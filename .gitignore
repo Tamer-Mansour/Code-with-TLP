@@ -1,0 +1,48 @@
+# Repo-wide ignores
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Secrets / env files
+.env
+.env.local
+
+# Databases (SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Test files (per user request)
+**/tests/
+**/pytest.ini
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Node / Angular (for the future frontend/ folder)
+node_modules/
+dist/
+.angular/
+.nx/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tooling caches
+.mypy_cache/
+.ruff_cache/
+.pyright/

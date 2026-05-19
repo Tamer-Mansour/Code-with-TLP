@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.local
+
+# Databases (SQLite default)
+*.db
+*.sqlite
+*.sqlite3
+
+# Editors / IDEs
+.idea/
+.vscode/
+
+# Test files (per user request: all test files ignored by git)
+tests/
+pytest.ini
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.cache/
+
+# Type checkers
+.mypy_cache/
+.ruff_cache/
+.pyright/
+
+# Build artifacts
+dist/
+build/
