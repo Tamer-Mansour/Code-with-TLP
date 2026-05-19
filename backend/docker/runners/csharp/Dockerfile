@@ -12,6 +12,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 \
     DOTNET_NOLOGO=1
 
 WORKDIR /workspace
+RUN chmod 777 /workspace
 USER runner
 
 CMD ["dotnet", "script", "/workspace/solution.csx"]

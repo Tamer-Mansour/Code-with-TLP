@@ -3,6 +3,7 @@ FROM python:3.11-slim
 # Lock down: non-root user, no apt cache.
 RUN useradd -ms /bin/bash runner
 WORKDIR /workspace
+RUN chmod 777 /workspace
 USER runner
 
 # stdout buffering off so we don't lose output on a crash.

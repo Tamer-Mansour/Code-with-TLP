@@ -1,0 +1,216 @@
+<div class="pt-14">
+  <div class="page-container py-8">
+
+    <!-- Loading skeleton -->
+    @if (loading()) {
+      <div class="animate-pulse space-y-6">
+        <div class="skeleton h-4 w-48 rounded"></div>
+        <div class="skeleton h-8 w-80 rounded-lg"></div>
+        <div class="lg:grid lg:grid-cols-[1fr_280px] gap-8 mt-6">
+          <div class="space-y-4">
+            @for (_ of [1,2,3,4,5]; track $index) {
+              <div class="skeleton h-4 rounded" [style.width]="($index % 3 === 0 ? '70%' : '100%')"></div>
+            }
+          </div>
+          <div class="skeleton h-64 rounded-xl mt-6 lg:mt-0"></div>
+        </div>
+      </div>
+    }
+
+    <!-- Error -->
+    @if (error() && !loading()) {
+      <div class="text-center py-24">
+        <p class="text-app-text font-medium">{{ error() }}</p>
+        <a routerLink="/catalog" class="btn btn-secondary mt-4 inline-flex no-underline">← Back to Catalog</a>
+      </div>
+    }
+
+    <!-- Content -->
+    @if (!loading() && !error() && lesson()) {
+      @let ls = lesson()!;
+
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-app-text-muted mb-6">
+        <a routerLink="/catalog" class="hover:text-app-text-2 transition-colors no-underline">Catalog</a>
+        <lucide-icon [img]="ChevronRight" [size]="12"></lucide-icon>
+        <span class="text-app-text-2 truncate max-w-xs">{{ ls.title }}</span>
+      </nav>
+
+      <div class="lg:grid lg:grid-cols-[1fr_280px] gap-8 items-start">
+
+        <!-- Left: Main lesson content -->
+        <main class="min-w-0">
+          <!-- Lesson header -->
+          <header class="mb-8">
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+              <span
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+                [class]="lessonTypeBadgeClass(ls.lesson_type)"
+              >
+                <lucide-icon [img]="lessonIcon(ls.lesson_type)" [size]="11"></lucide-icon>
+                {{ lessonTypeLabel(ls.lesson_type) }}
+              </span>
+              <span class="text-xs text-app-text-muted flex items-center gap-1">
+                <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
+                {{ ls.duration_minutes }} min
+              </span>
+              @if (isCompleted) {
+                <span class="inline-flex items-center gap-1 text-xs text-green-400">
+                  <lucide-icon [img]="CheckCircle2" [size]="12"></lucide-icon>
+                  Completed
+                </span>
+              }
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-app-text leading-tight">{{ ls.title }}</h1>
+          </header>
+
+          <!-- Video embed -->
+          @if (ls.lesson_type === 'video' && ls.video_url) {
+            <div class="mb-8 rounded-xl overflow-hidden border border-app-border bg-app-surface aspect-video">
+              <iframe
+                [src]="ls.video_url"
+                class="w-full h-full"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                title="Lesson video"
+              ></iframe>
+            </div>
+          }
+
+          <!-- Markdown content -->
+          @if (ls.content_md) {
+            <div class="content-prose mb-8">
+              <markdown [data]="ls.content_md" [disableSanitizer]="false"></markdown>
+            </div>
+          }
+
+          <!-- Exercise link -->
+          @if (ls.lesson_type === 'exercise') {
+            <div class="card mb-8 flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-semibold text-app-text mb-1">Coding Exercise</p>
+                <p class="text-xs text-app-text-2">This lesson has an associated coding exercise.</p>
+              </div>
+              <a
+                [routerLink]="['/exercises']"
+                [queryParams]="{ lesson: ls.id }"
+                class="btn btn-primary btn-sm shrink-0 no-underline"
+              >
+                <lucide-icon [img]="ExternalLink" [size]="13"></lucide-icon>
+                Open Exercise
+              </a>
+            </div>
+          }
+
+          <!-- Prev / Next navigation -->
+          <nav class="flex items-center justify-between gap-4 pt-6 border-t border-app-border" aria-label="Lesson navigation">
+            <button
+              onclick="history.back()"
+              class="btn btn-secondary btn-sm flex items-center gap-1.5"
+              aria-label="Previous lesson"
+            >
+              <lucide-icon [img]="ArrowLeft" [size]="14"></lucide-icon>
+              <span class="hidden sm:block">Previous</span>
+            </button>
+
+            @if (!isCompleted && auth.isAuthenticated()) {
+              <button
+                (click)="markComplete()"
+                class="btn btn-primary btn-sm"
+                [disabled]="marking()"
+                [attr.aria-busy]="marking()"
+              >
+                @if (marking()) {
+                  <div class="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  Saving...
+                } @else {
+                  <lucide-icon [img]="CheckCircle2" [size]="14"></lucide-icon>
+                  Mark Complete
+                }
+              </button>
+            } @else if (isCompleted) {
+              <span class="flex items-center gap-1.5 text-sm text-green-400 font-medium">
+                <lucide-icon [img]="CheckCircle2" [size]="16"></lucide-icon>
+                Completed
+              </span>
+            }
+
+            <button
+              class="btn btn-secondary btn-sm flex items-center gap-1.5"
+              aria-label="Next lesson"
+            >
+              <span class="hidden sm:block">Next</span>
+              <lucide-icon [img]="ArrowRight" [size]="14"></lucide-icon>
+            </button>
+          </nav>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="mt-8 lg:mt-0 lg:sticky lg:top-20 space-y-4">
+
+          <!-- Mark complete (sidebar shortcut) -->
+          @if (auth.isAuthenticated()) {
+            <div class="card">
+              <h3 class="text-sm font-semibold text-app-text mb-3">Your Progress</h3>
+
+              @if (isCompleted) {
+                <div class="flex items-center gap-2 p-3 rounded-lg bg-green-950/40 border border-green-800/40">
+                  <lucide-icon [img]="CheckCircle2" [size]="16" class="text-green-400 shrink-0"></lucide-icon>
+                  <p class="text-sm text-green-400 font-medium">Lesson completed</p>
+                </div>
+              } @else {
+                <button
+                  (click)="markComplete()"
+                  class="btn btn-primary w-full justify-center"
+                  [disabled]="marking()"
+                >
+                  @if (marking()) {
+                    <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Saving...
+                  } @else {
+                    <lucide-icon [img]="CheckCircle2" [size]="15"></lucide-icon>
+                    Mark as Complete
+                  }
+                </button>
+                <p class="text-xs text-app-text-muted mt-2 text-center">
+                  Complete this lesson to track your progress
+                </p>
+              }
+            </div>
+          } @else {
+            <div class="card text-center">
+              <lucide-icon [img]="Circle" [size]="28" class="text-app-border-2 mx-auto mb-3"></lucide-icon>
+              <p class="text-sm text-app-text-2 mb-3">Log in to track your progress</p>
+              <a routerLink="/login" class="btn btn-primary btn-sm w-full justify-center no-underline">Log in</a>
+            </div>
+          }
+
+          <!-- Lesson info card -->
+          <div class="card space-y-3">
+            <h3 class="text-sm font-semibold text-app-text">Lesson Info</h3>
+            <div class="space-y-2.5 text-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-app-text-muted">Type</span>
+                <span
+                  class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs"
+                  [class]="lessonTypeBadgeClass(ls.lesson_type)"
+                >
+                  {{ lessonTypeLabel(ls.lesson_type) }}
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-app-text-muted">Duration</span>
+                <span class="text-app-text-2 flex items-center gap-1">
+                  <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
+                  {{ ls.duration_minutes }} min
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+      </div>
+    }
+  </div>
+</div>

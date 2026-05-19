@@ -1,0 +1,236 @@
+<nav class="fixed top-0 inset-x-0 z-50 bg-app-bg/90 backdrop-blur-md border-b border-app-border h-14">
+  <div class="page-container h-full flex items-center justify-between">
+
+    <!-- Logo -->
+    <a
+      routerLink="/"
+      class="flex items-center gap-2 shrink-0"
+      style="text-decoration: none; color: inherit;"
+      aria-label="Code with TLP home"
+    >
+      <img src="logo.png" alt="Code with TLP" class="w-8 h-8 object-contain rounded-lg" />
+      <span class="font-semibold text-sm tracking-tight text-app-text">Code with TLP</span>
+    </a>
+
+    <!-- Desktop nav links -->
+    <div class="hidden md:flex items-center gap-1">
+      <a
+        routerLink="/catalog"
+        routerLinkActive="text-app-text bg-app-surface-2"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150"
+        style="text-decoration: none;"
+      >
+        <lucide-icon [img]="BookOpen" [size]="14"></lucide-icon>
+        Catalog
+      </a>
+
+      <a
+        routerLink="/exercises"
+        routerLinkActive="text-app-text bg-app-surface-2"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150"
+        style="text-decoration: none;"
+      >
+        <lucide-icon [img]="BarChart2" [size]="14"></lucide-icon>
+        Exercises
+      </a>
+
+      @if (auth.isAuthenticated()) {
+        <a
+          routerLink="/dashboard"
+          routerLinkActive="text-app-text bg-app-surface-2"
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150"
+          style="text-decoration: none;"
+        >
+          <lucide-icon [img]="LayoutDashboard" [size]="14"></lucide-icon>
+          Dashboard
+        </a>
+      }
+    </div>
+
+    <!-- Right side -->
+    <div class="flex items-center gap-1.5">
+
+      <!-- Theme toggle -->
+      <button
+        (click)="theme.toggle()"
+        class="btn-icon text-app-text-2 hover:text-app-text hover:bg-app-surface-2"
+        [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+        title="{{ theme.isDark() ? 'Light mode' : 'Dark mode' }}"
+      >
+        @if (theme.isDark()) {
+          <lucide-icon [img]="Sun" [size]="18"></lucide-icon>
+        } @else {
+          <lucide-icon [img]="Moon" [size]="18"></lucide-icon>
+        }
+      </button>
+
+      <!-- Unauthenticated -->
+      @if (!auth.isAuthenticated()) {
+        <div class="hidden md:flex items-center gap-2">
+          <a routerLink="/login"    class="btn btn-ghost btn-sm"    style="text-decoration: none;">Log in</a>
+          <a routerLink="/register" class="btn btn-primary btn-sm"  style="text-decoration: none;">Register</a>
+        </div>
+      }
+
+      <!-- Authenticated user dropdown -->
+      @if (auth.isAuthenticated()) {
+        <div class="relative" data-dropdown>
+          <button
+            (click)="toggleDropdown()"
+            class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-app-surface-2 transition-all duration-150 group"
+            [attr.aria-expanded]="dropdownOpen()"
+            aria-label="User menu"
+          >
+            <div class="w-7 h-7 rounded-full bg-brand/20 border border-brand/40 flex items-center justify-center shrink-0">
+              <span class="text-xs font-semibold text-brand">{{ userInitials }}</span>
+            </div>
+            <span class="hidden md:block text-sm text-app-text-2 group-hover:text-app-text transition-colors max-w-[120px] truncate">
+              {{ auth.currentUser()?.username }}
+            </span>
+            <lucide-icon
+              [img]="ChevronDown"
+              [size]="14"
+              class="text-app-text-muted transition-transform duration-200"
+              [ngClass]="{ 'rotate-180': dropdownOpen() }"
+            ></lucide-icon>
+          </button>
+
+          @if (dropdownOpen()) {
+            <div
+              class="absolute right-0 top-full mt-2 w-48 bg-app-surface border border-app-border rounded-xl shadow-popover animate-slide-up overflow-hidden py-1"
+              role="menu"
+              aria-label="User menu"
+            >
+              <div class="px-3 py-2.5 border-b border-app-border">
+                <p class="text-sm font-medium text-app-text truncate">{{ auth.currentUser()?.full_name || auth.currentUser()?.username }}</p>
+                <p class="text-xs text-app-text-muted truncate">{{ auth.currentUser()?.email }}</p>
+              </div>
+
+              <a routerLink="/dashboard" (click)="closeDropdown()"
+                class="flex items-center gap-2.5 px-3 py-2 text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+                style="text-decoration: none;" role="menuitem">
+                <lucide-icon [img]="LayoutDashboard" [size]="14"></lucide-icon>
+                Dashboard
+              </a>
+
+              <a routerLink="/profile" (click)="closeDropdown()"
+                class="flex items-center gap-2.5 px-3 py-2 text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+                style="text-decoration: none;" role="menuitem">
+                <lucide-icon [img]="User" [size]="14"></lucide-icon>
+                Profile
+              </a>
+
+              @if (auth.isAdmin()) {
+                <a routerLink="/admin" (click)="closeDropdown()"
+                  class="flex items-center gap-2.5 px-3 py-2 text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+                  style="text-decoration: none;" role="menuitem">
+                  <lucide-icon [img]="Shield" [size]="14"></lucide-icon>
+                  Admin
+                </a>
+              }
+
+              <div class="border-t border-app-border my-1"></div>
+
+              <button
+                (click)="logout()"
+                class="flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/40 transition-colors w-full text-left"
+                role="menuitem"
+              >
+                <lucide-icon [img]="LogOut" [size]="14"></lucide-icon>
+                Logout
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Mobile hamburger -->
+      <button
+        (click)="toggleMobile()"
+        class="md:hidden btn-icon text-app-text-2 hover:text-app-text hover:bg-app-surface-2"
+        [attr.aria-expanded]="mobileOpen()"
+        aria-label="Toggle mobile menu"
+      >
+        @if (mobileOpen()) {
+          <lucide-icon [img]="X" [size]="20"></lucide-icon>
+        } @else {
+          <lucide-icon [img]="Menu" [size]="20"></lucide-icon>
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  @if (mobileOpen()) {
+    <div class="md:hidden bg-app-bg border-b border-app-border animate-slide-down" role="navigation" aria-label="Mobile navigation">
+      <div class="page-container py-4 flex flex-col gap-1">
+        <a routerLink="/catalog" routerLinkActive="text-app-text bg-app-surface-2" (click)="closeMobile()"
+          class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+          style="text-decoration: none;">
+          <lucide-icon [img]="BookOpen" [size]="16"></lucide-icon>
+          Catalog
+        </a>
+
+        <a routerLink="/exercises" routerLinkActive="text-app-text bg-app-surface-2" (click)="closeMobile()"
+          class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+          style="text-decoration: none;">
+          <lucide-icon [img]="BarChart2" [size]="16"></lucide-icon>
+          Exercises
+        </a>
+
+        @if (auth.isAuthenticated()) {
+          <a routerLink="/dashboard" routerLinkActive="text-app-text bg-app-surface-2" (click)="closeMobile()"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+            style="text-decoration: none;">
+            <lucide-icon [img]="LayoutDashboard" [size]="16"></lucide-icon>
+            Dashboard
+          </a>
+        }
+
+        <div class="border-t border-app-border my-2"></div>
+
+        @if (!auth.isAuthenticated()) {
+          <a routerLink="/login"    (click)="closeMobile()" class="btn btn-secondary w-full justify-center" style="text-decoration: none;">Log in</a>
+          <a routerLink="/register" (click)="closeMobile()" class="btn btn-primary  w-full justify-center mt-2" style="text-decoration: none;">Register</a>
+        } @else {
+          <div class="flex items-center gap-3 px-3 py-2 mb-1">
+            <div class="w-8 h-8 rounded-full bg-brand/20 border border-brand/40 flex items-center justify-center">
+              <span class="text-xs font-semibold text-brand">{{ userInitials }}</span>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-medium text-app-text truncate">{{ auth.currentUser()?.username }}</p>
+              <p class="text-xs text-app-text-muted truncate">{{ auth.currentUser()?.email }}</p>
+            </div>
+          </div>
+
+          <a routerLink="/profile" (click)="closeMobile()"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:bg-app-surface-2 transition-colors"
+            style="text-decoration: none;">
+            <lucide-icon [img]="User" [size]="16"></lucide-icon>
+            Profile
+          </a>
+
+          @if (auth.isAdmin()) {
+            <a routerLink="/admin" (click)="closeMobile()"
+              class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:bg-app-surface-2 transition-colors"
+              style="text-decoration: none;">
+              <lucide-icon [img]="Shield" [size]="16"></lucide-icon>
+              Admin
+            </a>
+          }
+
+          <button
+            (click)="logout()"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40 transition-colors w-full text-left mt-1"
+          >
+            <lucide-icon [img]="LogOut" [size]="16"></lucide-icon>
+            Logout
+          </button>
+        }
+      </div>
+    </div>
+  }
+</nav>

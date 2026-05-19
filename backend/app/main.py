@@ -1,8 +1,9 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from fastapi.responses import JSONResponse
 
 from app.api.routes import admin, auth, catalog, progress, submissions, users
 from app.core.config import settings
@@ -115,6 +116,14 @@ def create_app() -> FastAPI:
             "health": "/health",
             "api": prefix,
         }
+
+    @app.exception_handler(Exception)
+    async def _unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+        """Return a proper JSON 500 so CORS middleware can attach headers."""
+        return JSONResponse(
+            status_code=500,
+            content={"detail": f"{type(exc).__name__}: {exc}"},
+        )
 
     app.openapi = _custom_openapi(app)
     return app

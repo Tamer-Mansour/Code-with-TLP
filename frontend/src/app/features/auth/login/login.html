@@ -1,0 +1,104 @@
+<div class="min-h-dvh flex items-center justify-center bg-app-bg bg-grid px-4 py-16">
+  <div class="card max-w-md w-full mx-auto animate-fade-in">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-brand/10 border border-brand/30 mb-4">
+        <lucide-icon [img]="Code2" [size]="22" class="text-brand"></lucide-icon>
+      </div>
+      <h1 class="text-2xl font-bold text-app-text mb-1">Welcome back</h1>
+      <p class="text-sm text-app-text-2">Sign in to your account to continue</p>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="flex flex-col gap-5">
+
+      <!-- Identifier field -->
+      <div>
+        <label for="identifier" class="label">Email or Username</label>
+        <input
+          id="identifier"
+          type="text"
+          formControlName="identifier"
+          autocomplete="username"
+          placeholder="you@example.com"
+          [class]="identifierCtrl.invalid && identifierCtrl.touched ? 'input-error' : 'input'"
+          aria-describedby="identifier-error"
+        />
+        @if (identifierCtrl.invalid && identifierCtrl.touched) {
+          <p id="identifier-error" class="mt-1.5 text-xs text-red-400 flex items-center gap-1" role="alert">
+            <lucide-icon [img]="AlertCircle" [size]="12"></lucide-icon>
+            This field is required.
+          </p>
+        }
+      </div>
+
+      <!-- Password field -->
+      <div>
+        <label for="password" class="label">Password</label>
+        <div class="relative">
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            [class]="(passwordCtrl.invalid && passwordCtrl.touched ? 'input-error' : 'input') + ' pr-10'"
+            aria-describedby="password-error"
+          />
+          <button
+            type="button"
+            (click)="togglePassword()"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 text-app-text-muted hover:text-app-text-2 transition-colors"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+          >
+            @if (showPassword()) {
+              <lucide-icon [img]="EyeOff" [size]="16"></lucide-icon>
+            } @else {
+              <lucide-icon [img]="Eye" [size]="16"></lucide-icon>
+            }
+          </button>
+        </div>
+        @if (passwordCtrl.invalid && passwordCtrl.touched) {
+          <p id="password-error" class="mt-1.5 text-xs text-red-400 flex items-center gap-1" role="alert">
+            <lucide-icon [img]="AlertCircle" [size]="12"></lucide-icon>
+            Password is required.
+          </p>
+        }
+      </div>
+
+      <!-- Error message -->
+      @if (errorMessage()) {
+        <div
+          class="flex items-start gap-2.5 p-3.5 rounded-lg bg-red-950/50 border border-red-800/60 text-red-300"
+          role="alert"
+          aria-live="assertive"
+        >
+          <lucide-icon [img]="AlertCircle" [size]="16" class="shrink-0 mt-0.5"></lucide-icon>
+          <p class="text-sm">{{ errorMessage() }}</p>
+        </div>
+      }
+
+      <!-- Submit button -->
+      <button
+        type="submit"
+        class="btn btn-primary w-full justify-center"
+        [disabled]="loading()"
+        [attr.aria-busy]="loading()"
+      >
+        @if (loading()) {
+          <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          Signing in...
+        } @else {
+          Sign in
+        }
+      </button>
+    </form>
+
+    <!-- Footer link -->
+    <p class="text-center text-sm text-app-text-2 mt-6">
+      Don't have an account?
+      <a routerLink="/register" class="text-brand-light hover:text-brand font-medium ml-1">Register</a>
+    </p>
+  </div>
+</div>

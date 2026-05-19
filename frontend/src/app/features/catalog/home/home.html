@@ -1,0 +1,200 @@
+<div class="pt-14">
+
+  <!-- Hero section -->
+  <section class="relative bg-grid pt-16 pb-14 text-center overflow-hidden">
+    <!-- Background glow -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+      <div class="w-[600px] h-[300px] bg-brand/5 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="page-container relative">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand/10 border border-brand/25 text-brand-light text-xs font-medium mb-6">
+        <lucide-icon [img]="Zap" [size]="12"></lucide-icon>
+        LeetCode-style CS education platform
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl font-bold text-gradient mb-4 leading-tight">
+        Master Computer Science
+      </h1>
+      <p class="text-base sm:text-lg text-app-text-2 max-w-xl mx-auto mb-10 leading-relaxed">
+        Structured courses, in-depth lessons, and LeetCode-style code exercises — all in one platform.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a routerLink="/catalog/subjects" class="btn btn-primary btn-lg no-underline">
+          <lucide-icon [img]="BookOpen" [size]="18"></lucide-icon>
+          Browse Courses
+        </a>
+        <a routerLink="/exercises" class="btn btn-secondary btn-lg no-underline">
+          <lucide-icon [img]="Code2" [size]="18"></lucide-icon>
+          Try an Exercise
+        </a>
+      </div>
+
+      <!-- Stats row -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-12 text-sm text-app-text-2">
+        <div class="flex items-center gap-2">
+          <lucide-icon [img]="Layers" [size]="16" class="text-brand-light"></lucide-icon>
+          <span>{{ subjects().length }} Subjects</span>
+        </div>
+        <div class="w-px h-4 bg-app-border hidden sm:block"></div>
+        <div class="flex items-center gap-2">
+          <lucide-icon [img]="BookOpen" [size]="16" class="text-brand-light"></lucide-icon>
+          <span>{{ courses().length }}+ Courses</span>
+        </div>
+        <div class="w-px h-4 bg-app-border hidden sm:block"></div>
+        <div class="flex items-center gap-2">
+          <lucide-icon [img]="Code2" [size]="16" class="text-brand-light"></lucide-icon>
+          <span>Coding Exercises</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="page-container py-14">
+
+    <!-- Loading skeleton -->
+    @if (loading()) {
+      <div class="mb-14">
+        <div class="skeleton h-7 w-48 mb-6 rounded-lg"></div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          @for (_ of [1,2,3,4,5,6,7,8]; track $index) {
+            <div class="skeleton h-32 rounded-xl"></div>
+          }
+        </div>
+      </div>
+      <div>
+        <div class="skeleton h-7 w-48 mb-6 rounded-lg"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for (_ of [1,2,3,4,5,6]; track $index) {
+            <div class="skeleton h-48 rounded-xl"></div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (error() && !loading()) {
+      <div class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="w-12 h-12 rounded-full bg-red-950 border border-red-800 flex items-center justify-center mb-4">
+          <lucide-icon [img]="Code2" [size]="20" class="text-red-400"></lucide-icon>
+        </div>
+        <p class="text-app-text font-medium mb-1">Something went wrong</p>
+        <p class="text-app-text-2 text-sm">{{ error() }}</p>
+      </div>
+    }
+
+    <!-- Subjects grid -->
+    @if (!loading() && !error()) {
+      <section class="mb-14" aria-labelledby="subjects-heading">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 id="subjects-heading" class="section-title">Browse by Subject</h2>
+            <p class="section-sub">Explore our structured CS curriculum</p>
+          </div>
+          <a routerLink="/catalog/subjects" class="btn btn-ghost btn-sm no-underline flex items-center gap-1">
+            View all
+            <lucide-icon [img]="ChevronRight" [size]="14"></lucide-icon>
+          </a>
+        </div>
+
+        @if (subjects().length === 0) {
+          <div class="text-center py-12 text-app-text-2">No subjects available yet.</div>
+        } @else {
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            @for (subject of subjects(); track trackById($index, subject); let i = $index) {
+              <a
+                [routerLink]="['/catalog/subjects', subject.slug]"
+                class="card-hover cursor-pointer p-5 flex flex-col gap-3 no-underline group"
+                [attr.aria-label]="subject.name"
+              >
+                <div
+                  class="w-10 h-10 rounded-lg bg-gradient-to-br flex items-center justify-center"
+                  [class]="subjectGradient(i)"
+                >
+                  <lucide-icon [img]="Layers" [size]="18" [class]="subjectIconColor(i)"></lucide-icon>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-app-text group-hover:text-brand-light transition-colors leading-snug">
+                    {{ subject.name }}
+                  </p>
+                  @if (subject.description) {
+                    <p class="text-xs text-app-text-muted mt-0.5 line-clamp-2 leading-relaxed">
+                      {{ subject.description }}
+                    </p>
+                  }
+                </div>
+                <div class="flex items-center text-xs text-app-text-muted">
+                  <lucide-icon [img]="ArrowRight" [size]="12" class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-brand-light"></lucide-icon>
+                </div>
+              </a>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Featured courses -->
+      <section aria-labelledby="courses-heading">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 id="courses-heading" class="section-title">Featured Courses</h2>
+            <p class="section-sub">Handpicked courses to get you started</p>
+          </div>
+          <a routerLink="/catalog/courses" class="btn btn-ghost btn-sm no-underline flex items-center gap-1">
+            View all
+            <lucide-icon [img]="ChevronRight" [size]="14"></lucide-icon>
+          </a>
+        </div>
+
+        @if (courses().length === 0) {
+          <div class="text-center py-12 text-app-text-2">No courses available yet.</div>
+        } @else {
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for (course of courses(); track trackById($index, course)) {
+              <a
+                [routerLink]="['/catalog/courses', course.slug]"
+                class="card-hover group flex flex-col no-underline overflow-hidden p-0"
+                [attr.aria-label]="course.title"
+              >
+                <!-- Cover image / gradient placeholder -->
+                <div class="h-36 bg-gradient-to-br from-app-surface-2 to-app-surface flex items-center justify-center overflow-hidden">
+                  @if (course.cover_image) {
+                    <img
+                      [src]="course.cover_image"
+                      [alt]="course.title"
+                      class="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <lucide-icon [img]="BookOpen" [size]="32" class="text-app-border-2"></lucide-icon>
+                  }
+                </div>
+
+                <!-- Card body -->
+                <div class="p-5 flex flex-col gap-3 flex-1">
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="text-sm font-semibold text-app-text group-hover:text-brand-light transition-colors line-clamp-2 leading-snug flex-1">
+                      {{ course.title }}
+                    </h3>
+                    <span [class]="difficultyBadge(course.difficulty)" class="shrink-0">
+                      {{ difficultyLabel(course.difficulty) }}
+                    </span>
+                  </div>
+
+                  @if (course.summary) {
+                    <p class="text-xs text-app-text-2 line-clamp-2 leading-relaxed">{{ course.summary }}</p>
+                  }
+
+                  <div class="flex items-center gap-1.5 text-xs text-app-text-muted mt-auto">
+                    <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
+                    {{ course.estimated_hours }}h estimated
+                  </div>
+                </div>
+              </a>
+            }
+          </div>
+        }
+      </section>
+    }
+  </div>
+</div>

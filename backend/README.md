@@ -1,35 +1,71 @@
-# Studying App — Backend
+# Code with TLP — Backend
 
-FastAPI + SQLite + Docker-sandboxed code execution. Supports Python, JavaScript, TypeScript, Java, and C# exercises.
+FastAPI + SQLite + Docker-sandboxed code execution.
+Supports Python, JavaScript, TypeScript, Java, and C# exercises.
 
 ## Stack
 
-- **FastAPI** + **Uvicorn**
-- **SQLAlchemy 2.0** with SQLite (set `DATABASE_URL` to use Postgres/MySQL later)
-- **JWT** auth (access + refresh tokens) with bcrypt password hashing
-- **Docker** for per-submission code sandboxing
-- Domain: subjects → courses → modules → lessons → exercises → test cases, plus enrollments, lesson progress, submissions, learning paths, tags
+- **FastAPI 0.115** + **Uvicorn** (hot-reload in dev via `--reload`)
+- **SQLAlchemy 2.0** with SQLite — change `DATABASE_URL` in `.env` to switch to PostgreSQL
+- **JWT** auth — access tokens (60 min) + refresh tokens (14 days), bcrypt password hashing
+- **Docker** — one throwaway container per test case, hard-capped CPU / RAM / PIDs / network
+- Domain model: subjects → courses → modules → lessons → exercises → test cases, plus enrollments, lesson progress, submissions, learning paths
 
 ## Layout
 
 ```
 backend/
 ├── app/
-│   ├── main.py                # FastAPI entrypoint
-│   ├── seed.py                # Seed admin + sample course/exercise
-│   ├── core/                  # config, db, security
-│   ├── models/                # SQLAlchemy models
+│   ├── main.py                # App factory, CORS middleware, global exception handler
+│   ├── seed.py                # Seed admin user + sample course/exercise
+│   ├── core/
+│   │   ├── config.py          # Pydantic settings (reads .env)
+│   │   ├── database.py        # SQLAlchemy engine + session
+│   │   └── security.py        # JWT helpers, bcrypt
+│   ├── models/                # SQLAlchemy ORM models
 │   ├── schemas/               # Pydantic request/response schemas
 │   ├── api/
-│   │   ├── deps.py            # auth dependencies
-│   │   └── routes/            # auth, users, catalog, submissions, progress, admin
+│   │   ├── deps.py            # get_current_user, get_db dependencies
+│   │   └── routes/
+│   │       ├── auth.py        # register, login, refresh, me
+│   │       ├── users.py       # GET/PATCH /users/me
+│   │       ├── catalog.py     # subjects, courses, lessons, exercises, learning paths
+│   │       ├── submissions.py # run (ad-hoc), submit (graded), history
+│   │       ├── progress.py    # enroll, lesson progress
+│   │       └── admin.py       # admin-only CRUD + stats
 │   └── services/
-│       ├── code_runner.py     # Docker-backed runner
-│       └── judge.py           # Score a submission against test cases
-└── docker/runners/            # One Dockerfile per supported language
+│       ├── code_runner.py     # Docker-backed sandbox runner
+│       └── judge.py           # Score a submission against all test cases
+├── docker/runners/            # One Dockerfile per supported language
+│   ├── python/
+│   ├── node/                  # JavaScript + TypeScript (tsx)
+│   ├── java/
+│   └── csharp/
+├── tests/                     # ~69 pytest tests (Docker mocked)
+├── Dockerfile
+├── requirements.txt
+└── .env.example
 ```
 
-## Setup
+---
+
+## Setup (using make from the repo root)
+
+```powershell
+make bootstrap    # create venv + copy .env + seed the database
+make runners      # build the Docker sandbox images
+make run          # start FastAPI on :8000 with hot reload
+```
+
+Or with the PowerShell wrapper:
+
+```powershell
+.\make.ps1 bootstrap
+.\make.ps1 runners
+.\make.ps1 run
+```
+
+### Manual setup
 
 ```powershell
 cd backend
@@ -37,102 +73,149 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 copy .env.example .env
-# Edit .env — at minimum set SECRET_KEY and FIRST_ADMIN_PASSWORD.
-```
-
-## Build the code-runner images
-
-You need **Docker Desktop running** (Linux containers).
-
-```powershell
-.\docker\runners\build-all.ps1
-```
-
-(or `./docker/runners/build-all.sh` on Linux/macOS)
-
-This produces:
-- `studying-runner-python:latest`
-- `studying-runner-node:latest`
-- `studying-runner-java:latest`
-- `studying-runner-csharp:latest`
-
-## Seed the database
-
-```powershell
+# Edit .env — set SECRET_KEY and FIRST_ADMIN_PASSWORD at minimum
 python -m app.seed
-```
-
-Creates the admin user from `.env` and a "Sum two numbers" sample exercise wired to an Algorithms course.
-
-## Run the API
-
-```powershell
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-- Swagger UI:  http://localhost:8000/docs
-- Health:      http://localhost:8000/health
-- API prefix:  `/api/v1`
+- **Swagger UI:** http://localhost:8000/docs
+- **Health check:** http://localhost:8000/health
+- **API prefix:** `/api/v1`
 
-## Key endpoints
+---
+
+## Build the sandbox runner images
+
+Docker Desktop must be running with Linux containers.
+
+```powershell
+.\docker\runners\build-all.ps1        # Windows
+./docker/runners/build-all.sh         # Linux / macOS
+# or from repo root:
+make runners
+```
+
+This produces four images:
+
+| Image | Languages |
+|-------|-----------|
+| `studying-runner-python:latest` | Python 3 |
+| `studying-runner-node:latest` | JavaScript, TypeScript (tsx) |
+| `studying-runner-java:latest` | Java |
+| `studying-runner-csharp:latest` | C# (dotnet-script) |
+
+If an image is missing, submissions using that language get `status = internal_error` with a clear message pointing to the build step.
+
+---
+
+## Environment variables (`.env`)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SECRET_KEY` | `change-me` | JWT signing secret — **must be changed** |
+| `DATABASE_URL` | `sqlite:///./studying_app.db` | SQLAlchemy connection string |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `60` | Access token lifetime |
+| `REFRESH_TOKEN_EXPIRE_DAYS` | `14` | Refresh token lifetime |
+| `FIRST_ADMIN_EMAIL` | `admin@studying.app` | Seeded admin email |
+| `FIRST_ADMIN_USERNAME` | `admin` | Seeded admin username |
+| `FIRST_ADMIN_PASSWORD` | `ChangeMe123!` | Seeded admin password — **change this** |
+| `DOCKER_ENABLED` | `true` | Set to `false` to disable sandbox (submissions get `internal_error`) |
+| `RUNNER_DEFAULT_TIMEOUT_SEC` | `5` | Max wall-clock time per test case |
+| `RUNNER_DEFAULT_MEMORY_MB` | `256` | Container memory cap |
+| `CORS_ORIGINS` | `http://localhost:4200` | Comma-separated allowed origins |
+
+---
+
+## API endpoints
 
 ### Auth
 
-| Method | Path | Description |
-| --- | --- | --- |
-| POST | `/api/v1/auth/register` | Register a student |
-| POST | `/api/v1/auth/login` | Login with email or username |
-| POST | `/api/v1/auth/refresh` | Refresh access token |
-| GET  | `/api/v1/auth/me` | Current user |
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/v1/auth/register` | — | Register a new student |
+| POST | `/api/v1/auth/login` | — | Login, returns JWT pair |
+| POST | `/api/v1/auth/refresh` | — | Refresh access token |
+| GET  | `/api/v1/auth/me` | ✓ | Current user info |
+
+### Users
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET    | `/api/v1/users/me` | ✓ | Current user profile |
+| PATCH  | `/api/v1/users/me` | ✓ | Update name, bio, avatar, password |
 
 ### Catalog (public reads)
 
 - `GET /api/v1/catalog/subjects`
-- `GET /api/v1/catalog/courses`
+- `GET /api/v1/catalog/courses` — filter by `q`, `difficulty`, `subject_id`
 - `GET /api/v1/catalog/courses/{slug}` — full tree (modules + lessons)
 - `GET /api/v1/catalog/lessons/{id}`
-- `GET /api/v1/catalog/exercises` (filter by `difficulty`, `language`, `tag`, `q`)
-- `GET /api/v1/catalog/exercises/{slug}` — student detail (no solution, no hidden cases)
+- `GET /api/v1/catalog/exercises` — filter by `difficulty`, `language`, `q`
+- `GET /api/v1/catalog/exercises/{slug}` — student detail (no solution, hidden cases redacted)
 - `GET /api/v1/catalog/learning-paths`
 
-### Student progress
+### Submissions
 
-- `POST /api/v1/progress/enroll/{course_id}`
-- `GET  /api/v1/progress/enrollments`
-- `PUT  /api/v1/progress/lessons/{lesson_id}` — mark lesson `in_progress`/`completed`
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/v1/submissions/run` | ✓ | Ad-hoc run with custom stdin, no grading |
+| POST | `/api/v1/submissions` | ✓ | Submit code → judged → scored |
+| GET  | `/api/v1/submissions/me` | ✓ | Submission history (paginated) |
+| GET  | `/api/v1/submissions/{id}` | ✓ | Full submission detail |
 
-### Code execution
+### Progress
 
-- `POST /api/v1/submissions/run` — ad-hoc run with custom stdin (no grading)
-- `POST /api/v1/submissions` — submit code → judged → scored → returns full results
-- `GET  /api/v1/submissions/me` — your submission history
-- `GET  /api/v1/submissions/{id}`
+- `POST /api/v1/progress/enroll/{course_id}` — enroll in a course
+- `GET  /api/v1/progress/enrollments` — your enrollments
+- `PUT  /api/v1/progress/lessons/{lesson_id}` — mark `in_progress` / `completed`
 
 ### Admin (role = admin only)
 
-Mounted under `/api/v1/admin/...` — full CRUD over users, subjects (via `/catalog/subjects`), courses, modules, lessons, exercises, test cases. Plus:
+All under `/api/v1/admin/`:
 
-- `GET /api/v1/admin/stats` — dashboard counters
-- `GET /api/v1/admin/users` (filter `role`, `q`)
-- `GET /api/v1/admin/submissions` (filter `user_id`, `exercise_id`, `status`)
+- `GET /admin/stats` — platform counters
+- `GET /admin/users` — filter by `role`, `q`
+- `GET /admin/submissions` — filter by `user_id`, `exercise_id`, `status`
+- Full CRUD over subjects, courses, modules, lessons, exercises, and test cases
 
-## Notes on the judge
+---
 
-- Each submission runs once **per test case** inside a fresh container.
-- Container limits: no network (`--network none`), capped memory (defaults to 256 MB), capped CPU (0.5 vCPU), `--pids-limit 128`, `no-new-privileges`.
-- Wall-clock timeout = exercise `time_limit_ms` + 1s safety. Status `time_limit_exceeded` if exceeded.
-- Output comparison is whitespace-tolerant (trailing whitespace per line is ignored).
-- Hidden test cases are graded but their stdin/stdout aren't echoed back to the user.
-- If a runner image is missing, the submission gets `status=internal_error` with a clear message — build the images.
+## How the judge works
 
-## Next steps (frontend)
+Each submission runs **once per test case** inside a fresh Docker container:
 
-The Angular frontend will live in `frontend/` and consume `/api/v1/...`. Plan:
+```
+FastAPI → grade_submission() → code_runner.run() → Docker container
+                                  ↑                     ↓
+                           repeated per TC         stdout/stderr
+```
 
-- `/login`, `/register` — auth flow with JWT in `Authorization: Bearer …`
-- `/catalog`, `/courses/:slug`, `/lessons/:id` — student experience
-- `/exercises/:slug` — Monaco editor + Run + Submit, results panel below
-- `/dashboard` — enrollments, recent submissions, score totals
-- `/admin/*` — guarded by `role === 'admin'`, CRUD pages for everything in the admin router
+Container constraints:
 
-Hit `/health` first to confirm the API + Docker runner are wired up before building the UI.
+| Limit | Value |
+|-------|-------|
+| Network | `--network none` |
+| Memory | 256 MB (configurable) |
+| CPU | 0.5 vCPU |
+| PIDs | 128 |
+| Privileges | `no-new-privileges` |
+| Timeout | exercise `time_limit_ms` + 1 s |
+
+Output comparison is whitespace-tolerant (trailing whitespace per line is stripped before comparing).
+
+---
+
+## Running the tests
+
+```powershell
+make test        # ~69 tests
+make test-cov    # with coverage report
+```
+
+Docker is **mocked** — the full suite passes anywhere in seconds, no Docker daemon required.
+
+---
+
+## Full Docker setup (from repo root)
+
+See the root `README.md` for the complete Docker Compose workflow and make targets.

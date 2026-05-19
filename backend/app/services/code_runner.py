@@ -6,7 +6,6 @@ container with strict resource limits and no network, and returns stdout/stderr/
 
 from __future__ import annotations
 
-import json
 import shutil
 import tempfile
 import time
@@ -150,10 +149,6 @@ class CodeRunner:
                 cpu_quota=int(settings.runner_default_cpu * 100000),
                 pids_limit=128,
                 security_opt=["no-new-privileges"],
-                detach=True,
-                stdout=True,
-                stderr=True,
-                tty=False,
             )
         except ImageNotFound:
             return RunResult(
@@ -165,7 +160,7 @@ class CodeRunner:
                 out_of_memory=False,
                 error=f"Runner image not found: {image}. Build it from docker/runners/.",
             )
-        except APIError as exc:
+        except Exception as exc:
             return RunResult(
                 exit_code=1,
                 stdout="",
@@ -173,14 +168,26 @@ class CodeRunner:
                 runtime_ms=0,
                 timed_out=False,
                 out_of_memory=False,
-                error=f"Docker API error: {exc}",
+                error=f"Docker create failed: {exc}",
             )
 
         start = time.perf_counter()
         timed_out = False
         out_of_memory = False
         try:
-            container.start()
+            try:
+                container.start()
+            except Exception as exc:
+                try:
+                    container.remove(force=True)
+                except Exception:
+                    pass
+                return RunResult(
+                    exit_code=1, stdout="", stderr="",
+                    runtime_ms=0, timed_out=False, out_of_memory=False,
+                    error=f"Container start failed: {exc}",
+                )
+
             try:
                 result = container.wait(timeout=timeout_sec)
                 exit_code = int(result.get("StatusCode", 1))
@@ -194,8 +201,12 @@ class CodeRunner:
 
             runtime_ms = int((time.perf_counter() - start) * 1000)
 
-            stdout = container.logs(stdout=True, stderr=False).decode("utf-8", errors="replace")
-            stderr = container.logs(stdout=False, stderr=True).decode("utf-8", errors="replace")
+            try:
+                stdout = container.logs(stdout=True, stderr=False).decode("utf-8", errors="replace")
+                stderr = container.logs(stdout=False, stderr=True).decode("utf-8", errors="replace")
+            except Exception:
+                stdout = ""
+                stderr = ""
 
             try:
                 state = client.api.inspect_container(container.id).get("State", {})

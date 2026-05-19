@@ -1,0 +1,62 @@
+<div
+  aria-live="polite"
+  aria-label="Notifications"
+  class="fixed bottom-5 right-5 z-[9999] flex flex-col gap-3 max-w-sm w-full pointer-events-none"
+>
+  @for (toast of toasts; track trackById($index, toast)) {
+    <div
+      class="relative pointer-events-auto overflow-hidden rounded-xl bg-app-surface border border-app-border shadow-popover
+             border-l-4 animate-slide-up flex items-start gap-3 p-4"
+      [ngClass]="borderColor(toast.type)"
+      role="alert"
+    >
+      <!-- Icon -->
+      <div class="shrink-0 mt-0.5">
+        <svg
+          class="w-4 h-4"
+          [ngClass]="iconColor(toast.type)"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="icon(toast.type)" />
+        </svg>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-app-text leading-snug">{{ label(toast.type) }}</p>
+        <p class="text-xs text-app-text-2 mt-0.5 leading-relaxed break-words">{{ toast.message }}</p>
+      </div>
+
+      <!-- Close button -->
+      <button
+        (click)="dismiss(toast.id)"
+        class="shrink-0 -mt-0.5 -mr-1 p-1 rounded-md text-app-text-muted hover:text-app-text hover:bg-app-surface-2 transition-colors"
+        aria-label="Dismiss notification"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Auto-dismiss progress bar -->
+      <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-app-border overflow-hidden rounded-b-xl">
+        <div
+          class="h-full origin-left"
+          [ngClass]="progressColor(toast.type)"
+          [style.animation]="'shrink ' + animDuration(toast) + ' linear forwards'"
+        ></div>
+      </div>
+    </div>
+  }
+</div>
+
+<style>
+  @keyframes shrink {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+  }
+</style>

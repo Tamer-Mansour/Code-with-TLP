@@ -33,22 +33,42 @@ HOST ?= 0.0.0.0
 # ---------- Help ----------
 .PHONY: help
 help: ## Show this help
-	@echo Studying App targets:
+	@echo Code with TLP — Makefile targets:
 	@echo.
-	@echo   make install         Create venv and install backend dependencies
-	@echo   make env             Copy backend/.env.example to backend/.env (if missing)
-	@echo   make runners         Build the Docker sandbox images (Python/Node/Java/C#)
-	@echo   make seed            Run the database seed (admin + sample course/exercise)
-	@echo   make run             Start the FastAPI server on $(HOST):$(PORT) with reload
-	@echo   make test            Run the pytest suite
-	@echo   make test-cov        Run pytest with coverage report
-	@echo   make health          Curl /health and print the response
-	@echo   make swagger         Open Swagger UI in the default browser
-	@echo   make bootstrap       install + env + seed (one-shot setup, no Docker required)
-	@echo   make all             bootstrap + runners (full setup, Docker required)
-	@echo   make clean           Remove venv, caches, and the SQLite database file
-	@echo   make freeze          Show installed package versions
-	@echo   make git-status      Show repo status
+	@echo   Backend:
+	@echo   make install              Create venv and install backend dependencies
+	@echo   make env                  Copy backend/.env.example to backend/.env (if missing)
+	@echo   make runners              Build the Docker sandbox images (Python/Node/Java/C#)
+	@echo   make seed                 Run the database seed (admin + sample course/exercise)
+	@echo   make run                  Start the FastAPI server on $(HOST):$(PORT) with reload
+	@echo   make test                 Run the pytest suite
+	@echo   make test-cov             Run pytest with coverage report
+	@echo   make health               Curl /health and print the response
+	@echo   make swagger              Open Swagger UI in the default browser
+	@echo   make bootstrap            install + env + seed (one-shot setup, no Docker required)
+	@echo.
+	@echo   Frontend:
+	@echo   make frontend-install     Install Angular frontend dependencies
+	@echo   make frontend-dev         Start Angular dev server on :4200
+	@echo   make frontend-build       Build Angular app for production
+	@echo.
+	@echo   Docker (full stack):
+	@echo   make docker-up              Build images and start all containers (first run)
+	@echo   make docker-start           Start containers without rebuilding
+	@echo   make docker-down            Stop and remove all containers
+	@echo   make docker-restart         Restart all containers (no rebuild)
+	@echo   make docker-update-backend  Rebuild backend image and restart it
+	@echo   make docker-update-frontend Rebuild frontend image and restart it
+	@echo   make docker-ps              Show container status
+	@echo   make docker-logs            Tail all container logs
+	@echo   make docker-logs-backend    Tail backend logs only
+	@echo   make docker-logs-frontend   Tail frontend logs only
+	@echo   make docker-seed            Run seed inside the running backend container
+	@echo.
+	@echo   Misc:
+	@echo   make clean                Remove venv, caches, and the SQLite database
+	@echo   make freeze               Show installed package versions
+	@echo   make git-status           Show repo status
 
 # ---------- Setup ----------
 .PHONY: install
@@ -74,26 +94,31 @@ runners: ## Build the Docker runner images
 	@$(BUILD_RUNNERS)
 
 # ---------- Run / seed ----------
+# Use $(abspath ...) so these work from any shell on Windows and Unix.
+ABS_PY     := $(abspath $(PY))
+ABS_UVICORN:= $(abspath $(UVICORN))
+ABS_PYTEST := $(abspath $(firstword $(PYTEST)))
+
 .PHONY: seed
 seed: ## Populate the DB with admin + sample course/exercise
-	cd backend && ../$(PY) -m app.seed
+	cd backend && "$(ABS_PY)" -m app.seed
 
 .PHONY: run
 run: ## Start the FastAPI server with --reload
-	cd backend && ../$(UVICORN) app.main:app --reload --host $(HOST) --port $(PORT)
+	cd backend && "$(ABS_UVICORN)" app.main:app --reload --host $(HOST) --port $(PORT)
 
 .PHONY: run-prod
 run-prod: ## Start the FastAPI server without reload (single worker)
-	cd backend && ../$(UVICORN) app.main:app --host $(HOST) --port $(PORT) --workers 1
+	cd backend && "$(ABS_UVICORN)" app.main:app --host $(HOST) --port $(PORT) --workers 1
 
 # ---------- Tests ----------
 .PHONY: test
 test: ## Run the pytest suite
-	cd backend && ../$(PYTEST) -v
+	cd backend && "$(ABS_PY)" -m pytest -v
 
 .PHONY: test-cov
 test-cov: ## Run pytest with coverage
-	cd backend && ../$(PYTEST) --cov=app --cov-report=term-missing --cov-report=html
+	cd backend && "$(ABS_PY)" -m pytest --cov=app --cov-report=term-missing --cov-report=html
 
 # ---------- Utilities ----------
 .PHONY: health
@@ -115,6 +140,66 @@ freeze: ## Show installed package versions
 .PHONY: git-status
 git-status: ## git status
 	@git status
+
+# ---------- Frontend ----------
+.PHONY: frontend-install
+frontend-install: ## Install Angular frontend dependencies
+	cd frontend && npm install
+
+.PHONY: frontend-dev
+frontend-dev: ## Start Angular dev server on :4200
+	cd frontend && npm start
+
+.PHONY: frontend-build
+frontend-build: ## Build Angular app for production
+	cd frontend && npm run build
+
+# ---------- Docker (full stack) ----------
+.PHONY: docker-up
+docker-up: ## Build images and start all containers (use for first run or after dep changes)
+	docker compose up --build -d
+
+.PHONY: docker-start
+docker-start: ## Start containers without rebuilding
+	docker compose up -d
+
+.PHONY: docker-down
+docker-down: ## Stop and remove all containers
+	docker compose down
+
+.PHONY: docker-restart
+docker-restart: ## Restart all containers without rebuilding
+	docker compose restart
+
+.PHONY: docker-update-backend
+docker-update-backend: ## Rebuild only the backend image and restart it
+	docker compose build backend
+	docker compose up -d --no-deps backend
+
+.PHONY: docker-update-frontend
+docker-update-frontend: ## Rebuild only the frontend image and restart it
+	docker compose build frontend
+	docker compose up -d --no-deps frontend
+
+.PHONY: docker-ps
+docker-ps: ## Show running container status
+	docker compose ps
+
+.PHONY: docker-logs
+docker-logs: ## Tail all container logs
+	docker compose logs -f
+
+.PHONY: docker-logs-backend
+docker-logs-backend: ## Tail backend container logs
+	docker compose logs -f backend
+
+.PHONY: docker-logs-frontend
+docker-logs-frontend: ## Tail frontend container logs
+	docker compose logs -f frontend
+
+.PHONY: docker-seed
+docker-seed: ## Run seed inside the running backend container
+	docker compose exec backend python -m app.seed
 
 # ---------- Composed targets ----------
 .PHONY: bootstrap

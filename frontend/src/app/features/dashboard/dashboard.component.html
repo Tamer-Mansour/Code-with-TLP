@@ -1,0 +1,237 @@
+<div class="bg-app-bg min-h-dvh pb-16">
+  <div class="page-container pt-8">
+
+    <!-- ── Header ─────────────────────────────────────────── -->
+    <div class="flex items-start justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-app-text">
+          Welcome back,
+          <span class="text-gradient">{{ currentUser()?.username ?? currentUser()?.full_name ?? 'Student' }}</span>
+        </h1>
+        <p class="text-app-text-2 mt-1">Here's an overview of your learning progress.</p>
+      </div>
+      <!-- User avatar chip -->
+      <div class="flex items-center gap-3 mt-1">
+        <div class="w-10 h-10 rounded-full bg-brand/20 border border-brand/30 flex items-center justify-center text-brand font-bold text-sm flex-shrink-0">
+          {{ userInitials() }}
+        </div>
+        <div class="hidden sm:block">
+          <p class="text-sm font-semibold text-app-text">{{ currentUser()?.full_name ?? currentUser()?.username }}</p>
+          <p class="text-xs text-app-text-muted capitalize">{{ currentUser()?.role }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Stats row ──────────────────────────────────────── -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+      <!-- Enrolled courses -->
+      <div class="card flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-app-text-muted mb-1">
+          <div class="p-1.5 rounded-lg bg-brand/10">
+            <lucide-icon name="book-open" class="w-4 h-4 text-brand" />
+          </div>
+          <span class="text-xs font-medium">Enrolled Courses</span>
+        </div>
+        @if (loadingEnrollments()) {
+          <div class="skeleton h-9 w-16 rounded-lg"></div>
+        } @else {
+          <span class="text-3xl font-bold text-gradient">{{ enrolledCount() }}</span>
+        }
+        <span class="text-xs text-app-text-muted">active enrollments</span>
+      </div>
+
+      <!-- Completed exercises -->
+      <div class="card flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-app-text-muted mb-1">
+          <div class="p-1.5 rounded-lg bg-green-500/10">
+            <lucide-icon name="check-circle-2" class="w-4 h-4 text-green-400" />
+          </div>
+          <span class="text-xs font-medium">Accepted Solutions</span>
+        </div>
+        @if (loadingSubmissions()) {
+          <div class="skeleton h-9 w-16 rounded-lg"></div>
+        } @else {
+          <span class="text-3xl font-bold text-green-400">{{ completedExercises() }}</span>
+        }
+        <span class="text-xs text-app-text-muted">out of {{ recentSubmissions().length }} recent</span>
+      </div>
+
+      <!-- Acceptance rate -->
+      <div class="card flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-app-text-muted mb-1">
+          <div class="p-1.5 rounded-lg bg-purple-500/10">
+            <lucide-icon name="percent" class="w-4 h-4 text-purple-400" />
+          </div>
+          <span class="text-xs font-medium">Acceptance Rate</span>
+        </div>
+        @if (loadingSubmissions()) {
+          <div class="skeleton h-9 w-16 rounded-lg"></div>
+        } @else {
+          <span class="text-3xl font-bold text-purple-400">{{ acceptanceRate() }}<span class="text-lg">%</span></span>
+        }
+        <span class="text-xs text-app-text-muted">across all submissions</span>
+      </div>
+
+      <!-- Total points -->
+      <div class="card flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-app-text-muted mb-1">
+          <div class="p-1.5 rounded-lg bg-yellow-500/10">
+            <lucide-icon name="zap" class="w-4 h-4 text-yellow-400" />
+          </div>
+          <span class="text-xs font-medium">Total Points</span>
+        </div>
+        @if (loadingSubmissions()) {
+          <div class="skeleton h-9 w-16 rounded-lg"></div>
+        } @else {
+          <span class="text-3xl font-bold text-yellow-400">{{ totalPoints() }}</span>
+        }
+        <span class="text-xs text-app-text-muted">points earned</span>
+      </div>
+    </div>
+
+    <!-- ── My Courses ─────────────────────────────────────── -->
+    <section class="mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="section-title">My Courses</h2>
+        <a routerLink="/catalog" class="btn-ghost btn-sm flex items-center gap-1.5">
+          Browse all
+          <lucide-icon name="arrow-right" class="w-3.5 h-3.5" />
+        </a>
+      </div>
+
+      @if (loadingEnrollments()) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (i of [1,2,3]; track i) {
+            <div class="card gap-4 flex flex-col">
+              <div class="skeleton h-5 w-3/4 rounded"></div>
+              <div class="skeleton h-3 w-full rounded"></div>
+              <div class="skeleton h-1.5 w-full rounded-full"></div>
+            </div>
+          }
+        </div>
+      } @else if (coursesWithProgress().length === 0) {
+        <div class="card flex flex-col items-center justify-center py-12 text-center">
+          <lucide-icon name="graduation-cap" class="w-12 h-12 text-app-text-muted mb-3" />
+          <h3 class="text-base font-semibold text-app-text mb-2">No Enrollments Yet</h3>
+          <p class="text-sm text-app-text-2 mb-4">Start learning by enrolling in a course.</p>
+          <a routerLink="/catalog" class="btn-primary btn-sm">Browse Courses</a>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (item of coursesWithProgress(); track item.enrollment.id) {
+            <div class="card-hover flex flex-col gap-4">
+              <!-- Course header -->
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-semibold text-app-text text-sm leading-snug line-clamp-2">
+                    {{ item.course!.title }}
+                  </h3>
+                  @if (item.course!.summary) {
+                    <p class="text-xs text-app-text-2 mt-1 line-clamp-1">{{ item.course!.summary }}</p>
+                  }
+                </div>
+                <span [ngClass]="getDifficultyBadge(item.course!.difficulty)" class="flex-shrink-0">
+                  {{ item.course!.difficulty }}
+                </span>
+              </div>
+
+              <!-- Progress bar -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs text-app-text-muted">Progress</span>
+                  <span class="text-xs font-medium text-app-text-2">{{ item.enrollment.progress_percent }}%</span>
+                </div>
+                <div class="w-full bg-app-surface-2 rounded-full h-1.5">
+                  <div
+                    class="h-1.5 rounded-full bg-brand transition-all duration-500"
+                    [style.width.%]="item.enrollment.progress_percent"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Continue button -->
+              <a
+                [routerLink]="['/catalog/courses', item.course!.slug]"
+                class="btn-secondary btn-sm w-full justify-center mt-auto"
+              >
+                <lucide-icon name="play" class="w-3.5 h-3.5" />
+                Continue Learning
+              </a>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- ── Recent Submissions ─────────────────────────────── -->
+    <section class="mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="section-title">Recent Submissions</h2>
+        <a routerLink="/exercises" class="btn-ghost btn-sm flex items-center gap-1.5">
+          All exercises
+          <lucide-icon name="arrow-right" class="w-3.5 h-3.5" />
+        </a>
+      </div>
+
+      @if (loadingSubmissions()) {
+        <div class="space-y-2">
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="skeleton h-12 rounded-lg"></div>
+          }
+        </div>
+      } @else if (recentSubmissions().length === 0) {
+        <div class="card flex flex-col items-center justify-center py-12 text-center">
+          <lucide-icon name="code-2" class="w-12 h-12 text-app-text-muted mb-3" />
+          <h3 class="text-base font-semibold text-app-text mb-2">No Submissions Yet</h3>
+          <p class="text-sm text-app-text-2 mb-4">Try solving an exercise to see your results here.</p>
+          <a routerLink="/exercises" class="btn-primary btn-sm">Try an Exercise</a>
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Exercise</th>
+                <th>Language</th>
+                <th>Score</th>
+                <th>Runtime</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of recentSubmissions(); track s.id) {
+                <tr>
+                  <td>
+                    <span [ngClass]="getStatusBadge(s.status)">{{ getStatusLabel(s.status) }}</span>
+                  </td>
+                  <td class="text-app-text">#{{ s.exercise_id }}</td>
+                  <td>{{ LANGUAGE_LABELS[s.language] ?? s.language }}</td>
+                  <td class="font-mono text-xs">{{ s.score }}</td>
+                  <td class="font-mono text-xs">{{ formatRuntime(s.runtime_ms) }}</td>
+                  <td class="text-app-text-muted">{{ s.created_at | date:'short' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <!-- ── Quick actions ──────────────────────────────────── -->
+    <section>
+      <h2 class="section-title mb-4">Quick Actions</h2>
+      <div class="flex flex-wrap gap-3">
+        <a routerLink="/catalog" class="btn-primary flex items-center gap-2">
+          <lucide-icon name="book-open" class="w-4 h-4" />
+          Browse Courses
+        </a>
+        <a routerLink="/exercises" class="btn-secondary flex items-center gap-2">
+          <lucide-icon name="code-2" class="w-4 h-4" />
+          Try Exercise
+        </a>
+      </div>
+    </section>
+
+  </div>
+</div>

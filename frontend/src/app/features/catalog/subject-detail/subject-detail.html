@@ -1,0 +1,157 @@
+<div class="pt-14">
+  <div class="page-container py-8">
+
+    <!-- Loading skeleton -->
+    @if (loading()) {
+      <div class="animate-pulse space-y-6">
+        <div class="space-y-2">
+          <div class="skeleton h-4 w-40 rounded"></div>
+          <div class="skeleton h-8 w-72 rounded-lg"></div>
+          <div class="skeleton h-4 w-96 rounded"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          @for (_ of [1,2,3,4,5,6]; track $index) {
+            <div class="skeleton h-56 rounded-xl"></div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (error() && !loading()) {
+      <div class="text-center py-24">
+        <p class="text-app-text font-medium">{{ error() }}</p>
+        <a routerLink="/catalog" class="btn btn-secondary mt-4 inline-flex no-underline">← Back to Catalog</a>
+      </div>
+    }
+
+    <!-- Content -->
+    @if (!loading() && !error() && subject()) {
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-app-text-muted mb-6">
+        <a routerLink="/catalog" class="hover:text-app-text-2 transition-colors no-underline">Catalog</a>
+        <lucide-icon [img]="ChevronRight" [size]="12"></lucide-icon>
+        <span class="text-app-text-2">{{ subject()!.name }}</span>
+      </nav>
+
+      <!-- Header -->
+      <header class="mb-10">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-11 h-11 rounded-xl bg-brand/10 border border-brand/30 flex items-center justify-center">
+            <lucide-icon [img]="Layers" [size]="20" class="text-brand"></lucide-icon>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold text-app-text">{{ subject()!.name }}</h1>
+          </div>
+        </div>
+        @if (subject()!.description) {
+          <p class="text-app-text-2 max-w-2xl leading-relaxed">{{ subject()!.description }}</p>
+        }
+        <p class="text-sm text-app-text-muted mt-3">
+          {{ courses().length }} course{{ courses().length !== 1 ? 's' : '' }} available
+        </p>
+      </header>
+
+      <!-- Courses grid -->
+      @if (courses().length === 0) {
+        <div class="text-center py-16 card">
+          <lucide-icon [img]="BookOpen" [size]="40" class="text-app-border-2 mx-auto mb-4"></lucide-icon>
+          <p class="text-app-text font-medium">No courses yet</p>
+          <p class="text-app-text-2 text-sm mt-1">Check back later for new content.</p>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for (course of courses(); track trackById($index, course)) {
+            <div class="card-hover flex flex-col overflow-hidden p-0 group">
+              <!-- Cover -->
+              <div class="h-40 bg-gradient-to-br from-app-surface-2 to-app-surface flex items-center justify-center overflow-hidden relative">
+                @if (course.cover_image) {
+                  <img
+                    [src]="course.cover_image"
+                    [alt]="course.title"
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                } @else {
+                  <lucide-icon [img]="BookOpen" [size]="36" class="text-app-border-2"></lucide-icon>
+                }
+                <!-- Enrolled badge overlay -->
+                @if (isEnrolled(course.id)) {
+                  <div class="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-green-950/90 border border-green-800/60">
+                    <lucide-icon [img]="CheckCircle2" [size]="11" class="text-green-400"></lucide-icon>
+                    <span class="text-xs text-green-400 font-medium">Enrolled</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Body -->
+              <div class="p-5 flex flex-col gap-3 flex-1">
+                <div class="flex items-start gap-2 justify-between">
+                  <h2 class="text-sm font-semibold text-app-text group-hover:text-brand-light transition-colors line-clamp-2 leading-snug flex-1">
+                    {{ course.title }}
+                  </h2>
+                  <span [class]="difficultyBadge(course.difficulty)" class="shrink-0 mt-0.5">
+                    {{ difficultyLabel(course.difficulty) }}
+                  </span>
+                </div>
+
+                @if (course.summary) {
+                  <p class="text-xs text-app-text-2 line-clamp-2 leading-relaxed">{{ course.summary }}</p>
+                }
+
+                <!-- Progress bar (enrolled) -->
+                @if (isEnrolled(course.id)) {
+                  @let enr = getEnrollment(course.id);
+                  <div class="space-y-1">
+                    <div class="flex items-center justify-between text-xs text-app-text-muted">
+                      <span>Progress</span>
+                      <span>{{ enr?.progress_percent ?? 0 }}%</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-app-surface-2 rounded-full overflow-hidden">
+                      <div
+                        class="h-full bg-brand rounded-full transition-all duration-300"
+                        [style.width.%]="enr?.progress_percent ?? 0"
+                      ></div>
+                    </div>
+                  </div>
+                }
+
+                <div class="flex items-center gap-1.5 text-xs text-app-text-muted">
+                  <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
+                  {{ course.estimated_hours }}h estimated
+                </div>
+
+                <!-- Action button -->
+                <div class="mt-auto pt-1">
+                  @if (isEnrolled(course.id)) {
+                    <a
+                      [routerLink]="['/catalog/courses', course.slug]"
+                      class="btn btn-secondary btn-sm w-full justify-center no-underline"
+                    >
+                      <lucide-icon [img]="PlayCircle" [size]="14"></lucide-icon>
+                      Continue
+                    </a>
+                  } @else if (auth.isAuthenticated()) {
+                    <a
+                      [routerLink]="['/catalog/courses', course.slug]"
+                      class="btn btn-primary btn-sm w-full justify-center no-underline"
+                    >
+                      Enroll
+                    </a>
+                  } @else {
+                    <a
+                      [routerLink]="['/catalog/courses', course.slug]"
+                      class="btn btn-ghost btn-sm w-full justify-center no-underline"
+                    >
+                      View Course
+                    </a>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

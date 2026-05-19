@@ -1,0 +1,101 @@
+<!-- Page title -->
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="section-title text-2xl">Dashboard</h1>
+    <p class="section-sub mt-1">Platform overview and key metrics</p>
+  </div>
+  <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-app-surface border border-app-border text-xs text-app-text-muted">
+    <lucide-icon name="refresh-cw" class="w-3 h-3" />
+    Live data
+  </div>
+</div>
+
+<!-- Error state -->
+@if (error()) {
+  <div class="card flex flex-col items-center justify-center py-16 text-center">
+    <lucide-icon name="alert-triangle" class="w-12 h-12 text-red-400 mb-3" />
+    <h3 class="text-base font-semibold text-app-text mb-2">Failed to load stats</h3>
+    <p class="text-sm text-app-text-2">Unable to fetch platform statistics. Please refresh the page.</p>
+  </div>
+}
+
+<!-- Stats grid -->
+@if (!error()) {
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+    @for (card of statCards; track card.key) {
+      <div class="card flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+          <div class="p-2 rounded-lg" [ngClass]="card.bgClass">
+            <lucide-icon [name]="card.icon" class="w-4 h-4" [ngClass]="card.colorClass" />
+          </div>
+          <span class="text-xs font-medium text-app-text-muted">{{ card.label }}</span>
+        </div>
+
+        @if (loading()) {
+          <div class="skeleton h-9 w-20 rounded-lg"></div>
+          <div class="skeleton h-3 w-12 rounded"></div>
+        } @else {
+          <span class="text-3xl font-bold text-gradient tabular-nums">{{ getStatValue(card.key) | number }}</span>
+          <div class="h-1 w-full rounded-full bg-app-surface-2">
+            <div class="h-1 rounded-full" [ngClass]="card.bgClass" style="width: 70%"></div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Secondary info cards -->
+  @if (!loading() && stats()) {
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <!-- Acceptance rate -->
+      <div class="card">
+        <div class="flex items-center gap-2 mb-4">
+          <lucide-icon name="target" class="w-4 h-4 text-emerald-400" />
+          <span class="text-sm font-semibold text-app-text">Acceptance Rate</span>
+        </div>
+        @if (stats()!.submissions > 0) {
+          <div class="flex items-end gap-2">
+            <span class="text-4xl font-bold text-emerald-400 tabular-nums">
+              {{ ((stats()!.submissions_accepted / stats()!.submissions) * 100) | number:'1.1-1' }}%
+            </span>
+          </div>
+          <p class="text-xs text-app-text-muted mt-2">
+            {{ stats()!.submissions_accepted | number }} accepted / {{ stats()!.submissions | number }} total
+          </p>
+        } @else {
+          <span class="text-3xl font-bold text-app-text-muted">—</span>
+        }
+      </div>
+
+      <!-- Total courses -->
+      <div class="card">
+        <div class="flex items-center gap-2 mb-4">
+          <lucide-icon name="library" class="w-4 h-4 text-brand" />
+          <span class="text-sm font-semibold text-app-text">Course Coverage</span>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-4xl font-bold text-gradient tabular-nums">{{ stats()!.courses | number }}</span>
+          <span class="text-sm text-app-text-muted mb-1">total</span>
+        </div>
+        <p class="text-xs text-app-text-muted mt-2">
+          {{ stats()!.courses_published | number }} published
+        </p>
+      </div>
+
+      <!-- Total exercises -->
+      <div class="card">
+        <div class="flex items-center gap-2 mb-4">
+          <lucide-icon name="square-code" class="w-4 h-4 text-yellow-400" />
+          <span class="text-sm font-semibold text-app-text">Exercise Coverage</span>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-4xl font-bold text-yellow-400 tabular-nums">{{ stats()!.exercises | number }}</span>
+          <span class="text-sm text-app-text-muted mb-1">total</span>
+        </div>
+        <p class="text-xs text-app-text-muted mt-2">
+          {{ stats()!.exercises_published | number }} published
+        </p>
+      </div>
+    </div>
+  }
+}

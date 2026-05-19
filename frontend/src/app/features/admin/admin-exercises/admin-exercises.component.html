@@ -1,0 +1,314 @@
+<!-- Page header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="section-title">Exercises</h1>
+    <p class="section-sub mt-1">
+      @if (!loading()) { {{ exercises().length }} exercises total } @else { Loading... }
+    </p>
+  </div>
+  <button (click)="openCreate()" class="btn-primary flex items-center gap-2">
+    <lucide-icon name="plus" class="w-4 h-4" />
+    New Exercise
+  </button>
+</div>
+
+<!-- Loading -->
+@if (loading()) {
+  <div class="space-y-2">
+    @for (i of [1,2,3,4,5]; track i) {
+      <div class="skeleton h-14 rounded-lg"></div>
+    }
+  </div>
+}
+
+<!-- Table -->
+@if (!loading()) {
+  @if (exercises().length === 0) {
+    <div class="card flex flex-col items-center justify-center py-16 text-center">
+      <lucide-icon name="code-2" class="w-12 h-12 text-app-text-muted mb-3" />
+      <h3 class="text-base font-semibold text-app-text mb-2">No Exercises Yet</h3>
+      <p class="text-sm text-app-text-2 mb-4">Create your first coding exercise.</p>
+      <button (click)="openCreate()" class="btn-primary btn-sm">New Exercise</button>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Difficulty</th>
+            <th>Languages</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ex of exercises(); track ex.id) {
+            <tr>
+              <td>
+                <div>
+                  <p class="text-sm font-medium text-app-text">{{ ex.title }}</p>
+                  <p class="text-xs text-app-text-muted">{{ ex.slug }}</p>
+                </div>
+              </td>
+              <td><span [ngClass]="getDifficultyBadge(ex.difficulty)">{{ ex.difficulty }}</span></td>
+              <td>
+                <div class="flex flex-wrap gap-1">
+                  @for (lang of ex.supported_languages; track lang) {
+                    <span class="px-1.5 py-0.5 rounded text-[10px] bg-app-surface-2 border border-app-border text-app-text-muted">
+                      {{ LANGUAGE_LABELS[lang] ?? lang }}
+                    </span>
+                  }
+                </div>
+              </td>
+              <td>
+                @if (ex.is_published) {
+                  <span class="flex items-center gap-1.5 text-xs text-green-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                    Published
+                  </span>
+                } @else {
+                  <span class="flex items-center gap-1.5 text-xs text-app-text-muted">
+                    <span class="w-1.5 h-1.5 rounded-full bg-app-text-muted"></span>
+                    Draft
+                  </span>
+                }
+              </td>
+              <td class="text-right">
+                <div class="flex items-center justify-end gap-2">
+                  @if (deletingId() === ex.id) {
+                    <span class="text-xs text-red-400">Confirm?</span>
+                    <button (click)="executeDelete(ex.id)" [disabled]="deleteLoading()" class="btn-danger btn-sm text-xs">
+                      @if (deleteLoading()) { <lucide-icon name="loader-2" class="w-3 h-3 animate-spin" /> }
+                      Delete
+                    </button>
+                    <button (click)="cancelDelete()" class="btn-ghost btn-sm text-xs">Cancel</button>
+                  } @else {
+                    <button (click)="openEdit(ex)" class="btn-secondary btn-sm flex items-center gap-1.5">
+                      <lucide-icon name="pencil" class="w-3 h-3" />
+                      Edit
+                    </button>
+                    <button (click)="confirmDelete(ex.id)" class="btn-ghost btn-sm text-red-400 hover:bg-red-500/10">
+                      <lucide-icon name="trash-2" class="w-3.5 h-3.5" />
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
+
+<!-- ── Slide-in Panel ──────────────────────────────────────── -->
+@if (panelOpen()) {
+  <!-- Backdrop -->
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in" (click)="closePanel()"></div>
+
+  <!-- Panel (wide for Monaco editor) -->
+  <div class="fixed inset-y-0 right-0 w-full max-w-3xl bg-app-surface border-l border-app-border shadow-popover z-50 flex flex-col overflow-y-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-app-border flex-shrink-0">
+      <h2 class="text-base font-semibold text-app-text">
+        {{ editingExercise() ? 'Edit Exercise' : 'New Exercise' }}
+      </h2>
+      <button (click)="closePanel()" class="btn-icon btn-ghost">
+        <lucide-icon name="x" class="w-4 h-4" />
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="exerciseForm" (ngSubmit)="save()" class="flex-1 px-6 py-5 space-y-6">
+
+      <!-- Title + Slug -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="label" for="ex-title">Title <span class="text-red-400">*</span></label>
+          <input
+            id="ex-title"
+            type="text"
+            formControlName="title"
+            placeholder="Two Sum"
+            class="input"
+            (input)="onTitleChange($any($event.target).value)"
+          />
+        </div>
+        <div>
+          <label class="label" for="ex-slug">Slug <span class="text-red-400">*</span></label>
+          <input id="ex-slug" type="text" formControlName="slug" placeholder="two-sum" class="input" />
+        </div>
+      </div>
+
+      <!-- Difficulty -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="label" for="ex-diff">Difficulty <span class="text-red-400">*</span></label>
+          <select id="ex-diff" formControlName="difficulty" class="input cursor-pointer">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Supported languages (checkboxes) -->
+      <div>
+        <p class="label">Supported Languages</p>
+        <div class="flex flex-wrap gap-3" formArrayName="supported_languages">
+          @for (lang of ALL_LANGUAGES; track lang; let i = $index) {
+            <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-app-border hover:border-app-border-2 transition-colors"
+              [ngClass]="supportedLangsArray.at(i).value ? 'border-brand bg-brand/10' : 'bg-app-surface-2'"
+            >
+              <input type="checkbox" [formControlName]="i" class="hidden" />
+              <span class="text-sm font-medium" [ngClass]="supportedLangsArray.at(i).value ? 'text-brand' : 'text-app-text-2'">
+                {{ LANGUAGE_LABELS[lang] }}
+              </span>
+            </label>
+          }
+        </div>
+      </div>
+
+      <!-- Prompt (markdown) -->
+      <div>
+        <label class="label" for="ex-prompt">Problem Prompt (Markdown) <span class="text-red-400">*</span></label>
+        <textarea
+          id="ex-prompt"
+          formControlName="prompt_md"
+          rows="8"
+          placeholder="## Problem Description&#10;&#10;Given an array of integers..."
+          class="input font-mono text-xs resize-y"
+        ></textarea>
+      </div>
+
+      <!-- Starter code tabs (Monaco per language) -->
+      <div>
+        <p class="label mb-3">Starter Code</p>
+        <div class="border border-app-border rounded-xl overflow-hidden">
+          <!-- Language tabs -->
+          <div class="flex border-b border-app-border bg-app-surface-2 overflow-x-auto">
+            @for (lang of ALL_LANGUAGES; track lang) {
+              @if (supportedLangsArray.at(ALL_LANGUAGES.indexOf(lang)).value) {
+                <button
+                  type="button"
+                  (click)="activeCodeTab.set(lang)"
+                  [ngClass]="activeCodeTab() === lang
+                    ? 'border-b-2 border-brand text-app-text bg-app-bg'
+                    : 'text-app-text-muted hover:text-app-text-2'"
+                  class="px-4 py-2 text-xs font-medium flex-shrink-0 transition-colors"
+                >
+                  {{ LANGUAGE_LABELS[lang] }}
+                </button>
+              }
+            }
+            @if (selectedLanguages().length === 0) {
+              <span class="px-4 py-2 text-xs text-app-text-muted italic">Select a language above</span>
+            }
+          </div>
+          <!-- Monaco editor for active tab -->
+          @if (selectedLanguages().length > 0) {
+            <div class="h-64">
+              <app-monaco-editor
+                [value]="getStarterCode(activeCodeTab())"
+                (valueChange)="setStarterCode(activeCodeTab(), $event)"
+                [language]="getMonacoLang(activeCodeTab())"
+                theme="vs-dark"
+              />
+            </div>
+          } @else {
+            <div class="h-32 flex items-center justify-center text-sm text-app-text-muted bg-zinc-950">
+              Select at least one language to edit starter code.
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Test cases -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <p class="label mb-0">Test Cases <span class="text-app-text-muted font-normal">({{ testCasesArray.length }})</span></p>
+          <button type="button" (click)="addTestCase()" class="btn-secondary btn-sm flex items-center gap-1.5">
+            <lucide-icon name="plus" class="w-3 h-3" />
+            Add Test Case
+          </button>
+        </div>
+        <div class="space-y-4" formArrayName="test_cases">
+          @for (tc of testCasesArray.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="card-sm border border-app-border-2 relative">
+              <!-- Remove button -->
+              <button
+                type="button"
+                (click)="removeTestCase(i)"
+                class="absolute top-3 right-3 btn-icon btn-ghost text-app-text-muted hover:text-red-400 w-6 h-6"
+              >
+                <lucide-icon name="x" class="w-3.5 h-3.5" />
+              </button>
+
+              <p class="text-xs font-semibold text-app-text-2 mb-3">Test Case {{ i + 1 }}</p>
+
+              <div class="grid grid-cols-2 gap-3 mb-3">
+                <!-- stdin -->
+                <div>
+                  <label class="label text-[10px]">Input (stdin)</label>
+                  <textarea formControlName="stdin" rows="2" placeholder="e.g. 3 5" class="input font-mono text-xs resize-none"></textarea>
+                </div>
+                <!-- expected output -->
+                <div>
+                  <label class="label text-[10px]">Expected Output <span class="text-red-400">*</span></label>
+                  <textarea formControlName="expected_stdout" rows="2" placeholder="e.g. 8" class="input font-mono text-xs resize-none"></textarea>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-6">
+                <!-- Weight -->
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-app-text-muted">Weight</label>
+                  <input type="number" formControlName="weight" min="1" max="100" class="input w-16 text-xs py-1" />
+                </div>
+                <!-- Hidden -->
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" formControlName="is_hidden" class="w-4 h-4 accent-brand rounded" />
+                  <span class="text-xs text-app-text-2">Hidden test case</span>
+                </label>
+              </div>
+            </div>
+          }
+          @if (testCasesArray.length === 0) {
+            <div class="flex items-center justify-center py-8 border border-dashed border-app-border rounded-xl text-sm text-app-text-muted">
+              No test cases yet. Click "Add Test Case" to begin.
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Published toggle -->
+      <div class="flex items-center justify-between py-3 border-t border-app-border">
+        <div>
+          <p class="text-sm font-medium text-app-text">Published</p>
+          <p class="text-xs text-app-text-muted">Visible to students when enabled</p>
+        </div>
+        <button
+          type="button"
+          (click)="exerciseForm.patchValue({ is_published: !exerciseForm.value.is_published })"
+          [ngClass]="exerciseForm.value.is_published ? 'bg-brand' : 'bg-app-surface-2'"
+          class="relative w-11 h-6 rounded-full transition-colors duration-200"
+        >
+          <span
+            [ngClass]="exerciseForm.value.is_published ? 'translate-x-5' : 'translate-x-0.5'"
+            class="inline-block w-5 h-5 rounded-full bg-white shadow transition-transform duration-200"
+          ></span>
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-end gap-3 pt-2 sticky bottom-0 bg-app-surface py-4 -mx-6 px-6 border-t border-app-border">
+        <button type="button" (click)="closePanel()" class="btn-secondary">Cancel</button>
+        <button type="submit" [disabled]="exerciseForm.invalid || saveLoading()" class="btn-primary flex items-center gap-2">
+          @if (saveLoading()) { <lucide-icon name="loader-2" class="w-4 h-4 animate-spin" /> }
+          {{ editingExercise() ? 'Save Changes' : 'Create Exercise' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

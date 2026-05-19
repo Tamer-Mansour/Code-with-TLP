@@ -1,0 +1,238 @@
+<div class="pt-14">
+  <div class="page-container py-8">
+
+    <!-- Loading skeleton -->
+    @if (loading()) {
+      <div class="animate-pulse space-y-6">
+        <div class="skeleton h-4 w-48 rounded"></div>
+        <div class="skeleton h-8 w-80 rounded-lg"></div>
+        <div class="lg:flex gap-8 mt-8">
+          <div class="flex-1 space-y-4">
+            @for (_ of [1,2,3]; track $index) {
+              <div class="skeleton h-20 rounded-xl"></div>
+            }
+          </div>
+          <div class="lg:w-72 mt-6 lg:mt-0">
+            <div class="skeleton h-64 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Error -->
+    @if (error() && !loading()) {
+      <div class="text-center py-24">
+        <p class="text-app-text font-medium">{{ error() }}</p>
+        <a routerLink="/catalog" class="btn btn-secondary mt-4 inline-flex no-underline">← Back to Catalog</a>
+      </div>
+    }
+
+    <!-- Content -->
+    @if (!loading() && !error() && courseTree()) {
+      @let tree = courseTree()!;
+
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-app-text-muted mb-6">
+        <a routerLink="/catalog" class="hover:text-app-text-2 transition-colors no-underline">Catalog</a>
+        <lucide-icon [img]="ChevronRight" [size]="12"></lucide-icon>
+        <span class="text-app-text-2 truncate max-w-xs">{{ tree.title }}</span>
+      </nav>
+
+      <div class="lg:flex gap-8 items-start">
+
+        <!-- Main content: Course tree -->
+        <div class="flex-1 min-w-0">
+          <!-- Course header -->
+          <header class="mb-8">
+            <div class="flex items-center gap-2 mb-3">
+              <span [class]="difficultyBadge(tree.difficulty)">{{ difficultyLabel(tree.difficulty) }}</span>
+              <span class="text-app-text-muted text-xs">·</span>
+              <span class="text-xs text-app-text-muted flex items-center gap-1">
+                <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
+                {{ tree.estimated_hours }}h
+              </span>
+              <span class="text-app-text-muted text-xs">·</span>
+              <span class="text-xs text-app-text-muted">{{ totalLessons }} lessons</span>
+            </div>
+            <h1 class="text-3xl font-bold text-app-text mb-3">{{ tree.title }}</h1>
+            @if (tree.description) {
+              <p class="text-app-text-2 leading-relaxed max-w-2xl">{{ tree.description }}</p>
+            }
+          </header>
+
+          <!-- Modules accordion -->
+          <section aria-label="Course content">
+            <h2 class="text-lg font-semibold text-app-text mb-4">Course Content</h2>
+            <div class="space-y-2">
+              @for (module of tree.modules; track trackById($index, module)) {
+                <div class="card p-0 overflow-hidden">
+                  <!-- Module header -->
+                  <button
+                    (click)="toggleModule(module.id)"
+                    class="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-app-surface-2/60 transition-colors"
+                    [attr.aria-expanded]="isModuleExpanded(module.id)"
+                    [attr.aria-controls]="'module-' + module.id"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-brand/10 border border-brand/25 flex items-center justify-center shrink-0">
+                      <lucide-icon [img]="BookOpen" [size]="13" class="text-brand-light"></lucide-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold text-app-text truncate">{{ module.title }}</p>
+                      <p class="text-xs text-app-text-muted mt-0.5">
+                        {{ module.lessons.length }} lesson{{ module.lessons.length !== 1 ? 's' : '' }}
+                        @if (module.summary) { · {{ module.summary | slice:0:60 }}{{ module.summary.length > 60 ? '…' : '' }} }
+                      </p>
+                    </div>
+                    <lucide-icon
+                      [img]="ChevronDown"
+                      [size]="16"
+                      class="text-app-text-muted shrink-0 transition-transform duration-200"
+                      [ngClass]="{ 'rotate-180': isModuleExpanded(module.id) }"
+                    ></lucide-icon>
+                  </button>
+
+                  <!-- Lessons list -->
+                  @if (isModuleExpanded(module.id)) {
+                    <div
+                      [id]="'module-' + module.id"
+                      class="border-t border-app-border"
+                      role="list"
+                    >
+                      @for (lesson of module.lessons; track trackById($index, lesson)) {
+                        <a
+                          [routerLink]="['/catalog/lessons', lesson.id]"
+                          class="flex items-center gap-3 px-5 py-3 hover:bg-app-surface-2/50 transition-colors border-b border-app-border/50 last:border-b-0 no-underline group"
+                          role="listitem"
+                        >
+                          <div class="shrink-0">
+                            <lucide-icon
+                              [img]="lessonIcon(lesson.lesson_type)"
+                              [size]="14"
+                              class="text-app-text-muted group-hover:text-brand-light transition-colors"
+                            ></lucide-icon>
+                          </div>
+                          <span class="flex-1 text-sm text-app-text-2 group-hover:text-app-text transition-colors truncate">
+                            {{ lesson.title }}
+                          </span>
+                          <div class="flex items-center gap-3 shrink-0">
+                            <span class="text-xs text-app-text-muted hidden sm:block">{{ lessonTypeLabel(lesson.lesson_type) }}</span>
+                            <span class="text-xs text-app-text-muted flex items-center gap-1">
+                              <lucide-icon [img]="Clock" [size]="11"></lucide-icon>
+                              {{ lesson.duration_minutes }}m
+                            </span>
+                          </div>
+                        </a>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (tree.modules.length === 0) {
+                <div class="text-center py-12 card">
+                  <p class="text-app-text-2">No modules available yet.</p>
+                </div>
+              }
+            </div>
+          </section>
+        </div>
+
+        <!-- Right sidebar (sticky) -->
+        <aside class="lg:w-72 shrink-0 mt-8 lg:mt-0 lg:sticky lg:top-20">
+          <div class="card space-y-5">
+            <!-- Cover image -->
+            @if (tree.cover_image) {
+              <div class="h-40 rounded-lg overflow-hidden -mx-6 -mt-6 mb-0">
+                <img [src]="tree.cover_image" [alt]="tree.title" class="w-full h-full object-cover" loading="lazy" />
+              </div>
+            }
+
+            <!-- Progress ring (enrolled) -->
+            @if (isEnrolled) {
+              <div class="flex flex-col items-center py-2">
+                <!-- SVG progress ring -->
+                <div class="relative w-24 h-24">
+                  <svg class="w-24 h-24 -rotate-90" viewBox="0 0 96 96" aria-hidden="true">
+                    <circle cx="48" cy="48" r="40" fill="none" stroke-width="8" class="stroke-app-surface-2" />
+                    <circle
+                      cx="48" cy="48" r="40"
+                      fill="none"
+                      stroke-width="8"
+                      class="stroke-brand transition-all duration-700"
+                      stroke-linecap="round"
+                      [style.strokeDasharray]="251.2"
+                      [style.strokeDashoffset]="251.2 * (1 - progressPercent / 100)"
+                    />
+                  </svg>
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-lg font-bold text-app-text">{{ progressPercent }}%</span>
+                  </div>
+                </div>
+                <p class="text-sm text-app-text-2 mt-2">Progress</p>
+              </div>
+            }
+
+            <!-- Course info -->
+            <div class="space-y-3 text-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-app-text-muted">Difficulty</span>
+                <span [class]="difficultyBadge(tree.difficulty)">{{ difficultyLabel(tree.difficulty) }}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-app-text-muted">Duration</span>
+                <span class="text-app-text-2 flex items-center gap-1">
+                  <lucide-icon [img]="Clock" [size]="13"></lucide-icon>
+                  {{ tree.estimated_hours }}h
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-app-text-muted">Modules</span>
+                <span class="text-app-text-2">{{ tree.modules.length }}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-app-text-muted">Lessons</span>
+                <span class="text-app-text-2">{{ totalLessons }}</span>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Enroll / Continue button -->
+            @if (!isEnrolled) {
+              <button
+                (click)="enroll()"
+                class="btn btn-primary w-full justify-center"
+                [disabled]="enrolling()"
+              >
+                @if (enrolling()) {
+                  <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  Enrolling...
+                } @else {
+                  <lucide-icon [img]="Unlock" [size]="15"></lucide-icon>
+                  Enroll for Free
+                }
+              </button>
+            } @else {
+              @if (getFirstLessonId(tree)) {
+                <a
+                  [routerLink]="['/catalog/lessons', getFirstLessonId(tree)]"
+                  class="btn btn-primary w-full justify-center no-underline"
+                >
+                  <lucide-icon [img]="PlayCircle" [size]="15"></lucide-icon>
+                  Continue Learning
+                </a>
+              }
+            }
+
+            @if (!auth.isAuthenticated()) {
+              <p class="text-xs text-app-text-muted text-center">
+                <a routerLink="/login" class="text-brand-light">Log in</a> to track your progress
+              </p>
+            }
+          </div>
+        </aside>
+
+      </div>
+    }
+  </div>
+</div>

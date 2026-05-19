@@ -1,0 +1,215 @@
+<!-- Page header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="section-title">Submissions</h1>
+    <p class="section-sub mt-1">
+      @if (!loading()) { {{ submissions().length }} results } @else { Loading... }
+    </p>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="flex flex-col sm:flex-row gap-3 mb-6">
+  <!-- User ID -->
+  <div class="relative flex-1">
+    <lucide-icon name="user" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-text-muted pointer-events-none" />
+    <input
+      type="text"
+      placeholder="User ID..."
+      class="input pl-9"
+      [ngModel]="filterUserId()"
+      (ngModelChange)="filterUserId.set($event)"
+    />
+  </div>
+  <!-- Exercise ID -->
+  <div class="relative flex-1">
+    <lucide-icon name="code-2" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-text-muted pointer-events-none" />
+    <input
+      type="text"
+      placeholder="Exercise ID..."
+      class="input pl-9"
+      [ngModel]="filterExerciseId()"
+      (ngModelChange)="filterExerciseId.set($event)"
+    />
+  </div>
+  <!-- Status filter -->
+  <select
+    class="input w-auto min-w-[180px] cursor-pointer"
+    [ngModel]="filterStatus()"
+    (ngModelChange)="filterStatus.set($event)"
+  >
+    <option value="">All Statuses</option>
+    @for (s of STATUS_OPTIONS; track s) {
+      <option [value]="s">{{ STATUS_LABEL[s] }}</option>
+    }
+  </select>
+  <!-- Apply / Clear -->
+  <button (click)="applyFilters()" class="btn-primary flex items-center gap-1.5">
+    <lucide-icon name="filter" class="w-4 h-4" />
+    Filter
+  </button>
+  <button (click)="clearFilters()" class="btn-ghost flex items-center gap-1.5">
+    <lucide-icon name="x" class="w-4 h-4" />
+    Clear
+  </button>
+</div>
+
+<!-- Loading -->
+@if (loading()) {
+  <div class="space-y-2">
+    @for (i of [1,2,3,4,5,6]; track i) {
+      <div class="skeleton h-14 rounded-lg"></div>
+    }
+  </div>
+}
+
+<!-- Table + expandable rows -->
+@if (!loading()) {
+  @if (submissions().length === 0) {
+    <div class="card flex flex-col items-center justify-center py-16 text-center">
+      <lucide-icon name="inbox" class="w-12 h-12 text-app-text-muted mb-3" />
+      <h3 class="text-base font-semibold text-app-text mb-2">No Submissions Found</h3>
+      <p class="text-sm text-app-text-2">Try adjusting your filters or clear them to see all submissions.</p>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Exercise</th>
+            <th>Language</th>
+            <th>Status</th>
+            <th>Score</th>
+            <th>Runtime</th>
+            <th>Date</th>
+            <th class="text-right">Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (sub of submissions(); track sub.id) {
+            <!-- Main row -->
+            <tr
+              class="cursor-pointer"
+              [ngClass]="expandedId() === sub.id ? 'bg-app-surface border-l-2 border-brand' : ''"
+              (click)="toggleExpand(sub)"
+            >
+              <td class="font-mono text-xs text-app-text-muted">#{{ sub.id }}</td>
+              <td class="text-xs">{{ sub.user_id }}</td>
+              <td class="text-xs">{{ sub.exercise_id }}</td>
+              <td class="text-xs">{{ LANGUAGE_LABELS[sub.language] ?? sub.language }}</td>
+              <td><span [ngClass]="getStatusBadge(sub.status)">{{ getStatusLabel(sub.status) }}</span></td>
+              <td class="font-mono text-xs">{{ sub.score }}</td>
+              <td class="font-mono text-xs">{{ formatRuntime(sub.runtime_ms) }}</td>
+              <td class="text-xs text-app-text-muted">{{ sub.created_at | date:'short' }}</td>
+              <td class="text-right">
+                <lucide-icon
+                  [name]="expandedId() === sub.id ? 'chevron-up' : 'chevron-down'"
+                  class="w-4 h-4 text-app-text-muted ml-auto"
+                />
+              </td>
+            </tr>
+
+            <!-- Expanded detail row -->
+            @if (expandedId() === sub.id) {
+              <tr>
+                <td colspan="9" class="p-0 border-b-0">
+                  <div class="bg-zinc-950 border-b border-app-border animate-slide-down">
+                    @if (detailLoading()) {
+                      <div class="flex items-center justify-center p-8 gap-3 text-app-text-2">
+                        <lucide-icon name="loader-2" class="w-5 h-5 animate-spin" />
+                        Loading submission detail...
+                      </div>
+                    } @else if (expandedDetail()) {
+                      <div class="p-6 space-y-5">
+                        <!-- Meta info -->
+                        <div class="flex flex-wrap gap-4 text-xs">
+                          <div class="flex items-center gap-1.5 text-app-text-2">
+                            <lucide-icon name="check-circle" class="w-3.5 h-3.5 text-green-400" />
+                            {{ expandedDetail()!.passed_tests }}/{{ expandedDetail()!.total_tests }} tests passed
+                          </div>
+                          <div class="flex items-center gap-1.5 text-app-text-2">
+                            <lucide-icon name="clock" class="w-3.5 h-3.5" />
+                            {{ expandedDetail()!.runtime_ms }}ms
+                          </div>
+                          <div class="flex items-center gap-1.5 text-app-text-2">
+                            <lucide-icon name="cpu" class="w-3.5 h-3.5" />
+                            {{ expandedDetail()!.memory_kb }}KB
+                          </div>
+                          @if (expandedDetail()!.error_message) {
+                            <div class="flex items-center gap-1.5 text-red-400">
+                              <lucide-icon name="alert-triangle" class="w-3.5 h-3.5" />
+                              {{ expandedDetail()!.error_message }}
+                            </div>
+                          }
+                        </div>
+
+                        <!-- Code viewer (read-only Monaco) -->
+                        <div>
+                          <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider mb-2">Submitted Code</p>
+                          <div class="h-64 rounded-xl overflow-hidden border border-app-border">
+                            <app-monaco-editor
+                              [value]="expandedDetail()!.code"
+                              [language]="getMonacoLang(expandedDetail()!.language)"
+                              theme="vs-dark"
+                              [readOnly]="true"
+                            />
+                          </div>
+                        </div>
+
+                        <!-- stdout / stderr -->
+                        <div class="grid grid-cols-2 gap-4">
+                          @if (expandedDetail()!.stdout) {
+                            <div>
+                              <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider mb-2">stdout</p>
+                              <pre class="code-block text-xs whitespace-pre-wrap break-all max-h-32 overflow-y-auto text-green-400">{{ expandedDetail()!.stdout }}</pre>
+                            </div>
+                          }
+                          @if (expandedDetail()!.stderr) {
+                            <div>
+                              <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider mb-2">stderr</p>
+                              <pre class="code-block text-xs whitespace-pre-wrap break-all max-h-32 overflow-y-auto text-red-400">{{ expandedDetail()!.stderr }}</pre>
+                            </div>
+                          }
+                        </div>
+
+                        <!-- Test case results -->
+                        @if (expandedDetail()!.results.length) {
+                          <div>
+                            <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider mb-2">Test Results</p>
+                            <div class="space-y-2">
+                              @for (result of expandedDetail()!.results; track result.id) {
+                                <div class="flex items-center gap-3 px-3 py-2 rounded-lg border border-app-border bg-app-surface text-xs">
+                                  @if (result.passed) {
+                                    <lucide-icon name="check-circle-2" class="w-4 h-4 text-green-400 flex-shrink-0" />
+                                    <span class="text-green-400 font-medium">Passed</span>
+                                  } @else {
+                                    <lucide-icon name="x-circle" class="w-4 h-4 text-red-400 flex-shrink-0" />
+                                    <span class="text-red-400 font-medium">Failed</span>
+                                  }
+                                  <span class="text-app-text-muted">TC #{{ result.test_case_id }}</span>
+                                  @if (result.is_hidden) {
+                                    <span class="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">hidden</span>
+                                  }
+                                  <span class="ml-auto text-app-text-muted font-mono">{{ result.runtime_ms }}ms</span>
+                                  @if (result.error) {
+                                    <span class="text-red-400 truncate max-w-xs">{{ result.error }}</span>
+                                  }
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
