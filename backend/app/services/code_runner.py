@@ -1,17 +1,16 @@
 """Run untrusted user code inside throwaway Docker containers.
 
-Each call creates a temp workspace, writes the source + stdin into it, runs a language-specific
-container with strict resource limits and no network, and returns stdout/stderr/exit code.
+Files are injected via put_archive (no volume mounts) so this works correctly
+when the backend itself runs inside Docker with the host socket mounted.
 """
 
 from __future__ import annotations
 
-import shutil
-import tempfile
+import io
+import tarfile
 import time
 import uuid
 from dataclasses import dataclass
-from pathlib import Path
 from typing import ClassVar
 
 from app.core.config import settings
@@ -33,7 +32,22 @@ class CodeRunnerError(RuntimeError):
 
 
 class CodeRunner:
-    """Docker-backed code runner."""
+    """Docker-backed code runner using put_archive instead of volume mounts."""
+
+    # Extra seconds added to the container timeout for languages with slow startup.
+    LANG_STARTUP_OVERHEAD_SEC: ClassVar[dict[str, int]] = {
+        "csharp": 15,  # dotnet script JIT + warmup
+        "java": 3,     # JVM startup
+    }
+
+    # Extra env vars injected per language (suppress noise, fix first-run issues).
+    LANG_ENV: ClassVar[dict[str, dict[str, str]]] = {
+        "csharp": {
+            "DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "1",
+            "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+            "DOTNET_NOLOGO": "1",
+        },
+    }
 
     LANG_SPEC: ClassVar[dict[str, dict]] = {
         "python": {
@@ -114,22 +128,48 @@ class CodeRunner:
 
         spec = self.LANG_SPEC[language]
         image = getattr(settings, spec["image_key"])
-        timeout_sec = max(1, int((time_limit_ms or settings.runner_default_timeout_sec * 1000) / 1000) + 1)
+        base_sec = max(1, int((time_limit_ms or settings.runner_default_timeout_sec * 1000) / 1000) + 1)
+        timeout_sec = base_sec + self.LANG_STARTUP_OVERHEAD_SEC.get(language, 0)
         memory_mb = memory_limit_mb or settings.runner_default_memory_mb
 
-        workspace = Path(tempfile.mkdtemp(prefix="run-"))
-        try:
-            (workspace / spec["filename"]).write_text(code, encoding="utf-8")
-            (workspace / "input.txt").write_text(stdin or "", encoding="utf-8")
-            return self._run_container(image, spec["cmd"], workspace, timeout_sec, memory_mb)
-        finally:
-            shutil.rmtree(workspace, ignore_errors=True)
+        return self._run_container(
+            image=image,
+            command=spec["cmd"],
+            filename=spec["filename"],
+            code=code,
+            stdin=stdin or "",
+            timeout_sec=timeout_sec,
+            memory_mb=memory_mb,
+            extra_env=self.LANG_ENV.get(language, {}),
+        )
 
     # --- internals ---
 
-    def _run_container(self, image: str, command: str, workspace: Path, timeout_sec: int, memory_mb: int) -> RunResult:
+    def _build_archive(self, filename: str, code: str, stdin: str) -> bytes:
+        """Pack solution file + input.txt into a tar archive for put_archive."""
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w") as tar:
+            for name, content in ((filename, code), ("input.txt", stdin)):
+                data = content.encode("utf-8")
+                info = tarfile.TarInfo(name=name)
+                info.size = len(data)
+                info.mode = 0o644
+                tar.addfile(info, io.BytesIO(data))
+        return buf.getvalue()
+
+    def _run_container(
+        self,
+        image: str,
+        command: str,
+        filename: str,
+        code: str,
+        stdin: str,
+        timeout_sec: int,
+        memory_mb: int,
+        extra_env: dict[str, str] | None = None,
+    ) -> RunResult:
         import docker  # type: ignore
-        from docker.errors import ImageNotFound, APIError  # type: ignore
+        from docker.errors import ImageNotFound  # type: ignore
 
         client = self._client
         assert client is not None
@@ -141,7 +181,6 @@ class CodeRunner:
                 command=["sh", "-c", command],
                 name=name,
                 working_dir="/workspace",
-                volumes={str(workspace): {"bind": "/workspace", "mode": "rw"}},
                 network_mode="none",
                 mem_limit=f"{memory_mb}m",
                 memswap_limit=f"{memory_mb}m",
@@ -149,6 +188,7 @@ class CodeRunner:
                 cpu_quota=int(settings.runner_default_cpu * 100000),
                 pids_limit=128,
                 security_opt=["no-new-privileges"],
+                environment=extra_env or {},
             )
         except ImageNotFound:
             return RunResult(
@@ -169,6 +209,25 @@ class CodeRunner:
                 timed_out=False,
                 out_of_memory=False,
                 error=f"Docker create failed: {exc}",
+            )
+
+        # Inject files directly — no volume mounts needed.
+        try:
+            archive = self._build_archive(filename, code, stdin)
+            container.put_archive("/workspace", archive)
+        except Exception as exc:
+            try:
+                container.remove(force=True)
+            except Exception:
+                pass
+            return RunResult(
+                exit_code=1,
+                stdout="",
+                stderr="",
+                runtime_ms=0,
+                timed_out=False,
+                out_of_memory=False,
+                error=f"Failed to inject files into container: {exc}",
             )
 
         start = time.perf_counter()

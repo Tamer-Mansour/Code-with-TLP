@@ -283,7 +283,7 @@
       </div>
 
       <!-- ── Console (JetBrains Run tool window) ─────────────── -->
-      <div class="flex-shrink-0 flex flex-col border-t" style="height:260px; background:#1e1f22; border-color:#3d3d3d;">
+      <div class="flex-shrink-0 flex flex-col border-t" style="height:320px; background:#1e1f22; border-color:#3d3d3d;">
 
         <!-- Console header -->
         <div class="flex flex-shrink-0 items-center justify-between px-4 h-9 border-b" style="background:#252527; border-color:#3d3d3d;">
@@ -312,6 +312,20 @@
               </button>
             }
           </div>
+        </div>
+
+        <!-- Stdin input -->
+        <div class="flex-shrink-0 border-b px-4 pt-2 pb-2" style="border-color:#3d3d3d;">
+          <p class="text-[9px] font-bold uppercase tracking-[0.15em] mb-1" style="color:#4d5154;">stdin</p>
+          <textarea
+            [value]="stdinInput()"
+            (input)="stdinInput.set($any($event.target).value)"
+            rows="3"
+            placeholder="(no input)"
+            spellcheck="false"
+            class="w-full resize-none font-mono text-xs outline-none bg-transparent"
+            style="color:#a9b7c6; line-height:1.5; caret-color:#a9b7c6;"
+          ></textarea>
         </div>
 
         <!-- Console body -->

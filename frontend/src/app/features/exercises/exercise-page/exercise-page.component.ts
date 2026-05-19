@@ -55,6 +55,7 @@ export class ExercisePageComponent implements OnInit {
   isRunning = signal(false);
   isSubmitting = signal(false);
   runResult = signal<CodeRunResult | null>(null);
+  stdinInput = signal('');
   lastSubmission = signal<Submission | null>(null);
   submissions = signal<SubmissionSummary[]>([]);
   submissionsLoading = signal(false);
@@ -108,6 +109,8 @@ export class ExercisePageComponent implements OnInit {
         this.code.set(ex.starter_code[lang] ?? '');
         this.loading.set(false);
         this.loadSubmissions(ex.id);
+        const firstVisible = (ex.test_cases ?? []).find((tc: any) => !tc.is_hidden);
+        this.stdinInput.set(firstVisible?.stdin ?? '');
       },
       error: () => {
         this.loading.set(false);
@@ -148,7 +151,7 @@ export class ExercisePageComponent implements OnInit {
     this.isRunning.set(true);
     this.runResult.set(null);
     this.submissionService
-      .runCode({ language: this.selectedLanguage(), code: this.code(), stdin: '' })
+      .runCode({ language: this.selectedLanguage(), code: this.code(), stdin: this.stdinInput() })
       .subscribe({
         next: (result) => {
           this.runResult.set(result);

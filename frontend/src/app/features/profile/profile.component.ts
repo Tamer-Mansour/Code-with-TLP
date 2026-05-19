@@ -22,6 +22,7 @@ import {
   STATUS_BADGE_CLASS,
   UserUpdate,
 } from '../../core/models/types';
+import { fileToBase64, validateImageFile } from '../../shared/utils/image.utils';
 
 // ── Rank system ────────────────────────────────────────────
 export interface RankInfo {
@@ -139,6 +140,8 @@ export class ProfileComponent implements OnInit {
   saving = signal(false);
   passwordOpen = signal(false);
   selectedBg = signal<string>(localStorage.getItem('profile_bg') ?? 'gradient');
+  avatarPreview = signal<string>('');
+  avatarError = signal<string>('');
 
   // ── Stats ──────────────────────────────────────────────────
   totalSubmissions = computed(() => this.submissions().length);
@@ -204,7 +207,6 @@ export class ProfileComponent implements OnInit {
   editForm = this.fb.group({
     full_name: [''],
     bio: [''],
-    avatar_url: [''],
     new_password: ['', [Validators.minLength(8)]],
   });
 
@@ -223,9 +225,10 @@ export class ProfileComponent implements OnInit {
     this.editForm.patchValue({
       full_name: u?.full_name ?? '',
       bio: u?.bio ?? '',
-      avatar_url: u?.avatar_url ?? '',
       new_password: '',
     });
+    this.avatarPreview.set(u?.avatar_url ?? '');
+    this.avatarError.set('');
     this.passwordOpen.set(false);
     this.editOpen.set(true);
   }
@@ -235,13 +238,31 @@ export class ProfileComponent implements OnInit {
     this.editForm.reset();
   }
 
+  async onAvatarFileChange(event: Event): Promise<void> {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const error = validateImageFile(file);
+    if (error) {
+      this.avatarError.set(error);
+      return;
+    }
+    this.avatarError.set('');
+    const base64 = await fileToBase64(file);
+    this.avatarPreview.set(base64);
+  }
+
+  removeAvatar(): void {
+    this.avatarPreview.set('');
+    this.avatarError.set('');
+  }
+
   saveProfile(): void {
     if (this.saving()) return;
     const val = this.editForm.value;
     const payload: UserUpdate = {};
     if (val.full_name !== null && val.full_name !== undefined) payload.full_name = val.full_name;
     if (val.bio !== null && val.bio !== undefined) payload.bio = val.bio;
-    if (val.avatar_url) payload.avatar_url = val.avatar_url;
+    payload.avatar_url = this.avatarPreview() || '';
     if (val.new_password) payload.password = val.new_password;
 
     this.saving.set(true);

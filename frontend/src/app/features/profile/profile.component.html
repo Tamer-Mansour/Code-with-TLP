@@ -294,25 +294,56 @@
     <!-- Form -->
     <form [formGroup]="editForm" (ngSubmit)="saveProfile()" class="flex-1 px-6 py-5 space-y-5">
 
-      <!-- Avatar preview + URL -->
+      <!-- Avatar upload -->
       <div>
-        <label class="label">Avatar URL</label>
-        <div class="flex items-center gap-4 mb-2">
-          <!-- Live preview -->
-          <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-app-border flex-shrink-0">
-            @if (editForm.value.avatar_url) {
-              <img [src]="editForm.value.avatar_url!" alt="preview"
-                   class="w-full h-full object-cover"
-                   (error)="$any($event.target).style.display='none'" />
+        <label class="label">Avatar</label>
+        <div class="flex items-center gap-4">
+
+          <!-- Preview circle — click to pick file -->
+          <label class="relative w-16 h-16 rounded-full overflow-hidden border-2 border-app-border
+                         flex-shrink-0 cursor-pointer group" title="Click to upload image">
+            @if (avatarPreview()) {
+              <img [src]="avatarPreview()" alt="avatar preview" class="w-full h-full object-cover" />
             } @else {
               <div class="w-full h-full flex items-center justify-center
                            text-lg font-bold bg-app-surface-2 text-app-text-muted">
                 {{ initials() }}
               </div>
             }
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 bg-black/50 flex items-center justify-center
+                         opacity-0 group-hover:opacity-100 transition-opacity">
+              <lucide-icon name="camera" class="w-5 h-5 text-white" />
+            </div>
+            <input type="file" accept="image/*" class="sr-only"
+                   (change)="onAvatarFileChange($event)" />
+          </label>
+
+          <!-- Actions -->
+          <div class="flex flex-col gap-2">
+            <label class="btn-secondary btn-sm cursor-pointer inline-flex items-center gap-1.5">
+              <lucide-icon name="upload" class="w-3.5 h-3.5" />
+              Upload image
+              <input type="file" accept="image/*" class="sr-only"
+                     (change)="onAvatarFileChange($event)" />
+            </label>
+            @if (avatarPreview()) {
+              <button type="button" (click)="removeAvatar()"
+                      class="btn-ghost btn-sm text-red-400 hover:text-red-500 inline-flex items-center gap-1.5">
+                <lucide-icon name="trash-2" class="w-3.5 h-3.5" />
+                Remove
+              </button>
+            }
+            <p class="text-[11px] text-app-text-muted">JPEG, PNG or WebP — max 2 MB</p>
           </div>
-          <input type="url" formControlName="avatar_url" placeholder="https://..." class="input flex-1" />
         </div>
+
+        @if (avatarError()) {
+          <p class="text-xs text-red-400 mt-2 flex items-center gap-1">
+            <lucide-icon name="alert-circle" class="w-3.5 h-3.5" />
+            {{ avatarError() }}
+          </p>
+        }
       </div>
 
       <!-- Full Name -->
