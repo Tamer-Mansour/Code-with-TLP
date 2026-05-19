@@ -47,28 +47,32 @@ stdying-app/
 
 ---
 
-## 🚀 Quick start (backend)
+## 🚀 Quick start
 
 > Requires **Python 3.11+** and (for code execution) **Docker Desktop** running.
 
+### Option A — one-liner with `make`
+
+```powershell
+make bootstrap   # install + .env + seed
+make runners     # build the Docker sandbox images (needs Docker Desktop)
+make run         # start the API on :8000
+make test        # run the ~69-test pytest suite (no Docker needed)
+```
+
+Run `make help` to see every target. No `make`? Use the PowerShell wrapper:
+`./make.ps1 bootstrap`, `./make.ps1 run`, `./make.ps1 test` — same target names.
+
+### Option B — manual
+
 ```powershell
 cd backend
-
-# 1) virtual env + dependencies
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-
-# 2) configure
-copy .env.example .env       # then edit SECRET_KEY and FIRST_ADMIN_PASSWORD
-
-# 3) build language sandboxes
-.\docker\runners\build-all.ps1
-
-# 4) seed the database
-python -m app.seed
-
-# 5) run the API
+copy .env.example .env                   # edit SECRET_KEY + FIRST_ADMIN_PASSWORD
+.\docker\runners\build-all.ps1           # build sandbox images
+python -m app.seed                       # seed admin + sample course/exercise
 uvicorn app.main:app --reload --port 8000
 ```
 

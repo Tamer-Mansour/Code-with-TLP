@@ -157,34 +157,34 @@ Docker is **mocked** — tests pass on a machine with no Docker.
 
 ---
 
-## 4. Run sheet (for `backend/`)
+## 4. Run sheet
+
+### Fast path (Makefile)
 
 ```powershell
-# 1. Set up venv + install
+make bootstrap   # venv + .env + seed (no Docker needed)
+make runners     # build the Python/Node/Java/C# sandbox images
+make test        # ~69 tests, ~15s
+make run         # API on http://localhost:8000  (Swagger: /docs)
+```
+
+Run `make help` to see every target. No `make`? Use `./make.ps1 <target>` instead.
+
+### Manual (if you prefer)
+
+```powershell
+cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-
-# 2. Configure environment
-copy .env.example .env
-# Edit .env: set SECRET_KEY and FIRST_ADMIN_PASSWORD.
-
-# 3. Build the language sandboxes (needs Docker Desktop running)
+copy .env.example .env                  # edit SECRET_KEY + FIRST_ADMIN_PASSWORD
 .\docker\runners\build-all.ps1
-
-# 4. Seed the database
 python -m app.seed
-
-# 5. Run tests (Docker NOT required — runner is mocked)
 pytest -v
-
-# 6. Start the API
 uvicorn app.main:app --reload --port 8000
-
-# 7. Open Swagger
-# http://localhost:8000/docs
-#  → login → copy access_token → click Authorize → paste → use any endpoint
 ```
+
+Swagger flow: http://localhost:8000/docs → login → copy `access_token` → click **Authorize** → paste → use any endpoint.
 
 ---
 
