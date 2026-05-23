@@ -133,3 +133,21 @@ def set_lesson_progress(
     db.commit()
     db.refresh(lp)
     return lp
+
+
+@router.get("/course/{course_id}/lessons", response_model=list[LessonProgressRead])
+def course_lesson_progress(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """All lesson progress records for the current user in a given course."""
+    return db.scalars(
+        select(LessonProgress)
+        .join(Lesson, Lesson.id == LessonProgress.lesson_id)
+        .join(Module, Module.id == Lesson.module_id)
+        .where(
+            Module.course_id == course_id,
+            LessonProgress.user_id == current.id,
+        )
+    ).all()

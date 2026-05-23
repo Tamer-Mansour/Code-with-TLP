@@ -12,11 +12,13 @@ import { AdminService } from '../../../core/services/admin.service';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { Course, Subject } from '../../../core/models/types';
+import { fileToBase64, validateImageFile } from '../../../shared/utils/image.utils';
 
 @Component({
   selector: 'app-admin-courses',
   standalone: true,
   templateUrl: './admin-courses.component.html',
+  styleUrl: './admin-courses.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgClass, FormsModule, ReactiveFormsModule, LucideAngularModule],
 })
@@ -35,11 +37,13 @@ export class AdminCoursesComponent implements OnInit {
   saveLoading = signal(false);
   deletingId = signal<number | null>(null);
   deleteLoading = signal(false);
+  imagePreview = signal<string>('');
 
   courseForm = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
     slug: ['', [Validators.required]],
     summary: [''],
+    cover_image: [''],
     difficulty: ['beginner', Validators.required],
     subject_id: [null as number | null],
     is_published: [false],
@@ -68,16 +72,19 @@ export class AdminCoursesComponent implements OnInit {
 
   openCreate(): void {
     this.editingCourse.set(null);
+    this.imagePreview.set('');
     this.courseForm.reset({ difficulty: 'beginner', is_published: false });
     this.panelOpen.set(true);
   }
 
   openEdit(course: Course): void {
     this.editingCourse.set(course);
+    this.imagePreview.set(course.cover_image ?? '');
     this.courseForm.reset({
       title: course.title,
       slug: course.slug,
       summary: course.summary ?? '',
+      cover_image: course.cover_image ?? '',
       difficulty: course.difficulty,
       subject_id: course.subject_id,
       is_published: course.is_published,
@@ -88,6 +95,7 @@ export class AdminCoursesComponent implements OnInit {
   closePanel(): void {
     this.panelOpen.set(false);
     this.editingCourse.set(null);
+    this.imagePreview.set('');
     this.courseForm.reset();
   }
 
@@ -101,6 +109,25 @@ export class AdminCoursesComponent implements OnInit {
         .slice(0, 80);
       this.courseForm.patchValue({ slug });
     }
+  }
+
+  async onImageSelected(event: Event): Promise<void> {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const err = validateImageFile(file, 2);
+    if (err) {
+      this.toast.error(err);
+      (event.target as HTMLInputElement).value = '';
+      return;
+    }
+    const base64 = await fileToBase64(file);
+    this.imagePreview.set(base64);
+    this.courseForm.patchValue({ cover_image: base64 });
+  }
+
+  removeImage(): void {
+    this.imagePreview.set('');
+    this.courseForm.patchValue({ cover_image: '' });
   }
 
   save(): void {

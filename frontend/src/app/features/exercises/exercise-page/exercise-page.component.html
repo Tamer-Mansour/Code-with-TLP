@@ -1,3 +1,12 @@
+<!-- TLP wave loader — shown during code execution / submission -->
+@if (isRunning() || isSubmitting()) {
+  <app-tlp-loader
+    [loading]="true"
+    [overlay]="true"
+    [label]="isSubmitting() ? 'Submitting…' : 'Running code…'"
+  />
+}
+
 <!-- Loading skeleton -->
 @if (loading()) {
   <div class="flex h-[calc(100vh-3.5rem)] bg-app-bg overflow-hidden">
@@ -186,22 +195,52 @@
                       <th>Language</th>
                       <th>Runtime</th>
                       <th>Date</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (s of submissions(); track s.id) {
-                      <tr>
+                      <tr class="cursor-pointer hover:bg-app-surface-2 transition-colors"
+                          [class.bg-brand\/5]="viewingSubmission()?.id === s.id"
+                          (click)="openSubmissionCode(s.id)">
                         <td><span [ngClass]="getStatusBadge(s.status)">{{ getStatusLabel(s.status) }}</span></td>
                         <td class="font-mono text-xs tabular-nums">{{ s.score }}/{{ exercise()!.points }}</td>
                         <td>{{ LANGUAGE_LABELS[s.language] ?? s.language }}</td>
                         <td class="font-mono text-xs tabular-nums">{{ formatRuntime(s.runtime_ms) }}</td>
                         <td class="text-app-text-muted text-xs">{{ s.created_at | date:'short' }}</td>
+                        <td class="text-app-text-muted">
+                          @if (loadingSubmissionCode() && viewingSubmission() === null) {
+                            <lucide-icon name="loader-2" class="w-3.5 h-3.5 animate-spin" />
+                          } @else {
+                            <lucide-icon name="code-2" class="w-3.5 h-3.5" />
+                          }
+                        </td>
                       </tr>
                     }
                   </tbody>
                 </table>
               </div>
             }
+          </div>
+        }
+
+        <!-- ── Submission code viewer ── -->
+        @if (viewingSubmission()) {
+          <div class="border-t border-app-border bg-app-surface">
+            <div class="flex items-center justify-between px-4 py-2.5 bg-app-surface-2">
+              <div class="flex items-center gap-2">
+                <lucide-icon name="code-2" class="w-3.5 h-3.5 text-brand" />
+                <span class="text-xs font-semibold text-app-text">
+                  Submission #{{ viewingSubmission()!.id }}
+                  <span class="font-normal text-app-text-muted ml-1">{{ LANGUAGE_LABELS[viewingSubmission()!.language] ?? viewingSubmission()!.language }}</span>
+                </span>
+              </div>
+              <button (click)="closeSubmissionCode()" class="btn-icon btn-ghost">
+                <lucide-icon name="x" class="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <pre class="overflow-x-auto p-4 text-xs font-mono leading-relaxed text-app-text-2 max-h-64 overflow-y-auto"
+                 style="background:#1e1e1e; color:#d4d4d4;">{{ viewingSubmission()!.code }}</pre>
           </div>
         }
 

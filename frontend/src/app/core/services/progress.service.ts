@@ -28,4 +28,8 @@ export class ProgressService {
   setLessonProgress(lessonId: number, status: string): Observable<LessonProgress> {
     return this.http.put<LessonProgress>(`${this.base}/lessons/${lessonId}`, { status });
   }
+
+  getCourseProgress(courseId: number): Observable<LessonProgress[]> {
+    return this.http.get<LessonProgress[]>(`${this.base}/course/${courseId}/lessons`);
+  }
 }

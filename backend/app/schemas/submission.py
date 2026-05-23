@@ -68,6 +68,7 @@ class SubmissionSummary(BaseModel):
     user_id: int
     exercise_id: int
     language: str
+    code: str
     status: SubmissionStatus
     score: float
     passed_tests: int

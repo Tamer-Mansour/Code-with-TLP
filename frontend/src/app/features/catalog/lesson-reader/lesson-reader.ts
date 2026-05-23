@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { combineLatest, forkJoin, of } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { MarkdownModule } from 'ngx-markdown';
 import {
   LucideAngularModule,
@@ -26,12 +26,13 @@ import {
   ArrowLeft,
   ArrowRight,
   ExternalLink,
+  Timer,
 } from 'lucide-angular';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { ProgressService } from '../../../core/services/progress.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
-import { Lesson, LessonProgress, LessonType } from '../../../core/models/types';
+import { Lesson, LessonProgress, LessonType, CourseTree, LessonInTree } from '../../../core/models/types';
 
 @Component({
   selector: 'app-lesson-reader',
@@ -62,34 +63,110 @@ export class LessonReaderComponent implements OnInit {
   readonly ArrowLeft = ArrowLeft;
   readonly ArrowRight = ArrowRight;
   readonly ExternalLink = ExternalLink;
+  readonly Timer = Timer;
 
   readonly lesson = signal<Lesson | null>(null);
   readonly lessonProgress = signal<LessonProgress | null>(null);
   readonly loading = signal(true);
   readonly marking = signal(false);
   readonly error = signal('');
+  readonly courseSlug = signal('');
+  readonly courseTree = signal<CourseTree | null>(null);
+  readonly timeSpent = signal(0); // seconds since page loaded
+
+  private timerHandle: ReturnType<typeof setInterval> | null = null;
 
   get isCompleted(): boolean {
     return this.lessonProgress()?.status === 'completed';
   }
 
+  get flatLessons(): LessonInTree[] {
+    const tree = this.courseTree();
+    if (!tree) return [];
+    return tree.modules.flatMap(m => m.lessons);
+  }
+
+  get currentIndex(): number {
+    const lesson = this.lesson();
+    if (!lesson) return -1;
+    return this.flatLessons.findIndex(l => l.id === lesson.id);
+  }
+
+  get prevLesson(): LessonInTree | null {
+    const idx = this.currentIndex;
+    return idx > 0 ? this.flatLessons[idx - 1] : null;
+  }
+
+  get nextLesson(): LessonInTree | null {
+    const idx = this.currentIndex;
+    const flat = this.flatLessons;
+    return idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : null;
+  }
+
+  get timeSpentLabel(): string {
+    const t = this.timeSpent();
+    const m = Math.floor(t / 60);
+    const s = t % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  private startTimer(): void {
+    this.stopTimer();
+    this.timeSpent.set(0);
+    this.timerHandle = setInterval(() => {
+      this.timeSpent.update(v => v + 1);
+      this.cdr.markForCheck();
+    }, 1000);
+  }
+
+  private stopTimer(): void {
+    if (this.timerHandle !== null) {
+      clearInterval(this.timerHandle);
+      this.timerHandle = null;
+    }
+  }
+
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.destroyRef.onDestroy(() => this.stopTimer());
 
-    const progressReq$ = this.auth.isAuthenticated()
-      ? this.progress.getLessonProgress(id).pipe(catchError(() => of<LessonProgress | null>(null)))
-      : of<LessonProgress | null>(null);
+    combineLatest([this.route.paramMap, this.route.queryParamMap])
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        switchMap(([params, queryParams]) => {
+          const id = Number(params.get('id'));
+          const slug = queryParams.get('course') ?? '';
+          this.courseSlug.set(slug);
+          this.loading.set(true);
+          this.lesson.set(null);
+          this.lessonProgress.set(null);
+          this.courseTree.set(null);
+          this.error.set('');
+          this.marking.set(false);
+          this.stopTimer();
+          this.cdr.markForCheck();
 
-    forkJoin({
-      lesson: this.catalog.getLesson(id),
-      lessonProgress: progressReq$,
-    })
-      .pipe(takeUntilDestroyed(this.destroyRef))
+          const progressReq$ = this.auth.isAuthenticated()
+            ? this.progress.getLessonProgress(id).pipe(catchError(() => of<LessonProgress | null>(null)))
+            : of<LessonProgress | null>(null);
+
+          const treeReq$ = slug
+            ? this.catalog.getCourseTree(slug).pipe(catchError(() => of<CourseTree | null>(null)))
+            : of<CourseTree | null>(null);
+
+          return forkJoin({
+            lesson: this.catalog.getLesson(id),
+            lessonProgress: progressReq$,
+            tree: treeReq$,
+          });
+        })
+      )
       .subscribe({
-        next: ({ lesson, lessonProgress }) => {
+        next: ({ lesson, lessonProgress, tree }) => {
           this.lesson.set(lesson);
           this.lessonProgress.set(lessonProgress);
+          if (tree) this.courseTree.set(tree);
           this.loading.set(false);
+          this.startTimer();
           this.cdr.markForCheck();
         },
         error: () => {
@@ -115,15 +192,17 @@ export class LessonReaderComponent implements OnInit {
         next: (prog: LessonProgress) => {
           this.lessonProgress.set(prog);
           this.marking.set(false);
-          this.toast.success('Lesson completed! Progress saved.');
           this.cdr.markForCheck();
         },
         error: () => {
           this.marking.set(false);
-          this.toast.error('Could not save progress. Please try again.');
           this.cdr.markForCheck();
         },
       });
+  }
+
+  navQueryParams(): Record<string, string> {
+    return this.courseSlug() ? { course: this.courseSlug() } : {};
   }
 
   lessonTypeLabel(type: LessonType): string {

@@ -1,0 +1,13 @@
+<div
+  class="tlp-loader-wrap"
+  [class.tlp-overlay]="overlay"
+  [class.loading]="loading"
+  role="status"
+  aria-live="polite"
+  [attr.aria-label]="loading ? 'Loading…' : null"
+>
+  <div class="tlp-logo-box" [innerHTML]="svgHtml()"></div>
+  @if (label) {
+    <p class="tlp-label">{{ label }}</p>
+  }
+</div>

@@ -101,6 +101,7 @@
                       @for (lesson of module.lessons; track trackById($index, lesson)) {
                         <a
                           [routerLink]="['/catalog/lessons', lesson.id]"
+                          [queryParams]="{ course: tree.slug }"
                           class="flex items-center gap-3 px-5 py-3 hover:bg-app-surface-2/50 transition-colors border-b border-app-border/50 last:border-b-0 no-underline group"
                           role="listitem"
                         >
@@ -120,6 +121,11 @@
                               <lucide-icon [img]="Clock" [size]="11"></lucide-icon>
                               {{ lesson.duration_minutes }}m
                             </span>
+                            @if (completedLessonIds().has(lesson.id)) {
+                              <lucide-icon [img]="CheckCircle2" [size]="14" class="text-green-400"></lucide-icon>
+                            } @else {
+                              <lucide-icon [img]="Circle" [size]="14" class="text-app-border"></lucide-icon>
+                            }
                           </div>
                         </a>
                       }

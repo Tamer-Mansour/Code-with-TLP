@@ -137,11 +137,14 @@ export interface TestCasePublic {
 
 export interface ExerciseSummary {
   id: number;
+  lesson_id?: number;
   title: string;
   slug: string;
   difficulty: ExerciseDifficulty;
   points: number;
   supported_languages: SupportedLanguage[];
+  course_slug?: string;
+  course_title?: string;
 }
 
 export interface Exercise {
@@ -223,6 +226,7 @@ export interface SubmissionSummary {
   user_id: number;
   exercise_id: number;
   language: string;
+  code: string;
   status: SubmissionStatus;
   score: number;
   passed_tests: number;

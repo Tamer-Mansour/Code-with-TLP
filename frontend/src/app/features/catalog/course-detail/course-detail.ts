@@ -71,6 +71,7 @@ export class CourseDetailComponent implements OnInit {
   readonly enrolling = signal(false);
   readonly error = signal('');
   readonly expandedModules = signal<Set<number>>(new Set());
+  readonly completedLessonIds = signal<Set<number>>(new Set());
 
   ngOnInit(): void {
     const slug = this.route.snapshot.paramMap.get('slug') ?? '';
@@ -94,6 +95,18 @@ export class CourseDetailComponent implements OnInit {
           this.enrollment.set(enr ?? null);
           this.loading.set(false);
           this.cdr.markForCheck();
+          if (this.auth.isAuthenticated()) {
+            this.progress.getCourseProgress(tree.id)
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe({
+                next: (records) => {
+                  this.completedLessonIds.set(
+                    new Set(records.filter(r => r.status === 'completed').map(r => r.lesson_id))
+                  );
+                  this.cdr.markForCheck();
+                },
+              });
+          }
         },
         error: () => {
           this.error.set('Could not load course. Please try again.');

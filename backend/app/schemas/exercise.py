@@ -81,11 +81,14 @@ class ExerciseSummary(BaseModel):
     """Light view for catalog listings."""
     model_config = ConfigDict(from_attributes=True)
     id: int
+    lesson_id: int | None = None
     title: str
     slug: str
     difficulty: Difficulty
     points: int
     supported_languages: list[str]
+    course_slug: str | None = None
+    course_title: str | None = None
 
 
 class ExerciseRead(ExerciseBase):

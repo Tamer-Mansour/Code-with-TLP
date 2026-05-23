@@ -84,9 +84,13 @@
             [attr.aria-expanded]="dropdownOpen()"
             aria-label="User menu"
           >
-            <div class="w-7 h-7 rounded-full bg-brand/20 border border-brand/40 flex items-center justify-center shrink-0">
-              <span class="text-xs font-semibold text-brand">{{ userInitials }}</span>
-            </div>
+            @if (auth.currentUser()?.avatar_url) {
+              <img [src]="auth.currentUser()!.avatar_url" alt="Avatar" class="w-7 h-7 rounded-full object-cover border border-brand/40 shrink-0" />
+            } @else {
+              <div class="w-7 h-7 rounded-full bg-brand/20 border border-brand/40 flex items-center justify-center shrink-0">
+                <span class="text-xs font-semibold text-brand">{{ userInitials }}</span>
+              </div>
+            }
             <span class="hidden md:block text-sm text-app-text-2 group-hover:text-app-text transition-colors max-w-[120px] truncate">
               {{ auth.currentUser()?.username }}
             </span>
@@ -197,9 +201,13 @@
           <a routerLink="/register" (click)="closeMobile()" class="btn btn-primary  w-full justify-center mt-2" style="text-decoration: none;">Register</a>
         } @else {
           <div class="flex items-center gap-3 px-3 py-2 mb-1">
-            <div class="w-8 h-8 rounded-full bg-brand/20 border border-brand/40 flex items-center justify-center">
-              <span class="text-xs font-semibold text-brand">{{ userInitials }}</span>
-            </div>
+            @if (auth.currentUser()?.avatar_url) {
+              <img [src]="auth.currentUser()!.avatar_url" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-brand/40" />
+            } @else {
+              <div class="w-8 h-8 rounded-full bg-brand/20 border border-brand/40 flex items-center justify-center">
+                <span class="text-xs font-semibold text-brand">{{ userInitials }}</span>
+              </div>
+            }
             <div class="min-w-0">
               <p class="text-sm font-medium text-app-text truncate">{{ auth.currentUser()?.username }}</p>
               <p class="text-xs text-app-text-muted truncate">{{ auth.currentUser()?.email }}</p>

@@ -9,6 +9,7 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject as RxSubject, Subscription } from 'rxjs';
@@ -25,8 +26,12 @@ import {
   Inbox,
   RefreshCw,
   Plus,
+  CheckCircle2,
+  BookOpen,
 } from 'lucide-angular';
 import { CatalogService } from '../../../core/services/catalog.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { SubmissionService } from '../../../core/services/submission.service';
 import { ExerciseSummary, ExerciseDifficulty, LANGUAGE_LABELS } from '../../../core/models/types';
 
 interface FilterState {
@@ -40,12 +45,14 @@ const PAGE_SIZE = 12;
 @Component({
   selector: 'app-exercise-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, LucideAngularModule],
+  imports: [RouterLink, NgClass, FormsModule, LucideAngularModule],
   templateUrl: './exercise-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExerciseListComponent implements OnInit, OnDestroy {
   private readonly catalog = inject(CatalogService);
+  private readonly auth = inject(AuthService);
+  private readonly submissionService = inject(SubmissionService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly filterChange$ = new RxSubject<FilterState>();
@@ -60,10 +67,13 @@ export class ExerciseListComponent implements OnInit, OnDestroy {
   readonly Inbox = Inbox;
   readonly RefreshCw = RefreshCw;
   readonly Plus = Plus;
+  readonly CheckCircle2 = CheckCircle2;
+  readonly BookOpen = BookOpen;
 
   readonly LANGUAGE_LABELS = LANGUAGE_LABELS;
 
   readonly exercises = signal<ExerciseSummary[]>([]);
+  readonly solvedIds = signal<Set<number>>(new Set());
   readonly loading = signal(true);
   readonly loadingMore = signal(false);
   readonly error = signal('');
@@ -124,6 +134,20 @@ export class ExerciseListComponent implements OnInit, OnDestroy {
       });
 
     this.emitFilters();
+
+    if (this.auth.isAuthenticated()) {
+      this.submissionService.getMySubmissions().pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe({
+        next: (subs) => {
+          const solved = new Set(
+            subs.filter(s => s.status === 'accepted').map(s => s.exercise_id)
+          );
+          this.solvedIds.set(solved);
+          this.cdr.markForCheck();
+        },
+      });
+    }
   }
 
   ngOnDestroy(): void {

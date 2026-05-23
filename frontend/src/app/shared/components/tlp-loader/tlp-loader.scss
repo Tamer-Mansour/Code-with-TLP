@@ -1,0 +1,53 @@
+/* All selectors prefixed with app-tlp-loader so ViewEncapsulation.None styles
+   don't leak into unrelated components. */
+
+app-tlp-loader .tlp-loader-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+app-tlp-loader .tlp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(9, 9, 11, 0.82);
+  backdrop-filter: blur(4px);
+}
+
+app-tlp-loader .tlp-logo-box {
+  width: 140px;
+  height: auto;
+
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+app-tlp-loader .tlp-label {
+  font-size: 13px;
+  color: #8892b0;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+/* Wave animation — .loading is on .tlp-loader-wrap, SVG groups are inside innerHTML */
+app-tlp-loader .tlp-logo-box svg g[id] {
+  transform-box: fill-box;
+  transform-origin: center center;
+}
+
+app-tlp-loader .loading .tlp-logo-box svg #cap      { animation: tlpWaveY 1.8s ease-in-out infinite 0.00s; }
+app-tlp-loader .loading .tlp-logo-box svg #chevron  { animation: tlpWaveY 1.8s ease-in-out infinite 0.10s; }
+app-tlp-loader .loading .tlp-logo-box svg #letter_t { animation: tlpWaveY 1.8s ease-in-out infinite 0.20s; }
+app-tlp-loader .loading .tlp-logo-box svg #letter_l { animation: tlpWaveY 1.8s ease-in-out infinite 0.30s; }
+app-tlp-loader .loading .tlp-logo-box svg #letter_p { animation: tlpWaveY 1.8s ease-in-out infinite 0.40s; }
+
+@keyframes tlpWaveY {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%           { transform: translateY(-10%); }
+}

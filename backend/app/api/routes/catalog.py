@@ -120,7 +120,15 @@ def list_exercises(
     limit: int = Query(default=50, le=200),
     offset: int = 0,
 ):
-    stmt = select(Exercise).where(Exercise.is_published.is_(True))
+    stmt = (
+        select(Exercise)
+        .where(Exercise.is_published.is_(True))
+        .options(
+            selectinload(Exercise.lesson)
+            .selectinload(Lesson.module)
+            .selectinload(Module.course)
+        )
+    )
     if difficulty:
         stmt = stmt.where(Exercise.difficulty == difficulty)
     if q:
@@ -131,7 +139,22 @@ def list_exercises(
     rows = db.scalars(stmt.order_by(Exercise.id).offset(offset).limit(limit)).all()
     if language:
         rows = [e for e in rows if language in (e.supported_languages or [])]
-    return rows
+
+    result = []
+    for e in rows:
+        course = e.lesson.module.course if (e.lesson and e.lesson.module) else None
+        result.append(ExerciseSummary(
+            id=e.id,
+            lesson_id=e.lesson_id,
+            title=e.title,
+            slug=e.slug,
+            difficulty=e.difficulty,
+            points=e.points,
+            supported_languages=e.supported_languages or [],
+            course_slug=course.slug if course else None,
+            course_title=course.title if course else None,
+        ))
+    return result
 
 
 @router.get("/exercises/{slug}", response_model=ExerciseRead)

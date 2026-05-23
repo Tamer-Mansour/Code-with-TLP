@@ -111,9 +111,16 @@
     @if (!loading() && !error() && exercises().length > 0) {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         @for (exercise of exercises(); track trackById($index, exercise)) {
-          <div class="card-hover flex flex-col group">
+          <div class="card-hover flex flex-col group relative">
+            <!-- Solved badge -->
+            @if (solvedIds().has(exercise.id)) {
+              <div class="absolute top-3 right-3 z-10">
+                <lucide-icon [img]="CheckCircle2" [size]="16" class="text-green-400"></lucide-icon>
+              </div>
+            }
+
             <!-- Card header -->
-            <div class="flex items-start justify-between gap-2 mb-3">
+            <div class="flex items-start justify-between gap-2 mb-3 pr-5">
               <h2 class="text-sm font-semibold text-app-text group-hover:text-brand-light transition-colors line-clamp-2 leading-snug flex-1">
                 {{ exercise.title }}
               </h2>
@@ -123,10 +130,22 @@
             </div>
 
             <!-- Points -->
-            <div class="flex items-center gap-1.5 text-xs text-app-text-muted mb-4">
+            <div class="flex items-center gap-1.5 text-xs text-app-text-muted mb-3">
               <lucide-icon [img]="Zap" [size]="12" class="text-amber-400"></lucide-icon>
               <span>{{ exercise.points }} points</span>
             </div>
+
+            <!-- Course context -->
+            @if (exercise.course_title) {
+              <div class="flex items-center gap-1 text-xs text-app-text-muted mb-3 min-w-0">
+                <lucide-icon [img]="BookOpen" [size]="11" class="flex-shrink-0 text-brand"></lucide-icon>
+                <a [routerLink]="['/courses', exercise.course_slug]"
+                   (click)="$event.stopPropagation()"
+                   class="truncate hover:text-brand transition-colors">
+                  {{ exercise.course_title }}
+                </a>
+              </div>
+            }
 
             <!-- Language pills -->
             <div class="flex flex-wrap gap-1.5 mb-5 flex-1">
@@ -140,11 +159,18 @@
             <!-- Action -->
             <a
               [routerLink]="['/exercises', exercise.slug]"
-              class="btn btn-primary btn-sm w-full justify-center no-underline mt-auto"
+              class="btn btn-sm w-full justify-center no-underline mt-auto"
+              [class.btn-primary]="!solvedIds().has(exercise.id)"
+              [ngClass]="solvedIds().has(exercise.id) ? 'border border-green-600/50 bg-green-600/10 text-green-400 hover:bg-green-600/20' : ''"
               [attr.aria-label]="'Solve ' + exercise.title"
             >
-              <lucide-icon [img]="Code2" [size]="14"></lucide-icon>
-              Solve
+              @if (solvedIds().has(exercise.id)) {
+                <lucide-icon [img]="CheckCircle2" [size]="14"></lucide-icon>
+                Solved
+              } @else {
+                <lucide-icon [img]="Code2" [size]="14"></lucide-icon>
+                Solve
+              }
               <lucide-icon [img]="ArrowRight" [size]="13" class="ml-auto"></lucide-icon>
             </a>
           </div>

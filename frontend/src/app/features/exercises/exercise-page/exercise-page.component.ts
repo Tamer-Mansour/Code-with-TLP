@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 import { LucideAngularModule } from 'lucide-angular';
 import { MonacoEditorComponent } from '../../../shared/components/monaco-editor/monaco-editor';
+import { TlpLoaderComponent } from '../../../shared/components/tlp-loader/tlp-loader';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { SubmissionService } from '../../../core/services/submission.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -35,7 +36,7 @@ type ActiveTab = 'description' | 'testcases' | 'submissions';
   standalone: true,
   templateUrl: './exercise-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass, DatePipe, FormsModule, LucideAngularModule, MonacoEditorComponent, MarkdownModule],
+  imports: [NgClass, DatePipe, FormsModule, LucideAngularModule, MonacoEditorComponent, MarkdownModule, TlpLoaderComponent],
 })
 export class ExercisePageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -57,6 +58,8 @@ export class ExercisePageComponent implements OnInit {
   runResult = signal<CodeRunResult | null>(null);
   stdinInput = signal('');
   lastSubmission = signal<Submission | null>(null);
+  viewingSubmission = signal<Submission | null>(null);
+  loadingSubmissionCode = signal(false);
   submissions = signal<SubmissionSummary[]>([]);
   submissionsLoading = signal(false);
 
@@ -125,6 +128,9 @@ export class ExercisePageComponent implements OnInit {
       next: (subs) => {
         this.submissions.set(subs);
         this.submissionsLoading.set(false);
+        // Restore last submitted code for the currently selected language.
+        const saved = subs.find(s => s.language === this.selectedLanguage());
+        if (saved?.code) this.code.set(saved.code);
       },
       error: () => this.submissionsLoading.set(false),
     });
@@ -133,8 +139,9 @@ export class ExercisePageComponent implements OnInit {
   setLanguage(lang: string): void {
     const l = lang as SupportedLanguage;
     this.selectedLanguage.set(l);
-    const starter = this.exercise()?.starter_code[l] ?? '';
-    this.code.set(starter);
+    // Prefer saved submission code; fall back to starter code.
+    const saved = this.submissions().find(s => s.language === l);
+    this.code.set(saved?.code ?? (this.exercise()?.starter_code[l] ?? ''));
     this.runResult.set(null);
   }
 
@@ -188,6 +195,30 @@ export class ExercisePageComponent implements OnInit {
           this.toast.error('Submission failed. Please try again.');
         },
       });
+  }
+
+  openSubmissionCode(id: number): void {
+    if (this.loadingSubmissionCode()) return;
+    const current = this.viewingSubmission();
+    if (current?.id === id) {
+      this.viewingSubmission.set(null);
+      return;
+    }
+    this.loadingSubmissionCode.set(true);
+    this.submissionService.getSubmission(id).subscribe({
+      next: (sub) => {
+        this.viewingSubmission.set(sub);
+        this.loadingSubmissionCode.set(false);
+      },
+      error: () => {
+        this.loadingSubmissionCode.set(false);
+        this.toast.error('Failed to load submission.');
+      },
+    });
+  }
+
+  closeSubmissionCode(): void {
+    this.viewingSubmission.set(null);
   }
 
   getStatusBadge(status: SubmissionStatus): string {

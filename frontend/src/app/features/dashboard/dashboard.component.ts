@@ -51,9 +51,13 @@ export class DashboardComponent implements OnInit {
   // ── Computed stats ────────────────────────────────────────
   enrolledCount = computed(() => this.enrollments().length);
 
-  completedExercises = computed(() =>
-    this.recentSubmissions().filter((s) => s.status === 'accepted').length
-  );
+  completedExercises = computed(() => {
+    const seen = new Set<number>();
+    for (const s of this.recentSubmissions()) {
+      if (s.status === 'accepted') seen.add(s.exercise_id);
+    }
+    return seen.size;
+  });
 
   acceptanceRate = computed(() => {
     const subs = this.recentSubmissions();
@@ -62,9 +66,15 @@ export class DashboardComponent implements OnInit {
     return Math.round((accepted / subs.length) * 100);
   });
 
-  totalPoints = computed(() =>
-    this.recentSubmissions().reduce((sum, s) => sum + (s.score ?? 0), 0)
-  );
+  totalPoints = computed(() => {
+    // Sum the best (highest) score per exercise to avoid counting re-submits twice.
+    const best = new Map<number, number>();
+    for (const s of this.recentSubmissions()) {
+      const prev = best.get(s.exercise_id) ?? 0;
+      if ((s.score ?? 0) > prev) best.set(s.exercise_id, s.score ?? 0);
+    }
+    return Array.from(best.values()).reduce((sum, v) => sum + v, 0);
+  });
 
   coursesWithProgress = computed(() => {
     const courses = this.enrolledCourses();

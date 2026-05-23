@@ -1,14 +1,14 @@
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.api.deps import get_current_user
 from app.core.database import get_db
 from app.models import Exercise, ProgressStatus, Submission, User
 from app.models.progress import LessonProgress
-from app.models.submission import SubmissionStatus
+from app.models.submission import SubmissionStatus, TestCaseResult
 from app.schemas.submission import (
     SUPPORTED_LANGUAGES,
     CodeRunRequest,
@@ -56,7 +56,7 @@ def run_code(payload: CodeRunRequest, _: User = Depends(get_current_user)) -> Co
     )
 
 
-@router.post("", response_model=SubmissionRead, status_code=201)
+@router.post("", response_model=SubmissionRead, status_code=200)
 def submit(
     payload: SubmissionCreate,
     db: Session = Depends(get_db),
@@ -72,14 +72,37 @@ def submit(
 
     _ensure_language(payload.language, exercise)
 
-    submission = Submission(
-        user_id=current.id,
-        exercise_id=exercise.id,
-        language=payload.language,
-        code=payload.code,
+    # Upsert: one submission per (user, exercise, language) — re-submitting updates in place.
+    submission = db.scalar(
+        select(Submission).where(
+            Submission.user_id == current.id,
+            Submission.exercise_id == exercise.id,
+            Submission.language == payload.language,
+        )
     )
-    db.add(submission)
-    db.flush()  # get an id
+    if submission:
+        db.execute(delete(TestCaseResult).where(TestCaseResult.submission_id == submission.id))
+        db.flush()
+        db.expire(submission)
+        submission.code = payload.code
+        submission.status = SubmissionStatus.pending
+        submission.score = 0.0
+        submission.passed_tests = 0
+        submission.total_tests = 0
+        submission.runtime_ms = 0
+        submission.memory_kb = 0
+        submission.stdout = None
+        submission.stderr = None
+        submission.error_message = None
+    else:
+        submission = Submission(
+            user_id=current.id,
+            exercise_id=exercise.id,
+            language=payload.language,
+            code=payload.code,
+        )
+        db.add(submission)
+        db.flush()  # get an id
 
     grade_submission(db, submission, exercise)
 

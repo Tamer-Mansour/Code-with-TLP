@@ -46,9 +46,23 @@
           @for (course of courses(); track course.id) {
             <tr>
               <td>
-                <div>
-                  <p class="text-sm font-medium text-app-text">{{ course.title }}</p>
-                  <p class="text-xs text-app-text-muted">{{ course.slug }}</p>
+                <div class="flex items-center gap-3">
+                  @if (course.cover_image) {
+                    <img
+                      [src]="course.cover_image"
+                      [alt]="course.title"
+                      class="w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-app-border"
+                      (error)="$any($event.target).style.display='none'"
+                    />
+                  } @else {
+                    <div class="w-10 h-10 rounded-lg flex-shrink-0 bg-app-surface-2 border border-app-border flex items-center justify-center">
+                      <lucide-icon name="book-open" class="w-4 h-4 text-app-text-muted" />
+                    </div>
+                  }
+                  <div>
+                    <p class="text-sm font-medium text-app-text">{{ course.title }}</p>
+                    <p class="text-xs text-app-text-muted">{{ course.slug }}</p>
+                  </div>
                 </div>
               </td>
               <td class="text-xs">{{ getSubjectName(course.subject_id) }}</td>
@@ -147,6 +161,36 @@
           placeholder="Brief description of this course..."
           class="input resize-none"
         ></textarea>
+      </div>
+
+      <!-- Cover Image -->
+      <div>
+        <label class="label">Cover Image</label>
+        @if (imagePreview()) {
+          <!-- Preview + replace/remove controls -->
+          <div class="relative w-full h-40 rounded-lg overflow-hidden border border-app-border bg-app-surface-2 group">
+            <img [src]="imagePreview()" alt="Cover preview" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <label class="btn-secondary btn-sm cursor-pointer flex items-center gap-1.5">
+                <lucide-icon name="refresh-cw" class="w-3.5 h-3.5" />
+                Replace
+                <input type="file" accept="image/*" class="hidden" (change)="onImageSelected($event)" />
+              </label>
+              <button type="button" (click)="removeImage()" class="btn-sm btn-ghost text-red-400 hover:bg-red-500/10 flex items-center gap-1.5">
+                <lucide-icon name="trash-2" class="w-3.5 h-3.5" />
+                Remove
+              </button>
+            </div>
+          </div>
+        } @else {
+          <!-- Drop zone / file picker -->
+          <label class="flex flex-col items-center justify-center w-full h-36 rounded-lg border-2 border-dashed border-app-border bg-app-surface-2 hover:border-brand hover:bg-brand/5 transition-colors cursor-pointer">
+            <lucide-icon name="image" class="w-8 h-8 text-app-text-muted mb-2" />
+            <span class="text-sm text-app-text-2">Click to upload a cover image</span>
+            <span class="text-xs text-app-text-muted mt-1">JPEG, PNG, WebP — max 2 MB</span>
+            <input type="file" accept="image/*" class="hidden" (change)="onImageSelected($event)" />
+          </label>
+        }
       </div>
 
       <!-- Difficulty + Subject row -->
