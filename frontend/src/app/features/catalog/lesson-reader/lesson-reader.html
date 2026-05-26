@@ -30,9 +30,15 @@
       @let ls = lesson()!;
 
       <!-- Breadcrumb -->
-      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-app-text-muted mb-6">
+      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-app-text-muted mb-8">
         <a routerLink="/catalog" class="hover:text-app-text-2 transition-colors no-underline">Catalog</a>
         <lucide-icon [img]="ChevronRight" [size]="12"></lucide-icon>
+        @if (courseSlug()) {
+          <a [routerLink]="['/catalog/courses', courseSlug()]" class="hover:text-app-text-2 transition-colors no-underline truncate max-w-[8rem]">
+            {{ courseSlug() }}
+          </a>
+          <lucide-icon [img]="ChevronRight" [size]="12"></lucide-icon>
+        }
         <span class="text-app-text-2 truncate max-w-xs">{{ ls.title }}</span>
       </nav>
 
@@ -41,8 +47,8 @@
         <!-- Left: Main lesson content -->
         <main class="min-w-0">
           <!-- Lesson header -->
-          <header class="mb-8">
-            <div class="flex flex-wrap items-center gap-2 mb-3">
+          <header class="mb-10 pb-6 border-b border-app-border">
+            <div class="flex flex-wrap items-center gap-2 mb-4">
               <span
                 class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
                 [class]="lessonTypeBadgeClass(ls.lesson_type)"
@@ -52,11 +58,11 @@
               </span>
               <span class="text-xs text-app-text-muted flex items-center gap-1">
                 <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
-                {{ ls.duration_minutes }} min
+                {{ ls.duration_minutes }} min read
               </span>
               @if (isCompleted) {
-                <span class="inline-flex items-center gap-1 text-xs text-green-400">
-                  <lucide-icon [img]="CheckCircle2" [size]="12"></lucide-icon>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400">
+                  <lucide-icon [img]="CheckCircle2" [size]="11"></lucide-icon>
                   Completed
                 </span>
               }
@@ -81,7 +87,7 @@
           <!-- Markdown content -->
           @if (ls.content_md) {
             <div class="content-prose mb-8">
-              <markdown [data]="ls.content_md" [disableSanitizer]="false"></markdown>
+              <markdown [data]="contentBody" [disableSanitizer]="false"></markdown>
             </div>
           }
 
@@ -177,9 +183,9 @@
 
             @if (auth.isAuthenticated()) {
               @if (isCompleted) {
-                <div class="flex items-center gap-2 p-3 rounded-lg bg-green-950/40 border border-green-800/40">
-                  <lucide-icon [img]="CheckCircle2" [size]="16" class="text-green-400 shrink-0"></lucide-icon>
-                  <p class="text-sm text-green-400 font-medium">Lesson completed</p>
+                <div class="flex items-center gap-2 p-3 rounded-lg bg-green-100 dark:bg-green-950/40 border border-green-300 dark:border-green-800/40">
+                  <lucide-icon [img]="CheckCircle2" [size]="16" class="text-green-600 dark:text-green-400 shrink-0"></lucide-icon>
+                  <p class="text-sm text-green-700 dark:text-green-400 font-medium">Lesson completed</p>
                 </div>
               } @else {
                 <button
@@ -204,28 +210,47 @@
             }
           </div>
 
-          <!-- Lesson info card -->
-          <div class="card space-y-3">
-            <h3 class="text-sm font-semibold text-app-text">Lesson Info</h3>
-            <div class="space-y-2.5 text-sm">
-              <div class="flex items-center justify-between">
-                <span class="text-app-text-muted">Type</span>
-                <span
-                  class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs"
-                  [class]="lessonTypeBadgeClass(ls.lesson_type)"
-                >
-                  {{ lessonTypeLabel(ls.lesson_type) }}
-                </span>
+          <!-- Course outline (if course context available) -->
+          @if (courseTree()) {
+            <div class="card p-0 overflow-hidden">
+              <div class="px-5 py-3.5 border-b border-app-border">
+                <h3 class="text-sm font-semibold text-app-text">Course Outline</h3>
               </div>
-              <div class="flex items-center justify-between">
-                <span class="text-app-text-muted">Duration</span>
-                <span class="text-app-text-2 flex items-center gap-1">
-                  <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
-                  {{ ls.duration_minutes }} min
-                </span>
+              <div class="divide-y divide-app-border/60 max-h-96 overflow-y-auto">
+                @for (module of courseTree()!.modules; track module.id) {
+                  <div>
+                    <div class="px-4 py-2.5 bg-app-surface-2/50">
+                      <p class="text-xs font-semibold text-app-text-2 uppercase tracking-wide leading-snug">{{ module.title }}</p>
+                    </div>
+                    @for (item of module.lessons; track item.id) {
+                      <a
+                        [routerLink]="['/catalog/lessons', item.id]"
+                        [queryParams]="navQueryParams()"
+                        class="flex items-center gap-2.5 px-4 py-2 hover:bg-app-surface-2/70 transition-colors no-underline group/item"
+                        [class.bg-brand]="item.id === ls.id"
+                        [class.bg-opacity-5]="item.id === ls.id"
+                      >
+                        <lucide-icon
+                          [img]="lessonIcon(item.lesson_type)"
+                          [size]="12"
+                          class="shrink-0"
+                          [class.text-brand-light]="item.id === ls.id"
+                          [class.text-app-text-muted]="item.id !== ls.id"
+                        ></lucide-icon>
+                        <span
+                          class="text-xs truncate leading-snug"
+                          [class.text-brand-light]="item.id === ls.id"
+                          [class.font-semibold]="item.id === ls.id"
+                          [class.text-app-text-2]="item.id !== ls.id"
+                          [class.group-hover-item-text-app-text]="item.id !== ls.id"
+                        >{{ item.title }}</span>
+                      </a>
+                    }
+                  </div>
+                }
               </div>
             </div>
-          </div>
+          }
 
         </aside>
       </div>

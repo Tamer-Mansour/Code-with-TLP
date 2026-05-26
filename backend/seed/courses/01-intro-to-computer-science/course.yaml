@@ -1,0 +1,811 @@
+subject:
+  slug: foundations
+  name: "Computer Science Foundations"
+  description: "The bedrock ideas every computer scientist builds on."
+  icon: lightbulb
+  color: "#8b5cf6"
+  order_index: 0
+
+course:
+  slug: intro-to-computer-science
+  title: "Introduction to Computer Science"
+  summary: "A beginner-friendly tour of computing: hardware, binary, data, logic, algorithms, and the internet."
+  description: |
+    A ground-up introduction to the core ideas of computer science, from how a transistor works
+    to how a web page loads. You will explore hardware and software, number systems, data
+    representation, Boolean logic, how programs execute, and the fundamentals of the Internet.
+    No prior experience required — just curiosity.
+  difficulty: beginner
+  estimated_hours: 20
+  is_published: true
+  order_index: 1
+
+modules:
+  - title: "What Is Computing?"
+    summary: "Computers, hardware vs software, abstraction layers, and a brief history."
+    order_index: 1
+    lessons:
+      - slug: what-is-a-computer
+        title: "What Is a Computer?"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/what-is-a-computer.md
+
+      - slug: hardware-vs-software
+        title: "Hardware vs Software"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/hardware-vs-software.md
+
+      - slug: abstraction-and-history
+        title: "Abstraction and the History of Computing"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/abstraction-and-history.md
+
+      - slug: quiz-what-is-computing
+        title: "Quiz: What Is Computing?"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-what-is-computing.md
+
+  - title: "Number Systems & Binary"
+    summary: "Binary, hexadecimal, conversions, and why computers use base-2."
+    order_index: 2
+    lessons:
+      - slug: binary-number-system
+        title: "The Binary Number System"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/binary-number-system.md
+
+      - slug: hexadecimal
+        title: "Hexadecimal: Base-16"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/hexadecimal.md
+
+      - slug: binary-conversion-exercise
+        title: "Binary ↔ Decimal Converter"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/binary-conversion-exercise.md
+        exercises:
+          - slug: cs-binary-conversion
+            title: "Binary and Decimal Converter"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/cs-binary-conversion.prompt.md
+            supported_languages: [python]
+            tags: [binary, number-systems, conversion]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        prefix, number = parts[0], parts[1]
+                        # TODO: handle B (binary->decimal) and D (decimal->binary)
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        prefix, number = parts[0], parts[1]
+                        if prefix == 'B':
+                            print(int(number, 2))
+                        elif prefix == 'D':
+                            n = int(number)
+                            if n == 0:
+                                print(0)
+                            else:
+                                print(bin(n)[2:])
+
+                solve()
+            test_cases:
+              - name: "binary-to-decimal-basic"
+                stdin: "B 1010\n"
+                expected_stdout: "10"
+                is_hidden: false
+                weight: 1
+              - name: "decimal-to-binary-basic"
+                stdin: "D 13\n"
+                expected_stdout: "1101"
+                is_hidden: false
+                weight: 1
+              - name: "all-ones-byte"
+                stdin: "B 11111111\n"
+                expected_stdout: "255"
+                is_hidden: false
+                weight: 1
+              - name: "zero-decimal-to-binary"
+                stdin: "D 0\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: "one-decimal"
+                stdin: "D 1\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: "single-zero-binary"
+                stdin: "B 0\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: "multi-line-mixed"
+                stdin: "B 1100\nD 45\nB 101101\n"
+                expected_stdout: "12\n101101\n45"
+                is_hidden: true
+                weight: 2
+              - name: "large-decimal"
+                stdin: "D 200\n"
+                expected_stdout: "11001000"
+                is_hidden: true
+                weight: 1
+
+      - slug: hex-converter-exercise
+        title: "Hexadecimal Converter"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/hex-converter-exercise.md
+        exercises:
+          - slug: cs-hex-converter
+            title: "Decimal ↔ Hexadecimal Converter"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/cs-hex-converter.prompt.md
+            supported_languages: [python]
+            tags: [hexadecimal, number-systems, conversion]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        prefix, number = parts[0], parts[1]
+                        # TODO: handle H (hex->decimal) and D (decimal->hex)
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        prefix, number = parts[0], parts[1]
+                        if prefix == 'H':
+                            print(int(number, 16))
+                        elif prefix == 'D':
+                            n = int(number)
+                            if n == 0:
+                                print(0)
+                            else:
+                                print(format(n, 'X'))
+
+                solve()
+            test_cases:
+              - name: "hex-ff-to-decimal"
+                stdin: "H FF\n"
+                expected_stdout: "255"
+                is_hidden: false
+                weight: 1
+              - name: "decimal-255-to-hex"
+                stdin: "D 255\n"
+                expected_stdout: "FF"
+                is_hidden: false
+                weight: 1
+              - name: "hex-1a-to-decimal"
+                stdin: "H 1A\n"
+                expected_stdout: "26"
+                is_hidden: false
+                weight: 1
+              - name: "decimal-zero"
+                stdin: "D 0\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: "hex-10-to-decimal"
+                stdin: "H 10\n"
+                expected_stdout: "16"
+                is_hidden: true
+                weight: 1
+              - name: "decimal-16-to-hex"
+                stdin: "D 16\n"
+                expected_stdout: "10"
+                is_hidden: true
+                weight: 1
+              - name: "decimal-300-to-hex"
+                stdin: "D 300\n"
+                expected_stdout: "12C"
+                is_hidden: true
+                weight: 1
+              - name: "hex-a-to-decimal"
+                stdin: "H A\n"
+                expected_stdout: "10"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-number-systems
+        title: "Quiz: Number Systems & Binary"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-number-systems.md
+
+  - title: "Data Representation"
+    summary: "How integers, text, images, and sound are encoded as bits."
+    order_index: 3
+    lessons:
+      - slug: representing-integers-and-text
+        title: "Representing Integers and Text"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/representing-integers-and-text.md
+
+      - slug: twos-complement-exercise
+        title: "Two's Complement Interpreter"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/twos-complement-exercise.md
+        exercises:
+          - slug: cs-twos-complement
+            title: "Two's Complement Interpreter"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/cs-twos-complement.prompt.md
+            supported_languages: [python]
+            tags: [binary, integers, twos-complement, data-representation]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        # line is an 8-bit binary string, e.g. "10000001"
+                        # TODO: compute unsigned and signed values
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        unsigned = int(line, 2)
+                        if line[0] == '1':
+                            signed = unsigned - 256
+                        else:
+                            signed = unsigned
+                        print(unsigned, signed)
+
+                solve()
+            test_cases:
+              - name: "positive-one"
+                stdin: "00000001\n"
+                expected_stdout: "1 1"
+                is_hidden: false
+                weight: 1
+              - name: "max-positive"
+                stdin: "01111111\n"
+                expected_stdout: "127 127"
+                is_hidden: false
+                weight: 1
+              - name: "min-negative"
+                stdin: "10000000\n"
+                expected_stdout: "128 -128"
+                is_hidden: false
+                weight: 1
+              - name: "negative-one"
+                stdin: "11111111\n"
+                expected_stdout: "255 -1"
+                is_hidden: false
+                weight: 1
+              - name: "zero"
+                stdin: "00000000\n"
+                expected_stdout: "0 0"
+                is_hidden: true
+                weight: 1
+              - name: "negative-127"
+                stdin: "10000001\n"
+                expected_stdout: "129 -127"
+                is_hidden: true
+                weight: 1
+              - name: "negative-16"
+                stdin: "11110000\n"
+                expected_stdout: "240 -16"
+                is_hidden: true
+                weight: 1
+
+      - slug: images-sound-compression
+        title: "Images, Sound, and Compression"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/images-sound-compression.md
+
+      - slug: quiz-data-representation
+        title: "Quiz: Data Representation"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-data-representation.md
+
+  - title: "Boolean Logic & Gates"
+    summary: "AND, OR, NOT, truth tables, logic gates, and building adders."
+    order_index: 4
+    lessons:
+      - slug: boolean-logic
+        title: "Boolean Logic"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/boolean-logic.md
+
+      - slug: logic-gates-and-circuits
+        title: "Logic Gates and Circuits"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/logic-gates-and-circuits.md
+
+      - slug: boolean-evaluation-exercise
+        title: "Boolean Expression Evaluator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/boolean-evaluation-exercise.md
+        exercises:
+          - slug: cs-boolean-evaluator
+            title: "Boolean Expression Evaluator"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/cs-boolean-evaluator.prompt.md
+            supported_languages: [python]
+            tags: [boolean, logic, gates]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        # TODO: handle NOT <operand> and <operand> OP <operand>
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        if parts[0] == 'NOT':
+                            a = parts[1] == '1'
+                            print(not a)
+                        else:
+                            a = parts[0] == '1'
+                            op = parts[1]
+                            b = parts[2] == '1'
+                            if op == 'AND':
+                                print(a and b)
+                            elif op == 'OR':
+                                print(a or b)
+                            elif op == 'XOR':
+                                print(a != b)
+
+                solve()
+            test_cases:
+              - name: "and-false"
+                stdin: "1 AND 0\n"
+                expected_stdout: "False"
+                is_hidden: false
+                weight: 1
+              - name: "or-true"
+                stdin: "1 OR 0\n"
+                expected_stdout: "True"
+                is_hidden: false
+                weight: 1
+              - name: "not-true"
+                stdin: "NOT 1\n"
+                expected_stdout: "False"
+                is_hidden: false
+                weight: 1
+              - name: "xor-same-zero"
+                stdin: "0 XOR 0\n"
+                expected_stdout: "False"
+                is_hidden: false
+                weight: 1
+              - name: "not-zero"
+                stdin: "NOT 0\n"
+                expected_stdout: "True"
+                is_hidden: true
+                weight: 1
+              - name: "and-both-true"
+                stdin: "1 AND 1\n"
+                expected_stdout: "True"
+                is_hidden: true
+                weight: 1
+              - name: "xor-different"
+                stdin: "1 XOR 0\n"
+                expected_stdout: "True"
+                is_hidden: true
+                weight: 1
+              - name: "or-both-false"
+                stdin: "0 OR 0\n"
+                expected_stdout: "False"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-boolean-logic
+        title: "Quiz: Boolean Logic & Gates"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-boolean-logic.md
+
+  - title: "How Programs Run"
+    summary: "Machine code, the fetch-execute cycle, compilers vs interpreters, memory layout."
+    order_index: 5
+    lessons:
+      - slug: machine-code-and-cpu
+        title: "Machine Code and the CPU"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/machine-code-and-cpu.md
+
+      - slug: compilers-vs-interpreters
+        title: "Compilers vs Interpreters"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/compilers-vs-interpreters.md
+
+      - slug: quiz-how-programs-run
+        title: "Quiz: How Programs Run"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-how-programs-run.md
+
+  - title: "Algorithms & Problem Solving"
+    summary: "What is an algorithm, pseudocode, flowcharts, searching, and sorting."
+    order_index: 6
+    lessons:
+      - slug: what-is-an-algorithm
+        title: "What Is an Algorithm?"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/what-is-an-algorithm.md
+
+      - slug: searching-and-sorting
+        title: "Searching and Sorting"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/searching-and-sorting.md
+
+      - slug: count-bits-exercise
+        title: "Count the 1 Bits"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/count-bits-exercise.md
+        exercises:
+          - slug: cs-count-bits
+            title: "Count the 1 Bits"
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/cs-count-bits.prompt.md
+            supported_languages: [python]
+            tags: [binary, bit-manipulation, algorithms]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        n = int(line)
+                        # TODO: count the number of 1 bits in n's binary representation
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        n = int(line)
+                        count = 0
+                        while n > 0:
+                            count += n & 1
+                            n >>= 1
+                        print(count)
+
+                solve()
+            test_cases:
+              - name: "seven"
+                stdin: "7\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: "all-ones-byte"
+                stdin: "255\n"
+                expected_stdout: "8"
+                is_hidden: false
+                weight: 1
+              - name: "zero"
+                stdin: "0\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: "ten"
+                stdin: "10\n"
+                expected_stdout: "2"
+                is_hidden: true
+                weight: 1
+              - name: "one"
+                stdin: "1\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: "power-of-two"
+                stdin: "64\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: "large-value"
+                stdin: "65535\n"
+                expected_stdout: "16"
+                is_hidden: true
+                weight: 1
+
+      - slug: linear-search-exercise
+        title: "Linear Search"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/linear-search-exercise.md
+        exercises:
+          - slug: cs-linear-search
+            title: "Linear Search"
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/cs-linear-search.prompt.md
+            supported_languages: [python]
+            tags: [searching, algorithms, linear-search]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = []
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if line:
+                            lines.append(line)
+                    i = 0
+                    while i < len(lines) - 1:
+                        lst = list(map(int, lines[i].split()))
+                        target = int(lines[i+1])
+                        # TODO: find first index of target in lst, or -1
+                        i += 2
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = []
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if line:
+                            lines.append(line)
+                    i = 0
+                    while i < len(lines) - 1:
+                        lst = list(map(int, lines[i].split()))
+                        target = int(lines[i+1])
+                        result = -1
+                        for idx, val in enumerate(lst):
+                            if val == target:
+                                result = idx
+                                break
+                        print(result)
+                        i += 2
+
+                solve()
+            test_cases:
+              - name: "found-mid-list"
+                stdin: "3 1 4 1 5 9 7 6\n7\n"
+                expected_stdout: "6"
+                is_hidden: false
+                weight: 1
+              - name: "not-found"
+                stdin: "10 20 30 40 50\n25\n"
+                expected_stdout: "-1"
+                is_hidden: false
+                weight: 1
+              - name: "first-occurrence-duplicates"
+                stdin: "5 5 5 5\n5\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: "single-element-match"
+                stdin: "1\n1\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: "single-element-miss"
+                stdin: "42\n7\n"
+                expected_stdout: "-1"
+                is_hidden: true
+                weight: 1
+              - name: "target-at-end"
+                stdin: "1 2 3 4 5\n5\n"
+                expected_stdout: "4"
+                is_hidden: true
+                weight: 1
+              - name: "target-at-start"
+                stdin: "99 1 2 3\n99\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+
+      - slug: bubble-sort-exercise
+        title: "Bubble Sort Step-by-Step"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/bubble-sort-exercise.md
+        exercises:
+          - slug: cs-bubble-sort
+            title: "Bubble Sort Step-by-Step"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/cs-bubble-sort.prompt.md
+            supported_languages: [python]
+            tags: [sorting, algorithms, bubble-sort]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        lst = list(map(int, line.split()))
+                        # TODO: perform bubble sort, print each pass with swaps,
+                        # then print "sorted: <list>"
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        lst = list(map(int, line.split()))
+                        n = len(lst)
+                        for i in range(n - 1):
+                            swapped = False
+                            for j in range(n - 1 - i):
+                                if lst[j] > lst[j + 1]:
+                                    lst[j], lst[j + 1] = lst[j + 1], lst[j]
+                                    swapped = True
+                            if swapped:
+                                print(' '.join(map(str, lst)))
+                            else:
+                                print('sorted: ' + ' '.join(map(str, lst)))
+                                break
+                        else:
+                            print('sorted: ' + ' '.join(map(str, lst)))
+
+                solve()
+            test_cases:
+              - name: "basic-unsorted"
+                stdin: "5 3 8 1 4\n"
+                expected_stdout: "3 5 1 4 8\n3 1 4 5 8\n1 3 4 5 8\nsorted: 1 3 4 5 8"
+                is_hidden: false
+                weight: 2
+              - name: "already-sorted"
+                stdin: "1 2 3\n"
+                expected_stdout: "sorted: 1 2 3"
+                is_hidden: false
+                weight: 1
+              - name: "two-elements-swap"
+                stdin: "3 1\n"
+                expected_stdout: "1 3\nsorted: 1 3"
+                is_hidden: false
+                weight: 1
+              - name: "single-element"
+                stdin: "7\n"
+                expected_stdout: "sorted: 7"
+                is_hidden: true
+                weight: 1
+              - name: "reverse-sorted"
+                stdin: "4 3 2 1\n"
+                expected_stdout: "3 2 1 4\n2 1 3 4\n1 2 3 4\nsorted: 1 2 3 4"
+                is_hidden: true
+                weight: 2
+              - name: "two-elements-equal"
+                stdin: "5 5\n"
+                expected_stdout: "sorted: 5 5"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-algorithms
+        title: "Quiz: Algorithms & Problem Solving"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-algorithms.md
+
+  - title: "The Internet & The Web"
+    summary: "Packets, IP addresses, DNS, routers, client-server architecture, and HTTP."
+    order_index: 7
+    lessons:
+      - slug: how-data-travels
+        title: "How Data Travels: Networking Fundamentals"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/how-data-travels.md
+
+      - slug: client-server-and-http
+        title: "Client-Server Architecture and HTTP"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/client-server-and-http.md
+
+      - slug: quiz-internet-and-web
+        title: "Quiz: The Internet & The Web"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-internet-and-web.md

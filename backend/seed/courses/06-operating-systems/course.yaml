@@ -1,0 +1,919 @@
+subject:
+  slug: systems
+  name: Systems
+  description: How computers run software, from the CPU up to the network.
+  icon: server
+  color: "#ef4444"
+  order_index: 4
+
+course:
+  slug: operating-systems
+  title: Operating Systems
+  summary: "Processes, threads, scheduling, memory, and file systems — the OS concepts every systems programmer must master."
+  description: |
+    A rigorous tour of how an operating system manages processes, concurrency,
+    memory, and storage, grounded in the OSTEP / Silberschatz tradition.
+    Covers kernel internals, scheduling algorithms, synchronization primitives,
+    virtual memory, and file systems with worked examples and coding exercises.
+  difficulty: advanced
+  estimated_hours: 30
+  is_published: true
+  order_index: 2
+
+modules:
+  - title: OS Overview
+    summary: What an OS does, how kernel and user mode differ, and how system calls work.
+    order_index: 1
+    lessons:
+      - slug: what-an-os-does
+        title: What an Operating System Does
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/what-an-os-does.md
+
+      - slug: kernel-vs-user-mode
+        title: Kernel Mode vs User Mode
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/kernel-vs-user-mode.md
+
+      - slug: system-calls-deep-dive
+        title: "System Calls: The Kernel API"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/system-calls-deep-dive.md
+
+      - slug: quiz-os-overview
+        title: "Quiz: OS Overview"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-os-overview.md
+
+  - title: Processes
+    summary: The process model, PCB, state transitions, fork/exec, and context switching.
+    order_index: 2
+    lessons:
+      - slug: process-model
+        title: The Process Model
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/process-model.md
+
+      - slug: fork-and-exec
+        title: "fork() and exec(): Creating Processes"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/fork-and-exec.md
+
+      - slug: context-switching
+        title: Context Switching
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/context-switching.md
+
+      - slug: quiz-processes
+        title: "Quiz: Processes"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-processes.md
+
+  - title: Threads & Concurrency
+    summary: Threads vs processes, race conditions, and the critical section problem.
+    order_index: 3
+    lessons:
+      - slug: threads-vs-processes
+        title: Threads vs Processes
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/threads-vs-processes.md
+
+      - slug: race-conditions
+        title: Race Conditions and the Critical Section Problem
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/race-conditions.md
+
+      - slug: quiz-threads-concurrency
+        title: "Quiz: Threads & Concurrency"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-threads-concurrency.md
+
+  - title: CPU Scheduling
+    summary: FCFS, SJF, Round-Robin, priority scheduling, and key performance metrics.
+    order_index: 4
+    lessons:
+      - slug: scheduling-algorithms
+        title: CPU Scheduling Algorithms
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/scheduling-algorithms.md
+
+      - slug: fcfs-scheduling-practice
+        title: "Practice: FCFS Scheduling Simulation"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/fcfs-scheduling-practice.md
+        exercises:
+          - slug: os-fcfs-scheduler
+            title: FCFS Scheduler
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/os-fcfs-scheduler.prompt.md
+            supported_languages: [python]
+            tags: [scheduling, simulation, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    processes = []
+                    for i in range(n):
+                        arrival = int(data[idx]); idx += 1
+                        burst   = int(data[idx]); idx += 1
+                        processes.append((arrival, burst, i + 1))
+                    # TODO: simulate FCFS and print average waiting time
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    processes = []
+                    for i in range(n):
+                        arrival = int(data[idx]); idx += 1
+                        burst   = int(data[idx]); idx += 1
+                        processes.append((arrival, burst, i + 1))
+                    processes.sort(key=lambda x: (x[0], x[2]))
+                    time = 0
+                    total_wait = 0
+                    for arrival, burst, pid in processes:
+                        if time < arrival:
+                            time = arrival
+                        total_wait += time - arrival
+                        time += burst
+                    print(total_wait // n)
+
+                solve()
+            test_cases:
+              - name: case-three-same-arrival
+                stdin: "3\n0 24\n0 3\n0 3\n"
+                expected_stdout: "17"
+                is_hidden: false
+                weight: 1
+              - name: case-staggered-arrivals
+                stdin: "3\n0 5\n2 3\n4 1\n"
+                expected_stdout: "2"
+                is_hidden: false
+                weight: 1
+              - name: case-single-process
+                stdin: "1\n0 10\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: case-four-processes
+                stdin: "4\n0 6\n0 4\n0 8\n0 2\n"
+                expected_stdout: "8"
+                is_hidden: true
+                weight: 1
+              - name: case-cpu-idle-gap
+                stdin: "3\n0 2\n5 3\n6 1\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: case-reverse-order
+                stdin: "3\n0 3\n0 3\n0 24\n"
+                expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+
+      - slug: sjf-scheduling-practice
+        title: "Practice: SJF Scheduling Metrics"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/sjf-scheduling-practice.md
+        exercises:
+          - slug: os-sjf-scheduler
+            title: SJF Scheduler
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/os-sjf-scheduler.prompt.md
+            supported_languages: [python]
+            tags: [scheduling, sjf, simulation, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    bursts = list(map(int, data[1:n + 1]))
+                    # TODO: sort by burst, compute average waiting time (integer division)
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    bursts = list(map(int, data[1:n + 1]))
+                    bursts.sort()
+                    time = 0
+                    total_wait = 0
+                    for b in bursts:
+                        total_wait += time
+                        time += b
+                    print(total_wait // n)
+
+                solve()
+            test_cases:
+              - name: case-four-varied
+                stdin: "4\n6 3 8 1\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: case-single
+                stdin: "1\n10\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: case-equal-bursts
+                stdin: "3\n5 5 5\n"
+                expected_stdout: "5"
+                is_hidden: false
+                weight: 1
+              - name: case-ascending
+                stdin: "5\n1 2 3 4 5\n"
+                expected_stdout: "4"
+                is_hidden: true
+                weight: 1
+              - name: case-mixed
+                stdin: "5\n10 1 10 1 10\n"
+                expected_stdout: "7"
+                is_hidden: true
+                weight: 1
+              - name: case-two-unequal
+                stdin: "2\n100 1\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-cpu-scheduling
+        title: "Quiz: CPU Scheduling"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-cpu-scheduling.md
+
+  - title: Synchronization
+    summary: Locks, semaphores, monitors, deadlock conditions and prevention.
+    order_index: 5
+    lessons:
+      - slug: locks-and-semaphores
+        title: Locks, Semaphores, and Monitors
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/locks-and-semaphores.md
+
+      - slug: deadlock
+        title: "Deadlock: Conditions, Detection, and Prevention"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/deadlock.md
+
+      - slug: deadlock-detection-practice
+        title: "Practice: Deadlock Detection"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/deadlock-detection-practice.md
+        exercises:
+          - slug: os-deadlock-detector
+            title: Deadlock Detector
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/os-deadlock-detector.prompt.md
+            supported_languages: [python]
+            tags: [deadlock, graph, dfs, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    m = int(data[idx]); idx += 1
+                    graph = defaultdict(list)
+                    for _ in range(m):
+                        u = int(data[idx]); idx += 1
+                        v = int(data[idx]); idx += 1
+                        graph[u].append(v)
+                    # TODO: detect cycle in directed graph
+                    print("NO")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    m = int(data[idx]); idx += 1
+                    graph = defaultdict(list)
+                    for _ in range(m):
+                        u = int(data[idx]); idx += 1
+                        v = int(data[idx]); idx += 1
+                        graph[u].append(v)
+
+                    visited = set()
+                    in_stack = set()
+
+                    def dfs(node):
+                        visited.add(node)
+                        in_stack.add(node)
+                        for nb in graph[node]:
+                            if nb not in visited:
+                                if dfs(nb):
+                                    return True
+                            elif nb in in_stack:
+                                return True
+                        in_stack.remove(node)
+                        return False
+
+                    for node in range(1, n + 1):
+                        if node not in visited:
+                            if dfs(node):
+                                print("YES")
+                                return
+                    print("NO")
+
+                solve()
+            test_cases:
+              - name: case-simple-cycle
+                stdin: "3 3\n1 2\n2 3\n3 1\n"
+                expected_stdout: "YES"
+                is_hidden: false
+                weight: 1
+              - name: case-no-cycle-chain
+                stdin: "3 2\n1 2\n2 3\n"
+                expected_stdout: "NO"
+                is_hidden: false
+                weight: 1
+              - name: case-single-process-no-edges
+                stdin: "1 0\n"
+                expected_stdout: "NO"
+                is_hidden: false
+                weight: 1
+              - name: case-cycle-in-subgraph
+                stdin: "4 4\n1 2\n2 3\n3 4\n4 2\n"
+                expected_stdout: "YES"
+                is_hidden: true
+                weight: 1
+              - name: case-dag-no-cycle
+                stdin: "4 4\n1 2\n1 3\n2 4\n3 4\n"
+                expected_stdout: "NO"
+                is_hidden: true
+                weight: 1
+              - name: case-partial-cycle
+                stdin: "5 4\n1 2\n2 3\n3 1\n4 5\n"
+                expected_stdout: "YES"
+                is_hidden: true
+                weight: 1
+              - name: case-self-loop
+                stdin: "2 2\n1 2\n2 2\n"
+                expected_stdout: "YES"
+                is_hidden: true
+                weight: 1
+
+      - slug: bankers-algorithm-practice
+        title: "Practice: Banker's Algorithm"
+        type: exercise
+        duration_minutes: 35
+        content_file: lessons/bankers-algorithm-practice.md
+        exercises:
+          - slug: os-bankers-algorithm
+            title: "Banker's Algorithm: Safe State Check"
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/os-bankers-algorithm.prompt.md
+            supported_languages: [python]
+            tags: [deadlock, avoidance, bankers, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    m = int(data[idx]); idx += 1
+                    available = []
+                    for j in range(m):
+                        available.append(int(data[idx])); idx += 1
+                    allocation = []
+                    for i in range(n):
+                        row = [int(data[idx + j]) for j in range(m)]
+                        idx += m
+                        allocation.append(row)
+                    need = []
+                    for i in range(n):
+                        row = [int(data[idx + j]) for j in range(m)]
+                        idx += m
+                        need.append(row)
+                    # TODO: run safety algorithm, print SAFE <sequence> or UNSAFE
+                    print("UNSAFE")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    m = int(data[idx]); idx += 1
+                    available = []
+                    for j in range(m):
+                        available.append(int(data[idx])); idx += 1
+                    allocation = []
+                    for i in range(n):
+                        row = [int(data[idx + j]) for j in range(m)]
+                        idx += m
+                        allocation.append(row)
+                    need = []
+                    for i in range(n):
+                        row = [int(data[idx + j]) for j in range(m)]
+                        idx += m
+                        need.append(row)
+
+                    work = list(available)
+                    finish = [False] * n
+                    sequence = []
+                    changed = True
+                    while changed:
+                        changed = False
+                        for i in range(n):
+                            if not finish[i]:
+                                if all(need[i][j] <= work[j] for j in range(m)):
+                                    for j in range(m):
+                                        work[j] += allocation[i][j]
+                                    finish[i] = True
+                                    sequence.append(i + 1)
+                                    changed = True
+                    if all(finish):
+                        print("SAFE " + " ".join(map(str, sequence)))
+                    else:
+                        print("UNSAFE")
+
+                solve()
+            test_cases:
+              - name: case-classic-silberschatz
+                stdin: "5 3\n3 3 2\n0 1 0\n2 0 0\n3 0 2\n2 1 1\n0 0 2\n7 4 3\n1 2 2\n6 0 0\n0 1 1\n4 3 1\n"
+                expected_stdout: "SAFE 2 4 5 1 3"
+                is_hidden: false
+                weight: 1
+              - name: case-unsafe-no-resources
+                stdin: "2 1\n0\n1\n1\n2\n2\n"
+                expected_stdout: "UNSAFE"
+                is_hidden: false
+                weight: 1
+              - name: case-single-safe
+                stdin: "1 2\n3 2\n1 1\n2 1\n"
+                expected_stdout: "SAFE 1"
+                is_hidden: false
+                weight: 1
+              - name: case-all-need-zero
+                stdin: "3 2\n1 1\n1 0\n0 1\n0 0\n0 0\n0 0\n0 0\n"
+                expected_stdout: "SAFE 1 2 3"
+                is_hidden: true
+                weight: 1
+              - name: case-four-processes-safe
+                stdin: "4 2\n2 1\n0 0\n0 1\n1 0\n1 1\n2 1\n1 1\n1 2\n2 2\n"
+                expected_stdout: "SAFE 1 2 3 4"
+                is_hidden: true
+                weight: 1
+              - name: case-circular-unsafe
+                stdin: "3 1\n0\n1\n1\n1\n2\n2\n2\n"
+                expected_stdout: "UNSAFE"
+                is_hidden: true
+                weight: 1
+
+      - slug: bounded-buffer-practice
+        title: "Practice: Bounded Buffer Simulation"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/bounded-buffer-practice.md
+        exercises:
+          - slug: os-bounded-buffer
+            title: Bounded Buffer Simulation
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/os-bounded-buffer.prompt.md
+            supported_languages: [python]
+            tags: [synchronization, producer-consumer, simulation, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    lines = sys.stdin.read().strip().split('\n')
+                    first = lines[0].split()
+                    cap = int(first[0])
+                    k = int(first[1])
+                    # TODO: simulate bounded buffer, print consumed items or EMPTY
+                    print("EMPTY")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    lines = sys.stdin.read().strip().split('\n')
+                    first = lines[0].split()
+                    cap = int(first[0])
+                    k = int(first[1])
+                    buf = deque()
+                    consumed = []
+                    for line in lines[1:k + 1]:
+                        parts = line.strip().split()
+                        if parts[0] == 'P':
+                            item = int(parts[1])
+                            if len(buf) < cap:
+                                buf.append(item)
+                        else:
+                            if buf:
+                                consumed.append(str(buf.popleft()))
+                    print(' '.join(consumed) if consumed else 'EMPTY')
+
+                solve()
+            test_cases:
+              - name: case-simple-produce-consume
+                stdin: "3 6\nP 1\nP 2\nP 3\nC\nC\nC\n"
+                expected_stdout: "1 2 3"
+                is_hidden: false
+                weight: 1
+              - name: case-overflow-and-more
+                stdin: "2 7\nP 1\nP 2\nP 3\nC\nC\nP 4\nC\n"
+                expected_stdout: "1 2 4"
+                is_hidden: false
+                weight: 1
+              - name: case-consume-before-produce
+                stdin: "1 3\nC\nP 5\nC\n"
+                expected_stdout: "5"
+                is_hidden: false
+                weight: 1
+              - name: case-all-consume-empty
+                stdin: "2 3\nC\nC\nC\n"
+                expected_stdout: "EMPTY"
+                is_hidden: true
+                weight: 1
+              - name: case-alternate-same-item
+                stdin: "1 6\nP 7\nC\nP 8\nC\nP 8\nC\n"
+                expected_stdout: "7 8 8"
+                is_hidden: true
+                weight: 1
+              - name: case-full-buffer-drop
+                stdin: "5 12\nP 1\nP 2\nP 3\nP 4\nP 5\nP 6\nC\nC\nC\nC\nC\nC\n"
+                expected_stdout: "1 2 3 4 5"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-synchronization
+        title: "Quiz: Synchronization & Deadlock"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-synchronization.md
+
+  - title: Memory Management
+    summary: Paging, segmentation, virtual memory, TLB, and page replacement algorithms.
+    order_index: 6
+    lessons:
+      - slug: memory-allocation
+        title: "Memory Management: Allocation, Paging, and Segmentation"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/memory-allocation.md
+
+      - slug: virtual-memory-page-replacement
+        title: Virtual Memory and Page Replacement
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/virtual-memory-page-replacement.md
+
+      - slug: page-replacement-practice
+        title: "Practice: FIFO Page Replacement"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/page-replacement-practice.md
+        exercises:
+          - slug: os-page-replacement
+            title: FIFO Page Replacement
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/os-page-replacement.prompt.md
+            supported_languages: [python]
+            tags: [memory, page-replacement, simulation, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    f = int(data[0])
+                    n = int(data[1])
+                    refs = list(map(int, data[2:2 + n]))
+                    # TODO: simulate FIFO page replacement and print fault count
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    f = int(data[0])
+                    n = int(data[1])
+                    refs = list(map(int, data[2:2 + n]))
+                    queue = deque()
+                    in_mem = set()
+                    faults = 0
+                    for page in refs:
+                        if page not in in_mem:
+                            faults += 1
+                            if len(queue) == f:
+                                evicted = queue.popleft()
+                                in_mem.remove(evicted)
+                            queue.append(page)
+                            in_mem.add(page)
+                    print(faults)
+
+                solve()
+            test_cases:
+              - name: case-classic-3frames
+                stdin: "3 12\n1 2 3 4 1 2 5 1 2 3 4 5\n"
+                expected_stdout: "9"
+                is_hidden: false
+                weight: 1
+              - name: case-2frames
+                stdin: "2 6\n1 2 1 3 1 2\n"
+                expected_stdout: "5"
+                is_hidden: false
+                weight: 1
+              - name: case-single-frame
+                stdin: "1 4\n1 2 3 4\n"
+                expected_stdout: "4"
+                is_hidden: false
+                weight: 1
+              - name: case-all-fit
+                stdin: "4 8\n1 2 3 4 1 2 3 4\n"
+                expected_stdout: "4"
+                is_hidden: true
+                weight: 1
+              - name: case-repeated-page
+                stdin: "2 4\n7 7 7 7\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: case-belady-anomaly-setup
+                stdin: "4 12\n1 2 3 4 1 2 5 1 2 3 4 5\n"
+                expected_stdout: "10"
+                is_hidden: true
+                weight: 1
+
+      - slug: lru-page-replacement-practice
+        title: "Practice: LRU Page Replacement"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/lru-page-replacement-practice.md
+        exercises:
+          - slug: os-lru-page-replacement
+            title: LRU Page Replacement
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/os-lru-page-replacement.prompt.md
+            supported_languages: [python]
+            tags: [memory, lru, page-replacement, simulation, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    f = int(data[0])
+                    n = int(data[1])
+                    refs = list(map(int, data[2:2 + n]))
+                    # TODO: simulate LRU page replacement and print fault count
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    f = int(data[0])
+                    n = int(data[1])
+                    refs = list(map(int, data[2:2 + n]))
+                    memory = []
+                    faults = 0
+                    for page in refs:
+                        if page in memory:
+                            memory.remove(page)
+                            memory.append(page)
+                        else:
+                            faults += 1
+                            if len(memory) == f:
+                                memory.pop(0)
+                            memory.append(page)
+                    print(faults)
+
+                solve()
+            test_cases:
+              - name: case-classic-3frames
+                stdin: "3 12\n1 2 3 4 1 2 5 1 2 3 4 5\n"
+                expected_stdout: "10"
+                is_hidden: false
+                weight: 1
+              - name: case-2frames-lru
+                stdin: "2 6\n1 2 1 3 1 2\n"
+                expected_stdout: "4"
+                is_hidden: false
+                weight: 1
+              - name: case-single-frame
+                stdin: "1 4\n1 2 3 4\n"
+                expected_stdout: "4"
+                is_hidden: false
+                weight: 1
+              - name: case-all-fit
+                stdin: "4 8\n1 2 3 4 1 2 3 4\n"
+                expected_stdout: "4"
+                is_hidden: true
+                weight: 1
+              - name: case-repeated-page
+                stdin: "2 4\n7 7 7 7\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: case-perfect-loop
+                stdin: "3 9\n1 2 3 1 2 3 1 2 3\n"
+                expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+              - name: case-lru-eviction-order
+                stdin: "2 6\n1 2 3 2 1 3\n"
+                expected_stdout: "5"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-memory-management
+        title: "Quiz: Memory Management"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-memory-management.md
+
+  - title: File Systems & I/O
+    summary: Files, directories, inodes, VFS, disk scheduling, and I/O buffering.
+    order_index: 7
+    lessons:
+      - slug: file-systems
+        title: "File Systems: Files, Directories, and Inodes"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/file-systems.md
+
+      - slug: io-and-disk-scheduling
+        title: I/O Systems and Disk Scheduling
+        type: reading
+        duration_minutes: 17
+        content_file: lessons/io-and-disk-scheduling.md
+
+      - slug: round-robin-practice
+        title: "Practice: Round-Robin Scheduling"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/round-robin-practice.md
+        exercises:
+          - slug: os-round-robin
+            title: Round-Robin Scheduler
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/os-round-robin.prompt.md
+            supported_languages: [python]
+            tags: [scheduling, round-robin, simulation, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    q = int(data[1])
+                    bursts = list(map(int, data[2:2 + n]))
+                    # TODO: simulate Round-Robin and print average waiting time
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    q = int(data[1])
+                    bursts = list(map(int, data[2:2 + n]))
+                    remaining = list(bursts)
+                    queue = deque(range(n))
+                    time = 0
+                    finish = [0] * n
+                    while queue:
+                        i = queue.popleft()
+                        if remaining[i] <= q:
+                            time += remaining[i]
+                            remaining[i] = 0
+                            finish[i] = time
+                        else:
+                            remaining[i] -= q
+                            time += q
+                            queue.append(i)
+                    total_wait = sum(finish[i] - bursts[i] for i in range(n))
+                    print(total_wait // n)
+
+                solve()
+            test_cases:
+              - name: case-three-processes-q4
+                stdin: "3 4\n24 3 3\n"
+                expected_stdout: "5"
+                is_hidden: false
+                weight: 1
+              - name: case-single-process
+                stdin: "1 5\n10\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: case-four-processes-q3
+                stdin: "4 3\n6 4 8 2\n"
+                expected_stdout: "10"
+                is_hidden: false
+                weight: 1
+              - name: case-five-processes-q2
+                stdin: "5 2\n5 3 1 4 2\n"
+                expected_stdout: "8"
+                is_hidden: true
+                weight: 1
+              - name: case-equal-bursts
+                stdin: "3 3\n3 3 3\n"
+                expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+              - name: case-large-quantum
+                stdin: "3 100\n10 20 30\n"
+                expected_stdout: "13"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-file-systems-io
+        title: "Quiz: File Systems & I/O"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-file-systems-io.md

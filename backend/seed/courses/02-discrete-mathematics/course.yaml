@@ -1,0 +1,829 @@
+subject:
+  slug: foundations
+  name: "Computer Science Foundations"
+  description: "The bedrock ideas every computer scientist builds on."
+  icon: lightbulb
+  color: "#8b5cf6"
+  order_index: 0
+
+course:
+  slug: discrete-mathematics
+  title: "Discrete Mathematics"
+  summary: "Logic, proofs, sets, combinatorics, probability, graphs, number theory, and recurrences — the mathematical toolkit for CS."
+  description: |
+    A rigorous yet accessible tour through the mathematical foundations every computer scientist needs.
+    Covers propositional logic, proof techniques, combinatorics, discrete probability, graph theory,
+    number theory, the Chinese Remainder Theorem, and asymptotic analysis. Builds the formal reasoning
+    skills required for algorithms, cryptography, and advanced CS coursework.
+  difficulty: intermediate
+  estimated_hours: 26
+  is_published: true
+  order_index: 2
+
+modules:
+  - title: "Logic and Proofs"
+    summary: "Propositional logic, truth tables, quantifiers, and core proof techniques including induction."
+    order_index: 1
+    lessons:
+      - slug: propositions-and-connectives
+        title: "Propositions and Connectives"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/propositions-and-connectives.md
+
+      - slug: quantifiers-and-predicates
+        title: "Quantifiers and Predicates"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/quantifiers-and-predicates.md
+
+      - slug: proof-techniques
+        title: "Proof Techniques"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/proof-techniques.md
+
+      - slug: mathematical-induction
+        title: "Mathematical Induction"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/mathematical-induction.md
+
+      - slug: logic-proofs-quiz
+        title: "Quiz: Logic and Proofs"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/logic-proofs-quiz.md
+
+  - title: "Sets, Relations, and Functions"
+    summary: "Set algebra, Venn diagrams, relations, equivalence classes, functions, and cardinality."
+    order_index: 2
+    lessons:
+      - slug: set-operations
+        title: "Set Operations"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/set-operations.md
+
+      - slug: relations-and-equivalence
+        title: "Relations and Equivalence"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/relations-and-equivalence.md
+
+      - slug: functions-and-cardinality
+        title: "Functions and Cardinality"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/functions-and-cardinality.md
+
+      - slug: sets-relations-quiz
+        title: "Quiz: Sets, Relations, and Functions"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/sets-relations-quiz.md
+
+  - title: "Combinatorics and Counting"
+    summary: "Sum and product rules, permutations, combinations, pigeonhole principle, and the binomial theorem."
+    order_index: 3
+    lessons:
+      - slug: counting-rules
+        title: "Counting Rules: Sum and Product"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/counting-rules.md
+
+      - slug: permutations-and-combinations
+        title: "Permutations and Combinations"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/permutations-and-combinations.md
+
+      - slug: pigeonhole-and-binomial
+        title: "Pigeonhole Principle and the Binomial Theorem"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/pigeonhole-and-binomial.md
+
+      - slug: dm-combinations-exercise-lesson
+        title: "Exercise: Combinations Calculator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/dm-combinations-exercise.md
+        exercises:
+          - slug: dm-combinations
+            title: "C(n, r) — Binomial Coefficient"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/dm-combinations.prompt.md
+            supported_languages: [python]
+            tags: [combinatorics, math, binomial]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, r = int(data[0]), int(data[1])
+                    # TODO: compute C(n, r)
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, r = int(data[0]), int(data[1])
+
+                    if r < 0 or r > n:
+                        print(0)
+                        return
+
+                    # Multiplicative formula: C(n,r) = product of (n-i)/(i+1) for i in 0..r-1
+                    result = 1
+                    for i in range(r):
+                        result = result * (n - i) // (i + 1)
+                    print(result)
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "5 2\n"
+                expected_stdout: "10"
+                is_hidden: false
+                weight: 1
+              - name: choose-zero
+                stdin: "10 0\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: choose-three
+                stdin: "6 3\n"
+                expected_stdout: "20"
+                is_hidden: false
+                weight: 1
+              - name: medium
+                stdin: "20 10\n"
+                expected_stdout: "184756"
+                is_hidden: true
+                weight: 1
+              - name: choose-all
+                stdin: "7 7\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: large
+                stdin: "52 5\n"
+                expected_stdout: "2598960"
+                is_hidden: true
+                weight: 2
+              - name: symmetry
+                stdin: "15 3\n"
+                expected_stdout: "455"
+                is_hidden: true
+                weight: 1
+              - name: large-n-small-r
+                stdin: "100 2\n"
+                expected_stdout: "4950"
+                is_hidden: true
+                weight: 1
+
+      - slug: combinatorics-quiz
+        title: "Quiz: Combinatorics and Counting"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/combinatorics-quiz.md
+
+  - title: "Discrete Probability"
+    summary: "Sample spaces, conditional probability, Bayes' theorem, and expected value."
+    order_index: 4
+    lessons:
+      - slug: probability-basics
+        title: "Probability Basics: Sample Spaces and Events"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/probability-basics.md
+
+      - slug: bayes-and-expectation
+        title: "Bayes' Theorem and Expected Value"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/bayes-and-expectation.md
+
+      - slug: probability-quiz
+        title: "Quiz: Discrete Probability"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/probability-quiz.md
+
+  - title: "Graph Theory"
+    summary: "Graphs, paths, trees, connectivity, traversal, Euler and Hamiltonian circuits, and coloring."
+    order_index: 5
+    lessons:
+      - slug: graph-basics
+        title: "Graph Basics: Definitions and Terminology"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/graph-basics.md
+
+      - slug: trees-and-traversal
+        title: "Trees, Paths, and Graph Traversal"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/trees-and-traversal.md
+
+      - slug: dm-graph-paths-exercise-lesson
+        title: "Exercise: Count Paths in a DAG"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/dm-graph-paths-exercise.md
+        exercises:
+          - slug: dm-graph-paths
+            title: "Count Paths in a DAG"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/dm-graph-paths.prompt.md
+            supported_languages: [python]
+            tags: [graphs, dynamic-programming, dag]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    N = int(data[idx]); idx += 1
+                    M = int(data[idx]); idx += 1
+                    adj = [[] for _ in range(N + 1)]
+                    for _ in range(M):
+                        u = int(data[idx]); idx += 1
+                        v = int(data[idx]); idx += 1
+                        adj[u].append(v)
+                    # TODO: count paths from 1 to N
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    N = int(data[idx]); idx += 1
+                    M = int(data[idx]); idx += 1
+                    adj = [[] for _ in range(N + 1)]
+                    for _ in range(M):
+                        u = int(data[idx]); idx += 1
+                        v = int(data[idx]); idx += 1
+                        adj[u].append(v)
+
+                    # DP: dp[v] = number of paths from 1 to v
+                    # Process vertices in topological order (1..N since edges go low->high)
+                    dp = [0] * (N + 1)
+                    dp[1] = 1
+                    for u in range(1, N + 1):
+                        if dp[u] > 0:
+                            for v in adj[u]:
+                                dp[v] += dp[u]
+
+                    print(dp[N])
+
+                solve()
+            test_cases:
+              - name: two-paths
+                stdin: "4 4\n1 2\n1 3\n2 4\n3 4\n"
+                expected_stdout: "2"
+                is_hidden: false
+                weight: 1
+              - name: three-paths
+                stdin: "4 5\n1 2\n1 3\n2 3\n2 4\n3 4\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: single-path
+                stdin: "2 1\n1 2\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: five-vertices
+                stdin: "5 6\n1 2\n1 3\n2 4\n2 5\n3 5\n4 5\n"
+                expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+              - name: no-path
+                stdin: "4 2\n1 2\n3 4\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: six-vertices
+                stdin: "6 7\n1 2\n1 3\n2 4\n3 4\n4 5\n4 6\n5 6\n"
+                expected_stdout: "4"
+                is_hidden: true
+                weight: 2
+              - name: triangle-merge
+                stdin: "3 3\n1 2\n1 3\n2 3\n"
+                expected_stdout: "2"
+                is_hidden: true
+                weight: 1
+
+      - slug: dm-toposort-exercise-lesson
+        title: "Exercise: Topological Sort"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/dm-toposort-exercise.md
+        exercises:
+          - slug: dm-toposort
+            title: "Topological Sort — Lexicographically Smallest Order"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/dm-toposort.prompt.md
+            supported_languages: [python]
+            tags: [graphs, dag, topological-sort]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                import heapq
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    N = int(data[idx]); idx += 1
+                    M = int(data[idx]); idx += 1
+                    adj = [[] for _ in range(N + 1)]
+                    indeg = [0] * (N + 1)
+                    for _ in range(M):
+                        u = int(data[idx]); idx += 1
+                        v = int(data[idx]); idx += 1
+                        adj[u].append(v)
+                        indeg[v] += 1
+                    # TODO: output lexicographically smallest topological order
+                    print(' '.join(map(str, range(1, N + 1))))
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import heapq
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    N = int(data[idx]); idx += 1
+                    M = int(data[idx]); idx += 1
+                    adj = [[] for _ in range(N + 1)]
+                    indeg = [0] * (N + 1)
+                    for _ in range(M):
+                        u = int(data[idx]); idx += 1
+                        v = int(data[idx]); idx += 1
+                        adj[u].append(v)
+                        indeg[v] += 1
+
+                    # Kahn's algorithm with min-heap for lex smallest order
+                    heap = []
+                    for v in range(1, N + 1):
+                        if indeg[v] == 0:
+                            heapq.heappush(heap, v)
+
+                    result = []
+                    while heap:
+                        v = heapq.heappop(heap)
+                        result.append(v)
+                        for u in adj[v]:
+                            indeg[u] -= 1
+                            if indeg[u] == 0:
+                                heapq.heappush(heap, u)
+
+                    print(' '.join(map(str, result)))
+
+                solve()
+            test_cases:
+              - name: basic-dag
+                stdin: "4 3\n1 3\n2 3\n3 4\n"
+                expected_stdout: "1 2 3 4"
+                is_hidden: false
+                weight: 1
+              - name: no-edges
+                stdin: "3 0\n"
+                expected_stdout: "1 2 3"
+                is_hidden: false
+                weight: 1
+              - name: chain
+                stdin: "5 4\n1 2\n2 3\n3 4\n4 5\n"
+                expected_stdout: "1 2 3 4 5"
+                is_hidden: false
+                weight: 1
+              - name: diamond
+                stdin: "5 4\n1 3\n1 2\n2 4\n3 4\n"
+                expected_stdout: "1 2 3 4 5"
+                is_hidden: true
+                weight: 1
+              - name: reverse-fan
+                stdin: "6 4\n2 1\n3 1\n4 2\n4 3\n"
+                expected_stdout: "4 2 3 1 5 6"
+                is_hidden: true
+                weight: 2
+              - name: single-vertex
+                stdin: "1 0\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+
+      - slug: graph-theory-quiz
+        title: "Quiz: Graph Theory"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/graph-theory-quiz.md
+
+  - title: "Number Theory"
+    summary: "Divisibility, modular arithmetic, GCD, Euclid's algorithm, primes, the Chinese Remainder Theorem, and links to cryptography."
+    order_index: 6
+    lessons:
+      - slug: divisibility-and-modular
+        title: "Divisibility and Modular Arithmetic"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/divisibility-and-modular.md
+
+      - slug: gcd-and-primes
+        title: "GCD, Euclid's Algorithm, and Primes"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/gcd-and-primes.md
+
+      - slug: chinese-remainder-theorem
+        title: "Chinese Remainder Theorem"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/chinese-remainder-theorem.md
+
+      - slug: dm-gcd-exercise-lesson
+        title: "Exercise: Euclid's GCD"
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/dm-gcd-exercise.md
+        exercises:
+          - slug: dm-gcd
+            title: "Greatest Common Divisor"
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/dm-gcd.prompt.md
+            supported_languages: [python]
+            tags: [number-theory, gcd, euclid]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    a, b = int(data[0]), int(data[1])
+                    # TODO: compute gcd(a, b) using Euclid's algorithm
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    a, b = int(data[0]), int(data[1])
+
+                    # Euclid's algorithm (iterative)
+                    while b != 0:
+                        a, b = b, a % b
+                    print(a)
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "48 18\n"
+                expected_stdout: "6"
+                is_hidden: false
+                weight: 1
+              - name: large-factors
+                stdin: "100 75\n"
+                expected_stdout: "25"
+                is_hidden: false
+                weight: 1
+              - name: coprime
+                stdin: "7 13\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: reversed
+                stdin: "36 48\n"
+                expected_stdout: "12"
+                is_hidden: true
+                weight: 1
+              - name: perfect-divisor
+                stdin: "56 14\n"
+                expected_stdout: "14"
+                is_hidden: true
+                weight: 1
+              - name: fibonacci-like
+                stdin: "144 89\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: larger-composite
+                stdin: "252 105\n"
+                expected_stdout: "21"
+                is_hidden: true
+                weight: 1
+              - name: very-large
+                stdin: "1000000000000 999999999999\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 2
+
+      - slug: dm-modexp-exercise-lesson
+        title: "Exercise: Modular Exponentiation"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/dm-modexp-exercise.md
+        exercises:
+          - slug: dm-modexp
+            title: "Modular Exponentiation"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/dm-modexp.prompt.md
+            supported_languages: [python]
+            tags: [number-theory, cryptography, modular-arithmetic]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    base = int(data[0])
+                    exp  = int(data[1])
+                    mod  = int(data[2])
+                    # TODO: compute (base ** exp) % mod efficiently
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    base = int(data[0])
+                    exp  = int(data[1])
+                    mod  = int(data[2])
+
+                    # Fast modular exponentiation (repeated squaring)
+                    result = 1
+                    base = base % mod
+                    while exp > 0:
+                        if exp % 2 == 1:
+                            result = (result * base) % mod
+                        exp //= 2
+                        base = (base * base) % mod
+                    print(result)
+
+                solve()
+            test_cases:
+              - name: small-power
+                stdin: "2 10 1000\n"
+                expected_stdout: "24"
+                is_hidden: false
+                weight: 1
+              - name: mod-seven
+                stdin: "3 5 7\n"
+                expected_stdout: "5"
+                is_hidden: false
+                weight: 1
+              - name: zero-exponent
+                stdin: "2 0 13\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: base-one
+                stdin: "1 999 7\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: base-five
+                stdin: "5 3 13\n"
+                expected_stdout: "8"
+                is_hidden: true
+                weight: 1
+              - name: round-mod
+                stdin: "10 4 1000\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: large-exponent
+                stdin: "7 1000000000 1000000007\n"
+                expected_stdout: "312556845"
+                is_hidden: true
+                weight: 2
+
+      - slug: dm-sieve-exercise-lesson
+        title: "Exercise: Sieve of Eratosthenes"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/dm-sieve-exercise.md
+        exercises:
+          - slug: dm-sieve
+            title: "Count Primes up to N"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/dm-sieve.prompt.md
+            supported_languages: [python]
+            tags: [number-theory, primes, sieve]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    n = int(sys.stdin.read().strip())
+                    # TODO: count primes <= n using the Sieve of Eratosthenes
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    n = int(sys.stdin.read().strip())
+                    if n < 2:
+                        print(0)
+                        return
+                    is_prime = [True] * (n + 1)
+                    is_prime[0] = is_prime[1] = False
+                    p = 2
+                    while p * p <= n:
+                        if is_prime[p]:
+                            for k in range(p * p, n + 1, p):
+                                is_prime[k] = False
+                        p += 1
+                    print(sum(is_prime))
+
+                solve()
+            test_cases:
+              - name: zero
+                stdin: "0\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: two
+                stdin: "2\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: ten
+                stdin: "10\n"
+                expected_stdout: "4"
+                is_hidden: false
+                weight: 1
+              - name: twenty
+                stdin: "20\n"
+                expected_stdout: "8"
+                is_hidden: true
+                weight: 1
+              - name: fifty
+                stdin: "50\n"
+                expected_stdout: "15"
+                is_hidden: true
+                weight: 1
+              - name: hundred
+                stdin: "100\n"
+                expected_stdout: "25"
+                is_hidden: true
+                weight: 1
+              - name: one
+                stdin: "1\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+
+      - slug: number-theory-quiz
+        title: "Quiz: Number Theory"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/number-theory-quiz.md
+
+  - title: "Recurrences and Growth"
+    summary: "Recurrence relations, solving them with characteristic roots and the Master Theorem, and Big-O asymptotics."
+    order_index: 7
+    lessons:
+      - slug: recurrence-relations
+        title: "Recurrence Relations"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/recurrence-relations.md
+
+      - slug: asymptotic-growth
+        title: "Asymptotic Growth and Big-O Notation"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/asymptotic-growth.md
+
+      - slug: dm-fibonacci-mod-exercise-lesson
+        title: "Exercise: Fibonacci Modulo m"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/dm-fibonacci-mod-exercise.md
+        exercises:
+          - slug: dm-fibonacci-mod
+            title: "Fibonacci Modulo m"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/dm-fibonacci-mod.prompt.md
+            supported_languages: [python]
+            tags: [recurrences, fibonacci, modular-arithmetic]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, m = int(data[0]), int(data[1])
+                    # TODO: compute F(n) mod m
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, m = int(data[0]), int(data[1])
+
+                    if n == 0:
+                        print(0)
+                        return
+                    if n == 1:
+                        print(1 % m)
+                        return
+
+                    a, b = 0, 1
+                    for _ in range(2, n + 1):
+                        a, b = b, (a + b) % m
+
+                    print(b)
+
+                solve()
+            test_cases:
+              - name: fib-zero
+                stdin: "0 7\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: fib-one
+                stdin: "1 7\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: fib-six-mod5
+                stdin: "6 5\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: fib-ten-mod3
+                stdin: "10 3\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: fib-twenty-mod1000
+                stdin: "20 1000\n"
+                expected_stdout: "765"
+                is_hidden: true
+                weight: 1
+              - name: fib-fifty-mod1000
+                stdin: "50 1000\n"
+                expected_stdout: "25"
+                is_hidden: true
+                weight: 2
+              - name: fib-large
+                stdin: "1000000 1000000007\n"
+                expected_stdout: "918091266"
+                is_hidden: true
+                weight: 2
+
+      - slug: recurrences-quiz
+        title: "Quiz: Recurrences and Growth"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/recurrences-quiz.md

@@ -12,10 +12,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
 import {
   LucideAngularModule,
+  LucideIconData,
   BookOpen,
+  Brain,
+  Code,
   Code2,
   Clock,
   ChevronRight,
+  Cpu,
+  Database,
+  GitBranch,
+  Globe,
+  Lightbulb,
+  Server,
+  Sigma,
   Zap,
   BarChart2,
   Layers,
@@ -44,6 +54,18 @@ export class HomeComponent implements OnInit {
   readonly BarChart2 = BarChart2;
   readonly Layers = Layers;
   readonly ArrowRight = ArrowRight;
+
+  private readonly iconMap: Record<string, LucideIconData> = {
+    'lightbulb':  Lightbulb,
+    'code':       Code,
+    'server':     Server,
+    'sigma':      Sigma,
+    'git-branch': GitBranch,
+    'brain':      Brain,
+    'cpu':        Cpu,
+    'globe':      Globe,
+    'database':   Database,
+  };
 
   readonly subjects = signal<Subject[]>([]);
   readonly courses = signal<Course[]>([]);
@@ -87,6 +109,15 @@ export class HomeComponent implements OnInit {
       case 'advanced':     return 'Advanced';
       default:             return difficulty;
     }
+  }
+
+  subjectIcon(iconKey: string | undefined): LucideIconData {
+    return (iconKey && this.iconMap[iconKey]) ? this.iconMap[iconKey] : Layers;
+  }
+
+  subjectAccentStyle(color: string | undefined): Record<string, string> {
+    if (!color) return {};
+    return { 'border-left-color': color, 'color': color };
   }
 
   subjectGradient(index: number): string {

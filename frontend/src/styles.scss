@@ -27,7 +27,7 @@
   --color-app-border-2:    63  63  70; /* zinc-700 */
   --color-app-text:       250 250 250; /* zinc-50  */
   --color-app-text-2:     161 161 170; /* zinc-400 */
-  --color-app-text-muted:  82  82  91; /* zinc-600 */
+  --color-app-text-muted: 113 113 122; /* zinc-500 — brighter than zinc-600 so muted text stays readable on dark bg */
   --grid-line: rgba(255, 255, 255, 0.03);
 }
 
@@ -60,18 +60,42 @@
   }
 
   h1, h2, h3, h4, h5, h6 { @apply font-semibold text-app-text; }
-  a { @apply text-brand hover:text-brand-dark dark:text-brand-light dark:hover:text-brand transition-colors; }
+  /* Links: brand (blue-500) on light bg passes 4.5:1; brand-light (blue-400) on dark bg passes 4.5:1 */
+  a { @apply text-brand hover:text-brand-dark dark:text-brand-light dark:hover:text-brand-light transition-colors; }
   code, pre { font-family: 'JetBrains Mono', monospace; }
 }
 
 /* ─── Component classes ───────────────────────────────────── */
 @layer components {
   /* Buttons */
-  .btn          { @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed; }
-  .btn-primary  { @apply btn bg-brand hover:bg-brand-dark text-white shadow-sm; }
-  .btn-secondary{ @apply btn bg-app-surface-2 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-app-text border border-app-border; }
-  .btn-ghost    { @apply btn hover:bg-app-surface-2 text-app-text-2 hover:text-app-text; }
-  .btn-danger   { @apply btn bg-red-600 hover:bg-red-500 text-white; }
+  .btn          { @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg; }
+  /* Primary: soft gradient-outline pill. At rest = soft surface with a purple→blue gradient ring;
+     on hover the inner fills with the gradient. Soft in BOTH themes; text stays high-contrast. */
+  .btn-primary  {
+    @apply btn text-app-text dark:text-white;
+    border: 1.5px solid transparent;
+    background:
+      linear-gradient(rgb(var(--color-app-surface)), rgb(var(--color-app-surface))) padding-box,
+      linear-gradient(135deg, #8b5cf6, #3b82f6) border-box;
+  }
+  .btn-primary:hover {
+    @apply text-white;
+    background:
+      linear-gradient(135deg, #8b5cf6, #3b82f6) padding-box,
+      linear-gradient(135deg, #8b5cf6, #3b82f6) border-box;
+  }
+  .btn-primary:active {
+    @apply text-white;
+    background:
+      linear-gradient(135deg, #7c3aed, #2563eb) padding-box,
+      linear-gradient(135deg, #7c3aed, #2563eb) border-box;
+  }
+  /* Secondary: dark text on surface — stays readable in both themes on hover */
+  .btn-secondary{ @apply btn bg-app-surface-2 hover:bg-zinc-200 active:bg-zinc-300 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 text-app-text border border-app-border; }
+  /* Ghost: muted text gets full text-app-text on hover with subtle bg */
+  .btn-ghost    { @apply btn hover:bg-app-surface-2 active:bg-app-border text-app-text-2 hover:text-app-text active:text-app-text; }
+  /* Danger: always white text on red bg */
+  .btn-danger   { @apply btn bg-red-600 hover:bg-red-700 active:bg-red-800 text-white; }
   .btn-sm       { @apply px-3 py-1.5 text-xs; }
   .btn-lg       { @apply px-6 py-3 text-base; }
   .btn-icon     { @apply btn p-2 rounded-lg; }

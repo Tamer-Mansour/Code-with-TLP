@@ -103,10 +103,26 @@ export class AdminService {
     return this.http.post<any>(`${this.base}/modules`, data);
   }
 
+  updateModule(id: number, data: any): Observable<any> {
+    return this.http.patch<any>(`${this.base}/modules/${id}`, data);
+  }
+
+  deleteModule(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/modules/${id}`);
+  }
+
   // ── Lessons ───────────────────────────────────────────────
 
   createLesson(data: any): Observable<any> {
     return this.http.post<any>(`${this.base}/lessons`, data);
+  }
+
+  updateLesson(id: number, data: any): Observable<any> {
+    return this.http.patch<any>(`${this.base}/lessons/${id}`, data);
+  }
+
+  deleteLesson(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/lessons/${id}`);
   }
 
   // ── Test Cases ────────────────────────────────────────────

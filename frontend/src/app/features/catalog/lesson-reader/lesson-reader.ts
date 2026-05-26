@@ -110,6 +110,30 @@ export class LessonReaderComponent implements OnInit {
     return `${m}:${s.toString().padStart(2, '0')}`;
   }
 
+  /** Markdown body with a leading H1 stripped when it just repeats the lesson title
+   *  (the title is already shown in the header, so authoring it as the first heading
+   *  would render it twice). */
+  get contentBody(): string {
+    const ls = this.lesson();
+    if (!ls?.content_md) return '';
+    return this.stripDuplicateTitle(ls.content_md, ls.title);
+  }
+
+  private stripDuplicateTitle(md: string, title: string): string {
+    const norm = (s: string) =>
+      s.replace(/[#*_`]/g, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim().toLowerCase();
+    const lines = md.split('\n');
+    let i = 0;
+    while (i < lines.length && lines[i].trim() === '') i++;
+    const heading = lines[i]?.match(/^#{1,6}\s+(.+?)\s*#*\s*$/);
+    if (heading && norm(heading[1]) === norm(title)) {
+      lines.splice(0, i + 1);
+      while (lines.length && lines[0].trim() === '') lines.shift();
+      return lines.join('\n');
+    }
+    return md;
+  }
+
   private startTimer(): void {
     this.stopTimer();
     this.timeSpent.set(0);

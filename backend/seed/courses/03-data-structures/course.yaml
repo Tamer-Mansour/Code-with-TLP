@@ -1,0 +1,1625 @@
+subject:
+  slug: algorithms
+  name: Algorithms
+  description: "Core algorithms and data structures."
+  icon: cpu
+  color: "#3b82f6"
+  order_index: 1
+
+course:
+  slug: data-structures
+  title: Data Structures
+  summary: "Master arrays, linked lists, trees, graphs, and more — with Big-O analysis and hands-on coding exercises."
+  description: |
+    A comprehensive, code-heavy tour of the essential data structures every software engineer must know.
+    You will implement and analyse arrays, linked lists, stacks, queues, hash tables, trees, heaps, graphs,
+    and tries — building intuition for when and why to reach for each structure.
+    Each module pairs concise reading with Big-O tables and hands-on stdin/stdout exercises.
+  difficulty: intermediate
+  estimated_hours: 30
+  is_published: true
+  order_index: 2
+
+modules:
+  - title: Arrays & Dynamic Arrays
+    summary: Memory layout, indexing, amortised growth, and key array patterns.
+    order_index: 1
+    lessons:
+      - slug: arrays-memory-layout
+        title: Arrays and Memory Layout
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/arrays-memory-layout.md
+
+      - slug: dynamic-array-operations
+        title: Dynamic Array Operations
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/dynamic-array-operations.md
+
+      - slug: rotate-array-exercise
+        title: "Exercise: Rotate Array"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ds-rotate-array.md
+        exercises:
+          - slug: ds-rotate-array
+            title: Rotate Array
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ds-rotate-array.prompt.md
+            supported_languages: [python]
+            tags: [arrays, rotation, modular-arithmetic]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, k = int(data[0]), int(data[1])
+                    arr = list(map(int, data[2:2+n]))
+                    # TODO: rotate arr right by k steps
+                    print(*arr)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, k = int(data[0]), int(data[1])
+                    arr = list(map(int, data[2:2+n]))
+                    k = k % n
+                    arr = arr[-k:] + arr[:-k] if k else arr
+                    print(*arr)
+
+                solve()
+            test_cases:
+              - name: basic-rotation
+                stdin: "5 2\n1 2 3 4 5\n"
+                expected_stdout: "4 5 1 2 3"
+                is_hidden: false
+                weight: 1
+              - name: zero-rotation
+                stdin: "3 0\n7 8 9\n"
+                expected_stdout: "7 8 9"
+                is_hidden: false
+                weight: 1
+              - name: full-rotation
+                stdin: "4 4\n1 2 3 4\n"
+                expected_stdout: "1 2 3 4"
+                is_hidden: false
+                weight: 1
+              - name: large-k
+                stdin: "5 7\n1 2 3 4 5\n"
+                expected_stdout: "4 5 1 2 3"
+                is_hidden: true
+                weight: 1
+              - name: single-element
+                stdin: "1 100\n42\n"
+                expected_stdout: "42"
+                is_hidden: true
+                weight: 1
+              - name: two-elements-odd-k
+                stdin: "2 3\n10 20\n"
+                expected_stdout: "20 10"
+                is_hidden: true
+                weight: 1
+
+  - title: Linked Lists
+    summary: Singly and doubly linked lists, insertion, deletion, and reversal.
+    order_index: 2
+    lessons:
+      - slug: linked-lists-intro
+        title: Linked Lists
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/linked-lists-intro.md
+
+      - slug: reverse-linked-list-exercise
+        title: "Exercise: Reverse a Linked List"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ds-reverse-linked-list.md
+        exercises:
+          - slug: ds-reverse-linked-list
+            title: Reverse a Linked List
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ds-reverse-linked-list.prompt.md
+            supported_languages: [python]
+            tags: [linked-list, reversal, pointers]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class Node:
+                    def __init__(self, val):
+                        self.val = val
+                        self.next = None
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    vals = list(map(int, data[1:n+1]))
+                    # TODO: build list, reverse it, print values
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class Node:
+                    def __init__(self, val):
+                        self.val = val
+                        self.next = None
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    vals = list(map(int, data[1:n+1]))
+
+                    # Build linked list
+                    head = None
+                    for v in reversed(vals):
+                        node = Node(v)
+                        node.next = head
+                        head = node
+
+                    # Reverse iteratively
+                    prev = None
+                    cur = head
+                    while cur:
+                        nxt = cur.next
+                        cur.next = prev
+                        prev = cur
+                        cur = nxt
+
+                    # Print
+                    result = []
+                    node = prev
+                    while node:
+                        result.append(str(node.val))
+                        node = node.next
+                    print(' '.join(result))
+
+                solve()
+            test_cases:
+              - name: five-elements
+                stdin: "5\n1 2 3 4 5\n"
+                expected_stdout: "5 4 3 2 1"
+                is_hidden: false
+                weight: 1
+              - name: single-element
+                stdin: "1\n42\n"
+                expected_stdout: "42"
+                is_hidden: false
+                weight: 1
+              - name: two-elements
+                stdin: "2\n10 20\n"
+                expected_stdout: "20 10"
+                is_hidden: false
+                weight: 1
+              - name: four-elements
+                stdin: "4\n10 20 30 40\n"
+                expected_stdout: "40 30 20 10"
+                is_hidden: true
+                weight: 1
+              - name: negatives
+                stdin: "3\n-1 0 1\n"
+                expected_stdout: "1 0 -1"
+                is_hidden: true
+                weight: 1
+              - name: all-same
+                stdin: "4\n7 7 7 7\n"
+                expected_stdout: "7 7 7 7"
+                is_hidden: true
+                weight: 1
+
+  - title: Stacks & Queues
+    summary: LIFO and FIFO structures, deque, circular buffer, and queue-from-two-stacks.
+    order_index: 3
+    lessons:
+      - slug: stacks-and-queues
+        title: Stacks & Queues
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/stacks-and-queues.md
+
+      - slug: balanced-parens-exercise
+        title: "Exercise: Balanced Parentheses"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ds-balanced-parens.md
+        exercises:
+          - slug: ds-balanced-parens
+            title: Balanced Parentheses
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ds-balanced-parens.prompt.md
+            supported_languages: [python]
+            tags: [stack, strings, brackets]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    t = int(data[0])
+                    for i in range(1, t + 1):
+                        s = data[i].strip()
+                        # TODO: check if s is balanced
+                        print("YES")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def is_balanced(s):
+                    match = {')': '(', '}': '{', ']': '['}
+                    stack = []
+                    for ch in s:
+                        if ch in '({[':
+                            stack.append(ch)
+                        elif ch in ')}]':
+                            if not stack or stack[-1] != match[ch]:
+                                return False
+                            stack.pop()
+                    return len(stack) == 0
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    t = int(data[0])
+                    out = []
+                    for i in range(1, t + 1):
+                        s = data[i].strip()
+                        out.append("YES" if is_balanced(s) else "NO")
+                    print('\n'.join(out))
+
+                solve()
+            test_cases:
+              - name: mixed-valid-invalid
+                stdin: "4\n()\n()[{}]\n(]\n([)]\n"
+                expected_stdout: "YES\nYES\nNO\nNO"
+                is_hidden: false
+                weight: 1
+              - name: empty-string
+                stdin: "1\n\n"
+                expected_stdout: "YES"
+                is_hidden: false
+                weight: 1
+              - name: only-opening
+                stdin: "1\n(((\n"
+                expected_stdout: "NO"
+                is_hidden: false
+                weight: 1
+              - name: nested-valid
+                stdin: "1\n{[()]}\n"
+                expected_stdout: "YES"
+                is_hidden: true
+                weight: 1
+              - name: multiple-valid
+                stdin: "3\n(())\n[]{}\n{[}]\n"
+                expected_stdout: "YES\nYES\nNO"
+                is_hidden: true
+                weight: 1
+              - name: only-closing
+                stdin: "1\n)))\n"
+                expected_stdout: "NO"
+                is_hidden: true
+                weight: 1
+
+      - slug: stack-simulator-exercise
+        title: "Exercise: Stack Simulator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ds-stack-simulator.md
+        exercises:
+          - slug: ds-stack-simulator
+            title: Stack Simulator
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ds-stack-simulator.prompt.md
+            supported_languages: [python]
+            tags: [stack, simulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    q = int(data[0])
+                    stack = []
+                    for i in range(1, q + 1):
+                        line = data[i].strip()
+                        # TODO: handle PUSH, POP, TOP
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    q = int(data[0])
+                    stack = []
+                    out = []
+                    for i in range(1, q + 1):
+                        line = data[i].strip()
+                        if line.startswith('PUSH'):
+                            val = int(line.split()[1])
+                            stack.append(val)
+                        elif line == 'POP':
+                            if stack:
+                                out.append(str(stack.pop()))
+                            else:
+                                out.append('EMPTY')
+                        elif line == 'TOP':
+                            if stack:
+                                out.append(str(stack[-1]))
+                            else:
+                                out.append('EMPTY')
+                    print('\n'.join(out))
+
+                solve()
+            test_cases:
+              - name: basic-ops
+                stdin: "7\nPUSH 5\nPUSH 3\nTOP\nPOP\nPOP\nPOP\nPUSH 1\n"
+                expected_stdout: "3\n3\n5\nEMPTY"
+                is_hidden: false
+                weight: 1
+              - name: empty-pop
+                stdin: "2\nPOP\nTOP\n"
+                expected_stdout: "EMPTY\nEMPTY"
+                is_hidden: false
+                weight: 1
+              - name: push-then-pop-all
+                stdin: "5\nPUSH 10\nPUSH 20\nPOP\nPOP\nPOP\n"
+                expected_stdout: "20\n10\nEMPTY"
+                is_hidden: true
+                weight: 1
+              - name: negatives
+                stdin: "4\nPUSH -5\nPUSH -3\nTOP\nPOP\n"
+                expected_stdout: "-3\n-3"
+                is_hidden: true
+                weight: 1
+              - name: single-push-top
+                stdin: "2\nPUSH 99\nTOP\n"
+                expected_stdout: "99"
+                is_hidden: true
+                weight: 1
+
+      - slug: queue-two-stacks-exercise
+        title: "Exercise: Queue via Two Stacks"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ds-queue-two-stacks.md
+        exercises:
+          - slug: ds-queue-two-stacks
+            title: Queue via Two Stacks
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/ds-queue-two-stacks.prompt.md
+            supported_languages: [python]
+            tags: [stack, queue, simulation, amortised]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    q = int(data[0])
+                    inbox = []
+                    outbox = []
+                    for i in range(1, q + 1):
+                        line = data[i].strip()
+                        # TODO: handle ENQUEUE, DEQUEUE, FRONT
+                        # Use only inbox.append(), inbox.pop(),
+                        # outbox.append(), outbox.pop()
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    q = int(data[0])
+                    inbox = []
+                    outbox = []
+                    out = []
+
+                    def transfer():
+                        while inbox:
+                            outbox.append(inbox.pop())
+
+                    for i in range(1, q + 1):
+                        line = data[i].strip()
+                        if line.startswith('ENQUEUE'):
+                            val = int(line.split()[1])
+                            inbox.append(val)
+                        elif line == 'DEQUEUE':
+                            if not outbox:
+                                transfer()
+                            out.append(str(outbox.pop()) if outbox else 'EMPTY')
+                        elif line == 'FRONT':
+                            if not outbox:
+                                transfer()
+                            out.append(str(outbox[-1]) if outbox else 'EMPTY')
+                    print('\n'.join(out))
+
+                solve()
+            test_cases:
+              - name: basic-fifo
+                stdin: "8\nENQUEUE 10\nENQUEUE 20\nFRONT\nDEQUEUE\nDEQUEUE\nDEQUEUE\nENQUEUE 5\nFRONT\n"
+                expected_stdout: "10\n10\n20\nEMPTY\n5"
+                is_hidden: false
+                weight: 1
+              - name: empty-dequeue
+                stdin: "2\nDEQUEUE\nFRONT\n"
+                expected_stdout: "EMPTY\nEMPTY"
+                is_hidden: false
+                weight: 1
+              - name: interleaved
+                stdin: "6\nENQUEUE 1\nENQUEUE 2\nDEQUEUE\nENQUEUE 3\nDEQUEUE\nDEQUEUE\n"
+                expected_stdout: "1\n2\n3"
+                is_hidden: false
+                weight: 1
+              - name: front-does-not-remove
+                stdin: "4\nENQUEUE 7\nFRONT\nFRONT\nDEQUEUE\n"
+                expected_stdout: "7\n7\n7"
+                is_hidden: true
+                weight: 1
+              - name: negatives
+                stdin: "4\nENQUEUE -1\nENQUEUE -2\nDEQUEUE\nDEQUEUE\n"
+                expected_stdout: "-1\n-2"
+                is_hidden: true
+                weight: 1
+
+  - title: Hash Tables
+    summary: Hashing, collision resolution, load factor, and Python dicts and sets.
+    order_index: 4
+    lessons:
+      - slug: hash-tables
+        title: Hash Tables
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/hash-tables.md
+
+      - slug: word-frequency-exercise
+        title: "Exercise: Word Frequency Counter"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ds-word-frequency.md
+        exercises:
+          - slug: ds-word-frequency
+            title: Word Frequency Counter
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ds-word-frequency.prompt.md
+            supported_languages: [python]
+            tags: [hash-table, frequency-count, sorting]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    words = data[1:n+1]
+                    # TODO: count frequencies and print in alphabetical order
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import Counter
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    words = data[1:n+1]
+                    freq = Counter(words)
+                    out = []
+                    for word in sorted(freq):
+                        out.append(f"{word} {freq[word]}")
+                    print('\n'.join(out))
+
+                solve()
+            test_cases:
+              - name: basic-count
+                stdin: "7\napple banana apple cherry banana apple cherry\n"
+                expected_stdout: "apple 3\nbanana 2\ncherry 2"
+                is_hidden: false
+                weight: 1
+              - name: two-words
+                stdin: "3\ndog cat dog\n"
+                expected_stdout: "cat 1\ndog 2"
+                is_hidden: false
+                weight: 1
+              - name: all-same
+                stdin: "4\nfoo foo foo foo\n"
+                expected_stdout: "foo 4"
+                is_hidden: false
+                weight: 1
+              - name: single-word
+                stdin: "1\nhello\n"
+                expected_stdout: "hello 1"
+                is_hidden: true
+                weight: 1
+              - name: many-distinct
+                stdin: "5\ne d c b a\n"
+                expected_stdout: "a 1\nb 1\nc 1\nd 1\ne 1"
+                is_hidden: true
+                weight: 1
+
+      - slug: two-sum-exercise
+        title: "Exercise: Two-Sum with Hash Table"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ds-two-sum.md
+        exercises:
+          - slug: ds-two-sum
+            title: Two-Sum with Hash Table
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ds-two-sum.prompt.md
+            supported_languages: [python]
+            tags: [hash-table, two-sum, pairs]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, t = int(data[0]), int(data[1])
+                    nums = list(map(int, data[2:2+n]))
+                    # TODO: find all pairs (i,j) with i<j and nums[i]+nums[j]==t
+                    # print each as "i j", sorted by i then j
+                    # if none, print NONE
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, t = int(data[0]), int(data[1])
+                    nums = list(map(int, data[2:2+n]))
+
+                    # Build map: value -> sorted list of indices
+                    idx_map = {}
+                    for i, x in enumerate(nums):
+                        if x not in idx_map:
+                            idx_map[x] = []
+                        idx_map[x].append(i)
+
+                    pairs = set()
+                    for i, x in enumerate(nums):
+                        complement = t - x
+                        if complement in idx_map:
+                            for j in idx_map[complement]:
+                                if j > i:
+                                    pairs.add((i, j))
+
+                    result = sorted(pairs)
+                    if not result:
+                        print('NONE')
+                    else:
+                        print('\n'.join(f'{i} {j}' for i, j in result))
+
+                solve()
+            test_cases:
+              - name: multiple-pairs
+                stdin: "6 9\n2 7 11 15 2 7\n"
+                expected_stdout: "0 1\n0 5\n1 4\n4 5"
+                is_hidden: false
+                weight: 1
+              - name: no-pair
+                stdin: "4 100\n1 2 3 4\n"
+                expected_stdout: "NONE"
+                is_hidden: false
+                weight: 1
+              - name: simple-pair
+                stdin: "4 5\n1 2 3 4\n"
+                expected_stdout: "0 3\n1 2"
+                is_hidden: false
+                weight: 1
+              - name: all-same
+                stdin: "3 10\n5 5 5\n"
+                expected_stdout: "0 1\n0 2\n1 2"
+                is_hidden: true
+                weight: 1
+              - name: negatives
+                stdin: "4 0\n-2 2 -1 1\n"
+                expected_stdout: "0 1\n2 3"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-arrays-to-hash
+        title: "Quiz: Arrays to Hash Tables"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-arrays-to-hash.md
+
+  - title: Trees & Binary Search Trees
+    summary: Tree terminology, traversals, BST insert/search/delete, AVL balancing intro.
+    order_index: 5
+    lessons:
+      - slug: trees-and-bst
+        title: Trees & Binary Search Trees
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/trees-and-bst.md
+
+      - slug: bst-insert-inorder-exercise
+        title: "Exercise: BST Insert and In-Order Traversal"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ds-bst-insert-inorder.md
+        exercises:
+          - slug: ds-bst-insert-inorder
+            title: BST Insert and In-Order Traversal
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/ds-bst-insert-inorder.prompt.md
+            supported_languages: [python]
+            tags: [bst, tree, traversal, sorting]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class TreeNode:
+                    def __init__(self, val):
+                        self.val = val
+                        self.left = None
+                        self.right = None
+
+                def insert(root, val):
+                    # TODO
+                    pass
+
+                def inorder(root, result):
+                    # TODO
+                    pass
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    vals = list(map(int, data[1:n+1]))
+                    root = None
+                    for v in vals:
+                        root = insert(root, v)
+                    result = []
+                    inorder(root, result)
+                    print(*result)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class TreeNode:
+                    def __init__(self, val):
+                        self.val = val
+                        self.left = None
+                        self.right = None
+
+                def insert(root, val):
+                    if root is None:
+                        return TreeNode(val)
+                    if val < root.val:
+                        root.left = insert(root.left, val)
+                    elif val > root.val:
+                        root.right = insert(root.right, val)
+                    return root
+
+                def inorder(root, result):
+                    if root:
+                        inorder(root.left, result)
+                        result.append(root.val)
+                        inorder(root.right, result)
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    vals = list(map(int, data[1:n+1]))
+                    root = None
+                    for v in vals:
+                        root = insert(root, v)
+                    result = []
+                    inorder(root, result)
+                    print(*result)
+
+                solve()
+            test_cases:
+              - name: five-values
+                stdin: "5\n5 3 7 1 4\n"
+                expected_stdout: "1 3 4 5 7"
+                is_hidden: false
+                weight: 1
+              - name: three-values
+                stdin: "3\n10 5 15\n"
+                expected_stdout: "5 10 15"
+                is_hidden: false
+                weight: 1
+              - name: single-value
+                stdin: "1\n42\n"
+                expected_stdout: "42"
+                is_hidden: false
+                weight: 1
+              - name: sorted-insert
+                stdin: "5\n1 2 3 4 5\n"
+                expected_stdout: "1 2 3 4 5"
+                is_hidden: true
+                weight: 1
+              - name: reverse-sorted
+                stdin: "4\n8 6 4 2\n"
+                expected_stdout: "2 4 6 8"
+                is_hidden: true
+                weight: 1
+              - name: negative-values
+                stdin: "5\n0 -3 3 -1 1\n"
+                expected_stdout: "-3 -1 0 1 3"
+                is_hidden: true
+                weight: 1
+
+      - slug: bst-level-order-exercise
+        title: "Exercise: BST Level-Order Traversal"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ds-bst-level-order.md
+        exercises:
+          - slug: ds-bst-level-order
+            title: BST Level-Order Traversal
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/ds-bst-level-order.prompt.md
+            supported_languages: [python]
+            tags: [bst, tree, bfs, level-order]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import deque
+
+                class TreeNode:
+                    def __init__(self, val):
+                        self.val = val
+                        self.left = None
+                        self.right = None
+
+                def insert(root, val):
+                    # TODO: standard BST insert
+                    pass
+
+                def level_order(root):
+                    # TODO: return list of strings, one per level
+                    pass
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    vals = list(map(int, data[1:n+1]))
+                    root = None
+                    for v in vals:
+                        root = insert(root, v)
+                    for line in level_order(root):
+                        print(line)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import deque
+
+                class TreeNode:
+                    def __init__(self, val):
+                        self.val = val
+                        self.left = None
+                        self.right = None
+
+                def insert(root, val):
+                    if root is None:
+                        return TreeNode(val)
+                    if val < root.val:
+                        root.left = insert(root.left, val)
+                    elif val > root.val:
+                        root.right = insert(root.right, val)
+                    return root
+
+                def level_order(root):
+                    if not root:
+                        return []
+                    result = []
+                    q = deque([root])
+                    while q:
+                        level_size = len(q)
+                        level = []
+                        for _ in range(level_size):
+                            node = q.popleft()
+                            level.append(str(node.val))
+                            if node.left:
+                                q.append(node.left)
+                            if node.right:
+                                q.append(node.right)
+                        result.append(' '.join(level))
+                    return result
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    vals = list(map(int, data[1:n+1]))
+                    root = None
+                    for v in vals:
+                        root = insert(root, v)
+                    for line in level_order(root):
+                        print(line)
+
+                solve()
+            test_cases:
+              - name: balanced-tree
+                stdin: "7\n5 3 7 1 4 6 8\n"
+                expected_stdout: "5\n3 7\n1 4 6 8"
+                is_hidden: false
+                weight: 1
+              - name: single-node
+                stdin: "1\n42\n"
+                expected_stdout: "42"
+                is_hidden: false
+                weight: 1
+              - name: three-values
+                stdin: "3\n10 5 15\n"
+                expected_stdout: "10\n5 15"
+                is_hidden: false
+                weight: 1
+              - name: right-skewed
+                stdin: "4\n1 2 3 4\n"
+                expected_stdout: "1\n2\n3\n4"
+                is_hidden: true
+                weight: 1
+              - name: deeper-tree
+                stdin: "8\n5 3 7 2 4 6 9 1\n"
+                expected_stdout: "5\n3 7\n2 4 6 9\n1"
+                is_hidden: true
+                weight: 1
+
+  - title: Heaps & Priority Queues
+    summary: Binary heap structure, heapify, push/pop, k-th largest, and priority queue patterns.
+    order_index: 6
+    lessons:
+      - slug: heaps-priority-queues
+        title: Heaps & Priority Queues
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/heaps-priority-queues.md
+
+      - slug: heap-pushpop-exercise
+        title: "Exercise: Min-Heap Push/Pop Sequence"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ds-heap-pushpop.md
+        exercises:
+          - slug: ds-heap-pushpop
+            title: Min-Heap Push/Pop Sequence
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/ds-heap-pushpop.prompt.md
+            supported_languages: [python]
+            tags: [heap, priority-queue, simulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import heapq
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    q = int(data[0])
+                    heap = []
+                    for i in range(1, q + 1):
+                        line = data[i].strip()
+                        # TODO: handle PUSH and POP commands
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import heapq
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    q = int(data[0])
+                    heap = []
+                    out = []
+                    for i in range(1, q + 1):
+                        line = data[i].strip()
+                        if line.startswith('PUSH'):
+                            val = int(line.split()[1])
+                            heapq.heappush(heap, val)
+                        elif line == 'POP':
+                            if heap:
+                                out.append(str(heapq.heappop(heap)))
+                            else:
+                                out.append('EMPTY')
+                    print('\n'.join(out))
+
+                solve()
+            test_cases:
+              - name: basic-sequence
+                stdin: "7\nPUSH 5\nPUSH 3\nPUSH 8\nPOP\nPOP\nPUSH 1\nPOP\n"
+                expected_stdout: "3\n5\n1"
+                is_hidden: false
+                weight: 1
+              - name: empty-pop
+                stdin: "3\nPOP\nPUSH 10\nPOP\n"
+                expected_stdout: "EMPTY\n10"
+                is_hidden: false
+                weight: 1
+              - name: min-ordering
+                stdin: "5\nPUSH 9\nPUSH 1\nPUSH 5\nPOP\nPOP\n"
+                expected_stdout: "1\n5"
+                is_hidden: false
+                weight: 1
+              - name: all-pops-empty
+                stdin: "3\nPOP\nPOP\nPOP\n"
+                expected_stdout: "EMPTY\nEMPTY\nEMPTY"
+                is_hidden: true
+                weight: 1
+              - name: negatives
+                stdin: "4\nPUSH -2\nPUSH -5\nPUSH 0\nPOP\n"
+                expected_stdout: "-5"
+                is_hidden: true
+                weight: 1
+              - name: sorted-push
+                stdin: "6\nPUSH 1\nPUSH 2\nPUSH 3\nPOP\nPOP\nPOP\n"
+                expected_stdout: "1\n2\n3"
+                is_hidden: true
+                weight: 1
+
+      - slug: kth-largest-exercise
+        title: "Exercise: K-th Largest Element"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ds-kth-largest-heap.md
+        exercises:
+          - slug: ds-kth-largest-heap
+            title: K-th Largest Element via Min-Heap
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/ds-kth-largest-heap.prompt.md
+            supported_languages: [python]
+            tags: [heap, priority-queue, top-k, streaming]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import heapq
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, k = int(data[0]), int(data[1])
+                    nums = list(map(int, data[2:2+n]))
+                    # TODO: find k-th largest using a min-heap of size k
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import heapq
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n, k = int(data[0]), int(data[1])
+                    nums = list(map(int, data[2:2+n]))
+
+                    min_heap = []
+                    for x in nums:
+                        heapq.heappush(min_heap, x)
+                        if len(min_heap) > k:
+                            heapq.heappop(min_heap)
+                    print(min_heap[0])
+
+                solve()
+            test_cases:
+              - name: basic-k2
+                stdin: "6 2\n3 2 1 5 6 4\n"
+                expected_stdout: "5"
+                is_hidden: false
+                weight: 1
+              - name: basic-k4
+                stdin: "9 4\n3 2 3 1 2 4 5 5 6\n"
+                expected_stdout: "4"
+                is_hidden: false
+                weight: 1
+              - name: single-element
+                stdin: "1 1\n42\n"
+                expected_stdout: "42"
+                is_hidden: false
+                weight: 1
+              - name: negatives
+                stdin: "5 2\n-1 -2 -3 -4 -5\n"
+                expected_stdout: "-2"
+                is_hidden: true
+                weight: 1
+              - name: all-same
+                stdin: "4 1\n5 5 5 5\n"
+                expected_stdout: "5"
+                is_hidden: true
+                weight: 1
+              - name: k-equals-n
+                stdin: "5 5\n9 8 7 6 5\n"
+                expected_stdout: "5"
+                is_hidden: true
+                weight: 1
+
+  - title: "Graphs — Representations & Traversals"
+    summary: Adjacency list and matrix, BFS, DFS, topological sort, cycle detection.
+    order_index: 7
+    lessons:
+      - slug: graphs-representations
+        title: "Graphs — Representations & Traversals"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/graphs-representations.md
+
+      - slug: bfs-shortest-path-exercise
+        title: "Exercise: BFS Shortest Path"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ds-bfs-shortest-path.md
+        exercises:
+          - slug: ds-bfs-shortest-path
+            title: BFS Shortest Path
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/ds-bfs-shortest-path.prompt.md
+            supported_languages: [python]
+            tags: [graph, bfs, shortest-path]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                from collections import deque
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    V, E = int(data[idx]), int(data[idx+1])
+                    idx += 2
+                    graph = [[] for _ in range(V)]
+                    for _ in range(E):
+                        u, v = int(data[idx]), int(data[idx+1])
+                        idx += 2
+                        graph[u].append(v)
+                        graph[v].append(u)
+                    s = int(data[idx])
+                    # TODO: BFS from s, print distances
+
+                solve()
+            solution_code:
+              python: |
+                from collections import deque
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    V, E = int(data[idx]), int(data[idx+1])
+                    idx += 2
+                    graph = [[] for _ in range(V)]
+                    for _ in range(E):
+                        u, v = int(data[idx]), int(data[idx+1])
+                        idx += 2
+                        graph[u].append(v)
+                        graph[v].append(u)
+                    s = int(data[idx])
+
+                    dist = [-1] * V
+                    dist[s] = 0
+                    q = deque([s])
+                    while q:
+                        node = q.popleft()
+                        for nb in graph[node]:
+                            if dist[nb] == -1:
+                                dist[nb] = dist[node] + 1
+                                q.append(nb)
+                    out = []
+                    for v in range(V):
+                        out.append(f"{v} {dist[v]}")
+                    print('\n'.join(out))
+
+                solve()
+            test_cases:
+              - name: connected-graph
+                stdin: "5 5\n0 1\n0 2\n1 3\n2 3\n3 4\n0\n"
+                expected_stdout: "0 0\n1 1\n2 1\n3 2\n4 3"
+                is_hidden: false
+                weight: 1
+              - name: disconnected-graph
+                stdin: "4 2\n0 1\n2 3\n0\n"
+                expected_stdout: "0 0\n1 1\n2 -1\n3 -1"
+                is_hidden: false
+                weight: 1
+              - name: single-node
+                stdin: "1 0\n0\n"
+                expected_stdout: "0 0"
+                is_hidden: false
+                weight: 1
+              - name: linear-chain
+                stdin: "4 3\n0 1\n1 2\n2 3\n0\n"
+                expected_stdout: "0 0\n1 1\n2 2\n3 3"
+                is_hidden: true
+                weight: 1
+              - name: star-graph
+                stdin: "5 4\n0 1\n0 2\n0 3\n0 4\n0\n"
+                expected_stdout: "0 0\n1 1\n2 1\n3 1\n4 1"
+                is_hidden: true
+                weight: 1
+              - name: source-not-zero
+                stdin: "4 3\n0 1\n1 2\n2 3\n2\n"
+                expected_stdout: "0 2\n1 1\n2 0\n3 1"
+                is_hidden: true
+                weight: 1
+
+      - slug: detect-cycle-exercise
+        title: "Exercise: Detect Cycle in Graph"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ds-detect-cycle.md
+        exercises:
+          - slug: ds-detect-cycle
+            title: Detect Cycle in Undirected Graph
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/ds-detect-cycle.prompt.md
+            supported_languages: [python]
+            tags: [graph, union-find, cycle-detection]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    V, E = int(data[idx]), int(data[idx+1])
+                    idx += 2
+                    edges = []
+                    for _ in range(E):
+                        u, v = int(data[idx]), int(data[idx+1])
+                        idx += 2
+                        edges.append((u, v))
+                    # TODO: detect cycle using Union-Find
+                    # print YES or NO
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    V, E = int(data[idx]), int(data[idx+1])
+                    idx += 2
+                    edges = []
+                    for _ in range(E):
+                        u, v = int(data[idx]), int(data[idx+1])
+                        idx += 2
+                        edges.append((u, v))
+
+                    parent = list(range(V))
+                    rank = [0] * V
+
+                    def find(x):
+                        if parent[x] != x:
+                            parent[x] = find(parent[x])
+                        return parent[x]
+
+                    def union(x, y):
+                        rx, ry = find(x), find(y)
+                        if rx == ry:
+                            return False
+                        if rank[rx] < rank[ry]:
+                            rx, ry = ry, rx
+                        parent[ry] = rx
+                        if rank[rx] == rank[ry]:
+                            rank[rx] += 1
+                        return True
+
+                    for u, v in edges:
+                        if u == v:
+                            print('YES')
+                            return
+                        if not union(u, v):
+                            print('YES')
+                            return
+                    print('NO')
+
+                solve()
+            test_cases:
+              - name: cycle-present
+                stdin: "4 4\n0 1\n1 2\n2 3\n3 0\n"
+                expected_stdout: "YES"
+                is_hidden: false
+                weight: 1
+              - name: no-cycle-tree
+                stdin: "4 3\n0 1\n1 2\n2 3\n"
+                expected_stdout: "NO"
+                is_hidden: false
+                weight: 1
+              - name: no-edges
+                stdin: "3 0\n"
+                expected_stdout: "NO"
+                is_hidden: false
+                weight: 1
+              - name: self-loop
+                stdin: "3 2\n0 1\n1 1\n"
+                expected_stdout: "YES"
+                is_hidden: true
+                weight: 1
+              - name: two-components-one-cycle
+                stdin: "6 5\n0 1\n1 2\n3 4\n4 5\n5 3\n"
+                expected_stdout: "YES"
+                is_hidden: true
+                weight: 1
+              - name: two-trees-no-cycle
+                stdin: "6 4\n0 1\n1 2\n3 4\n4 5\n"
+                expected_stdout: "NO"
+                is_hidden: true
+                weight: 1
+
+      - slug: connected-components-exercise
+        title: "Exercise: Count Connected Components"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ds-connected-components.md
+        exercises:
+          - slug: ds-connected-components
+            title: Count Connected Components
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ds-connected-components.prompt.md
+            supported_languages: [python]
+            tags: [graph, union-find, dfs, connectivity]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    V, E = int(data[idx]), int(data[idx+1])
+                    idx += 2
+                    edges = []
+                    for _ in range(E):
+                        u, v = int(data[idx]), int(data[idx+1])
+                        idx += 2
+                        edges.append((u, v))
+                    # TODO: count connected components
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    V, E = int(data[idx]), int(data[idx+1])
+                    idx += 2
+                    edges = []
+                    for _ in range(E):
+                        u, v = int(data[idx]), int(data[idx+1])
+                        idx += 2
+                        edges.append((u, v))
+
+                    parent = list(range(V))
+                    rank = [0] * V
+
+                    def find(x):
+                        if parent[x] != x:
+                            parent[x] = find(parent[x])
+                        return parent[x]
+
+                    def union(x, y):
+                        rx, ry = find(x), find(y)
+                        if rx == ry:
+                            return
+                        if rank[rx] < rank[ry]:
+                            rx, ry = ry, rx
+                        parent[ry] = rx
+                        if rank[rx] == rank[ry]:
+                            rank[rx] += 1
+
+                    for u, v in edges:
+                        if u != v:
+                            union(u, v)
+
+                    components = len({find(i) for i in range(V)})
+                    print(components)
+
+                solve()
+            test_cases:
+              - name: three-components
+                stdin: "6 4\n0 1\n1 2\n3 4\n5 5\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: no-edges
+                stdin: "5 0\n"
+                expected_stdout: "5"
+                is_hidden: false
+                weight: 1
+              - name: complete-graph
+                stdin: "4 6\n0 1\n0 2\n0 3\n1 2\n1 3\n2 3\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: single-vertex
+                stdin: "1 0\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: chain-plus-isolated
+                stdin: "6 4\n0 1\n1 2\n2 3\n3 4\n"
+                expected_stdout: "2"
+                is_hidden: true
+                weight: 1
+
+  - title: Tries & Advanced Structures
+    summary: Prefix trees for string search, Union-Find deep dive, and FIFO caching.
+    order_index: 8
+    lessons:
+      - slug: tries-and-union-find
+        title: "Tries & Union-Find"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/tries-and-union-find.md
+
+      - slug: trie-prefix-exercise
+        title: "Exercise: Trie Prefix Search"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ds-trie-prefix.md
+        exercises:
+          - slug: ds-trie-prefix
+            title: Trie Prefix Search
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/ds-trie-prefix.prompt.md
+            supported_languages: [python]
+            tags: [trie, strings, prefix]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class TrieNode:
+                    def __init__(self):
+                        self.children = {}
+                        self.is_end = False
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    root = TrieNode()
+                    for _ in range(n):
+                        word = data[idx].strip(); idx += 1
+                        # TODO: insert word into trie
+                    q = int(data[idx]); idx += 1
+                    for _ in range(q):
+                        query = data[idx].strip(); idx += 1
+                        # TODO: classify query and print WORD / PREFIX / NONE
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class TrieNode:
+                    def __init__(self):
+                        self.children = {}
+                        self.is_end = False
+
+                def insert(root, word):
+                    node = root
+                    for ch in word:
+                        if ch not in node.children:
+                            node.children[ch] = TrieNode()
+                        node = node.children[ch]
+                    node.is_end = True
+
+                def classify(root, query):
+                    node = root
+                    for ch in query:
+                        if ch not in node.children:
+                            return "NONE"
+                        node = node.children[ch]
+                    return "WORD" if node.is_end else "PREFIX"
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    root = TrieNode()
+                    for _ in range(n):
+                        word = data[idx].strip(); idx += 1
+                        insert(root, word)
+                    q = int(data[idx]); idx += 1
+                    out = []
+                    for _ in range(q):
+                        query = data[idx].strip(); idx += 1
+                        out.append(classify(root, query))
+                    print('\n'.join(out))
+
+                solve()
+            test_cases:
+              - name: word-prefix-none
+                stdin: "4\ncat\ncar\ncard\nbat\n3\ncat\nca\ndog\n"
+                expected_stdout: "WORD\nPREFIX\nNONE"
+                is_hidden: false
+                weight: 1
+              - name: hello-world
+                stdin: "2\nhello\nworld\n2\nhell\nhello\n"
+                expected_stdout: "PREFIX\nWORD"
+                is_hidden: false
+                weight: 1
+              - name: exact-and-prefix
+                stdin: "3\nabc\nabcd\nxyz\n3\nabc\nab\nxy\n"
+                expected_stdout: "WORD\nPREFIX\nPREFIX"
+                is_hidden: false
+                weight: 1
+              - name: none-queries
+                stdin: "2\nfoo\nbar\n2\nbaz\nqux\n"
+                expected_stdout: "NONE\nNONE"
+                is_hidden: true
+                weight: 1
+              - name: single-char-words
+                stdin: "3\na\nb\nc\n3\na\nd\nab\n"
+                expected_stdout: "WORD\nNONE\nNONE"
+                is_hidden: true
+                weight: 1
+              - name: nested-words
+                stdin: "3\ndo\ndog\ndogs\n3\ndo\ndog\ndogx\n"
+                expected_stdout: "WORD\nWORD\nNONE"
+                is_hidden: true
+                weight: 1
+
+      - slug: fifo-cache-exercise
+        title: "Exercise: FIFO Cache Simulator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ds-fifo-cache.md
+        exercises:
+          - slug: ds-fifo-cache
+            title: FIFO Cache Simulator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/ds-fifo-cache.prompt.md
+            supported_languages: [python]
+            tags: [queue, hash-table, cache, simulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    C, Q = map(int, data[0].split())
+                    cache = {}
+                    order = deque()
+                    for i in range(1, Q + 1):
+                        parts = data[i].split()
+                        if parts[0] == 'GET':
+                            key = int(parts[1])
+                            # TODO: return value or MISS
+                        else:
+                            key, val = int(parts[1]), int(parts[2])
+                            # TODO: put (key, val), evict if full
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    C, Q = map(int, data[0].split())
+                    cache = {}     # key -> value
+                    order = deque()  # insertion order (new keys only)
+                    out = []
+
+                    for i in range(1, Q + 1):
+                        parts = data[i].split()
+                        if parts[0] == 'GET':
+                            key = int(parts[1])
+                            if key in cache:
+                                out.append(str(cache[key]))
+                            else:
+                                out.append('MISS')
+                        else:
+                            key, val = int(parts[1]), int(parts[2])
+                            if key in cache:
+                                cache[key] = val   # update; eviction order unchanged
+                            else:
+                                if len(cache) == C:
+                                    evict = order.popleft()
+                                    del cache[evict]
+                                cache[key] = val
+                                order.append(key)
+
+                    print('\n'.join(out))
+
+                solve()
+            test_cases:
+              - name: basic-eviction
+                stdin: "2 9\nPUT 1 10\nPUT 2 20\nGET 1\nPUT 3 30\nGET 1\nGET 2\nGET 3\nPUT 2 99\nGET 2\n"
+                expected_stdout: "10\nMISS\n20\n30\n99"
+                is_hidden: false
+                weight: 1
+              - name: cache-miss-only
+                stdin: "2 2\nGET 1\nGET 2\n"
+                expected_stdout: "MISS\nMISS"
+                is_hidden: false
+                weight: 1
+              - name: update-does-not-evict
+                stdin: "1 4\nPUT 1 10\nPUT 1 99\nGET 1\nPUT 2 20\n"
+                expected_stdout: "99"
+                is_hidden: false
+                weight: 1
+              - name: fifo-eviction-order
+                stdin: "2 6\nPUT 1 1\nPUT 2 2\nPUT 3 3\nGET 1\nGET 2\nGET 3\n"
+                expected_stdout: "MISS\n2\n3"
+                is_hidden: true
+                weight: 1
+              - name: capacity-one
+                stdin: "1 5\nPUT 5 50\nGET 5\nPUT 6 60\nGET 5\nGET 6\n"
+                expected_stdout: "50\nMISS\n60"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-trees-to-tries
+        title: "Quiz: Trees, Heaps, Graphs & Tries"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-trees-to-tries.md

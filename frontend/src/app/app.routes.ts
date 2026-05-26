@@ -106,6 +106,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'lessons',
+        loadComponent: () =>
+          import('./features/admin/admin-lessons/admin-lessons.component').then(
+            (m) => m.AdminLessonsComponent
+          ),
+      },
+      {
         path: 'exercises',
         loadComponent: () =>
           import('./features/admin/admin-exercises/admin-exercises.component').then(

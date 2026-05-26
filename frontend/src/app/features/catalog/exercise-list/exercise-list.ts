@@ -9,7 +9,6 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject as RxSubject, Subscription } from 'rxjs';
@@ -45,7 +44,7 @@ const PAGE_SIZE = 12;
 @Component({
   selector: 'app-exercise-list',
   standalone: true,
-  imports: [RouterLink, NgClass, FormsModule, LucideAngularModule],
+  imports: [RouterLink, FormsModule, LucideAngularModule],
   templateUrl: './exercise-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

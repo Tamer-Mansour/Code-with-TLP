@@ -1,0 +1,888 @@
+subject:
+  slug: systems
+  name: Systems
+  description: How computers run software, from the CPU up to the network.
+  icon: server
+  color: "#ef4444"
+  order_index: 4
+
+course:
+  slug: computer-architecture
+  title: "Computer Architecture & Organization"
+  summary: "From logic gates and binary arithmetic to CPUs, caches, pipelines, and Amdahl's Law — the full hardware stack."
+  description: |
+    A rigorous tour of how modern computers are built and how they execute programs,
+    following the classic Patterson & Hennessy / CS:APP curriculum. Covers digital
+    logic, number representation, CPU datapath and control, ISA design, memory
+    hierarchy with caches, pipelining with hazards, and I/O performance. Includes
+    hands-on coding exercises that reinforce bit-level reasoning.
+  difficulty: intermediate
+  estimated_hours: 24
+  is_published: true
+  order_index: 1
+
+modules:
+  - title: Digital Logic
+    summary: Gates, combinational vs sequential circuits, latches, flip-flops, and registers.
+    order_index: 1
+    lessons:
+      - slug: logic-gates
+        title: Logic Gates
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/logic-gates.md
+
+      - slug: combinational-vs-sequential
+        title: Combinational vs Sequential Logic
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/combinational-vs-sequential.md
+
+      - slug: latches-and-flipflops
+        title: Latches, Flip-Flops, and Registers
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/latches-and-flipflops.md
+
+      - slug: logic-quiz
+        title: "Quiz: Digital Logic"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/logic-quiz.md
+
+  - title: Data and Number Representation
+    summary: Two's complement, fixed and floating point, overflow, and bit-level encoding.
+    order_index: 2
+    lessons:
+      - slug: number-representation
+        title: Number Representation
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/number-representation.md
+
+      - slug: floating-point
+        title: Floating-Point and Overflow
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/floating-point.md
+
+      - slug: twos-complement-exercise
+        title: "Exercise: Two's Complement Converter"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/twos-complement-exercise.md
+        exercises:
+          - slug: ca-twos-complement
+            title: "Two's Complement Converter"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ca-twos-complement.prompt.md
+            supported_languages: [python]
+            tags: [binary, two's-complement, bit-manipulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    N = int(data[0])
+                    W = int(data[1])
+                    # TODO: compute W-bit two's complement of -N
+                    print("")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    N = int(data[0])
+                    W = int(data[1])
+                    mask = (1 << W) - 1
+                    neg_N = (~N + 1) & mask
+                    print(bin(neg_N)[2:].zfill(W))
+
+                solve()
+            test_cases:
+              - name: case-1
+                stdin: "5 8\n"
+                expected_stdout: "11111011"
+                is_hidden: false
+                weight: 1
+              - name: case-2
+                stdin: "1 4\n"
+                expected_stdout: "1111"
+                is_hidden: false
+                weight: 1
+              - name: case-3
+                stdin: "3 4\n"
+                expected_stdout: "1101"
+                is_hidden: false
+                weight: 1
+              - name: case-4
+                stdin: "1 8\n"
+                expected_stdout: "11111111"
+                is_hidden: true
+                weight: 1
+              - name: case-5
+                stdin: "64 8\n"
+                expected_stdout: "11000000"
+                is_hidden: true
+                weight: 1
+              - name: case-6
+                stdin: "127 8\n"
+                expected_stdout: "10000001"
+                is_hidden: true
+                weight: 1
+              - name: case-7
+                stdin: "0 8\n"
+                expected_stdout: "00000000"
+                is_hidden: true
+                weight: 1
+              - name: case-8
+                stdin: "7 4\n"
+                expected_stdout: "1001"
+                is_hidden: true
+                weight: 1
+
+      - slug: ieee754-exercise
+        title: "Exercise: Float to IEEE 754 Bits"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ieee754-exercise.md
+        exercises:
+          - slug: ca-ieee754
+            title: "Float to IEEE 754 Bits"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/ca-ieee754.prompt.md
+            supported_languages: [python]
+            tags: [ieee754, floating-point, bit-manipulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    f = float(line)
+                    # TODO: output 32-bit IEEE 754 single-precision bit string
+                    print("")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import struct
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    f = float(line)
+                    b = struct.pack('>f', f)
+                    bits = int.from_bytes(b, 'big')
+                    print(f'{bits:032b}')
+
+                solve()
+            test_cases:
+              - name: case-1
+                stdin: "1.0\n"
+                expected_stdout: "00111111100000000000000000000000"
+                is_hidden: false
+                weight: 1
+              - name: case-2
+                stdin: "-1.0\n"
+                expected_stdout: "10111111100000000000000000000000"
+                is_hidden: false
+                weight: 1
+              - name: case-3
+                stdin: "6.5\n"
+                expected_stdout: "01000000110100000000000000000000"
+                is_hidden: false
+                weight: 1
+              - name: case-4
+                stdin: "0.5\n"
+                expected_stdout: "00111111000000000000000000000000"
+                is_hidden: true
+                weight: 1
+              - name: case-5
+                stdin: "-0.375\n"
+                expected_stdout: "10111110110000000000000000000000"
+                is_hidden: true
+                weight: 1
+              - name: case-6
+                stdin: "0.0\n"
+                expected_stdout: "00000000000000000000000000000000"
+                is_hidden: true
+                weight: 1
+              - name: case-7
+                stdin: "2.0\n"
+                expected_stdout: "01000000000000000000000000000000"
+                is_hidden: true
+                weight: 1
+
+      - slug: data-representation-quiz
+        title: "Quiz: Data and Number Representation"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/data-representation-quiz.md
+
+  - title: The CPU and Datapath
+    summary: ALU design, register files, control unit, and the fetch-decode-execute cycle.
+    order_index: 3
+    lessons:
+      - slug: alu-and-registers
+        title: The ALU and Register File
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/alu-and-registers.md
+
+      - slug: control-unit
+        title: The Control Unit and Fetch-Decode-Execute
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/control-unit.md
+
+      - slug: bitwise-ops-exercise
+        title: "Exercise: Bitwise Operations Evaluator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/bitwise-ops-exercise.md
+        exercises:
+          - slug: ca-bitwise-ops
+            title: Bitwise Operations Evaluator
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ca-bitwise-ops.prompt.md
+            supported_languages: [python]
+            tags: [bitwise, alu, logic-gates]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    A = int(data[0])
+                    B = int(data[1])
+                    op = data[2]
+                    # TODO: compute A OP B
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    A = int(data[0])
+                    B = int(data[1])
+                    op = data[2]
+                    MASK = 0xFFFF
+                    if op == "AND":
+                        print(A & B)
+                    elif op == "OR":
+                        print(A | B)
+                    elif op == "XOR":
+                        print(A ^ B)
+                    elif op == "NAND":
+                        print((~(A & B)) & MASK)
+                    elif op == "NOR":
+                        print((~(A | B)) & MASK)
+
+                solve()
+            test_cases:
+              - name: case-1
+                stdin: "12 10 AND\n"
+                expected_stdout: "8"
+                is_hidden: false
+                weight: 1
+              - name: case-2
+                stdin: "12 10 XOR\n"
+                expected_stdout: "6"
+                is_hidden: false
+                weight: 1
+              - name: case-3
+                stdin: "12 10 NAND\n"
+                expected_stdout: "65527"
+                is_hidden: false
+                weight: 1
+              - name: case-4
+                stdin: "0 0 OR\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: case-5
+                stdin: "255 170 AND\n"
+                expected_stdout: "170"
+                is_hidden: true
+                weight: 1
+              - name: case-6
+                stdin: "65535 0 NOR\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: case-7
+                stdin: "43690 21845 XOR\n"
+                expected_stdout: "65535"
+                is_hidden: true
+                weight: 1
+
+      - slug: hamming-exercise
+        title: "Exercise: Hamming Distance and Parity"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/hamming-exercise.md
+        exercises:
+          - slug: ca-hamming
+            title: "Hamming Distance and Parity"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ca-hamming.prompt.md
+            supported_languages: [python]
+            tags: [hamming, parity, error-detection, bit-manipulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    a = data[0]
+                    b = data[1]
+                    # TODO: compute Hamming distance and even parity of a
+                    print(0)
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    a = data[0]
+                    b = data[1]
+                    dist = sum(x != y for x, y in zip(a, b))
+                    parity = a.count('1') % 2
+                    print(dist)
+                    print(parity)
+
+                solve()
+            test_cases:
+              - name: case-1
+                stdin: "10110 01001\n"
+                expected_stdout: "5\n1"
+                is_hidden: false
+                weight: 1
+              - name: case-2
+                stdin: "11001100 10100101\n"
+                expected_stdout: "4\n0"
+                is_hidden: false
+                weight: 1
+              - name: case-3
+                stdin: "10101010 10101010\n"
+                expected_stdout: "0\n0"
+                is_hidden: false
+                weight: 1
+              - name: case-4
+                stdin: "0000 1111\n"
+                expected_stdout: "4\n0"
+                is_hidden: true
+                weight: 1
+              - name: case-5
+                stdin: "1 0\n"
+                expected_stdout: "1\n1"
+                is_hidden: true
+                weight: 1
+              - name: case-6
+                stdin: "11110000 11111111\n"
+                expected_stdout: "4\n0"
+                is_hidden: true
+                weight: 1
+              - name: case-7
+                stdin: "10011 01100\n"
+                expected_stdout: "5\n1"
+                is_hidden: true
+                weight: 1
+
+      - slug: cpu-quiz
+        title: "Quiz: The CPU and Datapath"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/cpu-quiz.md
+
+  - title: Instruction Set Architecture
+    summary: RISC vs CISC, assembly language basics, and addressing modes.
+    order_index: 4
+    lessons:
+      - slug: risc-vs-cisc
+        title: RISC vs CISC Architectures
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/risc-vs-cisc.md
+
+      - slug: assembly-basics
+        title: Assembly Language Basics
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/assembly-basics.md
+
+      - slug: addressing-modes
+        title: Addressing Modes
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/addressing-modes.md
+
+      - slug: isa-quiz
+        title: "Quiz: Instruction Set Architecture"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/isa-quiz.md
+
+  - title: Memory Hierarchy and Caches
+    summary: Locality, cache lines, hits and misses, set-associative mapping, and write policies.
+    order_index: 5
+    lessons:
+      - slug: memory-hierarchy
+        title: The Memory Hierarchy
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/memory-hierarchy.md
+
+      - slug: cache-mapping
+        title: Cache Mapping and Address Decomposition
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/cache-mapping.md
+
+      - slug: cache-simulator-exercise
+        title: "Exercise: Cache Hit/Miss Simulator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/cache-simulator-exercise.md
+        exercises:
+          - slug: ca-cache-simulator
+            title: Cache Hit/Miss Simulator
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/ca-cache-simulator.prompt.md
+            supported_languages: [python]
+            tags: [cache, memory-hierarchy, simulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                import math
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    C = int(data[idx]); idx += 1
+                    B = int(data[idx]); idx += 1
+                    N = int(data[idx]); idx += 1
+                    addresses = [int(data[idx + i]) for i in range(N)]
+                    # TODO: simulate direct-mapped cache
+                    hits = 0
+                    misses = 0
+                    print(hits, misses)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import math
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    C = int(data[idx]); idx += 1
+                    B = int(data[idx]); idx += 1
+                    N = int(data[idx]); idx += 1
+                    addresses = [int(data[idx + i]) for i in range(N)]
+
+                    offset_bits = int(math.log2(B))
+                    index_bits = int(math.log2(C))
+                    cache = {}  # set_index -> tag
+
+                    hits = 0
+                    misses = 0
+                    for addr in addresses:
+                        index = (addr >> offset_bits) & (C - 1)
+                        tag = addr >> (offset_bits + index_bits)
+                        if cache.get(index) == tag:
+                            hits += 1
+                        else:
+                            misses += 1
+                            cache[index] = tag
+
+                    print(hits, misses)
+
+                solve()
+            test_cases:
+              - name: case-1
+                stdin: "4 4 6\n0\n4\n8\n0\n16\n4\n"
+                expected_stdout: "2 4"
+                is_hidden: false
+                weight: 1
+              - name: case-2
+                stdin: "4 16 6\n0\n4\n8\n12\n16\n0\n"
+                expected_stdout: "4 2"
+                is_hidden: false
+                weight: 1
+              - name: case-3
+                stdin: "2 4 4\n0\n4\n8\n12\n"
+                expected_stdout: "0 4"
+                is_hidden: false
+                weight: 1
+              - name: case-4
+                stdin: "8 8 6\n0\n8\n16\n24\n0\n8\n"
+                expected_stdout: "2 4"
+                is_hidden: true
+                weight: 1
+              - name: case-5
+                stdin: "1 4 4\n0\n4\n0\n4\n"
+                expected_stdout: "0 4"
+                is_hidden: true
+                weight: 1
+              - name: case-6
+                stdin: "4 4 8\n0\n4\n8\n12\n0\n4\n8\n12\n"
+                expected_stdout: "4 4"
+                is_hidden: true
+                weight: 1
+
+      - slug: set-assoc-cache-exercise
+        title: "Exercise: Set-Associative Cache Simulator"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/set-assoc-cache-exercise.md
+        exercises:
+          - slug: ca-set-assoc-cache
+            title: "Set-Associative Cache Simulator"
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/ca-set-assoc-cache.prompt.md
+            supported_languages: [python]
+            tags: [cache, set-associative, LRU, simulation]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                import math
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    C = int(data[idx]); idx += 1
+                    B = int(data[idx]); idx += 1
+                    N = int(data[idx]); idx += 1
+                    K = int(data[idx]); idx += 1
+                    addresses = [int(data[idx + i]) for i in range(K)]
+                    # TODO: simulate N-way set-associative cache with LRU replacement
+                    hits = 0
+                    misses = 0
+                    print(hits, misses)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import math
+                from collections import OrderedDict
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    C = int(data[idx]); idx += 1
+                    B = int(data[idx]); idx += 1
+                    N = int(data[idx]); idx += 1
+                    K = int(data[idx]); idx += 1
+                    addresses = [int(data[idx + i]) for i in range(K)]
+
+                    offset_bits = int(math.log2(B))
+                    index_bits = int(math.log2(C))
+                    # Each set: OrderedDict tag->True, LRU = leftmost
+                    sets = [OrderedDict() for _ in range(C)]
+
+                    hits = 0
+                    misses = 0
+                    for addr in addresses:
+                        set_index = (addr >> offset_bits) & (C - 1)
+                        tag = addr >> (offset_bits + index_bits)
+                        s = sets[set_index]
+                        if tag in s:
+                            hits += 1
+                            s.move_to_end(tag)
+                        else:
+                            misses += 1
+                            if len(s) >= N:
+                                s.popitem(last=False)
+                            s[tag] = True
+
+                    print(hits, misses)
+
+                solve()
+            test_cases:
+              - name: case-1
+                stdin: "2 4 2 6\n0\n16\n0\n16\n0\n16\n"
+                expected_stdout: "4 2"
+                is_hidden: false
+                weight: 1
+              - name: case-2
+                stdin: "4 4 1 8\n0\n4\n8\n12\n0\n4\n8\n12\n"
+                expected_stdout: "4 4"
+                is_hidden: false
+                weight: 1
+              - name: case-3
+                stdin: "2 4 1 6\n0\n16\n0\n16\n0\n16\n"
+                expected_stdout: "0 6"
+                is_hidden: false
+                weight: 1
+              - name: case-4
+                stdin: "4 8 2 8\n0\n8\n16\n24\n0\n8\n16\n24\n"
+                expected_stdout: "4 4"
+                is_hidden: true
+                weight: 1
+              - name: case-5
+                stdin: "1 4 2 6\n0\n4\n0\n4\n0\n4\n"
+                expected_stdout: "4 2"
+                is_hidden: true
+                weight: 1
+              - name: case-6
+                stdin: "4 16 2 8\n0\n16\n32\n48\n0\n16\n32\n48\n"
+                expected_stdout: "4 4"
+                is_hidden: true
+                weight: 1
+              - name: case-7
+                stdin: "2 4 4 8\n0\n4\n8\n12\n0\n4\n8\n12\n"
+                expected_stdout: "4 4"
+                is_hidden: true
+                weight: 1
+
+      - slug: memory-quiz
+        title: "Quiz: Memory Hierarchy and Caches"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/memory-quiz.md
+
+  - title: Pipelining
+    summary: Pipeline stages, data and control hazards, forwarding, stalls, and branch prediction.
+    order_index: 6
+    lessons:
+      - slug: pipelining-intro
+        title: Introduction to Pipelining
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/pipelining-intro.md
+
+      - slug: pipeline-hazards
+        title: Pipeline Hazards
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/pipeline-hazards.md
+
+      - slug: pipelining-quiz
+        title: "Quiz: Pipelining"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/pipelining-quiz.md
+
+  - title: "I/O and Performance"
+    summary: "Buses, interrupts, DMA, performance metrics, and Amdahl's Law."
+    order_index: 7
+    lessons:
+      - slug: io-and-buses
+        title: "I/O, Buses, and Interrupts"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/io-and-buses.md
+
+      - slug: amdahls-law
+        title: "Amdahl's Law and Performance Analysis"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/amdahls-law.md
+
+      - slug: cpi-calc-exercise
+        title: "Exercise: CPU Time Calculator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/cpi-calc-exercise.md
+        exercises:
+          - slug: ca-cpi-calc
+            title: "CPU Time Calculator"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ca-cpi-calc.prompt.md
+            supported_languages: [python]
+            tags: [performance, cpi, cpu-time]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        IC = int(parts[0])
+                        CPI = float(parts[1])
+                        freq = float(parts[2])
+                        # TODO: compute CPU time in nanoseconds, rounded to 4 decimal places
+                        print(0.0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        IC = int(parts[0])
+                        CPI = float(parts[1])
+                        freq = float(parts[2])
+                        cpu_time = IC * CPI / freq
+                        print(round(cpu_time, 4))
+
+                solve()
+            test_cases:
+              - name: case-1
+                stdin: "1000 2.0 2.0\n"
+                expected_stdout: "1000.0"
+                is_hidden: false
+                weight: 1
+              - name: case-2
+                stdin: "500 1.5 3.0\n"
+                expected_stdout: "250.0"
+                is_hidden: false
+                weight: 1
+              - name: case-3
+                stdin: "400 2.5 2.0\n"
+                expected_stdout: "500.0"
+                is_hidden: false
+                weight: 1
+              - name: case-4
+                stdin: "750 1.2 4.0\n"
+                expected_stdout: "225.0"
+                is_hidden: true
+                weight: 1
+              - name: case-5
+                stdin: "200 3.0 1.5\n"
+                expected_stdout: "400.0"
+                is_hidden: true
+                weight: 1
+              - name: case-6
+                stdin: "1000000 1.0 1.0\n"
+                expected_stdout: "1000000.0"
+                is_hidden: true
+                weight: 1
+
+      - slug: amdahl-exercise
+        title: "Exercise: Amdahl's Law Calculator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/amdahl-exercise.md
+        exercises:
+          - slug: ca-amdahl
+            title: "Amdahl's Law Calculator"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ca-amdahl.prompt.md
+            supported_languages: [python]
+            tags: [performance, amdahl, parallel-computing]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        f = float(parts[0])
+                        S = float(parts[1])
+                        # TODO: compute overall speedup using Amdahl's Law
+                        print(0.0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        f = float(parts[0])
+                        S = float(parts[1])
+                        speedup = 1.0 / ((1.0 - f) + f / S)
+                        print(round(speedup, 4))
+
+                solve()
+            test_cases:
+              - name: case-1
+                stdin: "0.4 10\n"
+                expected_stdout: "1.5625"
+                is_hidden: false
+                weight: 1
+              - name: case-2
+                stdin: "0.8 20\n"
+                expected_stdout: "4.1667"
+                is_hidden: false
+                weight: 1
+              - name: case-3
+                stdin: "0.5 2\n"
+                expected_stdout: "1.3333"
+                is_hidden: false
+                weight: 1
+              - name: case-4
+                stdin: "0.9 4\n"
+                expected_stdout: "3.0769"
+                is_hidden: true
+                weight: 1
+              - name: case-5
+                stdin: "0.6 3\n"
+                expected_stdout: "1.6667"
+                is_hidden: true
+                weight: 1
+              - name: case-6
+                stdin: "0.25 5\n"
+                expected_stdout: "1.25"
+                is_hidden: true
+                weight: 1
+              - name: case-7
+                stdin: "0.0 100\n"
+                expected_stdout: "1.0"
+                is_hidden: true
+                weight: 1
+              - name: case-8
+                stdin: "1.0 2\n"
+                expected_stdout: "2.0"
+                is_hidden: true
+                weight: 1
+
+      - slug: io-performance-quiz
+        title: "Quiz: I/O and Performance"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/io-performance-quiz.md

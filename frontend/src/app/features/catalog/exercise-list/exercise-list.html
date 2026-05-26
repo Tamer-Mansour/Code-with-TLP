@@ -66,9 +66,9 @@
 
     <!-- Loading skeleton -->
     @if (loading()) {
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        @for (_ of [1,2,3,4,5,6,7,8,9]; track $index) {
-          <div class="skeleton h-44 rounded-xl animate-pulse"></div>
+      <div class="space-y-2">
+        @for (_ of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+          <div class="skeleton h-16 rounded-xl animate-pulse"></div>
         }
       </div>
     }
@@ -107,73 +107,67 @@
       </div>
     }
 
-    <!-- Exercise grid -->
+    <!-- Exercise list -->
     @if (!loading() && !error() && exercises().length > 0) {
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="card p-0 overflow-hidden divide-y divide-app-border">
         @for (exercise of exercises(); track trackById($index, exercise)) {
-          <div class="card-hover flex flex-col group relative">
-            <!-- Solved badge -->
-            @if (solvedIds().has(exercise.id)) {
-              <div class="absolute top-3 right-3 z-10">
-                <lucide-icon [img]="CheckCircle2" [size]="16" class="text-green-400"></lucide-icon>
-              </div>
-            }
+          <a
+            [routerLink]="['/exercises', exercise.slug]"
+            class="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3 hover:bg-app-surface-2/60 transition-colors no-underline group"
+            [attr.aria-label]="'Solve ' + exercise.title"
+          >
+            <!-- Status / type indicator -->
+            <span class="shrink-0 w-5 flex justify-center">
+              @if (solvedIds().has(exercise.id)) {
+                <lucide-icon [img]="CheckCircle2" [size]="18" class="text-green-500 dark:text-green-400"></lucide-icon>
+              } @else {
+                <lucide-icon [img]="Code2" [size]="16" class="text-app-text-muted group-hover:text-brand transition-colors"></lucide-icon>
+              }
+            </span>
 
-            <!-- Card header -->
-            <div class="flex items-start justify-between gap-2 mb-3 pr-5">
-              <h2 class="text-sm font-semibold text-app-text group-hover:text-brand-light transition-colors line-clamp-2 leading-snug flex-1">
+            <!-- Title + meta (flex-1) -->
+            <div class="flex-1 min-w-0">
+              <h2 class="text-sm font-semibold text-app-text group-hover:text-brand dark:group-hover:text-brand-light transition-colors truncate leading-snug">
                 {{ exercise.title }}
               </h2>
-              <span [class]="difficultyBadge(exercise.difficulty)" class="shrink-0 mt-0.5">
-                {{ difficultyLabel(exercise.difficulty) }}
-              </span>
-            </div>
-
-            <!-- Points -->
-            <div class="flex items-center gap-1.5 text-xs text-app-text-muted mb-3">
-              <lucide-icon [img]="Zap" [size]="12" class="text-amber-400"></lucide-icon>
-              <span>{{ exercise.points }} points</span>
-            </div>
-
-            <!-- Course context -->
-            @if (exercise.course_title) {
-              <div class="flex items-center gap-1 text-xs text-app-text-muted mb-3 min-w-0">
-                <lucide-icon [img]="BookOpen" [size]="11" class="flex-shrink-0 text-brand"></lucide-icon>
-                <a [routerLink]="['/courses', exercise.course_slug]"
-                   (click)="$event.stopPropagation()"
-                   class="truncate hover:text-brand transition-colors">
-                  {{ exercise.course_title }}
-                </a>
+              <div class="flex items-center gap-2 mt-0.5 text-xs text-app-text-muted min-w-0">
+                @if (exercise.course_title) {
+                  <span class="flex items-center gap-1 min-w-0 truncate">
+                    <lucide-icon [img]="BookOpen" [size]="11" class="shrink-0 text-brand"></lucide-icon>
+                    <span class="truncate">{{ exercise.course_title }}</span>
+                  </span>
+                  <span class="text-app-border-2 shrink-0">•</span>
+                }
+                <span class="flex items-center gap-1 shrink-0">
+                  <lucide-icon [img]="Zap" [size]="11" class="text-amber-400"></lucide-icon>
+                  {{ exercise.points }} pts
+                </span>
               </div>
-            }
+            </div>
 
-            <!-- Language pills -->
-            <div class="flex flex-wrap gap-1.5 mb-5 flex-1">
+            <!-- Language pills (large screens only) -->
+            <div class="hidden xl:flex flex-nowrap items-center gap-1 shrink-0 max-w-[220px] overflow-hidden">
               @for (lang of exercise.supported_languages; track lang) {
-                <span class="inline-flex items-center px-2 py-0.5 rounded bg-app-surface-2 border border-app-border text-xs text-app-text-2 font-mono">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-app-surface-2 border border-app-border text-[10px] text-app-text-2 font-mono whitespace-nowrap">
                   {{ LANGUAGE_LABELS[lang] || lang }}
                 </span>
               }
             </div>
 
-            <!-- Action -->
-            <a
-              [routerLink]="['/exercises', exercise.slug]"
-              class="btn btn-sm w-full justify-center no-underline mt-auto"
-              [class.btn-primary]="!solvedIds().has(exercise.id)"
-              [ngClass]="solvedIds().has(exercise.id) ? 'border border-green-600/50 bg-green-600/10 text-green-400 hover:bg-green-600/20' : ''"
-              [attr.aria-label]="'Solve ' + exercise.title"
-            >
-              @if (solvedIds().has(exercise.id)) {
-                <lucide-icon [img]="CheckCircle2" [size]="14"></lucide-icon>
-                Solved
-              } @else {
-                <lucide-icon [img]="Code2" [size]="14"></lucide-icon>
-                Solve
-              }
-              <lucide-icon [img]="ArrowRight" [size]="13" class="ml-auto"></lucide-icon>
-            </a>
-          </div>
+            <!-- Difficulty -->
+            <span [class]="difficultyBadge(exercise.difficulty)" class="shrink-0">
+              {{ difficultyLabel(exercise.difficulty) }}
+            </span>
+
+            <!-- Solved label (small+ screens) -->
+            @if (solvedIds().has(exercise.id)) {
+              <span class="hidden sm:inline text-xs font-medium text-green-600 dark:text-green-400 shrink-0">Solved</span>
+            }
+
+            <!-- Arrow -->
+            <lucide-icon [img]="ArrowRight" [size]="16"
+              class="shrink-0 text-app-text-muted group-hover:text-brand group-hover:translate-x-0.5 transition-all"></lucide-icon>
+          </a>
         }
       </div>
 

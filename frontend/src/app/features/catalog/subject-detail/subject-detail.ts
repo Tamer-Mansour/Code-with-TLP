@@ -13,10 +13,20 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import {
   LucideAngularModule,
+  LucideIconData,
   BookOpen,
+  Brain,
   Clock,
+  Code,
   ChevronRight,
+  Cpu,
+  Database,
+  GitBranch,
+  Globe,
   Layers,
+  Lightbulb,
+  Server,
+  Sigma,
   CheckCircle2,
   PlayCircle,
 } from 'lucide-angular';
@@ -46,6 +56,22 @@ export class SubjectDetailComponent implements OnInit {
   readonly Layers = Layers;
   readonly CheckCircle2 = CheckCircle2;
   readonly PlayCircle = PlayCircle;
+
+  private readonly iconMap: Record<string, LucideIconData> = {
+    'lightbulb':  Lightbulb,
+    'code':       Code,
+    'server':     Server,
+    'sigma':      Sigma,
+    'git-branch': GitBranch,
+    'brain':      Brain,
+    'cpu':        Cpu,
+    'globe':      Globe,
+    'database':   Database,
+  };
+
+  subjectIcon(iconKey: string | undefined): LucideIconData {
+    return (iconKey && this.iconMap[iconKey]) ? this.iconMap[iconKey] : Layers;
+  }
 
   readonly subject = signal<Subject | null>(null);
   readonly courses = signal<Course[]>([]);

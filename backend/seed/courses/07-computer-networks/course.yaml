@@ -1,0 +1,848 @@
+subject:
+  slug: systems
+  name: Systems
+  description: How computers run software, from the CPU up to the network.
+  icon: server
+  color: "#ef4444"
+  order_index: 4
+
+course:
+  slug: computer-networks
+  title: Computer Networks
+  summary: "Packets, protocols, and the Internet: from Ethernet frames to TLS, covering every layer of the TCP/IP stack."
+  description: |
+    A top-down tour of computer networking covering the protocols that power the Internet,
+    from HTTP and DNS at the application layer down through TCP/IP, Ethernet, and MAC addressing.
+    Builds the mental model every software engineer needs to design, debug, and secure networked systems.
+    Exercises reinforce IP arithmetic, checksum computation, and HTTP parsing.
+  difficulty: intermediate
+  estimated_hours: 28
+  is_published: true
+  order_index: 3
+
+modules:
+  - title: Network Foundations
+    summary: What networks are, how the Internet is structured, and the OSI and TCP/IP layering models.
+    order_index: 1
+    lessons:
+      - slug: what-is-a-network
+        title: What is a Network?
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/what-is-a-network.md
+
+      - slug: the-internet
+        title: The Internet
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/the-internet.md
+
+      - slug: osi-vs-tcpip
+        title: "OSI vs TCP/IP Models"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/osi-vs-tcpip.md
+
+      - slug: quiz-network-foundations
+        title: "Quiz: Network Foundations"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-network-foundations.md
+
+  - title: Application Layer
+    summary: How applications communicate over the network using HTTP, DNS, email, and P2P protocols.
+    order_index: 2
+    lessons:
+      - slug: http-protocol
+        title: "HTTP: The Web's Protocol"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/http-protocol.md
+
+      - slug: dns
+        title: "DNS: The Internet's Phone Book"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/dns.md
+
+      - slug: email-and-app-models
+        title: Email Protocols and Application Models
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/email-and-app-models.md
+
+      - slug: http2-and-http3
+        title: "HTTP/2 and HTTP/3: Multiplexing and QUIC"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/http2-and-http3.md
+
+      - slug: parse-http-request
+        title: "Exercise: Parse an HTTP Request Line"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/parse-http-request.md
+        exercises:
+          - slug: net-parse-http
+            title: Parse HTTP Request Line
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/net-parse-http.prompt.md
+            supported_languages: [python]
+            tags: [http, parsing, strings]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.readline().strip()
+                    # TODO: parse the HTTP request line and print Method and Path
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.readline().strip()
+                    parts = line.split()
+                    method = parts[0]
+                    path = parts[1]
+                    print(f"Method: {method}")
+                    print(f"Path: {path}")
+
+                solve()
+            test_cases:
+              - name: get-index
+                stdin: "GET /index.html HTTP/1.0\n"
+                expected_stdout: "Method: GET\nPath: /index.html"
+                is_hidden: false
+                weight: 1
+              - name: post-login
+                stdin: "POST /api/login HTTP/1.1\n"
+                expected_stdout: "Method: POST\nPath: /api/login"
+                is_hidden: false
+                weight: 1
+              - name: delete-resource
+                stdin: "DELETE /users/42 HTTP/1.1\n"
+                expected_stdout: "Method: DELETE\nPath: /users/42"
+                is_hidden: false
+                weight: 1
+              - name: get-root
+                stdin: "GET / HTTP/2\n"
+                expected_stdout: "Method: GET\nPath: /"
+                is_hidden: true
+                weight: 1
+              - name: put-item
+                stdin: "PUT /api/items/5 HTTP/1.1\n"
+                expected_stdout: "Method: PUT\nPath: /api/items/5"
+                is_hidden: true
+                weight: 1
+              - name: patch-resource
+                stdin: "PATCH /api/users/99 HTTP/1.1\n"
+                expected_stdout: "Method: PATCH\nPath: /api/users/99"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-application-layer
+        title: "Quiz: Application Layer"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-application-layer.md
+
+  - title: Transport Layer
+    summary: UDP vs TCP, ports and sockets, reliable delivery, and congestion control.
+    order_index: 3
+    lessons:
+      - slug: udp-vs-tcp
+        title: UDP vs TCP
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/udp-vs-tcp.md
+
+      - slug: tcp-reliability
+        title: "TCP Reliability: How It Works"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/tcp-reliability.md
+
+      - slug: tcp-congestion-control
+        title: "TCP Congestion Control: Slow Start, AIMD, and BBR"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/tcp-congestion-control.md
+
+      - slug: quiz-transport-layer
+        title: "Quiz: Transport Layer"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-transport-layer.md
+
+      - slug: quiz-advanced-transport
+        title: "Quiz: TCP Congestion Control"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-advanced-transport.md
+
+  - title: Network Layer
+    summary: IP addressing, CIDR subnetting, routing algorithms, NAT, and IPv4 vs IPv6.
+    order_index: 4
+    lessons:
+      - slug: ip-addressing
+        title: IP Addressing
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/ip-addressing.md
+
+      - slug: routing-and-nat
+        title: Routing and NAT
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/routing-and-nat.md
+
+      - slug: ip-subnet-exercise
+        title: "Exercise: IP Network Calculator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ip-subnet-exercise.md
+        exercises:
+          - slug: net-ip-subnet
+            title: IP Network Calculator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/net-ip-subnet.prompt.md
+            supported_languages: [python]
+            tags: [networking, ip, subnetting, arithmetic]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    ip_str = data[0]
+                    prefix = int(data[1])
+                    # TODO: compute network address and usable host count
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    ip_str = data[0]
+                    prefix = int(data[1])
+
+                    parts = list(map(int, ip_str.split('.')))
+                    ip_int = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]
+
+                    mask = (0xFFFFFFFF << (32 - prefix)) & 0xFFFFFFFF
+                    network_int = ip_int & mask
+
+                    a = (network_int >> 24) & 0xFF
+                    b = (network_int >> 16) & 0xFF
+                    c = (network_int >> 8) & 0xFF
+                    d = network_int & 0xFF
+
+                    hosts = (1 << (32 - prefix)) - 2
+                    print(f"Network: {a}.{b}.{c}.{d}")
+                    print(f"Hosts: {hosts}")
+
+                solve()
+            test_cases:
+              - name: slash-26
+                stdin: "192.168.10.45 26\n"
+                expected_stdout: "Network: 192.168.10.0\nHosts: 62"
+                is_hidden: false
+                weight: 1
+              - name: slash-8
+                stdin: "10.0.0.1 8\n"
+                expected_stdout: "Network: 10.0.0.0\nHosts: 16777214"
+                is_hidden: false
+                weight: 1
+              - name: slash-20
+                stdin: "172.16.5.130 20\n"
+                expected_stdout: "Network: 172.16.0.0\nHosts: 4094"
+                is_hidden: false
+                weight: 1
+              - name: slash-24
+                stdin: "10.20.30.40 24\n"
+                expected_stdout: "Network: 10.20.30.0\nHosts: 254"
+                is_hidden: true
+                weight: 1
+              - name: slash-30
+                stdin: "192.0.2.200 30\n"
+                expected_stdout: "Network: 192.0.2.200\nHosts: 2"
+                is_hidden: true
+                weight: 1
+              - name: slash-10
+                stdin: "100.64.128.1 10\n"
+                expected_stdout: "Network: 100.64.0.0\nHosts: 4194302"
+                is_hidden: true
+                weight: 1
+              - name: slash-28
+                stdin: "192.168.100.200 28\n"
+                expected_stdout: "Network: 192.168.100.192\nHosts: 14"
+                is_hidden: true
+                weight: 1
+
+      - slug: cidr-range-exercise
+        title: "Exercise: CIDR Range Calculator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/cidr-range-exercise.md
+        exercises:
+          - slug: net-cidr-range
+            title: CIDR Range Calculator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/net-cidr-range.prompt.md
+            supported_languages: [python]
+            tags: [networking, ip, cidr, subnetting, arithmetic]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    ip_str, prefix_str = line.split('/')
+                    prefix = int(prefix_str)
+                    # TODO: compute and print network, broadcast, first, last, usable
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    ip_str, prefix_str = line.split('/')
+                    prefix = int(prefix_str)
+
+                    parts = list(map(int, ip_str.split('.')))
+                    ip_int = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]
+
+                    mask = (0xFFFFFFFF << (32 - prefix)) & 0xFFFFFFFF
+                    network_int = ip_int & mask
+                    broadcast_int = network_int | (~mask & 0xFFFFFFFF)
+                    first_host_int = network_int + 1
+                    last_host_int = broadcast_int - 1
+                    usable = (1 << (32 - prefix)) - 2
+
+                    def to_dot(n):
+                        return (f"{(n >> 24) & 0xFF}.{(n >> 16) & 0xFF}"
+                                f".{(n >> 8) & 0xFF}.{n & 0xFF}")
+
+                    print(f"Network: {to_dot(network_int)}")
+                    print(f"Broadcast: {to_dot(broadcast_int)}")
+                    print(f"First: {to_dot(first_host_int)}")
+                    print(f"Last: {to_dot(last_host_int)}")
+                    print(f"Usable: {usable}")
+
+                solve()
+            test_cases:
+              - name: slash-24-clean
+                stdin: "192.168.1.0/24\n"
+                expected_stdout: "Network: 192.168.1.0\nBroadcast: 192.168.1.255\nFirst: 192.168.1.1\nLast: 192.168.1.254\nUsable: 254"
+                is_hidden: false
+                weight: 1
+              - name: slash-26-host-ip
+                stdin: "192.168.10.45/26\n"
+                expected_stdout: "Network: 192.168.10.0\nBroadcast: 192.168.10.63\nFirst: 192.168.10.1\nLast: 192.168.10.62\nUsable: 62"
+                is_hidden: false
+                weight: 1
+              - name: slash-8
+                stdin: "10.0.0.0/8\n"
+                expected_stdout: "Network: 10.0.0.0\nBroadcast: 10.255.255.255\nFirst: 10.0.0.1\nLast: 10.255.255.254\nUsable: 16777214"
+                is_hidden: false
+                weight: 1
+              - name: slash-20
+                stdin: "172.16.5.130/20\n"
+                expected_stdout: "Network: 172.16.0.0\nBroadcast: 172.16.15.255\nFirst: 172.16.0.1\nLast: 172.16.15.254\nUsable: 4094"
+                is_hidden: true
+                weight: 1
+              - name: slash-30
+                stdin: "203.0.113.0/30\n"
+                expected_stdout: "Network: 203.0.113.0\nBroadcast: 203.0.113.3\nFirst: 203.0.113.1\nLast: 203.0.113.2\nUsable: 2"
+                is_hidden: true
+                weight: 1
+              - name: slash-10
+                stdin: "100.64.128.1/10\n"
+                expected_stdout: "Network: 100.64.0.0\nBroadcast: 100.127.255.255\nFirst: 100.64.0.1\nLast: 100.127.255.254\nUsable: 4194302"
+                is_hidden: true
+                weight: 1
+              - name: slash-16
+                stdin: "192.168.0.0/16\n"
+                expected_stdout: "Network: 192.168.0.0\nBroadcast: 192.168.255.255\nFirst: 192.168.0.1\nLast: 192.168.255.254\nUsable: 65534"
+                is_hidden: true
+                weight: 1
+
+      - slug: subnet-mask-exercise
+        title: "Exercise: Subnet Mask Converter"
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/subnet-mask-exercise.md
+        exercises:
+          - slug: net-subnet-mask
+            title: Subnet Mask Converter
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/net-subnet-mask.prompt.md
+            supported_languages: [python]
+            tags: [networking, ip, subnet-mask, bitwise]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    if '.' in line:
+                        # Input is dotted-decimal mask -> output prefix length
+                        pass
+                    else:
+                        # Input is prefix length integer -> output dotted-decimal mask
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    if '.' in line:
+                        parts = list(map(int, line.split('.')))
+                        mask = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]
+                        prefix = bin(mask).count('1')
+                        print(f"Prefix: {prefix}")
+                    else:
+                        prefix = int(line)
+                        if prefix == 0:
+                            mask = 0
+                        else:
+                            mask = (0xFFFFFFFF << (32 - prefix)) & 0xFFFFFFFF
+                        a = (mask >> 24) & 0xFF
+                        b = (mask >> 16) & 0xFF
+                        c = (mask >> 8) & 0xFF
+                        d = mask & 0xFF
+                        print(f"Mask: {a}.{b}.{c}.{d}")
+
+                solve()
+            test_cases:
+              - name: prefix-to-mask-24
+                stdin: "24\n"
+                expected_stdout: "Mask: 255.255.255.0"
+                is_hidden: false
+                weight: 1
+              - name: mask-to-prefix-24
+                stdin: "255.255.255.0\n"
+                expected_stdout: "Prefix: 24"
+                is_hidden: false
+                weight: 1
+              - name: prefix-to-mask-26
+                stdin: "26\n"
+                expected_stdout: "Mask: 255.255.255.192"
+                is_hidden: false
+                weight: 1
+              - name: mask-to-prefix-20
+                stdin: "255.255.240.0\n"
+                expected_stdout: "Prefix: 20"
+                is_hidden: true
+                weight: 1
+              - name: prefix-to-mask-0
+                stdin: "0\n"
+                expected_stdout: "Mask: 0.0.0.0"
+                is_hidden: true
+                weight: 1
+              - name: mask-to-prefix-32
+                stdin: "255.255.255.255\n"
+                expected_stdout: "Prefix: 32"
+                is_hidden: true
+                weight: 1
+              - name: prefix-to-mask-8
+                stdin: "8\n"
+                expected_stdout: "Mask: 255.0.0.0"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-network-layer
+        title: "Quiz: Network Layer"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-network-layer.md
+
+  - title: Link Layer
+    summary: MAC addresses, Ethernet frames, switches, ARP, and error detection with CRC and checksums.
+    order_index: 5
+    lessons:
+      - slug: mac-and-ethernet
+        title: MAC Addresses and Ethernet
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/mac-and-ethernet.md
+
+      - slug: error-detection
+        title: Error Detection in Networks
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/error-detection.md
+
+      - slug: ip-to-int-exercise
+        title: "Exercise: IP Address to 32-bit Integer"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ip-to-int-exercise.md
+        exercises:
+          - slug: net-ip-to-int
+            title: IP Address to 32-bit Integer
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/net-ip-to-int.prompt.md
+            supported_languages: [python]
+            tags: [networking, ip, bitwise, arithmetic]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    ip_str = sys.stdin.read().strip()
+                    # TODO: convert dotted-decimal to 32-bit integer
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    ip_str = sys.stdin.read().strip()
+                    parts = list(map(int, ip_str.split('.')))
+                    result = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]
+                    print(result)
+
+                solve()
+            test_cases:
+              - name: private-ip
+                stdin: "192.168.1.1\n"
+                expected_stdout: "3232235777"
+                is_hidden: false
+                weight: 1
+              - name: zero-ip
+                stdin: "0.0.0.0\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: broadcast
+                stdin: "255.255.255.255\n"
+                expected_stdout: "4294967295"
+                is_hidden: false
+                weight: 1
+              - name: loopback
+                stdin: "10.0.0.1\n"
+                expected_stdout: "167772161"
+                is_hidden: true
+                weight: 1
+              - name: rfc1918-172
+                stdin: "172.16.0.1\n"
+                expected_stdout: "2886729729"
+                is_hidden: true
+                weight: 1
+              - name: google-dns
+                stdin: "8.8.8.8\n"
+                expected_stdout: "134744072"
+                is_hidden: true
+                weight: 1
+
+      - slug: int-to-ip-exercise
+        title: "Exercise: 32-bit Integer to IP Address"
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/int-to-ip-exercise.md
+        exercises:
+          - slug: net-int-to-ip
+            title: 32-bit Integer to IP Address
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/net-int-to-ip.prompt.md
+            supported_languages: [python]
+            tags: [networking, ip, bitwise, arithmetic]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    n = int(sys.stdin.read().strip())
+                    # TODO: convert 32-bit integer to dotted-decimal IP address
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    n = int(sys.stdin.read().strip())
+                    a = (n >> 24) & 0xFF
+                    b = (n >> 16) & 0xFF
+                    c = (n >> 8) & 0xFF
+                    d = n & 0xFF
+                    print(f"{a}.{b}.{c}.{d}")
+
+                solve()
+            test_cases:
+              - name: private-192
+                stdin: "3232235777\n"
+                expected_stdout: "192.168.1.1"
+                is_hidden: false
+                weight: 1
+              - name: zero
+                stdin: "0\n"
+                expected_stdout: "0.0.0.0"
+                is_hidden: false
+                weight: 1
+              - name: all-ones
+                stdin: "4294967295\n"
+                expected_stdout: "255.255.255.255"
+                is_hidden: false
+                weight: 1
+              - name: google-dns
+                stdin: "134744072\n"
+                expected_stdout: "8.8.8.8"
+                is_hidden: true
+                weight: 1
+              - name: loopback
+                stdin: "2130706433\n"
+                expected_stdout: "127.0.0.1"
+                is_hidden: true
+                weight: 1
+              - name: rfc1918-172
+                stdin: "2886729729\n"
+                expected_stdout: "172.16.0.1"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-link-layer
+        title: "Quiz: Link Layer"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-link-layer.md
+
+  - title: Network Routing
+    summary: Routing algorithms, longest prefix match, and a hands-on routing exercise.
+    order_index: 6
+    lessons:
+      - slug: longest-prefix-match-exercise
+        title: "Exercise: Longest Prefix Match"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/longest-prefix-match-exercise.md
+        exercises:
+          - slug: net-lpm
+            title: Longest Prefix Match Router
+            difficulty: hard
+            points: 25
+            prompt_file: lessons/net-lpm.prompt.md
+            supported_languages: [python]
+            tags: [networking, routing, ip, algorithms, longest-prefix-match]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    routes = []
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        routes.append((parts[0], parts[1]))
+                    dst = data[n + 1].strip()
+                    # TODO: find the longest-prefix-matching route and print next-hop
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def ip_to_int(s):
+                    p = list(map(int, s.split('.')))
+                    return (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3]
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    routes = []
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        routes.append((parts[0], parts[1]))
+                    dst_str = data[n + 1].strip()
+                    dst = ip_to_int(dst_str)
+
+                    best_len = -1
+                    best_hop = None
+                    for (cidr, hop) in routes:
+                        net_str, plen_str = cidr.split('/')
+                        plen = int(plen_str)
+                        net = ip_to_int(net_str)
+                        if plen == 0:
+                            mask = 0
+                        else:
+                            mask = (0xFFFFFFFF << (32 - plen)) & 0xFFFFFFFF
+                        if (dst & mask) == (net & mask):
+                            if plen > best_len:
+                                best_len = plen
+                                best_hop = hop
+
+                    print(best_hop)
+
+                solve()
+            test_cases:
+              - name: specific-match
+                stdin: "3\n10.0.1.0/24 eth0\n10.0.0.0/8 eth1\n0.0.0.0/0 eth2\n10.0.1.45\n"
+                expected_stdout: "eth0"
+                is_hidden: false
+                weight: 1
+              - name: medium-match
+                stdin: "3\n10.0.1.0/24 eth0\n10.0.0.0/8 eth1\n0.0.0.0/0 eth2\n10.2.3.4\n"
+                expected_stdout: "eth1"
+                is_hidden: false
+                weight: 1
+              - name: default-route
+                stdin: "3\n10.0.1.0/24 eth0\n10.0.0.0/8 eth1\n0.0.0.0/0 eth2\n8.8.8.8\n"
+                expected_stdout: "eth2"
+                is_hidden: false
+                weight: 1
+              - name: four-routes-most-specific
+                stdin: "4\n192.168.0.0/16 gw1\n192.168.1.0/24 gw2\n192.168.1.128/25 gw3\n0.0.0.0/0 gw0\n192.168.1.200\n"
+                expected_stdout: "gw3"
+                is_hidden: true
+                weight: 1
+              - name: four-routes-24
+                stdin: "4\n192.168.0.0/16 gw1\n192.168.1.0/24 gw2\n192.168.1.128/25 gw3\n0.0.0.0/0 gw0\n192.168.1.10\n"
+                expected_stdout: "gw2"
+                is_hidden: true
+                weight: 1
+              - name: four-routes-16
+                stdin: "4\n192.168.0.0/16 gw1\n192.168.1.0/24 gw2\n192.168.1.128/25 gw3\n0.0.0.0/0 gw0\n192.168.5.1\n"
+                expected_stdout: "gw1"
+                is_hidden: true
+                weight: 1
+              - name: four-routes-default
+                stdin: "4\n192.168.0.0/16 gw1\n192.168.1.0/24 gw2\n192.168.1.128/25 gw3\n0.0.0.0/0 gw0\n1.2.3.4\n"
+                expected_stdout: "gw0"
+                is_hidden: true
+                weight: 1
+
+  - title: Network Security Basics
+    summary: Common threats, TLS encryption, certificate validation, firewalls, and authentication protocols.
+    order_index: 7
+    lessons:
+      - slug: network-threats
+        title: Network Threats and Attacks
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/network-threats.md
+
+      - slug: tls-and-encryption
+        title: "TLS, Encryption, and Firewalls"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/tls-and-encryption.md
+
+      - slug: internet-checksum-exercise
+        title: "Exercise: Internet Checksum"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/internet-checksum-exercise.md
+        exercises:
+          - slug: net-checksum
+            title: Internet Checksum
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/net-checksum.prompt.md
+            supported_languages: [python]
+            tags: [networking, checksum, bitwise, arithmetic]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    words = list(map(int, sys.stdin.read().split()))
+                    # TODO: compute Internet checksum (one's complement sum, then complement)
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    words = list(map(int, sys.stdin.read().split()))
+                    total = sum(words)
+                    while total >> 16:
+                        total = (total >> 16) + (total & 0xFFFF)
+                    checksum = (~total) & 0xFFFF
+                    print(checksum)
+
+                solve()
+            test_cases:
+              - name: two-words
+                stdin: "46336 5888\n"
+                expected_stdout: "13311"
+                is_hidden: false
+                weight: 1
+              - name: zero-word
+                stdin: "0\n"
+                expected_stdout: "65535"
+                is_hidden: false
+                weight: 1
+              - name: max-word
+                stdin: "65535\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: three-words
+                stdin: "256 512 1024\n"
+                expected_stdout: "63743"
+                is_hidden: true
+                weight: 1
+              - name: carry-wrap
+                stdin: "65535 65535\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: mixed
+                stdin: "4660 22136 291\n"
+                expected_stdout: "38448"
+                is_hidden: true
+                weight: 1
+              - name: single-one
+                stdin: "1\n"
+                expected_stdout: "65534"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-network-security
+        title: "Quiz: Network Security Basics"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-network-security.md

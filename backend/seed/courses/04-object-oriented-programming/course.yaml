@@ -1,0 +1,1307 @@
+subject:
+  slug: programming
+  name: Programming
+  description: "Programming paradigms, language design, and writing clean code."
+  icon: code
+  color: "#06b6d4"
+  order_index: 2
+
+course:
+  slug: object-oriented-programming
+  title: Object-Oriented Programming
+  summary: "Master classes, encapsulation, inheritance, polymorphism, SOLID principles, and classic design patterns in Python."
+  description: |
+    A thorough, practical tour of Object-Oriented Programming using Python.
+    You will build real classes, explore encapsulation and inheritance, apply
+    the SOLID principles, and implement common design patterns — Singleton,
+    Factory, Strategy, Observer, Decorator, Adapter, and Command — with
+    hands-on coding exercises and worked examples throughout.
+  difficulty: intermediate
+  estimated_hours: 22
+  is_published: true
+  order_index: 1
+
+modules:
+  - title: Classes and Objects
+    summary: The building blocks of OOP — state, behavior, attributes, methods, and instances.
+    order_index: 1
+    lessons:
+      - slug: state-vs-behavior
+        title: State vs Behavior
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/state-vs-behavior.md
+
+      - slug: attributes-and-methods
+        title: Attributes and Methods
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/attributes-and-methods.md
+
+      - slug: constructors-and-instances
+        title: Constructors and Instances
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/constructors-and-instances.md
+
+      - slug: bank-account-exercise
+        title: "Exercise: Bank Account Command Processor"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/bank-account-exercise.md
+        exercises:
+          - slug: oop-bank-account
+            title: Bank Account Command Processor
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/oop-bank-account.prompt.md
+            supported_languages: [python]
+            tags: [oop, classes, state]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class BankAccount:
+                    def __init__(self):
+                        self.balance = 0
+
+                    def deposit(self, amount):
+                        # TODO
+                        pass
+
+                    def withdraw(self, amount):
+                        # TODO: return False if insufficient funds
+                        pass
+
+                    def get_balance(self):
+                        return self.balance
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    account = BankAccount()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        # TODO: handle DEPOSIT, WITHDRAW, BALANCE
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class BankAccount:
+                    def __init__(self):
+                        self.balance = 0
+
+                    def deposit(self, amount):
+                        self.balance += amount
+
+                    def withdraw(self, amount):
+                        if amount > self.balance:
+                            return False
+                        self.balance -= amount
+                        return True
+
+                    def get_balance(self):
+                        return self.balance
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    account = BankAccount()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        if cmd == "DEPOSIT":
+                            account.deposit(int(parts[1]))
+                        elif cmd == "WITHDRAW":
+                            ok = account.withdraw(int(parts[1]))
+                            if not ok:
+                                print("INSUFFICIENT FUNDS")
+                        elif cmd == "BALANCE":
+                            print(account.get_balance())
+                solve()
+            test_cases:
+              - name: basic-deposit-withdraw
+                stdin: "5\nDEPOSIT 100\nWITHDRAW 30\nBALANCE\nWITHDRAW 200\nBALANCE\n"
+                expected_stdout: "70\nINSUFFICIENT FUNDS\n70"
+                is_hidden: false
+                weight: 1
+              - name: only-balance
+                stdin: "1\nBALANCE\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: exact-withdraw
+                stdin: "3\nDEPOSIT 50\nWITHDRAW 50\nBALANCE\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: multiple-deposits
+                stdin: "4\nDEPOSIT 200\nDEPOSIT 300\nWITHDRAW 100\nBALANCE\n"
+                expected_stdout: "400"
+                is_hidden: true
+                weight: 1
+              - name: all-fail-withdrawals
+                stdin: "3\nWITHDRAW 10\nWITHDRAW 1\nBALANCE\n"
+                expected_stdout: "INSUFFICIENT FUNDS\nINSUFFICIENT FUNDS\n0"
+                is_hidden: true
+                weight: 1
+              - name: interleaved-ops
+                stdin: "6\nDEPOSIT 500\nWITHDRAW 100\nBALANCE\nDEPOSIT 50\nWITHDRAW 600\nBALANCE\n"
+                expected_stdout: "400\nINSUFFICIENT FUNDS\n450"
+                is_hidden: true
+                weight: 1
+
+  - title: Encapsulation
+    summary: Control access to internal state with name conventions, properties, and invariants.
+    order_index: 2
+    lessons:
+      - slug: access-control
+        title: "Access Control and Encapsulation"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/access-control.md
+
+      - slug: properties-and-invariants
+        title: Properties and Invariants
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/properties-and-invariants.md
+
+      - slug: encapsulation-quiz
+        title: "Quiz: Encapsulation"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/encapsulation-quiz.md
+
+  - title: Inheritance
+    summary: Build class hierarchies with subclassing, super(), method overriding, and composition.
+    order_index: 3
+    lessons:
+      - slug: subclassing-and-super
+        title: "Subclassing and the super() Function"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/subclassing-and-super.md
+
+      - slug: overriding-methods
+        title: Overriding Methods
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/overriding-methods.md
+
+      - slug: shape-area-exercise
+        title: "Exercise: Shape Area Calculator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/shape-area-exercise.md
+        exercises:
+          - slug: oop-shape-area
+            title: Shape Area Calculator
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/oop-shape-area.prompt.md
+            supported_languages: [python]
+            tags: [oop, inheritance, polymorphism]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class Shape:
+                    def area(self):
+                        return 0.0
+
+                class Circle(Shape):
+                    def __init__(self, radius):
+                        self.radius = radius
+                    def area(self):
+                        # TODO
+                        pass
+
+                class Rectangle(Shape):
+                    def __init__(self, width, height):
+                        self.width = width
+                        self.height = height
+                    def area(self):
+                        # TODO
+                        pass
+
+                class Triangle(Shape):
+                    def __init__(self, base, height):
+                        self.base = base
+                        self.height = height
+                    def area(self):
+                        # TODO
+                        pass
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    current = None
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        # TODO: handle commands
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class Shape:
+                    def area(self):
+                        return 0.0
+
+                class Circle(Shape):
+                    def __init__(self, radius):
+                        self.radius = float(radius)
+                    def area(self):
+                        return 3.14159 * self.radius ** 2
+
+                class Rectangle(Shape):
+                    def __init__(self, width, height):
+                        self.width = float(width)
+                        self.height = float(height)
+                    def area(self):
+                        return self.width * self.height
+
+                class Triangle(Shape):
+                    def __init__(self, base, height):
+                        self.base = float(base)
+                        self.height = float(height)
+                    def area(self):
+                        return 0.5 * self.base * self.height
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    current = None
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        if cmd == "CIRCLE":
+                            current = Circle(parts[1])
+                        elif cmd == "RECTANGLE":
+                            current = Rectangle(parts[1], parts[2])
+                        elif cmd == "TRIANGLE":
+                            current = Triangle(parts[1], parts[2])
+                        elif cmd == "AREA":
+                            print(f"{current.area():.2f}")
+                solve()
+            test_cases:
+              - name: three-shapes
+                stdin: "6\nCIRCLE 5\nAREA\nRECTANGLE 4 6\nAREA\nTRIANGLE 3 8\nAREA\n"
+                expected_stdout: "78.54\n24.00\n12.00"
+                is_hidden: false
+                weight: 1
+              - name: unit-circle
+                stdin: "2\nCIRCLE 1\nAREA\n"
+                expected_stdout: "3.14"
+                is_hidden: false
+                weight: 1
+              - name: square
+                stdin: "2\nRECTANGLE 7 7\nAREA\n"
+                expected_stdout: "49.00"
+                is_hidden: false
+                weight: 1
+              - name: triangle-only
+                stdin: "2\nTRIANGLE 10 4\nAREA\n"
+                expected_stdout: "20.00"
+                is_hidden: true
+                weight: 1
+              - name: multiple-areas
+                stdin: "4\nCIRCLE 10\nAREA\nRECTANGLE 3 5\nAREA\n"
+                expected_stdout: "314.16\n15.00"
+                is_hidden: true
+                weight: 1
+              - name: thin-rectangle
+                stdin: "2\nRECTANGLE 1 100\nAREA\n"
+                expected_stdout: "100.00"
+                is_hidden: true
+                weight: 1
+
+      - slug: composition-exercise
+        title: "Exercise: Library Catalog (Composition)"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/composition-exercise.md
+        exercises:
+          - slug: oop-library-catalog
+            title: Library Catalog
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/oop-library-catalog.prompt.md
+            supported_languages: [python]
+            tags: [oop, composition, data-structures]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class Book:
+                    def __init__(self, title, author):
+                        self.title = title
+                        self.author = author
+
+                class Shelf:
+                    def __init__(self, name):
+                        self.name = name
+                        self.books = []
+
+                class Library:
+                    def __init__(self):
+                        self.shelves = {}
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    lib = Library()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        # TODO
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class Book:
+                    def __init__(self, title, author):
+                        self.title = title
+                        self.author = author
+
+                class Shelf:
+                    def __init__(self, name):
+                        self.name = name
+                        self.books = []
+
+                class Library:
+                    def __init__(self):
+                        self.shelves = {}
+
+                    def add_shelf(self, name):
+                        self.shelves[name] = Shelf(name)
+
+                    def add_book(self, shelf_name, title, author):
+                        self.shelves[shelf_name].books.append(Book(title, author))
+
+                    def list_shelf(self, shelf_name):
+                        books = self.shelves[shelf_name].books
+                        if not books:
+                            print("EMPTY")
+                        else:
+                            for b in books:
+                                print(f"{b.title} by {b.author}")
+
+                    def search(self, title):
+                        for shelf in self.shelves.values():
+                            for b in shelf.books:
+                                if b.title == title:
+                                    print(shelf.name)
+                                    return
+                        print("NOT FOUND")
+
+                    def count(self, shelf_name):
+                        print(len(self.shelves[shelf_name].books))
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    lib = Library()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        if cmd == "ADD_SHELF":
+                            lib.add_shelf(parts[1])
+                        elif cmd == "ADD_BOOK":
+                            lib.add_book(parts[1], parts[2], parts[3])
+                        elif cmd == "LIST_SHELF":
+                            lib.list_shelf(parts[1])
+                        elif cmd == "SEARCH":
+                            lib.search(parts[1])
+                        elif cmd == "COUNT":
+                            lib.count(parts[1])
+                solve()
+            test_cases:
+              - name: basic-catalog
+                stdin: "8\nADD_SHELF fiction\nADD_SHELF science\nADD_BOOK fiction Dune Herbert\nADD_BOOK fiction Foundation Asimov\nADD_BOOK science ABriefHistory Hawking\nLIST_SHELF fiction\nCOUNT science\nSEARCH Foundation\n"
+                expected_stdout: "Dune by Herbert\nFoundation by Asimov\n1\nfiction"
+                is_hidden: false
+                weight: 1
+              - name: empty-shelf
+                stdin: "2\nADD_SHELF empty\nLIST_SHELF empty\n"
+                expected_stdout: "EMPTY"
+                is_hidden: false
+                weight: 1
+              - name: search-not-found
+                stdin: "3\nADD_SHELF sf\nADD_BOOK sf Dune Herbert\nSEARCH UnknownBook\n"
+                expected_stdout: "NOT FOUND"
+                is_hidden: false
+                weight: 1
+              - name: count-multiple
+                stdin: "6\nADD_SHELF a\nADD_BOOK a BookA Auth1\nADD_BOOK a BookB Auth2\nADD_BOOK a BookC Auth3\nCOUNT a\nLIST_SHELF a\n"
+                expected_stdout: "3\nBookA by Auth1\nBookB by Auth2\nBookC by Auth3"
+                is_hidden: true
+                weight: 1
+              - name: search-first-shelf
+                stdin: "6\nADD_SHELF s1\nADD_SHELF s2\nADD_BOOK s1 Dune Herbert\nADD_BOOK s2 Dune Herbert\nSEARCH Dune\nCOUNT s2\n"
+                expected_stdout: "s1\n1"
+                is_hidden: true
+                weight: 1
+
+  - title: Polymorphism
+    summary: Dynamic dispatch, duck typing, method overriding, and abstract methods in Python.
+    order_index: 4
+    lessons:
+      - slug: dynamic-dispatch
+        title: Dynamic Dispatch and Polymorphism
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/dynamic-dispatch.md
+
+      - slug: abstract-methods
+        title: Abstract Methods and Enforced Interfaces
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/abstract-methods.md
+
+      - slug: animal-sounds-exercise
+        title: "Exercise: Animal Sounds via Polymorphism"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/animal-sounds-exercise.md
+        exercises:
+          - slug: oop-animal-sounds
+            title: Animal Sounds via Polymorphism
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/oop-animal-sounds.prompt.md
+            supported_languages: [python]
+            tags: [oop, polymorphism, inheritance]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class Animal:
+                    def __init__(self, name):
+                        self.name = name
+                    def speak(self):
+                        return ""
+
+                class Dog(Animal):
+                    def speak(self):
+                        # TODO
+                        pass
+
+                class Cat(Animal):
+                    def speak(self):
+                        # TODO
+                        pass
+
+                class Cow(Animal):
+                    def speak(self):
+                        # TODO
+                        pass
+
+                class Duck(Animal):
+                    def speak(self):
+                        # TODO
+                        pass
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    animals = {}
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        # TODO: handle CREATE, SPEAK, TYPE
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class Animal:
+                    def __init__(self, name):
+                        self.name = name
+                    def speak(self):
+                        return ""
+
+                class Dog(Animal):
+                    def speak(self):
+                        return "woof"
+
+                class Cat(Animal):
+                    def speak(self):
+                        return "meow"
+
+                class Cow(Animal):
+                    def speak(self):
+                        return "moo"
+
+                class Duck(Animal):
+                    def speak(self):
+                        return "quack"
+
+                ANIMAL_TYPES = {
+                    "Dog": Dog,
+                    "Cat": Cat,
+                    "Cow": Cow,
+                    "Duck": Duck,
+                }
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    animals = {}
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        if cmd == "CREATE":
+                            animal_type, name = parts[1], parts[2]
+                            animals[name] = ANIMAL_TYPES[animal_type](name)
+                        elif cmd == "SPEAK":
+                            name = parts[1]
+                            print(f"{name} says {animals[name].speak()}")
+                        elif cmd == "TYPE":
+                            name = parts[1]
+                            print(type(animals[name]).__name__)
+                solve()
+            test_cases:
+              - name: basic-animals
+                stdin: "6\nCREATE Dog Rex\nCREATE Cat Whiskers\nCREATE Duck Donald\nSPEAK Rex\nSPEAK Whiskers\nTYPE Donald\n"
+                expected_stdout: "Rex says woof\nWhiskers says meow\nDuck"
+                is_hidden: false
+                weight: 1
+              - name: cow-sound
+                stdin: "2\nCREATE Cow Bessie\nSPEAK Bessie\n"
+                expected_stdout: "Bessie says moo"
+                is_hidden: false
+                weight: 1
+              - name: all-sounds
+                stdin: "8\nCREATE Dog D\nCREATE Cat C\nCREATE Cow V\nCREATE Duck K\nSPEAK D\nSPEAK C\nSPEAK V\nSPEAK K\n"
+                expected_stdout: "D says woof\nC says meow\nV says moo\nK says quack"
+                is_hidden: false
+                weight: 1
+              - name: type-checks
+                stdin: "5\nCREATE Dog Buddy\nCREATE Cow Mabel\nCREATE Cat Luna\nTYPE Buddy\nTYPE Mabel\n"
+                expected_stdout: "Dog\nCow"
+                is_hidden: true
+                weight: 1
+              - name: speak-then-type
+                stdin: "4\nCREATE Duck Daffy\nSPEAK Daffy\nTYPE Daffy\nSPEAK Daffy\n"
+                expected_stdout: "Daffy says quack\nDuck\nDaffy says quack"
+                is_hidden: true
+                weight: 1
+
+      - slug: stack-exercise
+        title: "Exercise: Stack Command Processor"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/stack-exercise.md
+        exercises:
+          - slug: oop-stack-commands
+            title: Stack Command Processor
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/oop-stack-commands.prompt.md
+            supported_languages: [python]
+            tags: [oop, encapsulation, data-structures]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class Stack:
+                    def __init__(self):
+                        self._items = []
+
+                    def push(self, item):
+                        # TODO
+                        pass
+
+                    def pop(self):
+                        # TODO: return item or None if empty
+                        pass
+
+                    def peek(self):
+                        # TODO: return item or None if empty
+                        pass
+
+                    def size(self):
+                        return len(self._items)
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    stack = Stack()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        # TODO: handle PUSH, POP, PEEK, SIZE
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class Stack:
+                    def __init__(self):
+                        self._items = []
+
+                    def push(self, item):
+                        self._items.append(item)
+
+                    def pop(self):
+                        if not self._items:
+                            return None
+                        return self._items.pop()
+
+                    def peek(self):
+                        if not self._items:
+                            return None
+                        return self._items[-1]
+
+                    def size(self):
+                        return len(self._items)
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    stack = Stack()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        if cmd == "PUSH":
+                            stack.push(int(parts[1]))
+                        elif cmd == "POP":
+                            val = stack.pop()
+                            print(val if val is not None else "EMPTY")
+                        elif cmd == "PEEK":
+                            val = stack.peek()
+                            print(val if val is not None else "EMPTY")
+                        elif cmd == "SIZE":
+                            print(stack.size())
+                solve()
+            test_cases:
+              - name: push-peek-pop
+                stdin: "7\nPUSH 10\nPUSH 20\nPEEK\nSIZE\nPOP\nPOP\nPOP\n"
+                expected_stdout: "20\n2\n20\n10\nEMPTY"
+                is_hidden: false
+                weight: 1
+              - name: empty-stack
+                stdin: "2\nPOP\nPEEK\n"
+                expected_stdout: "EMPTY\nEMPTY"
+                is_hidden: false
+                weight: 1
+              - name: size-only
+                stdin: "4\nPUSH 1\nPUSH 2\nPUSH 3\nSIZE\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: interleaved
+                stdin: "6\nPUSH 5\nPUSH 10\nPOP\nPUSH 7\nPEEK\nSIZE\n"
+                expected_stdout: "10\n7\n2"
+                is_hidden: true
+                weight: 1
+              - name: single-item
+                stdin: "3\nPUSH 42\nPEEK\nPOP\n"
+                expected_stdout: "42\n42"
+                is_hidden: true
+                weight: 1
+              - name: size-after-pops
+                stdin: "6\nPUSH 1\nPUSH 2\nPOP\nPOP\nPOP\nSIZE\n"
+                expected_stdout: "2\n1\nEMPTY\n0"
+                is_hidden: true
+                weight: 1
+
+  - title: Abstraction and Interfaces
+    summary: Abstract base classes, Python protocols, contracts, and interface design.
+    order_index: 5
+    lessons:
+      - slug: abstract-base-classes
+        title: Abstract Base Classes and Interfaces
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/abstract-base-classes.md
+
+      - slug: contracts-and-protocols
+        title: "Contracts, Protocols, and Interface Design"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/contracts-and-protocols.md
+
+      - slug: event-system-exercise
+        title: "Exercise: Simple Event System"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/event-system-exercise.md
+        exercises:
+          - slug: oop-event-system
+            title: Simple Event System
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/oop-event-system.prompt.md
+            supported_languages: [python]
+            tags: [oop, observer, design-patterns]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                class EventBus:
+                    def __init__(self):
+                        self._subscribers = defaultdict(list)
+
+                    def subscribe(self, event, observer):
+                        # TODO
+                        pass
+
+                    def unsubscribe(self, event, observer):
+                        # TODO
+                        pass
+
+                    def fire(self, event, data):
+                        # TODO: notify all subscribers in subscription order
+                        pass
+
+                    def count(self, event):
+                        return len(self._subscribers[event])
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    bus = EventBus()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        # TODO
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                class EventBus:
+                    def __init__(self):
+                        self._subscribers = defaultdict(list)
+
+                    def subscribe(self, event, observer):
+                        self._subscribers[event].append(observer)
+
+                    def unsubscribe(self, event, observer):
+                        if observer in self._subscribers[event]:
+                            self._subscribers[event].remove(observer)
+
+                    def fire(self, event, data):
+                        for obs in self._subscribers[event]:
+                            print(f"{obs} received {data}")
+
+                    def count(self, event):
+                        return len(self._subscribers[event])
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    bus = EventBus()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        if cmd == "SUBSCRIBE":
+                            bus.subscribe(parts[1], parts[2])
+                        elif cmd == "UNSUBSCRIBE":
+                            bus.unsubscribe(parts[1], parts[2])
+                        elif cmd == "FIRE":
+                            bus.fire(parts[1], parts[2])
+                        elif cmd == "COUNT":
+                            print(bus.count(parts[1]))
+                solve()
+            test_cases:
+              - name: subscribe-fire-unsub
+                stdin: "8\nSUBSCRIBE click buttonA\nSUBSCRIBE click buttonB\nSUBSCRIBE hover tooltip\nFIRE click pressed\nCOUNT click\nUNSUBSCRIBE click buttonA\nFIRE click pressed\nCOUNT click\n"
+                expected_stdout: "buttonA received pressed\nbuttonB received pressed\n2\nbuttonB received pressed\n1"
+                is_hidden: false
+                weight: 1
+              - name: count-empty-event
+                stdin: "1\nCOUNT unknown\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: fire-no-subscribers
+                stdin: "2\nFIRE click data\nCOUNT click\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: multiple-events
+                stdin: "6\nSUBSCRIBE login userA\nSUBSCRIBE logout userB\nFIRE login success\nFIRE logout bye\nCOUNT login\nCOUNT logout\n"
+                expected_stdout: "userA received success\nuserB received bye\n1\n1"
+                is_hidden: true
+                weight: 1
+              - name: three-subscribers
+                stdin: "5\nSUBSCRIBE ev a\nSUBSCRIBE ev b\nSUBSCRIBE ev c\nFIRE ev go\nCOUNT ev\n"
+                expected_stdout: "a received go\nb received go\nc received go\n3"
+                is_hidden: true
+                weight: 1
+              - name: unsub-nonexistent
+                stdin: "4\nSUBSCRIBE ev a\nUNSUBSCRIBE ev b\nFIRE ev ping\nCOUNT ev\n"
+                expected_stdout: "a received ping\n1"
+                is_hidden: true
+                weight: 1
+
+  - title: SOLID Principles
+    summary: Apply the five SOLID principles to write maintainable, extensible Python code.
+    order_index: 6
+    lessons:
+      - slug: solid-srp-ocp
+        title: "SOLID: Single Responsibility and Open/Closed"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/solid-srp-ocp.md
+
+      - slug: solid-lsp-isp-dip
+        title: "SOLID: Liskov Substitution, Interface Segregation, and Dependency Inversion"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/solid-lsp-isp-dip.md
+
+      - slug: solid-quiz
+        title: "Quiz: SOLID Principles"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/solid-quiz.md
+
+  - title: Design Patterns
+    summary: "Singleton, Factory, Strategy, Observer, Decorator, Adapter, and Command — with Python examples."
+    order_index: 7
+    lessons:
+      - slug: singleton-and-factory
+        title: "Design Patterns: Singleton and Factory"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/singleton-and-factory.md
+
+      - slug: strategy-and-observer
+        title: "Design Patterns: Strategy and Observer"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/strategy-and-observer.md
+
+      - slug: decorator-adapter-command
+        title: "Design Patterns: Decorator, Adapter, and Command"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/decorator-adapter-command.md
+
+      - slug: state-machine-exercise
+        title: "Exercise: Traffic Light State Machine"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/state-machine-exercise.md
+        exercises:
+          - slug: oop-traffic-light
+            title: Traffic Light State Machine
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/oop-traffic-light.prompt.md
+            supported_languages: [python]
+            tags: [oop, state-machine, design-patterns]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class TrafficLight:
+                    STATES = ["RED", "GREEN", "YELLOW"]
+
+                    def __init__(self):
+                        self._index = 0
+                        self._count = 0
+
+                    def next(self):
+                        # TODO
+                        pass
+
+                    def state(self):
+                        # TODO
+                        pass
+
+                    def count(self):
+                        # TODO
+                        pass
+
+                    def reset(self):
+                        # TODO
+                        pass
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    light = TrafficLight()
+                    for i in range(1, n + 1):
+                        cmd = data[i].strip()
+                        # TODO
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class TrafficLight:
+                    STATES = ["RED", "GREEN", "YELLOW"]
+
+                    def __init__(self):
+                        self._index = 0
+                        self._count = 0
+
+                    def next(self):
+                        self._index = (self._index + 1) % len(self.STATES)
+                        self._count += 1
+
+                    def state(self):
+                        return self.STATES[self._index]
+
+                    def count(self):
+                        return self._count
+
+                    def reset(self):
+                        self._index = 0
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    light = TrafficLight()
+                    for i in range(1, n + 1):
+                        cmd = data[i].strip()
+                        if cmd == "NEXT":
+                            light.next()
+                        elif cmd == "STATE":
+                            print(light.state())
+                        elif cmd == "COUNT":
+                            print(light.count())
+                        elif cmd == "RESET":
+                            light.reset()
+                solve()
+            test_cases:
+              - name: basic-cycle
+                stdin: "5\nSTATE\nNEXT\nNEXT\nSTATE\nCOUNT\n"
+                expected_stdout: "RED\nYELLOW\n2"
+                is_hidden: false
+                weight: 1
+              - name: full-cycle
+                stdin: "4\nNEXT\nNEXT\nNEXT\nSTATE\n"
+                expected_stdout: "RED"
+                is_hidden: false
+                weight: 1
+              - name: reset-then-state
+                stdin: "5\nNEXT\nNEXT\nRESET\nSTATE\nCOUNT\n"
+                expected_stdout: "RED\n2"
+                is_hidden: false
+                weight: 1
+              - name: count-only
+                stdin: "3\nNEXT\nNEXT\nCOUNT\n"
+                expected_stdout: "2"
+                is_hidden: true
+                weight: 1
+              - name: initial-state
+                stdin: "1\nSTATE\n"
+                expected_stdout: "RED"
+                is_hidden: true
+                weight: 1
+              - name: next-then-green
+                stdin: "2\nNEXT\nSTATE\n"
+                expected_stdout: "GREEN"
+                is_hidden: true
+                weight: 1
+
+      - slug: observer-exercise
+        title: "Exercise: Score Tracker with Observer Notifications"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/observer-exercise.md
+        exercises:
+          - slug: oop-score-tracker
+            title: Score Tracker with Observer Notifications
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/oop-score-tracker.prompt.md
+            supported_languages: [python]
+            tags: [oop, observer, design-patterns]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                class ScoreTracker:
+                    def __init__(self):
+                        self._scores = {}
+                        self._subscribers = defaultdict(list)
+
+                    def subscribe(self, player, observer):
+                        # TODO
+                        pass
+
+                    def unsubscribe(self, player, observer):
+                        # TODO
+                        pass
+
+                    def set_score(self, player, score):
+                        # TODO: update score and notify
+                        pass
+
+                    def add_score(self, player, delta):
+                        # TODO: add delta and notify
+                        pass
+
+                    def get_score(self, player):
+                        return self._scores.get(player, 0)
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    tracker = ScoreTracker()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        # TODO
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                class ScoreTracker:
+                    def __init__(self):
+                        self._scores = {}
+                        self._subscribers = defaultdict(list)
+
+                    def subscribe(self, player, observer):
+                        self._subscribers[player].append(observer)
+
+                    def unsubscribe(self, player, observer):
+                        if observer in self._subscribers[player]:
+                            self._subscribers[player].remove(observer)
+
+                    def _notify(self, player):
+                        score = self._scores[player]
+                        for obs in self._subscribers[player]:
+                            print(f"{obs} notified: {player} score is {score}")
+
+                    def set_score(self, player, score):
+                        self._scores[player] = score
+                        self._notify(player)
+
+                    def add_score(self, player, delta):
+                        self._scores[player] = self._scores.get(player, 0) + delta
+                        self._notify(player)
+
+                    def get_score(self, player):
+                        return self._scores.get(player, 0)
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    tracker = ScoreTracker()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        if cmd == "SUBSCRIBE":
+                            tracker.subscribe(parts[1], parts[2])
+                        elif cmd == "UNSUBSCRIBE":
+                            tracker.unsubscribe(parts[1], parts[2])
+                        elif cmd == "SET":
+                            tracker.set_score(parts[1], int(parts[2]))
+                        elif cmd == "ADD":
+                            tracker.add_score(parts[1], int(parts[2]))
+                        elif cmd == "SCORE":
+                            print(tracker.get_score(parts[1]))
+                solve()
+            test_cases:
+              - name: basic-observer
+                stdin: "7\nSUBSCRIBE alice watcherA\nSUBSCRIBE alice watcherB\nSET alice 10\nSCORE alice\nUNSUBSCRIBE alice watcherA\nADD alice 5\nSCORE alice\n"
+                expected_stdout: "watcherA notified: alice score is 10\nwatcherB notified: alice score is 10\n10\nwatcherB notified: alice score is 15\n15"
+                is_hidden: false
+                weight: 1
+              - name: score-unknown-player
+                stdin: "1\nSCORE bob\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: add-from-zero
+                stdin: "4\nSUBSCRIBE x obs1\nADD x 7\nADD x 3\nSCORE x\n"
+                expected_stdout: "obs1 notified: x score is 7\nobs1 notified: x score is 10\n10"
+                is_hidden: false
+                weight: 1
+              - name: no-subscribers
+                stdin: "3\nSET alice 50\nADD alice 10\nSCORE alice\n"
+                expected_stdout: "60"
+                is_hidden: true
+                weight: 1
+              - name: multiple-players
+                stdin: "6\nSUBSCRIBE alice a1\nSUBSCRIBE bob b1\nSET alice 5\nSET bob 3\nSCORE alice\nSCORE bob\n"
+                expected_stdout: "a1 notified: alice score is 5\nb1 notified: bob score is 3\n5\n3"
+                is_hidden: true
+                weight: 1
+
+      - slug: command-interpreter-exercise
+        title: "Exercise: Calculator with Undo/Redo"
+        type: exercise
+        duration_minutes: 35
+        content_file: lessons/command-interpreter-exercise.md
+        exercises:
+          - slug: oop-calc-undo
+            title: Calculator with Undo/Redo
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/oop-calc-undo.prompt.md
+            supported_languages: [python]
+            tags: [oop, command-pattern, design-patterns]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class Calculator:
+                    def __init__(self):
+                        self._value = 0
+                        self._history = []
+                        self._undone = []
+
+                    def apply(self, op, n):
+                        # TODO: apply op (+/-/*), save to history, clear undone
+                        pass
+
+                    def undo(self):
+                        # TODO: reverse last operation
+                        pass
+
+                    def redo(self):
+                        # TODO: reapply last undone operation
+                        pass
+
+                    def value(self):
+                        return self._value
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    calc = Calculator()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        # TODO
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class Calculator:
+                    def __init__(self):
+                        self._value = 0
+                        self._history = []
+                        self._undone = []
+
+                    def _apply_op(self, op, n):
+                        if op == "ADD":
+                            self._value += n
+                        elif op == "SUB":
+                            self._value -= n
+                        elif op == "MUL":
+                            self._value *= n
+
+                    def _reverse_op(self, op, n):
+                        if op == "ADD":
+                            self._value -= n
+                        elif op == "SUB":
+                            self._value += n
+                        elif op == "MUL":
+                            self._value //= n
+
+                    def apply(self, op, n):
+                        self._apply_op(op, n)
+                        self._history.append((op, n))
+                        self._undone.clear()
+
+                    def undo(self):
+                        if not self._history:
+                            print("NOTHING TO UNDO")
+                            return
+                        op, n = self._history.pop()
+                        self._reverse_op(op, n)
+                        self._undone.append((op, n))
+
+                    def redo(self):
+                        if not self._undone:
+                            print("NOTHING TO REDO")
+                            return
+                        op, n = self._undone.pop()
+                        self._apply_op(op, n)
+                        self._history.append((op, n))
+
+                    def value(self):
+                        return self._value
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    calc = Calculator()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        if cmd in ("ADD", "SUB", "MUL"):
+                            calc.apply(cmd, int(parts[1]))
+                        elif cmd == "VALUE":
+                            print(calc.value())
+                        elif cmd == "UNDO":
+                            calc.undo()
+                        elif cmd == "REDO":
+                            calc.redo()
+                solve()
+            test_cases:
+              - name: basic-undo-redo
+                stdin: "8\nADD 10\nMUL 3\nVALUE\nUNDO\nVALUE\nREDO\nVALUE\nUNDO\n"
+                expected_stdout: "30\n10\n30"
+                is_hidden: false
+                weight: 1
+              - name: nothing-to-undo
+                stdin: "3\nVALUE\nUNDO\nVALUE\n"
+                expected_stdout: "0\nNOTHING TO UNDO\n0"
+                is_hidden: false
+                weight: 1
+              - name: nothing-to-redo
+                stdin: "2\nREDO\nVALUE\n"
+                expected_stdout: "NOTHING TO REDO\n0"
+                is_hidden: false
+                weight: 1
+              - name: new-op-clears-redo
+                stdin: "7\nADD 5\nADD 3\nUNDO\nADD 10\nREDO\nVALUE\nVALUE\n"
+                expected_stdout: "NOTHING TO REDO\n15\n15"
+                is_hidden: true
+                weight: 1
+              - name: subtraction-undo
+                stdin: "5\nADD 20\nSUB 5\nVALUE\nUNDO\nVALUE\n"
+                expected_stdout: "15\n20"
+                is_hidden: true
+                weight: 1
+              - name: multiple-undos
+                stdin: "7\nADD 1\nADD 2\nADD 3\nUNDO\nUNDO\nUNDO\nVALUE\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+
+      - slug: design-patterns-quiz
+        title: "Quiz: Design Patterns"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/design-patterns-quiz.md

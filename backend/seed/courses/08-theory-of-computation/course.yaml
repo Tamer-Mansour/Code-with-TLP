@@ -1,0 +1,771 @@
+subject:
+  slug: theory
+  name: "Theory of Computation"
+  description: "The mathematical limits of what computers can compute."
+  icon: sigma
+  color: "#ec4899"
+  order_index: 5
+
+course:
+  slug: theory-of-computation
+  title: "Theory of Computation"
+  summary: "Automata, grammars, Turing machines, and the boundary between the decidable and undecidable."
+  description: |
+    A rigorous tour of the mathematical foundations of computer science, following the Sipser tradition.
+    Covers finite automata, regular and context-free languages, Turing machines, the halting problem,
+    and the P vs NP question. Students gain the formal tools to classify problems by what can — and
+    cannot — be computed or efficiently solved.
+  difficulty: advanced
+  estimated_hours: 30
+  is_published: true
+  order_index: 1
+
+modules:
+  - title: "Languages & Foundations"
+    summary: "Alphabets, strings, languages, and the set/relation review needed for formal proofs."
+    order_index: 1
+    lessons:
+      - slug: alphabets-strings-languages
+        title: "Alphabets, Strings, and Languages"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/alphabets-strings-languages.md
+
+      - slug: set-operations-and-proofs
+        title: "Set Operations and Proof Techniques"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/set-operations-and-proofs.md
+
+      - slug: encoding-and-cardinality
+        title: "Encoding and Cardinality"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/encoding-and-cardinality.md
+
+      - slug: quiz-languages-foundations
+        title: "Quiz: Languages & Foundations"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/quiz-languages-foundations.md
+
+  - title: "Finite Automata"
+    summary: "DFAs, NFAs, their equivalence via the subset construction, and closure properties."
+    order_index: 2
+    lessons:
+      - slug: deterministic-finite-automata
+        title: "Deterministic Finite Automata"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/deterministic-finite-automata.md
+
+      - slug: nondeterministic-finite-automata
+        title: "Nondeterministic Finite Automata"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/nondeterministic-finite-automata.md
+
+      - slug: nfa-to-dfa-conversion
+        title: "NFA to DFA: The Subset Construction"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/nfa-to-dfa-conversion.md
+
+      - slug: dfa-simulation
+        title: "Simulating a DFA"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/dfa-simulation.md
+        exercises:
+          - slug: toc-dfa-simulate
+            title: "DFA Simulator"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/toc-dfa-simulate.prompt.md
+            supported_languages: [python]
+            tags: [automata, simulation, dfa]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n, a = map(int, data[idx].split()); idx += 1
+                    alphabet = data[idx].split(); idx += 1
+                    transitions = []
+                    for i in range(n):
+                        row = list(map(int, data[idx].split())); idx += 1
+                        transitions.append({alphabet[j]: row[j] for j in range(a)})
+                    start = int(data[idx]); idx += 1
+                    accept = set(map(int, data[idx].split())); idx += 1
+                    word = data[idx] if idx < len(data) else ""
+                    # TODO: simulate the DFA on word and print accept or reject
+                    print("accept")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n, a = map(int, data[idx].split()); idx += 1
+                    alphabet = data[idx].split(); idx += 1
+                    transitions = []
+                    for i in range(n):
+                        row = list(map(int, data[idx].split())); idx += 1
+                        transitions.append({alphabet[j]: row[j] for j in range(a)})
+                    start = int(data[idx]); idx += 1
+                    accept = set(map(int, data[idx].split())); idx += 1
+                    word = data[idx] if idx < len(data) else ""
+                    state = start
+                    for ch in word:
+                        state = transitions[state][ch]
+                    print("accept" if state in accept else "reject")
+
+                solve()
+            test_cases:
+              - name: even-ones-accept
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n101"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: even-ones-reject
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n1"
+                expected_stdout: "reject"
+                is_hidden: false
+                weight: 1
+              - name: even-ones-empty
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: even-ones-four-ones
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n110"
+                expected_stdout: "accept"
+                is_hidden: true
+                weight: 1
+              - name: even-ones-three-ones
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n111"
+                expected_stdout: "reject"
+                is_hidden: true
+                weight: 1
+              - name: div3-accept
+                stdin: "3 2\n0 1\n0 1\n2 0\n1 2\n0\n0\n110"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: div3-reject
+                stdin: "3 2\n0 1\n0 1\n2 0\n1 2\n0\n0\n111"
+                expected_stdout: "reject"
+                is_hidden: true
+                weight: 1
+
+      - slug: nfa-simulation-exercise
+        title: "Simulating an NFA"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/nfa-simulation-exercise.md
+        exercises:
+          - slug: toc-nfa-simulate
+            title: "NFA Simulator"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/toc-nfa-simulate.prompt.md
+            supported_languages: [python]
+            tags: [automata, nfa, simulation, epsilon-closure]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n, a = map(int, data[idx].split()); idx += 1
+                    alphabet = data[idx].split(); idx += 1
+                    # Build delta[state][sym_index] = set of dest states
+                    # sym indices 0..a-1 are alphabet; index a is epsilon
+                    delta = [[set() for _ in range(a + 1)] for _ in range(n)]
+                    for state in range(n):
+                        for si in range(a + 1):
+                            line = data[idx].strip(); idx += 1
+                            if line != '-':
+                                for dst in line.split():
+                                    delta[state][si].add(int(dst))
+                    start = int(data[idx]); idx += 1
+                    k = int(data[idx]); idx += 1
+                    accept = set(map(int, data[idx].split())); idx += 1
+                    word = data[idx] if idx < len(data) else ''
+                    # TODO: compute epsilon closure and simulate NFA
+                    print("reject")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n, a = map(int, data[idx].split()); idx += 1
+                    alphabet = data[idx].split(); idx += 1
+                    delta = [[set() for _ in range(a + 1)] for _ in range(n)]
+                    for state in range(n):
+                        for si in range(a + 1):
+                            line = data[idx].strip(); idx += 1
+                            if line != '-':
+                                for dst in line.split():
+                                    delta[state][si].add(int(dst))
+                    start = int(data[idx]); idx += 1
+                    k = int(data[idx]); idx += 1
+                    accept = set(map(int, data[idx].split())); idx += 1
+                    word = data[idx] if idx < len(data) else ''
+
+                    def eps_close(states):
+                        closed = set(states)
+                        queue = deque(states)
+                        while queue:
+                            q = queue.popleft()
+                            for r in delta[q][a]:
+                                if r not in closed:
+                                    closed.add(r)
+                                    queue.append(r)
+                        return closed
+
+                    current = eps_close({start})
+                    for ch in word:
+                        si = alphabet.index(ch)
+                        nxt = set()
+                        for q in current:
+                            nxt |= delta[q][si]
+                        current = eps_close(nxt)
+
+                    print("accept" if current & accept else "reject")
+
+                solve()
+            test_cases:
+              - name: ab-substring-accept
+                stdin: "3 2\na b\n0 1\n0\n-\n-\n2\n-\n2\n2\n2\n-\n0\n1\n2\nbab"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: ab-substring-reject
+                stdin: "3 2\na b\n0 1\n0\n-\n-\n2\n-\n2\n2\n2\n-\n0\n1\n2\nba"
+                expected_stdout: "reject"
+                is_hidden: false
+                weight: 1
+              - name: epsilon-nfa-accept-b
+                stdin: "3 2\na b\n1\n-\n1\n-\n2\n-\n-\n-\n-\n0\n1\n2\nb"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: epsilon-nfa-accept-ab
+                stdin: "3 2\na b\n1\n-\n1\n-\n2\n-\n-\n-\n-\n0\n1\n2\nab"
+                expected_stdout: "accept"
+                is_hidden: true
+                weight: 1
+              - name: epsilon-nfa-reject-bb
+                stdin: "3 2\na b\n1\n-\n1\n-\n2\n-\n-\n-\n-\n0\n1\n2\nbb"
+                expected_stdout: "reject"
+                is_hidden: true
+                weight: 1
+              - name: single-state-accept-empty
+                stdin: "1 1\na\n-\n-\n0\n1\n0\n"
+                expected_stdout: "accept"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-finite-automata
+        title: "Quiz: Finite Automata"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/quiz-finite-automata.md
+
+  - title: "Regular Expressions & Regular Languages"
+    summary: "Regular expressions, their equivalence to finite automata, and the pumping lemma."
+    order_index: 3
+    lessons:
+      - slug: regular-expressions
+        title: "Regular Expressions"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/regular-expressions.md
+
+      - slug: closure-regular-languages
+        title: "Closure Properties of Regular Languages"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/closure-regular-languages.md
+
+      - slug: pumping-lemma-regular
+        title: "The Pumping Lemma for Regular Languages"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/pumping-lemma-regular.md
+
+      - slug: quiz-regular-languages
+        title: "Quiz: Regular Expressions & Regular Languages"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/quiz-regular-languages.md
+
+  - title: "Context-Free Grammars"
+    summary: "CFGs, derivations, parse trees, ambiguity, CNF, and the CFL pumping lemma."
+    order_index: 4
+    lessons:
+      - slug: context-free-grammars
+        title: "Context-Free Grammars"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/context-free-grammars.md
+
+      - slug: ambiguity-and-parse-trees
+        title: "Ambiguity and Parse Trees"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/ambiguity-and-parse-trees.md
+
+      - slug: cfg-closure-and-cfl-pumping
+        title: "CFL Closure Properties and the Pumping Lemma"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/cfg-closure-and-cfl-pumping.md
+
+      - slug: cyk-parsing
+        title: "CYK Parsing Algorithm"
+        type: reading
+        duration_minutes: 25
+        content_file: lessons/cyk-parsing.md
+
+      - slug: cyk-membership-exercise
+        title: "CYK Membership Testing"
+        type: exercise
+        duration_minutes: 35
+        content_file: lessons/cyk-membership-exercise.md
+        exercises:
+          - slug: toc-cyk-membership
+            title: "CYK Membership in a CNF Grammar"
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/toc-cyk-membership.prompt.md
+            supported_languages: [python]
+            tags: [cyk, context-free, dynamic-programming, parsing]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    V, R = map(int, data[idx].split()); idx += 1
+                    var_names = data[idx].split(); idx += 1
+                    start = int(data[idx]); idx += 1
+                    binary_rules = []   # (A, B, C)
+                    terminal_rules = [] # (A, char)
+                    for _ in range(R):
+                        parts = data[idx].split(); idx += 1
+                        if len(parts) == 3:
+                            binary_rules.append((int(parts[0]), int(parts[1]), int(parts[2])))
+                        else:
+                            terminal_rules.append((int(parts[0]), parts[1]))
+                    word = data[idx] if idx < len(data) else ''
+                    n = len(word)
+                    if n == 0:
+                        print("reject")
+                        return
+                    # TODO: implement CYK algorithm
+                    print("reject")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    V, R = map(int, data[idx].split()); idx += 1
+                    var_names = data[idx].split(); idx += 1
+                    start = int(data[idx]); idx += 1
+                    binary_rules = []
+                    terminal_rules = []
+                    for _ in range(R):
+                        parts = data[idx].split(); idx += 1
+                        if len(parts) == 3:
+                            binary_rules.append((int(parts[0]), int(parts[1]), int(parts[2])))
+                        else:
+                            terminal_rules.append((int(parts[0]), parts[1]))
+                    word = data[idx] if idx < len(data) else ''
+                    n = len(word)
+                    if n == 0:
+                        print("reject")
+                        return
+
+                    # T[i][j] = set of variable indices that derive word[i..j]
+                    T = [[set() for _ in range(n)] for _ in range(n)]
+
+                    # Base case: length-1 substrings
+                    for i in range(n):
+                        for A, c in terminal_rules:
+                            if c == word[i]:
+                                T[i][i].add(A)
+
+                    # Fill for increasing lengths
+                    for length in range(2, n + 1):
+                        for i in range(n - length + 1):
+                            j = i + length - 1
+                            for k in range(i, j):
+                                for A, B, C in binary_rules:
+                                    if B in T[i][k] and C in T[k+1][j]:
+                                        T[i][j].add(A)
+
+                    print("accept" if start in T[0][n-1] else "reject")
+
+                solve()
+            test_cases:
+              - name: simple-ab-accept
+                stdin: "3 3\nS A B\n0\n0 1 2\n1 a\n2 b\nab"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: simple-ab-reject-ba
+                stdin: "3 3\nS A B\n0\n0 1 2\n1 a\n2 b\nba"
+                expected_stdout: "reject"
+                is_hidden: false
+                weight: 1
+              - name: anbn-accept-aabb
+                stdin: "4 5\nS A B C\n0\n0 1 2\n0 1 3\n1 a\n2 b\n3 0 2\naabb"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: anbn-accept-ab
+                stdin: "4 5\nS A B C\n0\n0 1 2\n0 1 3\n1 a\n2 b\n3 0 2\nab"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: anbn-reject-aab
+                stdin: "4 5\nS A B C\n0\n0 1 2\n0 1 3\n1 a\n2 b\n3 0 2\naab"
+                expected_stdout: "reject"
+                is_hidden: true
+                weight: 1
+              - name: anbn-accept-aaabbb
+                stdin: "4 5\nS A B C\n0\n0 1 2\n0 1 3\n1 a\n2 b\n3 0 2\naaabbb"
+                expected_stdout: "accept"
+                is_hidden: true
+                weight: 1
+              - name: simple-ab-reject-a
+                stdin: "3 3\nS A B\n0\n0 1 2\n1 a\n2 b\na"
+                expected_stdout: "reject"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-context-free-grammars
+        title: "Quiz: Context-Free Grammars"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/quiz-context-free-grammars.md
+
+  - title: "Pushdown Automata"
+    summary: "PDAs, their relation to CFGs, and the role of the stack in computation."
+    order_index: 5
+    lessons:
+      - slug: pushdown-automata
+        title: "Pushdown Automata"
+        type: reading
+        duration_minutes: 25
+        content_file: lessons/pushdown-automata.md
+
+      - slug: pda-cfg-equivalence
+        title: "PDA-CFG Equivalence in Detail"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/pda-cfg-equivalence.md
+
+      - slug: quiz-pushdown-automata
+        title: "Quiz: Pushdown Automata"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/quiz-pushdown-automata.md
+
+  - title: "Turing Machines"
+    summary: "The Turing machine model, variants, the Church-Turing thesis, and TM simulation."
+    order_index: 6
+    lessons:
+      - slug: turing-machines
+        title: "Turing Machines"
+        type: reading
+        duration_minutes: 25
+        content_file: lessons/turing-machines.md
+
+      - slug: tm-variants-and-church-turing
+        title: "TM Variants and the Church-Turing Thesis"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/tm-variants-and-church-turing.md
+
+      - slug: tm-simulation-exercise
+        title: "Simulating a Turing Machine"
+        type: exercise
+        duration_minutes: 35
+        content_file: lessons/tm-simulation-exercise.md
+        exercises:
+          - slug: toc-tm-simulate
+            title: "Turing Machine Simulator"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/toc-tm-simulate.prompt.md
+            supported_languages: [python]
+            tags: [turing-machine, simulation, computability]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n_states, n_tape_syms = map(int, data[idx].split()); idx += 1
+                    tape_symbols = data[idx].split(); idx += 1
+                    accept_state = int(data[idx]); idx += 1
+                    reject_state = int(data[idx]); idx += 1
+                    n_trans = int(data[idx]); idx += 1
+                    transitions = {}
+                    for _ in range(n_trans):
+                        parts = data[idx].split(); idx += 1
+                        # state symbol new_state new_symbol direction
+                        transitions[(int(parts[0]), parts[1])] = (int(parts[2]), parts[3], parts[4])
+                    start_state = int(data[idx]); idx += 1
+                    step_limit = int(data[idx]); idx += 1
+                    input_string = data[idx] if idx < len(data) else ""
+                    # TODO: simulate the TM and print accept, reject, or loop
+                    print("loop")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n_states, n_tape_syms = map(int, data[idx].split()); idx += 1
+                    tape_symbols = data[idx].split(); idx += 1
+                    accept_state = int(data[idx]); idx += 1
+                    reject_state = int(data[idx]); idx += 1
+                    n_trans = int(data[idx]); idx += 1
+                    transitions = {}
+                    for _ in range(n_trans):
+                        parts = data[idx].split(); idx += 1
+                        transitions[(int(parts[0]), parts[1])] = (int(parts[2]), parts[3], parts[4])
+                    start_state = int(data[idx]); idx += 1
+                    step_limit = int(data[idx]); idx += 1
+                    input_string = data[idx] if idx < len(data) else ""
+                    BLANK = '_'
+                    tape = list(input_string) if input_string else []
+                    state = start_state
+                    head = 0
+                    for _ in range(step_limit):
+                        if state == accept_state:
+                            print("accept")
+                            return
+                        if state == reject_state:
+                            print("reject")
+                            return
+                        while head >= len(tape):
+                            tape.append(BLANK)
+                        sym = tape[head]
+                        if (state, sym) not in transitions:
+                            print("reject")
+                            return
+                        new_state, new_sym, direction = transitions[(state, sym)]
+                        tape[head] = new_sym
+                        state = new_state
+                        if direction == 'R':
+                            head += 1
+                        else:
+                            head = max(0, head - 1)
+                    if state == accept_state:
+                        print("accept")
+                    elif state == reject_state:
+                        print("reject")
+                    else:
+                        print("loop")
+
+                solve()
+            test_cases:
+              - name: allzeros-accept-three
+                stdin: "3 3\n0 1 _\n1\n2\n3\n0 0 0 0 R\n0 _ 1 _ R\n0 1 2 1 R\n0\n100\n000"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: allzeros-reject-mixed
+                stdin: "3 3\n0 1 _\n1\n2\n3\n0 0 0 0 R\n0 _ 1 _ R\n0 1 2 1 R\n0\n100\n010"
+                expected_stdout: "reject"
+                is_hidden: false
+                weight: 1
+              - name: allzeros-accept-empty
+                stdin: "3 3\n0 1 _\n1\n2\n3\n0 0 0 0 R\n0 _ 1 _ R\n0 1 2 1 R\n0\n100\n"
+                expected_stdout: "accept"
+                is_hidden: false
+                weight: 1
+              - name: allzeros-reject-one
+                stdin: "3 3\n0 1 _\n1\n2\n3\n0 0 0 0 R\n0 _ 1 _ R\n0 1 2 1 R\n0\n100\n1"
+                expected_stdout: "reject"
+                is_hidden: true
+                weight: 1
+              - name: allzeros-loop
+                stdin: "3 3\n0 1 _\n1\n2\n3\n0 0 0 0 R\n0 1 0 1 R\n0 _ 0 _ R\n0\n10\n01"
+                expected_stdout: "loop"
+                is_hidden: true
+                weight: 1
+              - name: allzeros-accept-single
+                stdin: "3 3\n0 1 _\n1\n2\n3\n0 0 0 0 R\n0 _ 1 _ R\n0 1 2 1 R\n0\n100\n0"
+                expected_stdout: "accept"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-turing-machines
+        title: "Quiz: Turing Machines"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/quiz-turing-machines.md
+
+  - title: "Decidability & Complexity"
+    summary: "The halting problem, undecidability, reductions, and the P vs NP question."
+    order_index: 7
+    lessons:
+      - slug: decidability-and-halting
+        title: "Decidability and the Halting Problem"
+        type: reading
+        duration_minutes: 28
+        content_file: lessons/decidability-and-halting.md
+
+      - slug: complexity-p-and-np
+        title: "Complexity Classes: P and NP"
+        type: reading
+        duration_minutes: 25
+        content_file: lessons/complexity-p-and-np.md
+
+      - slug: reductions-and-np-completeness
+        title: "Reductions and NP-Completeness"
+        type: reading
+        duration_minutes: 25
+        content_file: lessons/reductions-and-np-completeness.md
+
+      - slug: count-accepted-strings-exercise
+        title: "Count Accepted Strings of Length N"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/count-accepted-strings-exercise.md
+        exercises:
+          - slug: toc-count-accepted-strings
+            title: "Count Strings of Length N Accepted by a DFA"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/toc-count-accepted-strings.prompt.md
+            supported_languages: [python]
+            tags: [automata, dynamic-programming, counting]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n, a = map(int, data[idx].split()); idx += 1
+                    alphabet = data[idx].split(); idx += 1
+                    transitions = []
+                    for i in range(n):
+                        row = list(map(int, data[idx].split())); idx += 1
+                        transitions.append({alphabet[j]: row[j] for j in range(a)})
+                    start = int(data[idx]); idx += 1
+                    accept = set(map(int, data[idx].split())); idx += 1
+                    N = int(data[idx])
+                    # TODO: count strings of length exactly N accepted by the DFA
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n, a = map(int, data[idx].split()); idx += 1
+                    alphabet = data[idx].split(); idx += 1
+                    transitions = []
+                    for i in range(n):
+                        row = list(map(int, data[idx].split())); idx += 1
+                        transitions.append({alphabet[j]: row[j] for j in range(a)})
+                    start = int(data[idx]); idx += 1
+                    accept = set(map(int, data[idx].split())); idx += 1
+                    N = int(data[idx])
+                    dp = [0] * n
+                    dp[start] = 1
+                    for _ in range(N):
+                        ndp = [0] * n
+                        for s in range(n):
+                            if dp[s] == 0:
+                                continue
+                            for sym in alphabet:
+                                ndp[transitions[s][sym]] += dp[s]
+                        dp = ndp
+                    print(sum(dp[s] for s in accept))
+
+                solve()
+            test_cases:
+              - name: even-ones-len3
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n3"
+                expected_stdout: "4"
+                is_hidden: false
+                weight: 1
+              - name: even-ones-len0
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n0"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: even-ones-len2
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n2"
+                expected_stdout: "2"
+                is_hidden: false
+                weight: 1
+              - name: even-ones-len1
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n1"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: even-ones-len4
+                stdin: "2 2\n0 1\n0 1\n1 0\n0\n0\n4"
+                expected_stdout: "8"
+                is_hidden: true
+                weight: 1
+              - name: div3-len2
+                stdin: "3 2\n0 1\n0 1\n2 0\n1 2\n0\n0\n2"
+                expected_stdout: "2"
+                is_hidden: false
+                weight: 1
+              - name: div3-len3
+                stdin: "3 2\n0 1\n0 1\n2 0\n1 2\n0\n0\n3"
+                expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-decidability-complexity
+        title: "Quiz: Decidability & Complexity"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/quiz-decidability-complexity.md

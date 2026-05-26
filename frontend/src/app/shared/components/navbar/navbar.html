@@ -215,7 +215,7 @@
           </div>
 
           <a routerLink="/profile" (click)="closeMobile()"
-            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:bg-app-surface-2 transition-colors"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
             style="text-decoration: none;">
             <lucide-icon [img]="User" [size]="16"></lucide-icon>
             Profile
@@ -223,7 +223,7 @@
 
           @if (auth.isAdmin()) {
             <a routerLink="/admin" (click)="closeMobile()"
-              class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:bg-app-surface-2 transition-colors"
+              class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
               style="text-decoration: none;">
               <lucide-icon [img]="Shield" [size]="16"></lucide-icon>
               Admin

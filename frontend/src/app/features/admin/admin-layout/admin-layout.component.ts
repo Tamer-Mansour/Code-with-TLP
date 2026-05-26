@@ -30,6 +30,7 @@ export class AdminLayoutComponent {
     { label: 'Dashboard',   icon: 'bar-chart-2',  route: '/admin/stats' },
     { label: 'Users',       icon: 'users',         route: '/admin/users' },
     { label: 'Courses',     icon: 'book-open',     route: '/admin/courses' },
+    { label: 'Lessons',     icon: 'library',       route: '/admin/lessons' },
     { label: 'Exercises',   icon: 'code-2',        route: '/admin/exercises' },
     { label: 'Submissions', icon: 'send',          route: '/admin/submissions' },
   ];

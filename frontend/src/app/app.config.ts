@@ -5,11 +5,12 @@ import { provideMarkdown } from 'ngx-markdown';
 import {
   LUCIDE_ICONS, LucideIconProvider,
   Activity, AlertTriangle, ArrowLeft, ArrowRight, Award, BarChart2,
-  BookOpen, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
-  Clock, Code2, Cpu, Filter, Flame, FlaskConical, Frown,
-  GraduationCap, Image, Inbox, Library, Loader2, Lock, LogOut,
+  BookOpen, Brain, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
+  Clock, Code, Code2, Cpu, Database, Filter, Flame, FlaskConical, Frown,
+  GitBranch, Globe, GraduationCap, Image, Inbox, Library, Lightbulb,
+  Loader2, Lock, LogOut,
   Pencil, Percent, Play, Plus, RefreshCw, Search, Send,
-  Shield, SquareCode, Star, Target, Terminal, Trash2, TrendingUp,
+  Server, Shield, Sigma, SquareCode, Star, Target, Terminal, Trash2, TrendingUp,
   Trophy, User, Users, X, XCircle, Zap,
 } from 'lucide-angular';
 import { routes } from './app.routes';
@@ -26,11 +27,12 @@ export const appConfig: ApplicationConfig = {
       provide: LUCIDE_ICONS,
       useValue: new LucideIconProvider({
         Activity, AlertTriangle, ArrowLeft, ArrowRight, Award, BarChart2,
-        BookOpen, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
-        Clock, Code2, Cpu, Filter, Flame, FlaskConical, Frown,
-        GraduationCap, Image, Inbox, Library, Loader2, Lock, LogOut,
+        BookOpen, Brain, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
+        Clock, Code, Code2, Cpu, Database, Filter, Flame, FlaskConical, Frown,
+        GitBranch, Globe, GraduationCap, Image, Inbox, Library, Lightbulb,
+        Loader2, Lock, LogOut,
         Pencil, Percent, Play, Plus, RefreshCw, Search, Send,
-        Shield, SquareCode, Star, Target, Terminal, Trash2, TrendingUp,
+        Server, Shield, Sigma, SquareCode, Star, Target, Terminal, Trash2, TrendingUp,
         Trophy, User, Users, X, XCircle, Zap,
       }),
       multi: true,
