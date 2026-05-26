@@ -5,8 +5,8 @@ import { adminGuard } from './core/guards/admin.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/catalog',
-    pathMatch: 'full',
+    loadComponent: () =>
+      import('./features/landing/landing.component').then((m) => m.LandingComponent),
   },
   {
     path: 'login',

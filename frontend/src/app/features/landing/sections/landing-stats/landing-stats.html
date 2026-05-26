@@ -1,0 +1,15 @@
+<section class="relative border-y border-app-border bg-app-surface/60">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+      @for (s of stats; track s.label; let i = $index) {
+        <div appReveal [revealDelay]="i * 70" class="flex flex-col items-center text-center gap-1.5">
+          <lucide-icon [img]="s.icon" [size]="20" class="text-brand mb-1"></lucide-icon>
+          <div class="text-3xl font-extrabold text-app-text tabular-nums">
+            <span [appCountUp]="s.value" [countSuffix]="s.suffix"></span>
+          </div>
+          <div class="text-xs font-medium text-app-text-muted uppercase tracking-wide">{{ s.label }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

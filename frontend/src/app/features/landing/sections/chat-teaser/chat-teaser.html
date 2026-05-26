@@ -1,0 +1,67 @@
+<section>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 grid lg:grid-cols-2 gap-12 items-center">
+    <!-- chat window mock -->
+    <div appReveal="left" class="relative">
+      <div class="absolute -inset-4 bg-gradient-to-br from-purple-500/15 to-blue-500/15 blur-2xl rounded-3xl"></div>
+      <div class="relative rounded-2xl border border-app-border bg-app-surface shadow-2xl overflow-hidden">
+        <!-- header -->
+        <div class="flex items-center gap-2.5 px-4 py-3 border-b border-app-border bg-app-surface-2/60">
+          <span class="w-8 h-8 rounded-full grid place-items-center bg-gradient-to-br from-purple-500 to-blue-500 text-white">
+            <lucide-icon [img]="Bot" [size]="16"></lucide-icon>
+          </span>
+          <span class="font-semibold text-sm text-app-text">TLP Chat</span>
+          <span class="ml-auto text-xs text-green-500 font-medium">online</span>
+        </div>
+
+        <!-- thread -->
+        <div class="p-4 space-y-3">
+          <div class="flex justify-end">
+            <div class="max-w-[80%] rounded-2xl rounded-br-sm px-3.5 py-2 text-sm bg-gradient-to-br from-purple-500 to-blue-500 text-white">
+              How am I doing so far?
+            </div>
+          </div>
+
+          <div class="flex justify-start">
+            <div class="max-w-[85%] rounded-2xl rounded-bl-sm px-3.5 py-2.5 text-sm bg-app-surface-2 text-app-text-2 space-y-2">
+              <p class="anim-pop" [style.animation-delay.ms]="200">Great momentum! You've completed <b class="text-app-text">62%</b> of Operating Systems and solved <b class="text-app-text">24</b> challenges.</p>
+              <div class="anim-pop flex flex-wrap gap-1.5" [style.animation-delay.ms]="600">
+                <span class="px-2 py-0.5 rounded-full text-xs bg-app-surface border border-app-border">Operating Systems · 62%</span>
+                <span class="px-2 py-0.5 rounded-full text-xs bg-app-surface border border-app-border">24 challenges solved</span>
+              </div>
+              <p class="anim-pop" [style.animation-delay.ms]="1000">Next up: try <b class="text-app-text">CPU Scheduling</b> to close your biggest gap.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- input -->
+        <div class="flex items-center gap-2 px-4 py-3 border-t border-app-border">
+          <div class="flex-1 text-sm text-app-text-muted px-3 py-2 rounded-lg bg-app-surface-2 border border-app-border">Ask anything about your learning…</div>
+          <button class="w-9 h-9 rounded-lg grid place-items-center text-white bg-gradient-to-br from-purple-500 to-blue-500">
+            <lucide-icon [img]="Send" [size]="16"></lucide-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- copy -->
+    <div appReveal="right">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-5 bg-app-surface-2 border border-app-border text-app-text-2">
+        <lucide-icon [img]="Sparkles" [size]="13" class="text-brand"></lucide-icon>
+        Bring your own key
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-app-text">Your AI study buddy</h2>
+      <p class="mt-3 text-app-text-2 leading-relaxed">
+        TLP Chat knows your courses, solved challenges, and progress through retrieval (RAG) —
+        and runs on the model you choose: GPT, Gemini, Claude, DeepSeek, Qwen, and more.
+      </p>
+      <ul class="mt-6 space-y-3">
+        @for (b of bullets; track b) {
+          <li class="flex items-start gap-2.5 text-sm text-app-text-2">
+            <lucide-icon [img]="CheckCircle2" [size]="18" class="text-green-500 shrink-0 mt-0.5"></lucide-icon>
+            {{ b }}
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

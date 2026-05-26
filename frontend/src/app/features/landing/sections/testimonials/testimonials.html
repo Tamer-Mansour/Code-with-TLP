@@ -1,0 +1,43 @@
+<section class="overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28">
+    <div appReveal class="max-w-2xl mx-auto text-center mb-12">
+      <p class="text-sm font-semibold text-brand mb-2">Loved by learners</p>
+      <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-app-text">Learning that actually sticks</h2>
+    </div>
+  </div>
+
+  <div class="relative pb-20 sm:pb-28 [mask-image:linear-gradient(90deg,transparent,#000_6%,#000_94%,transparent)]">
+    <div class="marquee-track gap-4">
+      @for (t of items; track t.name) {
+        <div class="shrink-0 w-80 rounded-2xl border border-app-border bg-app-surface p-6">
+          <div class="flex gap-0.5 mb-3">
+            @for (s of stars; track s) { <lucide-icon [img]="Star" [size]="15" class="text-amber-400"></lucide-icon> }
+          </div>
+          <p class="text-sm text-app-text-2 leading-relaxed">&ldquo;{{ t.quote }}&rdquo;</p>
+          <div class="mt-4 flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full grid place-items-center text-xs font-bold text-white bg-gradient-to-br from-purple-500 to-blue-500">{{ t.initials }}</span>
+            <div>
+              <p class="text-sm font-semibold text-app-text">{{ t.name }}</p>
+              <p class="text-xs text-app-text-muted">{{ t.role }}</p>
+            </div>
+          </div>
+        </div>
+      }
+      @for (t of items; track 'dup-' + t.name) {
+        <div aria-hidden="true" class="shrink-0 w-80 rounded-2xl border border-app-border bg-app-surface p-6">
+          <div class="flex gap-0.5 mb-3">
+            @for (s of stars; track s) { <lucide-icon [img]="Star" [size]="15" class="text-amber-400"></lucide-icon> }
+          </div>
+          <p class="text-sm text-app-text-2 leading-relaxed">&ldquo;{{ t.quote }}&rdquo;</p>
+          <div class="mt-4 flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full grid place-items-center text-xs font-bold text-white bg-gradient-to-br from-purple-500 to-blue-500">{{ t.initials }}</span>
+            <div>
+              <p class="text-sm font-semibold text-app-text">{{ t.name }}</p>
+              <p class="text-xs text-app-text-muted">{{ t.role }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

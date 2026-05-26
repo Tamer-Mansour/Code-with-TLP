@@ -1,0 +1,82 @@
+<section class="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28">
+  <!-- animated mesh + grid backdrop -->
+  <div class="hero-mesh anim-mesh"></div>
+  <div class="absolute inset-0 bg-grid opacity-[0.5] [mask-image:radial-gradient(70%_60%_at_50%_0%,#000,transparent)]"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+    <!-- Left: copy -->
+    <div>
+      <div appReveal class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6
+                  bg-app-surface-2 border border-app-border text-app-text-2">
+        <lucide-icon [img]="Sparkles" [size]="13" class="text-brand"></lucide-icon>
+        14 courses · 149 challenges · 5 languages
+      </div>
+
+      <h1 appReveal [revealDelay]="80" class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight text-app-text">
+        Master Computer Science
+        <span class="block bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">by actually doing it.</span>
+      </h1>
+
+      <p appReveal [revealDelay]="160" class="mt-6 text-lg text-app-text-2 max-w-xl leading-relaxed">
+        Learn through interactive lessons, solve LeetCode-style challenges in a real code runner,
+        watch algorithms come alive, and track your progress with a ranked profile — all in one place.
+      </p>
+
+      <div appReveal [revealDelay]="240" class="mt-8 flex flex-wrap items-center gap-3">
+        <a routerLink="/register"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white no-underline
+                 bg-gradient-to-br from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600
+                 shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-0.5">
+          Start learning free
+          <lucide-icon [img]="ArrowRight" [size]="16"></lucide-icon>
+        </a>
+        <a routerLink="/catalog"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold no-underline
+                 text-app-text border border-app-border bg-app-surface hover:bg-app-surface-2 transition-colors">
+          <lucide-icon [img]="Play" [size]="15" class="text-brand"></lucide-icon>
+          Browse courses
+        </a>
+      </div>
+
+      <div appReveal [revealDelay]="320" class="mt-6 flex items-center gap-2 text-xs text-app-text-muted">
+        <lucide-icon [img]="Zap" [size]="13" class="text-amber-400"></lucide-icon>
+        No credit card · bring your own AI key · free forever
+      </div>
+    </div>
+
+    <!-- Right: animated code editor -->
+    <div appReveal="scale" [revealDelay]="200" class="relative anim-float">
+      <div class="absolute -inset-4 bg-gradient-to-br from-purple-500/20 to-blue-500/20 blur-2xl rounded-3xl"></div>
+      <div class="relative rounded-2xl border border-app-border bg-app-surface shadow-2xl overflow-hidden">
+        <!-- window chrome -->
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-app-border bg-app-surface-2/60">
+          <span class="w-3 h-3 rounded-full bg-red-400"></span>
+          <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+          <span class="w-3 h-3 rounded-full bg-green-400"></span>
+          <span class="ml-3 text-xs text-app-text-muted font-mono">two_sum.py</span>
+        </div>
+        <!-- code -->
+        <pre class="p-5 text-[13px] leading-relaxed font-mono overflow-x-auto"><code><span class="text-purple-400">def</span> <span class="text-blue-400">two_sum</span>(nums, target):
+    seen = {{ '{}' }}
+    <span class="text-purple-400">for</span> i, n <span class="text-purple-400">in</span> <span class="text-blue-400">enumerate</span>(nums):
+        <span class="text-purple-400">if</span> target - n <span class="text-purple-400">in</span> seen:
+            <span class="text-purple-400">return</span> [seen[target - n], i]
+        seen[n] = i<span class="anim-blink text-brand">▋</span></code></pre>
+        <!-- test results -->
+        <div class="px-5 py-4 border-t border-app-border bg-app-surface-2/40 space-y-2">
+          @for (t of tests; track t.name) {
+            <div class="anim-pop flex items-center gap-2 text-xs font-mono text-app-text-2" [style.animation-delay.ms]="t.delay">
+              <lucide-icon [img]="CheckCircle2" [size]="14" class="text-green-500"></lucide-icon>
+              <span class="text-green-500 font-semibold">PASS</span>
+              <span class="truncate">{{ t.name }}</span>
+            </div>
+          }
+          <div class="anim-pop pt-1 flex items-center gap-1.5 text-xs font-semibold text-green-500" [style.animation-delay.ms]="1800">
+            <lucide-icon [img]="CheckCircle2" [size]="14"></lucide-icon>
+            All tests passed · +10 XP
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

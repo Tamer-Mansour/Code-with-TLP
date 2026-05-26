@@ -1,0 +1,48 @@
+<section>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 grid lg:grid-cols-2 gap-12 items-center">
+    <!-- copy -->
+    <div appReveal="left">
+      <p class="text-sm font-semibold text-brand mb-2">Practice that sticks</p>
+      <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-app-text">Solve real problems in a real code runner</h2>
+      <p class="mt-3 text-app-text-2 leading-relaxed">Write code in a full editor and run it against test cases — no setup, instant feedback, right in the browser.</p>
+      <ul class="mt-6 space-y-3">
+        @for (b of bullets; track b) {
+          <li class="flex items-start gap-2.5 text-sm text-app-text-2">
+            <lucide-icon [img]="CheckCircle2" [size]="18" class="text-green-500 shrink-0 mt-0.5"></lucide-icon>
+            {{ b }}
+          </li>
+        }
+      </ul>
+      <a routerLink="/exercises"
+        class="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white no-underline bg-gradient-to-br from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
+        Try a challenge
+        <lucide-icon [img]="ArrowRight" [size]="16"></lucide-icon>
+      </a>
+    </div>
+
+    <!-- editor mock -->
+    <div appReveal="right" class="relative">
+      <div class="absolute -inset-4 bg-gradient-to-br from-purple-500/15 to-blue-500/15 blur-2xl rounded-3xl"></div>
+      <div class="relative rounded-2xl border border-app-border bg-app-surface shadow-2xl overflow-hidden">
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-app-border bg-app-surface-2/60">
+          <span class="w-3 h-3 rounded-full bg-red-400"></span>
+          <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+          <span class="w-3 h-3 rounded-full bg-green-400"></span>
+          <span class="ml-3 text-xs text-app-text-muted font-mono">reverse_string.py</span>
+        </div>
+        <pre class="p-5 text-[13px] leading-relaxed font-mono overflow-x-auto"><code><span class="text-purple-400">def</span> <span class="text-blue-400">reverse</span>(s):
+    <span class="text-purple-400">return</span> s[::-<span class="text-amber-400">1</span>]<span class="anim-blink text-brand">&#9611;</span></code></pre>
+        <div class="px-5 py-4 border-t border-app-border bg-app-surface-2/40 space-y-2">
+          @for (t of tests; track t.n) {
+            <div class="anim-pop flex items-center gap-2 text-xs font-mono text-app-text-2" [style.animation-delay.ms]="t.d">
+              <lucide-icon [img]="CheckCircle2" [size]="14" class="text-green-500"></lucide-icon>
+              <span class="text-green-500 font-semibold">PASS</span>
+              <span class="truncate">{{ t.n }}</span>
+            </div>
+          }
+          <div class="anim-pop pt-1 text-xs font-semibold text-green-500" [style.animation-delay.ms]="1700">All tests passed · +25 XP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

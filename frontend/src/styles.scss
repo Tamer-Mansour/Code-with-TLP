@@ -187,6 +187,50 @@
   pointer-events: none;
 }
 
+/* ─── Landing page animations ─────────────────────────────── */
+/* Reveal-on-scroll (driven by RevealDirective) */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s ease, transform .7s cubic-bezier(.22,1,.36,1); will-change: opacity, transform; }
+.reveal-left  { transform: translateX(-34px); }
+.reveal-right { transform: translateX(34px); }
+.reveal-scale { transform: scale(.94); }
+.reveal.revealed { opacity: 1; transform: none; }
+
+@keyframes mesh-drift {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  33%      { transform: translate3d(4%, -3%, 0) scale(1.08); }
+  66%      { transform: translate3d(-3%, 2%, 0) scale(.96); }
+}
+@keyframes float-slow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes blink      { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes pop-in     { 0% { opacity: 0; transform: scale(.7); } 70% { transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes marquee    { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes gradient-pan { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+.anim-float  { animation: float-slow 6s ease-in-out infinite; }
+.anim-blink  { animation: blink 1.05s step-end infinite; }
+.anim-pop    { animation: pop-in .5s cubic-bezier(.34,1.56,.64,1) both; }
+.anim-mesh   { animation: mesh-drift 18s ease-in-out infinite; }
+
+/* hero animated gradient-mesh background */
+.hero-mesh {
+  position: absolute; inset: -20% -10% auto -10%; height: 130%;
+  background:
+    radial-gradient(40% 40% at 20% 25%, color-mix(in srgb, var(--g1, #8b5cf6) 55%, transparent), transparent 70%),
+    radial-gradient(38% 38% at 80% 20%, color-mix(in srgb, #3b82f6 50%, transparent), transparent 70%),
+    radial-gradient(45% 45% at 65% 75%, color-mix(in srgb, #ec4899 38%, transparent), transparent 70%);
+  filter: blur(46px); opacity: .5; pointer-events: none;
+}
+:root { --g1: #8b5cf6; }
+
+/* infinite marquee track (duplicate children, set width to 200%) */
+.marquee-track { display: flex; width: max-content; animation: marquee 32s linear infinite; }
+.marquee-track:hover { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .anim-float, .anim-mesh, .anim-blink, .marquee-track { animation: none; }
+}
+
 /* ─── Utilities ───────────────────────────────────────────── */
 @layer utilities {
   .text-gradient { @apply bg-gradient-to-r from-brand to-purple-500 bg-clip-text text-transparent; }

@@ -1,0 +1,25 @@
+<section id="faq">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+    <div appReveal class="text-center mb-12">
+      <p class="text-sm font-semibold text-brand mb-2">FAQ</p>
+      <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-app-text">Frequently asked questions</h2>
+    </div>
+
+    <div class="space-y-3">
+      @for (item of items; track item.q; let i = $index) {
+        <div appReveal [revealDelay]="i * 60" class="rounded-xl border border-app-border bg-app-surface overflow-hidden">
+          <button type="button" (click)="toggle(i)"
+            class="w-full flex items-center justify-between gap-4 px-5 py-4 text-left">
+            <span class="font-medium text-app-text">{{ item.q }}</span>
+            <lucide-icon [img]="ChevronDown" [size]="18"
+              class="shrink-0 text-app-text-muted transition-transform duration-200"
+              [class.rotate-180]="openIndex() === i"></lucide-icon>
+          </button>
+          @if (openIndex() === i) {
+            <div class="px-5 pb-5 -mt-1 text-sm text-app-text-2 leading-relaxed">{{ item.a }}</div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>
