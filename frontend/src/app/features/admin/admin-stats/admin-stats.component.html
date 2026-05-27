@@ -1,8 +1,8 @@
-<!-- Page title -->
+<!-- Page header -->
 <div class="flex items-center justify-between mb-8">
   <div>
-    <h1 class="section-title text-2xl">Dashboard</h1>
-    <p class="section-sub mt-1">Platform overview and key metrics</p>
+    <h1 class="text-2xl font-bold text-app-text">Dashboard</h1>
+    <p class="text-sm text-app-text-2 mt-0.5">Platform overview and key metrics</p>
   </div>
   <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-app-surface border border-app-border text-xs text-app-text-muted">
     <lucide-icon name="refresh-cw" class="w-3 h-3" />
@@ -12,90 +12,126 @@
 
 <!-- Error state -->
 @if (error()) {
-  <div class="card flex flex-col items-center justify-center py-16 text-center">
-    <lucide-icon name="alert-triangle" class="w-12 h-12 text-red-400 mb-3" />
-    <h3 class="text-base font-semibold text-app-text mb-2">Failed to load stats</h3>
+  <div class="bg-app-surface rounded-2xl border border-app-border p-16 flex flex-col items-center justify-center text-center shadow-card">
+    <div class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4">
+      <lucide-icon name="alert-triangle" class="w-7 h-7 text-red-400" />
+    </div>
+    <h3 class="text-base font-semibold text-app-text mb-1">Failed to load stats</h3>
     <p class="text-sm text-app-text-2">Unable to fetch platform statistics. Please refresh the page.</p>
   </div>
 }
 
 <!-- Stats grid -->
 @if (!error()) {
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     @for (card of statCards; track card.key) {
-      <div class="card flex flex-col gap-3">
-        <div class="flex items-center gap-2">
-          <div class="p-2 rounded-lg" [ngClass]="card.bgClass">
+      <div class="bg-app-surface rounded-2xl border border-app-border p-5 shadow-card flex flex-col gap-4 hover:border-app-border-2 hover:shadow-popover transition-all duration-200">
+        <!-- Icon chip + label row -->
+        <div class="flex items-center justify-between">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" [ngClass]="card.bgClass">
             <lucide-icon [name]="card.icon" class="w-4 h-4" [ngClass]="card.colorClass" />
           </div>
           <span class="text-xs font-medium text-app-text-muted">{{ card.label }}</span>
         </div>
 
         @if (loading()) {
-          <div class="skeleton h-9 w-20 rounded-lg"></div>
-          <div class="skeleton h-3 w-12 rounded"></div>
+          <div class="space-y-2">
+            <div class="skeleton h-8 w-24 rounded-lg"></div>
+            <div class="skeleton h-1.5 w-full rounded-full"></div>
+          </div>
         } @else {
-          <span class="text-3xl font-bold text-gradient tabular-nums">{{ getStatValue(card.key) | number }}</span>
-          <div class="h-1 w-full rounded-full bg-app-surface-2">
-            <div class="h-1 rounded-full" [ngClass]="card.bgClass" style="width: 70%"></div>
+          <div>
+            <span class="text-3xl font-bold text-app-text tabular-nums">{{ getStatValue(card.key) | number }}</span>
+            <!-- Progress bar -->
+            <div class="mt-3 h-1 w-full rounded-full bg-app-surface-2">
+              <div class="h-1 rounded-full transition-all duration-500" [ngClass]="card.bgClass" style="width: 70%"></div>
+            </div>
           </div>
         }
       </div>
     }
   </div>
 
-  <!-- Secondary info cards -->
+  <!-- Secondary metric cards -->
   @if (!loading() && stats()) {
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
       <!-- Acceptance rate -->
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4">
-          <lucide-icon name="target" class="w-4 h-4 text-emerald-400" />
+      <div class="bg-app-surface rounded-2xl border border-app-border p-5 shadow-card hover:border-app-border-2 hover:shadow-popover transition-all duration-200">
+        <div class="flex items-center gap-2.5 mb-5">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+            <lucide-icon name="target" class="w-4 h-4 text-emerald-400" />
+          </div>
           <span class="text-sm font-semibold text-app-text">Acceptance Rate</span>
         </div>
         @if (stats()!.submissions > 0) {
-          <div class="flex items-end gap-2">
+          <div class="flex items-end gap-2 mb-1">
             <span class="text-4xl font-bold text-emerald-400 tabular-nums">
               {{ ((stats()!.submissions_accepted / stats()!.submissions) * 100) | number:'1.1-1' }}%
             </span>
           </div>
-          <p class="text-xs text-app-text-muted mt-2">
-            {{ stats()!.submissions_accepted | number }} accepted / {{ stats()!.submissions | number }} total
+          <p class="text-xs text-app-text-muted">
+            {{ stats()!.submissions_accepted | number }} accepted of {{ stats()!.submissions | number }} total
           </p>
+          <!-- visual progress -->
+          <div class="mt-4 h-1.5 w-full rounded-full bg-app-surface-2 overflow-hidden">
+            <div
+              class="h-full rounded-full bg-emerald-500 transition-all duration-700"
+              [style.width.%]="(stats()!.submissions_accepted / stats()!.submissions) * 100"
+            ></div>
+          </div>
         } @else {
           <span class="text-3xl font-bold text-app-text-muted">—</span>
+          <p class="text-xs text-app-text-muted mt-1">No submissions yet</p>
         }
       </div>
 
-      <!-- Total courses -->
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4">
-          <lucide-icon name="library" class="w-4 h-4 text-brand" />
+      <!-- Course coverage -->
+      <div class="bg-app-surface rounded-2xl border border-app-border p-5 shadow-card hover:border-app-border-2 hover:shadow-popover transition-all duration-200">
+        <div class="flex items-center gap-2.5 mb-5">
+          <div class="w-9 h-9 rounded-xl bg-brand/10 flex items-center justify-center flex-shrink-0">
+            <lucide-icon name="library" class="w-4 h-4 text-brand" />
+          </div>
           <span class="text-sm font-semibold text-app-text">Course Coverage</span>
         </div>
-        <div class="flex items-end gap-2">
-          <span class="text-4xl font-bold text-gradient tabular-nums">{{ stats()!.courses | number }}</span>
+        <div class="flex items-end gap-2 mb-1">
+          <span class="text-4xl font-bold text-app-text tabular-nums">{{ stats()!.courses | number }}</span>
           <span class="text-sm text-app-text-muted mb-1">total</span>
         </div>
-        <p class="text-xs text-app-text-muted mt-2">
-          {{ stats()!.courses_published | number }} published
-        </p>
+        <p class="text-xs text-app-text-muted">{{ stats()!.courses_published | number }} published</p>
+        @if (stats()!.courses > 0) {
+          <div class="mt-4 h-1.5 w-full rounded-full bg-app-surface-2 overflow-hidden">
+            <div
+              class="h-full rounded-full bg-brand transition-all duration-700"
+              [style.width.%]="(stats()!.courses_published / stats()!.courses) * 100"
+            ></div>
+          </div>
+        }
       </div>
 
-      <!-- Total exercises -->
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4">
-          <lucide-icon name="square-code" class="w-4 h-4 text-yellow-400" />
+      <!-- Exercise coverage -->
+      <div class="bg-app-surface rounded-2xl border border-app-border p-5 shadow-card hover:border-app-border-2 hover:shadow-popover transition-all duration-200">
+        <div class="flex items-center gap-2.5 mb-5">
+          <div class="w-9 h-9 rounded-xl bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
+            <lucide-icon name="square-code" class="w-4 h-4 text-yellow-400" />
+          </div>
           <span class="text-sm font-semibold text-app-text">Exercise Coverage</span>
         </div>
-        <div class="flex items-end gap-2">
+        <div class="flex items-end gap-2 mb-1">
           <span class="text-4xl font-bold text-yellow-400 tabular-nums">{{ stats()!.exercises | number }}</span>
           <span class="text-sm text-app-text-muted mb-1">total</span>
         </div>
-        <p class="text-xs text-app-text-muted mt-2">
-          {{ stats()!.exercises_published | number }} published
-        </p>
+        <p class="text-xs text-app-text-muted">{{ stats()!.exercises_published | number }} published</p>
+        @if (stats()!.exercises > 0) {
+          <div class="mt-4 h-1.5 w-full rounded-full bg-app-surface-2 overflow-hidden">
+            <div
+              class="h-full rounded-full bg-yellow-500 transition-all duration-700"
+              [style.width.%]="(stats()!.exercises_published / stats()!.exercises) * 100"
+            ></div>
+          </div>
+        }
       </div>
+
     </div>
   }
 }

@@ -1,0 +1,256 @@
+<div class="p-4 flex flex-col gap-4">
+
+  <!-- ── Controls ──────────────────────────────────────────────────────── -->
+  <div class="flex flex-wrap items-start gap-3 p-3 rounded-xl
+              bg-app-surface-2 border border-app-border">
+
+    <!-- Insert group -->
+    <fieldset class="flex items-center gap-1.5">
+      <legend class="sr-only">Insert a value</legend>
+      <input
+        type="number"
+        min="1" max="999"
+        [value]="insertValue()"
+        (input)="onInsertInput($event)"
+        (keydown)="onInsertKeydown($event)"
+        placeholder="1 – 999"
+        class="w-24 px-2 py-1.5 rounded-lg text-sm
+               bg-app-surface border border-app-border text-app-text
+               focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+      />
+      <button
+        (click)="onInsert()"
+        [disabled]="!insertValue()"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-white bg-gradient-to-br from-purple-500 to-blue-500
+               hover:from-purple-600 hover:to-blue-600 disabled:opacity-40
+               disabled:cursor-not-allowed transition-all"
+      >
+        <lucide-icon [img]="Plus" [size]="13"></lucide-icon>
+        Insert
+      </button>
+    </fieldset>
+
+    <!-- Extract-Max -->
+    <button
+      (click)="onExtractMax()"
+      class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+             text-white bg-gradient-to-br from-rose-500 to-pink-600
+             hover:from-rose-600 hover:to-pink-700 transition-all"
+    >
+      <lucide-icon [img]="Trash2" [size]="13"></lucide-icon>
+      Extract-Max
+    </button>
+
+    <!-- Build-Heap group -->
+    <fieldset class="flex items-center gap-1.5">
+      <legend class="sr-only">Build-Heap from array</legend>
+      <input
+        type="text"
+        [value]="buildInput()"
+        (input)="onBuildInput($event)"
+        (keydown)="onBuildKeydown($event)"
+        placeholder="e.g. 3,1,7,9,4"
+        class="w-36 px-2 py-1.5 rounded-lg text-sm
+               bg-app-surface border border-app-border text-app-text
+               focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+      />
+      <button
+        (click)="onBuildHeap()"
+        class="px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-app-text-2 hover:text-app-text
+               bg-app-surface border border-app-border
+               hover:bg-app-surface-2 transition-all"
+      >
+        Build-Heap
+      </button>
+    </fieldset>
+
+    <!-- Random + Reset -->
+    <div class="ml-auto flex items-center gap-1.5">
+      <button
+        (click)="onRandomHeap()"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-app-text-2 hover:text-app-text
+               bg-app-surface border border-app-border
+               hover:bg-app-surface-2 transition-all"
+      >
+        <lucide-icon [img]="Shuffle" [size]="13"></lucide-icon>
+        Random
+      </button>
+      <button
+        (click)="onReset()"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-app-text-2 hover:text-app-text
+               bg-app-surface border border-app-border
+               hover:bg-app-surface-2 transition-all"
+      >
+        <lucide-icon [img]="RotateCcw" [size]="13"></lucide-icon>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Main canvas: tree + array row ─────────────────────────────────── -->
+  <div class="relative rounded-xl border border-app-border overflow-auto
+              bg-gradient-to-b from-app-surface to-app-surface-2 min-h-[340px]">
+
+    <!-- Radial glow -->
+    <div class="absolute inset-x-0 top-0 h-32 pointer-events-none
+                bg-[radial-gradient(ellipse_at_50%_0%,rgba(139,92,246,0.12),transparent_70%)]">
+    </div>
+
+    <!-- SVG tree -->
+    <svg
+      class="block overflow-visible"
+      [attr.width]="svgLayout().width"
+      [attr.height]="svgLayout().height"
+      [attr.viewBox]="'0 0 ' + svgLayout().width + ' ' + svgLayout().height"
+    >
+      <!-- Gradient definitions -->
+      <defs>
+        <linearGradient id="heapGradDefault" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#8b5cf6" />
+          <stop offset="100%" stop-color="#3b82f6" />
+        </linearGradient>
+      </defs>
+      <!-- Edges -->
+      @for (edge of svgLayout().edges; track $index) {
+        <line
+          [attr.x1]="edge.x1"
+          [attr.y1]="edge.y1"
+          [attr.x2]="edge.x2"
+          [attr.y2]="edge.y2"
+          class="stroke-app-border transition-all duration-300"
+          stroke-width="2"
+          stroke-linecap="round"
+        ></line>
+      }
+
+      <!-- Nodes -->
+      @for (node of svgLayout().nodes; track node.idx) {
+        <g [attr.transform]="'translate(' + node.cx + ',' + node.cy + ')'">
+          <!-- Glow ring for non-default states -->
+          @if (node.state !== 'default') {
+            <circle
+              [attr.r]="NODE_R + 6"
+              [class]="'heap-glow-ring heap-glow--' + node.state"
+            ></circle>
+          }
+
+          <!-- Main circle -->
+          <circle
+            [attr.r]="NODE_R"
+            [class]="nodeCircleClass(node.state)"
+          ></circle>
+
+          <!-- Value label -->
+          <text
+            text-anchor="middle"
+            dominant-baseline="central"
+            class="heap-node-label"
+            [style.font-size.px]="node.value >= 100 ? 10 : 12"
+          >{{ node.value }}</text>
+
+          <!-- Index label below -->
+          <text
+            [attr.y]="NODE_R + 14"
+            text-anchor="middle"
+            dominant-baseline="central"
+            class="heap-index-label"
+          >{{ node.idx }}</text>
+        </g>
+      }
+
+      <!-- Empty state -->
+      @if (svgLayout().nodes.length === 0) {
+        <text
+          [attr.x]="svgLayout().width / 2"
+          [attr.y]="svgLayout().height / 2"
+          text-anchor="middle"
+          dominant-baseline="central"
+          class="fill-app-text-muted text-sm"
+        >Heap is empty</text>
+      }
+    </svg>
+
+    <!-- Array backing row -->
+    @if (arrayCells().length > 0) {
+      <div class="px-4 pb-4 pt-2">
+        <p class="text-xs font-semibold uppercase tracking-wide text-app-text-muted mb-2">
+          Backing array
+        </p>
+        <div class="flex flex-wrap gap-1">
+          @for (cell of arrayCells(); track cell.idx) {
+            <div class="flex flex-col items-center gap-0.5">
+              <!-- Cell value -->
+              <div [class]="cellClass(cell.state)">{{ cell.value }}</div>
+              <!-- Index label -->
+              <span class="text-[10px] font-semibold text-app-text-muted select-none">
+                {{ cell.idx }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- ── Step note ─────────────────────────────────────────────────────── -->
+  <div class="min-h-[36px] px-4 py-2.5 rounded-xl
+              bg-app-surface-2 border border-app-border
+              text-sm text-app-text leading-relaxed"
+       [innerHTML]="noteHtml()">
+  </div>
+
+  <!-- ── Pseudo-code panel ──────────────────────────────────────────────── -->
+  <details class="group rounded-xl border border-app-border overflow-hidden">
+    <summary class="flex items-center justify-between px-4 py-2.5 cursor-pointer
+                    bg-app-surface-2 select-none
+                    text-xs font-semibold uppercase tracking-wide text-app-text-muted
+                    hover:text-app-text transition-colors">
+      Pseudocode
+      <span class="text-app-text-muted text-xs group-open:rotate-180 transition-transform">&#9660;</span>
+    </summary>
+    <div class="bg-app-surface px-4 py-3 font-mono text-xs leading-6 text-app-text-2 overflow-x-auto">
+      @for (line of PSEUDO; track $index) {
+        <div
+          class="px-2 py-0.5 rounded transition-colors duration-200"
+          [class.pseudo-active]="activePseudoLine() === $index"
+          [class.opacity-30]="line === ''"
+        >
+          @if (line !== '') {
+            {{ line }}
+          } @else {
+            &nbsp;
+          }
+        </div>
+      }
+    </div>
+  </details>
+
+  <!-- ── Legend ────────────────────────────────────────────────────────── -->
+  <div class="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-app-text-muted">
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot heap-node--default"></span>
+      default
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot heap-node--compare"></span>
+      comparing
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot heap-node--swap"></span>
+      swapping
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot heap-node--active"></span>
+      active / inserting
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot heap-node--done"></span>
+      settled / done
+    </span>
+  </div>
+
+</div>

@@ -1,0 +1,229 @@
+// ── Union-Find component styles ───────────────────────────────────────────
+// All styles are scoped to this component via Angular view encapsulation.
+// Nodes use SVG `class` bindings; edges and UI elements use Tailwind +
+// these local classes.
+
+:host {
+  display: block;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Control bar helpers (not duplicating Tailwind — only non-utility patterns)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Shared input base — Tailwind @apply kept light
+.uf-input {
+  @apply px-2 py-1.5 rounded-lg text-sm bg-app-surface border border-app-border
+         text-app-text focus:outline-none focus:ring-2 focus:ring-brand/50
+         transition-shadow duration-150;
+  /* remove browser spinner arrows */
+  -moz-appearance: textfield;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+}
+
+// Primary action button (Union — gradient)
+.uf-btn-primary {
+  @apply px-3 py-1.5 rounded-lg text-xs font-semibold text-white
+         bg-gradient-to-br from-purple-500 to-blue-500
+         hover:from-purple-600 hover:to-blue-600
+         transition-all duration-150 select-none;
+}
+
+// Secondary action button (Find — surface)
+.uf-btn-secondary {
+  @apply px-3 py-1.5 rounded-lg text-xs font-semibold
+         text-app-text-2 hover:text-app-text
+         bg-app-surface border border-app-border
+         hover:bg-app-surface-2
+         transition-all duration-150 select-none;
+}
+
+// Ghost button (Reset)
+.uf-btn-ghost {
+  @apply px-3 py-1.5 rounded-lg text-xs font-semibold
+         text-app-text-muted hover:text-app-text
+         bg-transparent hover:bg-app-surface-2
+         border border-transparent hover:border-app-border
+         transition-all duration-150 select-none;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SVG node circles
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Root ring (outer glow ring for roots)
+.uf-root-ring {
+  stroke: rgb(139 92 246 / 0.45);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 3;
+  animation: uf-ring-spin 8s linear infinite;
+}
+
+@keyframes uf-ring-spin {
+  to { stroke-dashoffset: -36; }
+}
+
+// Default member node
+.uf-node-default {
+  fill: url(#uf-grad-default);
+  filter: drop-shadow(0 1px 4px rgba(99 60 220 / 0.3));
+}
+
+// Root of a component — gradient + stronger glow
+.uf-node-root {
+  fill: url(#uf-grad-root);
+  filter: drop-shadow(0 0 7px rgba(139 92 246 / 0.65));
+}
+
+// Node currently being traversed (target of Find / just started Union)
+.uf-node-current {
+  fill: url(#uf-grad-current);
+  filter: drop-shadow(0 0 8px rgba(251 191 36 / 0.8));
+  animation: uf-pulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes uf-pulse {
+  from { filter: drop-shadow(0 0 5px rgba(251 191 36 / 0.6)); }
+  to   { filter: drop-shadow(0 0 12px rgba(251 191 36 / 0.95)); }
+}
+
+// Node on the path from x to root (Find walk)
+.uf-node-path {
+  fill: url(#uf-grad-path);
+  filter: drop-shadow(0 0 6px rgba(251 191 36 / 0.55));
+}
+
+// Node whose parent just changed (path-compressed or union-merged)
+.uf-node-merged {
+  fill: url(#uf-grad-merged);
+  filter: drop-shadow(0 0 7px rgba(34 197 94 / 0.6));
+  animation: uf-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes uf-pop {
+  0%   { transform: scale(0.85); }
+  60%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+// Dimmed node
+.uf-node-dim {
+  fill: rgb(var(--color-app-surface-2));
+  opacity: 0.45;
+}
+
+// Node label text
+.uf-node-label {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  pointer-events: none;
+  user-select: none;
+}
+
+// Rank badge (small circle in top-right of root nodes)
+.uf-rank-badge {
+  fill: rgb(245 158 11);
+  filter: drop-shadow(0 1px 2px rgba(0 0 0 / 0.35));
+}
+
+.uf-rank-label {
+  font-size: 8px;
+  font-weight: 800;
+  fill: white;
+  pointer-events: none;
+  user-select: none;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SVG edges
+// ═══════════════════════════════════════════════════════════════════════════
+
+.uf-edge {
+  stroke-linecap: round;
+  transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
+}
+
+// Neutral parent edge
+.uf-edge-default {
+  stroke: rgb(var(--color-app-border) / 0.7);
+  stroke-width: 1.8;
+  stroke-dasharray: 5 3;
+  opacity: 0.8;
+}
+
+// Edge currently being traversed (Find walk)
+.uf-edge-active {
+  stroke: rgb(251 191 36);
+  stroke-width: 2.5;
+  stroke-dasharray: none;
+  filter: drop-shadow(0 0 4px rgba(251 191 36 / 0.7));
+}
+
+// Edge after path compression / union merge
+.uf-edge-merged {
+  stroke: rgb(34 197 94);
+  stroke-width: 2.5;
+  stroke-dasharray: none;
+  filter: drop-shadow(0 0 4px rgba(34 197 94 / 0.6));
+}
+
+// SVG marker fill colours (used in <path> inside <marker>)
+.uf-marker-default {
+  fill: rgb(var(--color-app-border) / 0.7);
+}
+
+.uf-marker-active {
+  fill: rgb(251 191 36);
+}
+
+.uf-marker-merged {
+  fill: rgb(34 197 94);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Pseudocode panel
+// ═══════════════════════════════════════════════════════════════════════════
+
+.uf-pseudo-panel {
+  @apply rounded-xl border border-app-border bg-app-surface overflow-hidden;
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  font-size: 11px;
+}
+
+.uf-pseudo-header {
+  @apply px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest
+         text-app-text-muted bg-app-surface-2 border-b border-app-border;
+}
+
+.uf-pseudo-line {
+  @apply px-3 py-1 text-app-text-muted leading-relaxed
+         transition-colors duration-150;
+  white-space: pre;
+}
+
+.uf-pseudo-active {
+  @apply text-white bg-gradient-to-r from-purple-500/30 to-blue-500/20
+         font-semibold;
+  border-left: 3px solid rgb(139 92 246);
+  padding-left: calc(0.75rem - 3px);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Legend swatches
+// ═══════════════════════════════════════════════════════════════════════════
+
+.uf-legend-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.uf-node-root-swatch    { background: linear-gradient(135deg, rgb(139 92 246), rgb(59 130 246)); }
+.uf-node-default-swatch { background: linear-gradient(135deg, rgb(99 60 220 / 0.55), rgb(59 130 246 / 0.55)); border: 1.5px solid rgb(139 92 246 / 0.5); }
+.uf-node-current-swatch { background: linear-gradient(135deg, rgb(251 191 36), rgb(245 158 11)); }
+.uf-node-path-swatch    { background: linear-gradient(135deg, rgb(253 224 71), rgb(251 191 36)); }
+.uf-node-merged-swatch  { background: linear-gradient(135deg, rgb(74 222 128), rgb(22 163 74)); }

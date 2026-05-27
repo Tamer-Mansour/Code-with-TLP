@@ -1,4 +1,4 @@
-<div class="pt-14">
+<div>
   <div class="page-container py-8">
 
     <!-- Loading skeleton -->
@@ -11,7 +11,7 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           @for (_ of [1,2,3,4,5,6]; track $index) {
-            <div class="skeleton h-56 rounded-xl"></div>
+            <div class="skeleton h-64 rounded-2xl"></div>
           }
         </div>
       </div>
@@ -21,7 +21,7 @@
     @if (error() && !loading()) {
       <div class="text-center py-24">
         <p class="text-app-text font-medium">{{ error() }}</p>
-        <a routerLink="/catalog" class="btn btn-secondary mt-4 inline-flex no-underline">← Back to Catalog</a>
+        <a routerLink="/catalog" class="btn btn-secondary mt-4 inline-flex no-underline">Back to Catalog</a>
       </div>
     }
 
@@ -34,35 +34,47 @@
         <span class="text-app-text-2">{{ subject()!.name }}</span>
       </nav>
 
-      <!-- Header -->
-      <header class="mb-10 border-l-4 pl-5 rounded-sm" [style.border-left-color]="subject()!.color || '#3b82f6'">
-        <div class="flex items-center gap-3 mb-3">
-          <div
-            class="w-11 h-11 rounded-xl border flex items-center justify-center shrink-0"
-            [style.background]="subject()!.color ? subject()!.color + '1a' : 'rgba(59,130,246,0.10)'"
-            [style.border-color]="subject()!.color ? subject()!.color + '4d' : 'rgba(59,130,246,0.30)'"
-          >
-            <lucide-icon
-              [img]="subjectIcon(subject()!.icon)"
-              [size]="20"
-              [style.color]="subject()!.color || '#3b82f6'"
-            ></lucide-icon>
-          </div>
-          <div>
-            <h1 class="text-3xl font-bold text-app-text">{{ subject()!.name }}</h1>
+      <!-- Subject header card — modern, no border-left bar -->
+      <header class="mb-10 rounded-2xl border border-app-border bg-app-surface shadow-card overflow-hidden">
+        <!-- Subtle tinted gradient strip across the top of the card -->
+        <div
+          class="h-1.5 w-full"
+          [style.background]="'linear-gradient(90deg, ' + (subject()!.color || '#3b82f6') + ', ' + (subject()!.color || '#3b82f6') + '55)'"
+          aria-hidden="true"
+        ></div>
+
+        <div class="px-6 pt-5 pb-6">
+          <div class="flex items-start gap-4">
+            <!-- Icon chip — tinted gradient, no hard border -->
+            <div
+              class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 mt-0.5"
+              [style.background]="'linear-gradient(135deg, ' + (subject()!.color || '#3b82f6') + '28, ' + (subject()!.color || '#3b82f6') + '0d)'"
+              [style.box-shadow]="'0 0 0 1px ' + (subject()!.color || '#3b82f6') + '33, 0 2px 8px ' + (subject()!.color || '#3b82f6') + '18'"
+            >
+              <lucide-icon
+                [img]="subjectIcon(subject()!.icon)"
+                [size]="24"
+                [style.color]="subject()!.color || '#3b82f6'"
+              ></lucide-icon>
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <h1 class="text-2xl font-bold text-app-text leading-tight">{{ subject()!.name }}</h1>
+              @if (subject()!.description) {
+                <p class="text-sm text-app-text-2 mt-1.5 leading-relaxed max-w-2xl">{{ subject()!.description }}</p>
+              }
+              <p class="text-xs text-app-text-muted mt-3 flex items-center gap-1.5">
+                <lucide-icon [img]="BookOpen" [size]="12"></lucide-icon>
+                {{ courses().length }} course{{ courses().length !== 1 ? 's' : '' }} available
+              </p>
+            </div>
           </div>
         </div>
-        @if (subject()!.description) {
-          <p class="text-app-text-2 max-w-2xl leading-relaxed">{{ subject()!.description }}</p>
-        }
-        <p class="text-sm text-app-text-muted mt-3">
-          {{ courses().length }} course{{ courses().length !== 1 ? 's' : '' }} available
-        </p>
       </header>
 
       <!-- Courses grid -->
       @if (courses().length === 0) {
-        <div class="text-center py-16 card">
+        <div class="text-center py-16 card rounded-2xl">
           <lucide-icon [img]="BookOpen" [size]="40" class="text-app-border-2 mx-auto mb-4"></lucide-icon>
           <p class="text-app-text font-medium">No courses yet</p>
           <p class="text-app-text-2 text-sm mt-1">Check back later for new content.</p>
@@ -70,83 +82,109 @@
       } @else {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           @for (course of courses(); track trackById($index, course)) {
-            <div class="card-hover flex flex-col overflow-hidden p-0 group relative">
-              <!-- Subject color accent strip -->
-              <div
-                class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
-                [style.background]="subject()!.color || '#3b82f6'"
-              ></div>
 
-              <!-- Cover -->
-              <div class="h-40 bg-gradient-to-br from-app-surface-2 to-app-surface flex items-center justify-center overflow-hidden relative">
+            <!-- Course card -->
+            <div
+              class="group relative flex flex-col overflow-hidden rounded-2xl bg-app-surface border border-app-border
+                     shadow-card
+                     transition-all duration-200
+                     hover:-translate-y-0.5 hover:border-app-border-2 hover:shadow-popover hover:ring-1 hover:ring-brand/20"
+            >
+              <!-- Cover / thumbnail area -->
+              <div class="relative h-44 overflow-hidden bg-app-surface-2 flex items-center justify-center shrink-0">
+                <!-- Subject-color tinted gradient overlay -->
+                <div
+                  class="absolute inset-0 opacity-15"
+                  [style.background]="'linear-gradient(135deg, ' + (subject()!.color || '#3b82f6') + ', transparent 65%)'"
+                  aria-hidden="true"
+                ></div>
+                <!-- Subtle bottom fade -->
+                <div
+                  class="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-app-surface/70 to-transparent"
+                  aria-hidden="true"
+                ></div>
+
                 @if (course.cover_image) {
                   <img
                     [src]="course.cover_image"
                     [alt]="course.title"
-                    class="w-full h-full object-cover"
+                    class="absolute inset-0 w-full h-full object-cover"
                     loading="lazy"
                   />
                 } @else {
-                  <lucide-icon [img]="BookOpen" [size]="36" class="text-app-border-2"></lucide-icon>
+                  <lucide-icon
+                    [img]="BookOpen"
+                    [size]="40"
+                    class="relative z-10 text-app-border-2 transition-transform duration-200 group-hover:scale-110"
+                  ></lucide-icon>
                 }
-                <!-- Difficulty badge -->
+
+                <!-- Difficulty badge — top left -->
                 <span
                   [class]="difficultyBadge(course.difficulty)"
-                  class="absolute top-3 left-4"
+                  class="absolute top-3 left-3 z-10"
                 >{{ difficultyLabel(course.difficulty) }}</span>
-                <!-- Enrolled badge overlay -->
+
+                <!-- Enrolled badge — top right -->
                 @if (isEnrolled(course.id)) {
-                  <div class="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-green-950/90 border border-green-800/60">
+                  <div class="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-950/90 border border-green-800/60 backdrop-blur-sm">
                     <lucide-icon [img]="CheckCircle2" [size]="11" class="text-green-400"></lucide-icon>
-                    <span class="text-xs text-green-400 font-medium">Enrolled</span>
+                    <span class="text-xs text-green-400 font-medium leading-none">Enrolled</span>
                   </div>
                 }
               </div>
 
-              <!-- Body -->
-              <div class="pl-5 pr-5 pt-4 pb-5 flex flex-col gap-3 flex-1">
-                <h2 class="text-sm font-semibold text-app-text group-hover:text-brand dark:group-hover:text-brand-light transition-colors line-clamp-2 leading-snug">
+              <!-- Card body -->
+              <div class="flex flex-col gap-3 px-5 pt-4 pb-5 flex-1">
+
+                <!-- Title -->
+                <h2 class="text-sm font-semibold text-app-text leading-snug line-clamp-2
+                           group-hover:text-brand dark:group-hover:text-brand-light transition-colors duration-150">
                   {{ course.title }}
                 </h2>
 
+                <!-- Summary -->
                 @if (course.summary) {
                   <p class="text-xs text-app-text-2 line-clamp-2 leading-relaxed">{{ course.summary }}</p>
                 }
 
-                <!-- Progress bar (enrolled) -->
+                <!-- Progress bar (enrolled users only) -->
                 @if (isEnrolled(course.id)) {
                   @let enr = getEnrollment(course.id);
-                  <div class="space-y-1">
+                  <div class="space-y-1.5">
                     <div class="flex items-center justify-between text-xs text-app-text-muted">
-                      <span>Progress</span>
-                      <span class="font-medium">{{ enr?.progress_percent ?? 0 }}%</span>
+                      <span class="font-medium">Progress</span>
+                      <span class="font-semibold text-app-text-2">{{ enr?.progress_percent ?? 0 }}%</span>
                     </div>
                     <div class="h-1.5 w-full bg-app-surface-2 rounded-full overflow-hidden">
                       <div
-                        class="h-full bg-brand rounded-full transition-all duration-300"
+                        class="h-full rounded-full transition-all duration-500"
+                        style="background: linear-gradient(90deg, #8b5cf6, #3b82f6);"
                         [style.width.%]="enr?.progress_percent ?? 0"
                       ></div>
                     </div>
                   </div>
                 }
 
-                <!-- Meta row -->
-                <div class="flex items-center gap-3 text-xs text-app-text-muted border-t border-app-border/60 pt-2.5 mt-auto">
-                  <span class="flex items-center gap-1">
-                    <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
-                    {{ course.estimated_hours }}h
-                  </span>
-                </div>
+                <!-- Spacer pushes meta + CTA to bottom -->
+                <div class="mt-auto space-y-3">
 
-                <!-- Action button -->
-                <div class="pt-0.5">
+                  <!-- Meta row -->
+                  <div class="flex items-center gap-3 text-xs text-app-text-muted border-t border-app-border/50 pt-2.5">
+                    <span class="flex items-center gap-1">
+                      <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
+                      {{ course.estimated_hours }}h
+                    </span>
+                  </div>
+
+                  <!-- CTA button -->
                   @if (isEnrolled(course.id)) {
                     <a
                       [routerLink]="['/catalog/courses', course.slug]"
                       class="btn btn-secondary btn-sm w-full justify-center no-underline"
                     >
                       <lucide-icon [img]="PlayCircle" [size]="14"></lucide-icon>
-                      Continue
+                      Continue Learning
                     </a>
                   } @else if (auth.isAuthenticated()) {
                     <a
@@ -163,9 +201,11 @@
                       View Course
                     </a>
                   }
+
                 </div>
               </div>
             </div>
+
           }
         </div>
       }

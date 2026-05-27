@@ -2,17 +2,15 @@ import {
   Component,
   inject,
   ChangeDetectionStrategy,
-  signal,
-  OnInit,
 } from '@angular/core';
-import { NgClass } from '@angular/common';
 import { ToastService, Toast } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-toast-container',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './toast-container.html',
+  styleUrl: './toast-container.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastContainerComponent {
@@ -28,36 +26,6 @@ export class ToastContainerComponent {
 
   trackById(_: number, toast: Toast): string {
     return toast.id;
-  }
-
-  borderColor(type: Toast['type']): string {
-    switch (type) {
-      case 'success': return 'border-l-green-500';
-      case 'error':   return 'border-l-red-500';
-      case 'warning': return 'border-l-amber-500';
-      case 'info':    return 'border-l-brand';
-      default:        return 'border-l-brand';
-    }
-  }
-
-  iconColor(type: Toast['type']): string {
-    switch (type) {
-      case 'success': return 'text-green-400';
-      case 'error':   return 'text-red-400';
-      case 'warning': return 'text-amber-400';
-      case 'info':    return 'text-brand-light';
-      default:        return 'text-brand-light';
-    }
-  }
-
-  progressColor(type: Toast['type']): string {
-    switch (type) {
-      case 'success': return 'bg-green-500';
-      case 'error':   return 'bg-red-500';
-      case 'warning': return 'bg-amber-500';
-      case 'info':    return 'bg-brand';
-      default:        return 'bg-brand';
-    }
   }
 
   icon(type: Toast['type']): string {
@@ -82,5 +50,15 @@ export class ToastContainerComponent {
 
   animDuration(toast: Toast): string {
     return `${toast.duration ?? 4000}ms`;
+  }
+
+  accentColor(type: Toast['type']): string {
+    switch (type) {
+      case 'success': return '#22c55e';
+      case 'error':   return '#cd5c5c';
+      case 'warning': return '#f59e0b';
+      case 'info':    return '#3b82f6';
+      default:        return '#3b82f6';
+    }
   }
 }

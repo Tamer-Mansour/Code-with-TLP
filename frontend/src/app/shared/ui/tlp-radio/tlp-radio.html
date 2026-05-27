@@ -1,0 +1,33 @@
+<label
+  class="tlp-radio"
+  [class.tlp-radio--selected]="selected()"
+  [class.tlp-radio--disabled]="disabled()"
+  [class.tlp-radio--focused]="focused()"
+  [attr.for]="inputId"
+>
+  <!-- Hidden native radio -->
+  <input
+    type="radio"
+    class="sr-only"
+    [id]="inputId"
+    [name]="name || inputId"
+    [value]="value"
+    [checked]="selected()"
+    [disabled]="disabled()"
+    [attr.aria-checked]="selected()"
+    (change)="select()"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    (keydown)="onKeyDown($event)"
+  />
+
+  <!-- Visual ring + dot -->
+  <span class="tlp-radio__ring" aria-hidden="true">
+    <span class="tlp-radio__dot"></span>
+  </span>
+
+  @if (label) {
+    <span class="tlp-radio__label">{{ label }}</span>
+  }
+  <ng-content />
+</label>

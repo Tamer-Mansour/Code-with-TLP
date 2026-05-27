@@ -6,7 +6,7 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { NgClass, DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
+import { NgClass, DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -116,8 +116,9 @@ const BG_OPTIONS = [
   selector: 'app-profile',
   standalone: true,
   templateUrl: './profile.component.html',
+  styleUrl: './profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass, DatePipe, DecimalPipe, PercentPipe, RouterLink, ReactiveFormsModule, LucideAngularModule],
+  imports: [NgClass, DatePipe, DecimalPipe, RouterLink, ReactiveFormsModule, LucideAngularModule],
 })
 export class ProfileComponent implements OnInit {
   private readonly auth = inject(AuthService);

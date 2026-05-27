@@ -5,8 +5,9 @@
 
     <!-- Logo -->
     <div class="flex items-center gap-3 px-5 py-5 border-b border-app-border flex-shrink-0">
-      <div class="w-8 h-8 rounded-lg bg-brand/20 border border-brand/30 flex items-center justify-center flex-shrink-0">
-        <lucide-icon name="shield" class="w-4 h-4 text-brand" />
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+           style="background: linear-gradient(135deg, #8b5cf6, #3b82f6);">
+        <lucide-icon name="shield" class="w-4 h-4 text-white" />
       </div>
       <div>
         <p class="text-sm font-bold text-app-text leading-none">Admin Panel</p>
@@ -14,33 +15,41 @@
       </div>
     </div>
 
+    <!-- Nav label -->
+    <div class="px-5 pt-5 pb-1.5 flex-shrink-0">
+      <span class="text-[10px] font-semibold uppercase tracking-widest text-app-text-muted">Navigation</span>
+    </div>
+
     <!-- Nav items -->
-    <nav class="flex-1 px-3 py-4 space-y-1">
+    <nav class="flex-1 px-3 pb-4 space-y-0.5">
       @for (item of navItems; track item.route) {
         <a
           [routerLink]="item.route"
-          routerLinkActive="bg-brand/10 text-brand border-l-2 border-brand pl-[calc(0.75rem-2px)]"
+          routerLinkActive="bg-brand/10 text-brand font-semibold"
           [routerLinkActiveOptions]="{ exact: false }"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-app-text-2 hover:bg-app-surface-2 hover:text-app-text transition-all duration-150 cursor-pointer group"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-app-text-2 hover:bg-app-surface-2 hover:text-app-text transition-all duration-150 cursor-pointer group"
         >
-          <lucide-icon [name]="item.icon" class="w-4 h-4 flex-shrink-0 group-[.text-brand]:text-brand" />
+          <lucide-icon [name]="item.icon" class="w-4 h-4 flex-shrink-0" />
           {{ item.label }}
         </a>
       }
     </nav>
 
+    <!-- Divider -->
+    <div class="mx-4 border-t border-app-border flex-shrink-0"></div>
+
     <!-- Bottom section -->
-    <div class="px-3 py-4 border-t border-app-border flex-shrink-0 space-y-1">
+    <div class="px-3 py-3 flex-shrink-0 space-y-0.5">
       <a
         routerLink="/dashboard"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-app-text-2 hover:bg-app-surface-2 hover:text-app-text transition-all duration-150 cursor-pointer"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-app-text-2 hover:bg-app-surface-2 hover:text-app-text transition-all duration-150 cursor-pointer"
       >
         <lucide-icon name="arrow-left" class="w-4 h-4 flex-shrink-0" />
         Back to App
       </a>
       <button
         (click)="logout()"
-        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-150 cursor-pointer"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-150 cursor-pointer"
       >
         <lucide-icon name="log-out" class="w-4 h-4 flex-shrink-0" />
         Logout
@@ -50,7 +59,7 @@
 
   <!-- ── Main content area ──────────────────────────────── -->
   <main class="flex-1 pl-sidebar min-w-0">
-    <div class="px-8 pt-6 pb-16">
+    <div class="px-8 pt-7 pb-16">
       <router-outlet />
     </div>
   </main>

@@ -1,0 +1,249 @@
+<div class="rt-root">
+
+  <!-- ── Controls row ─────────────────────────────────────────────────── -->
+  <div class="rt-controls">
+
+    <!-- Operation pills -->
+    <div class="rt-op-group">
+      @for (op of OPERATIONS; track op) {
+        <button
+          class="rt-op-btn"
+          [class.rt-op-btn--active]="selectedOp() === op"
+          (click)="onSelectOp(op)"
+          type="button"
+        >
+          {{ op }}
+        </button>
+      }
+    </div>
+
+    <!-- n input -->
+    <div class="rt-n-input-wrap">
+      <label class="rt-label" [for]="'rt-n-input'">
+        n
+        <span class="rt-label-hint">(1 – {{ nMax() }})</span>
+      </label>
+      <input
+        id="rt-n-input"
+        type="number"
+        [value]="nInput()"
+        [min]="1"
+        [max]="nMax()"
+        (input)="onNInput($event)"
+        class="rt-input"
+      />
+    </div>
+
+    <!-- Action buttons -->
+    <div class="rt-action-group">
+      <button class="rt-btn rt-btn--primary" (click)="onReset()" type="button">
+        <lucide-icon [img]="RotateCcw" [size]="14"></lucide-icon>
+        Build
+      </button>
+      <button class="rt-btn rt-btn--ghost" (click)="onPlay()" type="button">
+        <lucide-icon [img]="Play" [size]="14"></lucide-icon>
+        Play
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Main panel ────────────────────────────────────────────────────── -->
+  <div class="rt-panel">
+
+    <!-- SVG canvas (left / top) -->
+    <div class="rt-canvas-wrap">
+
+      <!-- Radial glow -->
+      <div class="rt-canvas-glow" aria-hidden="true"></div>
+
+      <!-- Scrollable SVG -->
+      <div class="rt-canvas-scroll">
+        <svg
+          class="rt-svg"
+          [attr.width]="svgLayout().width"
+          [attr.height]="svgLayout().height"
+          [attr.viewBox]="'0 0 ' + svgLayout().width + ' ' + svgLayout().height"
+          overflow="visible"
+        >
+          <defs>
+            <marker id="rt-arrow" markerWidth="8" markerHeight="8"
+                    refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L8,3 z" class="rt-arrow-marker" />
+            </marker>
+          </defs>
+
+          <!-- Edges -->
+          @for (edge of svgLayout().edges; track $index) {
+            <line
+              [attr.x1]="edge.x1"
+              [attr.y1]="edge.y1 + NODE_R"
+              [attr.x2]="edge.x2"
+              [attr.y2]="edge.y2 - NODE_R"
+              class="rt-edge"
+              marker-end="url(#rt-arrow)"
+            />
+          }
+
+          <!-- Nodes -->
+          @for (node of svgLayout().nodes; track node.id) {
+            @if (node.visible) {
+              <g class="rt-node-group" [class]="'rt-node-group--' + node.state">
+
+                <!-- Circle -->
+                <circle
+                  [attr.cx]="node.cx"
+                  [attr.cy]="node.cy"
+                  [attr.r]="NODE_R"
+                  [class]="'rt-circle rt-circle--' + node.state"
+                />
+
+                <!-- Label inside circle -->
+                <text
+                  [attr.x]="node.cx"
+                  [attr.y]="node.cy"
+                  class="rt-node-label"
+                  dominant-baseline="central"
+                  text-anchor="middle"
+                >
+                  {{ node.label }}
+                </text>
+
+                <!-- Return value badge (below circle, when known) -->
+                @if (node.returnValue !== null) {
+                  <text
+                    [attr.x]="node.cx"
+                    [attr.y]="node.cy + NODE_R + 14"
+                    class="rt-return-label"
+                    [class]="'rt-return-label--' + node.state"
+                    dominant-baseline="central"
+                    text-anchor="middle"
+                  >
+                    = {{ node.returnValue }}
+                  </text>
+                }
+
+              </g>
+            }
+          }
+        </svg>
+      </div>
+
+      <!-- Step note -->
+      <div class="rt-note" [innerHTML]="currentFrame()?.note ?? 'Press Build to start.'"></div>
+    </div>
+
+    <!-- Pseudocode sidebar -->
+    <div class="rt-pseudo-panel">
+      <div class="rt-pseudo-title">Pseudocode</div>
+      <div class="rt-pseudo-lines">
+        @for (line of pseudoLines(); track $index) {
+          <div
+            class="rt-pseudo-line"
+            [class.rt-pseudo-line--active]="activePseudoLine() === $index"
+          >
+            <span class="rt-pseudo-ln">{{ $index + 1 }}</span>
+            <span class="rt-pseudo-text">{{ line }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Complexity chips -->
+      <div class="rt-complexity">
+        <div class="rt-complexity-row">
+          <span class="rt-complexity-label">Time</span>
+          <span class="rt-complexity-chip rt-complexity-chip--time">
+            @switch (selectedOp()) {
+              @case ('Factorial(n)')            { O(n) }
+              @case ('Fibonacci(n) — naive')    { O(2^n) }
+              @case ('Fibonacci(n) — memoized') { O(n) }
+            }
+          </span>
+        </div>
+        <div class="rt-complexity-row">
+          <span class="rt-complexity-label">Space</span>
+          <span class="rt-complexity-chip rt-complexity-chip--space">O(n)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Player controls ───────────────────────────────────────────────── -->
+  <div class="rt-player">
+
+    <!-- Step back -->
+    <button
+      class="rt-player-btn"
+      (click)="onStepBack()"
+      [disabled]="atStart()"
+      type="button"
+      aria-label="Step back"
+    >
+      <lucide-icon [img]="StepBack" [size]="16"></lucide-icon>
+    </button>
+
+    <!-- Play / pause -->
+    <button
+      class="rt-player-btn rt-player-btn--play"
+      (click)="onToggle()"
+      [disabled]="atEnd() && !playing()"
+      type="button"
+      [attr.aria-label]="playing() ? 'Pause' : 'Play'"
+    >
+      @if (playing()) {
+        <lucide-icon [img]="Pause" [size]="16"></lucide-icon>
+      } @else {
+        <lucide-icon [img]="Play" [size]="16"></lucide-icon>
+      }
+    </button>
+
+    <!-- Step forward -->
+    <button
+      class="rt-player-btn"
+      (click)="onStep()"
+      [disabled]="atEnd()"
+      type="button"
+      aria-label="Step forward"
+    >
+      <lucide-icon [img]="StepForward" [size]="16"></lucide-icon>
+    </button>
+
+    <!-- Scrubber -->
+    <input
+      type="range"
+      class="rt-scrubber"
+      [min]="0"
+      [max]="(frameCount() - 1) || 0"
+      [value]="frameIndex()"
+      (input)="onSeek($event)"
+      aria-label="Frame scrubber"
+    />
+
+    <!-- Step counter -->
+    <span class="rt-step-label">{{ stepLabel() }}</span>
+  </div>
+
+  <!-- ── Legend ─────────────────────────────────────────────────────────── -->
+  <div class="rt-legend">
+    <span class="rt-legend-item">
+      <span class="rt-legend-dot rt-legend-dot--calling"></span>
+      calling
+    </span>
+    <span class="rt-legend-item">
+      <span class="rt-legend-dot rt-legend-dot--returning"></span>
+      returning
+    </span>
+    <span class="rt-legend-item">
+      <span class="rt-legend-dot rt-legend-dot--memo"></span>
+      memo hit
+    </span>
+    <span class="rt-legend-item">
+      <span class="rt-legend-dot rt-legend-dot--done"></span>
+      done
+    </span>
+    <span class="rt-legend-item">
+      <span class="rt-legend-dot rt-legend-dot--idle"></span>
+      pending
+    </span>
+  </div>
+
+</div>

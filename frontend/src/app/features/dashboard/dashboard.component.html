@@ -1,99 +1,145 @@
-<div class="bg-app-bg min-h-dvh pb-16">
-  <div class="page-container pt-8">
+<div class="bg-app-bg min-h-dvh pb-20">
+  <div class="page-container pt-10">
 
-    <!-- ── Header ─────────────────────────────────────────── -->
-    <div class="flex items-start justify-between mb-8">
+    <!-- ── Header ─────────────────────────────────────────────── -->
+    <div class="flex items-start justify-between gap-4 mb-10">
       <div>
-        <h1 class="text-3xl font-bold text-app-text">
+        <p class="text-xs font-semibold uppercase tracking-widest text-app-text-muted mb-1">Your Dashboard</p>
+        <h1 class="text-3xl font-bold text-app-text leading-tight">
           Welcome back,
           <span class="text-gradient">{{ currentUser()?.username ?? currentUser()?.full_name ?? 'Student' }}</span>
         </h1>
-        <p class="text-app-text-2 mt-1">Here's an overview of your learning progress.</p>
+        <p class="text-app-text-2 mt-1.5 text-sm">Track your progress, continue your courses and review your submissions.</p>
       </div>
       <!-- User avatar chip -->
-      <div class="flex items-center gap-3 mt-1">
-        <div class="w-10 h-10 rounded-full bg-brand/20 border border-brand/30 flex items-center justify-center text-brand font-bold text-sm flex-shrink-0">
-          {{ userInitials() }}
-        </div>
-        <div class="hidden sm:block">
-          <p class="text-sm font-semibold text-app-text">{{ currentUser()?.full_name ?? currentUser()?.username }}</p>
+      <div class="flex items-center gap-3 mt-1 flex-shrink-0">
+        <div class="hidden sm:flex flex-col items-end">
+          <p class="text-sm font-semibold text-app-text leading-snug">{{ currentUser()?.full_name ?? currentUser()?.username }}</p>
           <p class="text-xs text-app-text-muted capitalize">{{ currentUser()?.role }}</p>
         </div>
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md">
+          {{ userInitials() }}
+        </div>
       </div>
     </div>
 
-    <!-- ── Stats row ──────────────────────────────────────── -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-      <!-- Enrolled courses -->
-      <div class="card flex flex-col gap-2">
-        <div class="flex items-center gap-2 text-app-text-muted mb-1">
-          <div class="p-1.5 rounded-lg bg-brand/10">
-            <lucide-icon name="book-open" class="w-4 h-4 text-brand" />
+    <!-- ── Stats row ───────────────────────────────────────────── -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+
+      <!-- Enrolled Courses -->
+      <div class="group relative bg-app-surface rounded-2xl border border-app-border p-5 shadow-card overflow-hidden
+                  transition-all duration-200 hover:border-brand/40 hover:shadow-popover hover:-translate-y-0.5">
+        <!-- subtle tinted backdrop -->
+        <div class="absolute inset-0 bg-brand/[0.03] rounded-2xl pointer-events-none"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <!-- icon chip -->
+            <div class="w-10 h-10 rounded-xl bg-blue-500/10 dark:bg-blue-500/15 flex items-center justify-center flex-shrink-0">
+              <lucide-icon name="book-open" class="w-5 h-5 text-blue-500 dark:text-blue-400" />
+            </div>
+            <!-- trend indicator placeholder -->
+            <div class="flex items-center gap-1 text-xs font-medium text-blue-500 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/15 px-2 py-0.5 rounded-full">
+              <lucide-icon name="trending-up" class="w-3 h-3" />
+              Active
+            </div>
           </div>
-          <span class="text-xs font-medium">Enrolled Courses</span>
+          @if (loadingEnrollments()) {
+            <div class="skeleton h-9 w-16 rounded-lg mb-1"></div>
+            <div class="skeleton h-3 w-24 rounded mt-2"></div>
+          } @else {
+            <p class="text-3xl font-bold text-app-text tabular-nums">{{ enrolledCount() }}</p>
+            <p class="text-xs text-app-text-muted mt-1">Enrolled courses</p>
+          }
         </div>
-        @if (loadingEnrollments()) {
-          <div class="skeleton h-9 w-16 rounded-lg"></div>
-        } @else {
-          <span class="text-3xl font-bold text-gradient">{{ enrolledCount() }}</span>
-        }
-        <span class="text-xs text-app-text-muted">active enrollments</span>
       </div>
 
-      <!-- Completed exercises -->
-      <div class="card flex flex-col gap-2">
-        <div class="flex items-center gap-2 text-app-text-muted mb-1">
-          <div class="p-1.5 rounded-lg bg-green-500/10">
-            <lucide-icon name="check-circle-2" class="w-4 h-4 text-green-400" />
+      <!-- Accepted Solutions -->
+      <div class="group relative bg-app-surface rounded-2xl border border-app-border p-5 shadow-card overflow-hidden
+                  transition-all duration-200 hover:border-green-500/40 hover:shadow-popover hover:-translate-y-0.5">
+        <div class="absolute inset-0 bg-green-500/[0.03] rounded-2xl pointer-events-none"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-green-500/10 dark:bg-green-500/15 flex items-center justify-center flex-shrink-0">
+              <lucide-icon name="check-circle-2" class="w-5 h-5 text-green-500 dark:text-green-400" />
+            </div>
+            <div class="flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400 bg-green-500/10 dark:bg-green-500/15 px-2 py-0.5 rounded-full">
+              <lucide-icon name="check" class="w-3 h-3" />
+              Solved
+            </div>
           </div>
-          <span class="text-xs font-medium">Accepted Solutions</span>
+          @if (loadingSubmissions()) {
+            <div class="skeleton h-9 w-16 rounded-lg mb-1"></div>
+            <div class="skeleton h-3 w-28 rounded mt-2"></div>
+          } @else {
+            <p class="text-3xl font-bold text-app-text tabular-nums">{{ completedExercises() }}</p>
+            <p class="text-xs text-app-text-muted mt-1">of {{ recentSubmissions().length }} recent submissions</p>
+          }
         </div>
-        @if (loadingSubmissions()) {
-          <div class="skeleton h-9 w-16 rounded-lg"></div>
-        } @else {
-          <span class="text-3xl font-bold text-green-400">{{ completedExercises() }}</span>
-        }
-        <span class="text-xs text-app-text-muted">out of {{ recentSubmissions().length }} recent</span>
       </div>
 
-      <!-- Acceptance rate -->
-      <div class="card flex flex-col gap-2">
-        <div class="flex items-center gap-2 text-app-text-muted mb-1">
-          <div class="p-1.5 rounded-lg bg-purple-500/10">
-            <lucide-icon name="percent" class="w-4 h-4 text-purple-400" />
+      <!-- Acceptance Rate -->
+      <div class="group relative bg-app-surface rounded-2xl border border-app-border p-5 shadow-card overflow-hidden
+                  transition-all duration-200 hover:border-purple-500/40 hover:shadow-popover hover:-translate-y-0.5">
+        <div class="absolute inset-0 bg-purple-500/[0.03] rounded-2xl pointer-events-none"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/10 dark:bg-purple-500/15 flex items-center justify-center flex-shrink-0">
+              <lucide-icon name="percent" class="w-5 h-5 text-purple-500 dark:text-purple-400" />
+            </div>
+            <!-- mini ring progress label -->
+            @if (!loadingSubmissions()) {
+              <div class="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-500/10 dark:bg-purple-500/15 px-2 py-0.5 rounded-full">
+                Rate
+              </div>
+            }
           </div>
-          <span class="text-xs font-medium">Acceptance Rate</span>
+          @if (loadingSubmissions()) {
+            <div class="skeleton h-9 w-20 rounded-lg mb-1"></div>
+            <div class="skeleton h-3 w-28 rounded mt-2"></div>
+          } @else {
+            <p class="text-3xl font-bold text-app-text tabular-nums">
+              {{ acceptanceRate() }}<span class="text-lg font-semibold text-app-text-2">%</span>
+            </p>
+            <p class="text-xs text-app-text-muted mt-1">Acceptance rate</p>
+          }
         </div>
-        @if (loadingSubmissions()) {
-          <div class="skeleton h-9 w-16 rounded-lg"></div>
-        } @else {
-          <span class="text-3xl font-bold text-purple-400">{{ acceptanceRate() }}<span class="text-lg">%</span></span>
-        }
-        <span class="text-xs text-app-text-muted">across all submissions</span>
       </div>
 
-      <!-- Total points -->
-      <div class="card flex flex-col gap-2">
-        <div class="flex items-center gap-2 text-app-text-muted mb-1">
-          <div class="p-1.5 rounded-lg bg-yellow-500/10">
-            <lucide-icon name="zap" class="w-4 h-4 text-yellow-400" />
+      <!-- Total Points -->
+      <div class="group relative bg-app-surface rounded-2xl border border-app-border p-5 shadow-card overflow-hidden
+                  transition-all duration-200 hover:border-amber-500/40 hover:shadow-popover hover:-translate-y-0.5">
+        <div class="absolute inset-0 bg-amber-500/[0.03] rounded-2xl pointer-events-none"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+              <lucide-icon name="zap" class="w-5 h-5 text-amber-500 dark:text-amber-400" />
+            </div>
+            <div class="flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/15 px-2 py-0.5 rounded-full">
+              <lucide-icon name="star" class="w-3 h-3" />
+              XP
+            </div>
           </div>
-          <span class="text-xs font-medium">Total Points</span>
+          @if (loadingSubmissions()) {
+            <div class="skeleton h-9 w-16 rounded-lg mb-1"></div>
+            <div class="skeleton h-3 w-20 rounded mt-2"></div>
+          } @else {
+            <p class="text-3xl font-bold text-app-text tabular-nums">{{ totalPoints() }}</p>
+            <p class="text-xs text-app-text-muted mt-1">Points earned</p>
+          }
         </div>
-        @if (loadingSubmissions()) {
-          <div class="skeleton h-9 w-16 rounded-lg"></div>
-        } @else {
-          <span class="text-3xl font-bold text-yellow-400">{{ totalPoints() }}</span>
-        }
-        <span class="text-xs text-app-text-muted">points earned</span>
       </div>
+
     </div>
 
-    <!-- ── My Courses ─────────────────────────────────────── -->
-    <section class="mb-10">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="section-title">My Courses</h2>
-        <a routerLink="/catalog" class="btn-ghost btn-sm flex items-center gap-1.5">
+    <!-- ── My Courses ──────────────────────────────────────────── -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-xl font-bold text-app-text">My Courses</h2>
+          <p class="text-xs text-app-text-muted mt-0.5">Pick up where you left off</p>
+        </div>
+        <a routerLink="/catalog"
+           class="btn-ghost btn-sm flex items-center gap-1.5 rounded-lg">
           Browse all
           <lucide-icon name="arrow-right" class="w-3.5 h-3.5" />
         </a>
@@ -102,48 +148,62 @@
       @if (loadingEnrollments()) {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           @for (i of [1,2,3]; track i) {
-            <div class="card gap-4 flex flex-col">
-              <div class="skeleton h-5 w-3/4 rounded"></div>
+            <div class="bg-app-surface rounded-2xl border border-app-border p-5 flex flex-col gap-4">
+              <div class="skeleton h-5 w-3/4 rounded-lg"></div>
               <div class="skeleton h-3 w-full rounded"></div>
-              <div class="skeleton h-1.5 w-full rounded-full"></div>
+              <div class="skeleton h-2 w-full rounded-full mt-2"></div>
+              <div class="skeleton h-8 w-full rounded-lg mt-1"></div>
             </div>
           }
         </div>
       } @else if (coursesWithProgress().length === 0) {
-        <div class="card flex flex-col items-center justify-center py-12 text-center">
-          <lucide-icon name="graduation-cap" class="w-12 h-12 text-app-text-muted mb-3" />
-          <h3 class="text-base font-semibold text-app-text mb-2">No Enrollments Yet</h3>
-          <p class="text-sm text-app-text-2 mb-4">Start learning by enrolling in a course.</p>
-          <a routerLink="/catalog" class="btn-primary btn-sm">Browse Courses</a>
+        <!-- Empty state -->
+        <div class="bg-app-surface rounded-2xl border border-app-border border-dashed p-12 flex flex-col items-center justify-center text-center">
+          <div class="w-14 h-14 rounded-2xl bg-brand/10 flex items-center justify-center mb-4">
+            <lucide-icon name="graduation-cap" class="w-7 h-7 text-brand" />
+          </div>
+          <h3 class="text-base font-semibold text-app-text mb-1">No Enrollments Yet</h3>
+          <p class="text-sm text-app-text-2 mb-5 max-w-xs">Start your learning journey by enrolling in your first course.</p>
+          <a routerLink="/catalog" class="btn-primary">
+            <lucide-icon name="book-open" class="w-4 h-4" />
+            Browse Courses
+          </a>
         </div>
       } @else {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           @for (item of coursesWithProgress(); track item.enrollment.id) {
-            <div class="card-hover flex flex-col gap-4">
-              <!-- Course header -->
+            <div class="group bg-app-surface rounded-2xl border border-app-border p-5 flex flex-col gap-4
+                        transition-all duration-200 hover:border-app-border-2 hover:shadow-popover hover:-translate-y-0.5">
+
+              <!-- Top row: difficulty badge -->
               <div class="flex items-start justify-between gap-2">
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-semibold text-app-text text-sm leading-snug line-clamp-2">
-                    {{ item.course!.title }}
-                  </h3>
-                  @if (item.course!.summary) {
-                    <p class="text-xs text-app-text-2 mt-1 line-clamp-1">{{ item.course!.summary }}</p>
-                  }
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center flex-shrink-0">
+                  <lucide-icon name="layers" class="w-4 h-4 text-brand" />
                 </div>
-                <span [ngClass]="getDifficultyBadge(item.course!.difficulty)" class="flex-shrink-0">
+                <span [ngClass]="getDifficultyBadge(item.course!.difficulty)" class="flex-shrink-0 capitalize">
                   {{ item.course!.difficulty }}
                 </span>
               </div>
 
+              <!-- Title & summary -->
+              <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-app-text text-sm leading-snug line-clamp-2">
+                  {{ item.course!.title }}
+                </h3>
+                @if (item.course!.summary) {
+                  <p class="text-xs text-app-text-muted mt-1 line-clamp-2 leading-relaxed">{{ item.course!.summary }}</p>
+                }
+              </div>
+
               <!-- Progress bar -->
-              <div class="space-y-1.5">
+              <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                  <span class="text-xs text-app-text-muted">Progress</span>
-                  <span class="text-xs font-medium text-app-text-2">{{ item.enrollment.progress_percent }}%</span>
+                  <span class="text-xs text-app-text-muted font-medium">Progress</span>
+                  <span class="text-xs font-semibold text-app-text tabular-nums">{{ item.enrollment.progress_percent }}%</span>
                 </div>
-                <div class="w-full bg-app-surface-2 rounded-full h-1.5">
+                <div class="w-full bg-app-surface-2 rounded-full h-1.5 overflow-hidden">
                   <div
-                    class="h-1.5 rounded-full bg-brand transition-all duration-500"
+                    class="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-500"
                     [style.width.%]="item.enrollment.progress_percent"
                   ></div>
                 </div>
@@ -152,7 +212,7 @@
               <!-- Continue button -->
               <a
                 [routerLink]="['/catalog/courses', item.course!.slug]"
-                class="btn-secondary btn-sm w-full justify-center mt-auto"
+                class="btn-secondary btn-sm w-full justify-center mt-auto group-hover:border-brand/40 transition-colors"
               >
                 <lucide-icon name="play" class="w-3.5 h-3.5" />
                 Continue Learning
@@ -163,11 +223,15 @@
       }
     </section>
 
-    <!-- ── Recent Submissions ─────────────────────────────── -->
-    <section class="mb-10">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="section-title">Recent Submissions</h2>
-        <a routerLink="/exercises" class="btn-ghost btn-sm flex items-center gap-1.5">
+    <!-- ── Recent Submissions ──────────────────────────────────── -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-xl font-bold text-app-text">Recent Submissions</h2>
+          <p class="text-xs text-app-text-muted mt-0.5">Your last 10 exercise attempts</p>
+        </div>
+        <a routerLink="/exercises"
+           class="btn-ghost btn-sm flex items-center gap-1.5 rounded-lg">
           All exercises
           <lucide-icon name="arrow-right" class="w-3.5 h-3.5" />
         </a>
@@ -176,51 +240,70 @@
       @if (loadingSubmissions()) {
         <div class="space-y-2">
           @for (i of [1,2,3,4,5]; track i) {
-            <div class="skeleton h-12 rounded-lg"></div>
+            <div class="skeleton h-14 rounded-xl"></div>
           }
         </div>
       } @else if (recentSubmissions().length === 0) {
-        <div class="card flex flex-col items-center justify-center py-12 text-center">
-          <lucide-icon name="code-2" class="w-12 h-12 text-app-text-muted mb-3" />
-          <h3 class="text-base font-semibold text-app-text mb-2">No Submissions Yet</h3>
-          <p class="text-sm text-app-text-2 mb-4">Try solving an exercise to see your results here.</p>
-          <a routerLink="/exercises" class="btn-primary btn-sm">Try an Exercise</a>
+        <!-- Empty state -->
+        <div class="bg-app-surface rounded-2xl border border-app-border border-dashed p-12 flex flex-col items-center justify-center text-center">
+          <div class="w-14 h-14 rounded-2xl bg-app-surface-2 flex items-center justify-center mb-4">
+            <lucide-icon name="code-2" class="w-7 h-7 text-app-text-muted" />
+          </div>
+          <h3 class="text-base font-semibold text-app-text mb-1">No Submissions Yet</h3>
+          <p class="text-sm text-app-text-2 mb-5 max-w-xs">Try solving an exercise to see your results here.</p>
+          <a routerLink="/exercises" class="btn-primary">
+            <lucide-icon name="code-2" class="w-4 h-4" />
+            Try an Exercise
+          </a>
         </div>
       } @else {
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Exercise</th>
-                <th>Language</th>
-                <th>Score</th>
-                <th>Runtime</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (s of recentSubmissions(); track s.id) {
-                <tr>
-                  <td>
-                    <span [ngClass]="getStatusBadge(s.status)">{{ getStatusLabel(s.status) }}</span>
-                  </td>
-                  <td class="text-app-text">#{{ s.exercise_id }}</td>
-                  <td>{{ LANGUAGE_LABELS[s.language] ?? s.language }}</td>
-                  <td class="font-mono text-xs">{{ s.score }}</td>
-                  <td class="font-mono text-xs">{{ formatRuntime(s.runtime_ms) }}</td>
-                  <td class="text-app-text-muted">{{ s.created_at | date:'short' }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
+        <!-- Submissions list — card-based rows, no traditional table on mobile -->
+        <div class="bg-app-surface rounded-2xl border border-app-border overflow-hidden shadow-card">
+
+          <!-- Table header -->
+          <div class="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-x-4 px-5 py-3
+                      border-b border-app-border bg-app-surface-2/60
+                      text-xs font-semibold uppercase tracking-wider text-app-text-muted">
+            <span>Status</span>
+            <span>Exercise</span>
+            <span class="hidden sm:block">Language</span>
+            <span class="hidden sm:block">Score</span>
+            <span class="hidden md:block">Runtime</span>
+            <span>Date</span>
+          </div>
+
+          <!-- Rows -->
+          @for (s of recentSubmissions(); track s.id) {
+            <div class="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-x-4 items-center
+                        px-5 py-3.5 border-b border-app-border/50 last:border-b-0
+                        hover:bg-app-surface-2/40 transition-colors duration-100">
+
+              <!-- Status badge -->
+              <span [ngClass]="getStatusBadge(s.status)">{{ getStatusLabel(s.status) }}</span>
+
+              <!-- Exercise ID -->
+              <span class="text-sm font-medium text-app-text">#{{ s.exercise_id }}</span>
+
+              <!-- Language -->
+              <span class="hidden sm:block text-xs text-app-text-2">{{ LANGUAGE_LABELS[s.language] ?? s.language }}</span>
+
+              <!-- Score -->
+              <span class="hidden sm:block font-mono text-xs text-app-text-2 tabular-nums">{{ s.score }}</span>
+
+              <!-- Runtime -->
+              <span class="hidden md:block font-mono text-xs text-app-text-muted tabular-nums">{{ formatRuntime(s.runtime_ms) }}</span>
+
+              <!-- Date -->
+              <span class="text-xs text-app-text-muted whitespace-nowrap">{{ s.created_at | date:'MMM d' }}</span>
+            </div>
+          }
         </div>
       }
     </section>
 
-    <!-- ── Quick actions ──────────────────────────────────── -->
+    <!-- ── Quick Actions ───────────────────────────────────────── -->
     <section>
-      <h2 class="section-title mb-4">Quick Actions</h2>
+      <h2 class="text-xl font-bold text-app-text mb-4">Quick Actions</h2>
       <div class="flex flex-wrap gap-3">
         <a routerLink="/catalog" class="btn-primary flex items-center gap-2">
           <lucide-icon name="book-open" class="w-4 h-4" />

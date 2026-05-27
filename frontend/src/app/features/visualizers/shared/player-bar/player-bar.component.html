@@ -1,0 +1,88 @@
+<div class="flex flex-wrap items-center gap-3 px-4 py-3
+            bg-app-surface border border-app-border rounded-xl">
+
+  <!-- Restart -->
+  <button
+    (click)="player.restart()"
+    [disabled]="!player.frames().length"
+    class="btn-icon text-app-text-2 hover:text-app-text hover:bg-app-surface-2 disabled:opacity-40"
+    title="Restart"
+    aria-label="Restart"
+  >
+    <lucide-icon [img]="RotateCcw" [size]="16"></lucide-icon>
+  </button>
+
+  <!-- Step back -->
+  <button
+    (click)="player.stepBack()"
+    [disabled]="player.atStart() || !player.frames().length"
+    class="btn-icon text-app-text-2 hover:text-app-text hover:bg-app-surface-2 disabled:opacity-40"
+    title="Previous step"
+    aria-label="Previous step"
+  >
+    <lucide-icon [img]="SkipBack" [size]="16"></lucide-icon>
+  </button>
+
+  <!-- Play / Pause -->
+  <button
+    (click)="player.toggle()"
+    [disabled]="!player.frames().length"
+    class="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold text-white disabled:opacity-40
+           bg-gradient-to-br from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600
+           transition-all shadow-sm"
+    [attr.aria-label]="player.playing() ? 'Pause' : 'Play'"
+  >
+    @if (player.playing()) {
+      <lucide-icon [img]="Pause" [size]="15"></lucide-icon>
+      Pause
+    } @else {
+      <lucide-icon [img]="Play" [size]="15"></lucide-icon>
+      Play
+    }
+  </button>
+
+  <!-- Step forward -->
+  <button
+    (click)="player.step()"
+    [disabled]="player.atEnd() || !player.frames().length"
+    class="btn-icon text-app-text-2 hover:text-app-text hover:bg-app-surface-2 disabled:opacity-40"
+    title="Next step"
+    aria-label="Next step"
+  >
+    <lucide-icon [img]="SkipForward" [size]="16"></lucide-icon>
+  </button>
+
+  <!-- Progress / seek -->
+  <div class="flex-1 min-w-32 flex flex-col gap-1">
+    <input
+      type="range"
+      min="0"
+      max="100"
+      [value]="player.frames().length ? progressInt() : 0"
+      (input)="onSeek($event)"
+      class="w-full h-1.5 rounded-full appearance-none cursor-pointer
+             bg-app-surface-2 accent-purple-500"
+      aria-label="Seek"
+    />
+  </div>
+
+  <!-- Step counter -->
+  <span class="text-xs text-app-text-muted font-mono tabular-nums min-w-[3.5rem] text-right">
+    {{ player.stepLabel() }}
+  </span>
+
+  <!-- Speed label + slider -->
+  <div class="flex items-center gap-2">
+    <span class="text-xs text-app-text-muted font-semibold uppercase tracking-wide hidden sm:block">Speed</span>
+    <input
+      type="range"
+      min="0"
+      max="100"
+      [value]="speedToSlider(player.speed())"
+      (input)="onSlider($event)"
+      class="w-20 h-1.5 rounded-full appearance-none cursor-pointer
+             bg-app-surface-2 accent-purple-500"
+      aria-label="Playback speed"
+    />
+  </div>
+</div>

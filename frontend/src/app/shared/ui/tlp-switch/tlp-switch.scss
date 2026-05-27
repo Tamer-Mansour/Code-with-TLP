@@ -1,0 +1,76 @@
+/* ── TLP Switch ───────────────────────────────────────────────
+   Toggle switch with gradient track when on, dark/light aware.
+   ─────────────────────────────────────────────────────────── */
+
+.tlp-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  user-select: none;
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+/* ── Track ──────────────────────────────────────────────────── */
+.tlp-switch__track {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  width: 2.75rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  padding: 0.1875rem;
+  background: rgb(var(--color-app-border-2));
+  border: 1.5px solid rgb(var(--color-app-border-2));
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.15s ease;
+
+  .tlp-switch--on & {
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    border-color: transparent;
+  }
+
+  .tlp-switch--focused & {
+    box-shadow: 0 0 0 2px #3b82f6, 0 0 0 4px rgb(var(--color-app-bg));
+  }
+
+  .tlp-switch:not(.tlp-switch--on):not(.tlp-switch--disabled):hover & {
+    background: rgb(var(--color-app-border));
+    border-color: rgb(var(--color-app-border));
+  }
+}
+
+/* ── Thumb ──────────────────────────────────────────────────── */
+.tlp-switch__thumb {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 9999px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transform: translateX(0);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+  will-change: transform;
+
+  .tlp-switch--on & {
+    transform: translateX(1.25rem);
+    box-shadow: 0 1px 4px rgba(59, 130, 246, 0.4);
+  }
+}
+
+/* ── Label text ─────────────────────────────────────────────── */
+.tlp-switch__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgb(var(--color-app-text-2));
+  transition: color 0.15s ease;
+
+  .tlp-switch--on & {
+    color: rgb(var(--color-app-text));
+  }
+}

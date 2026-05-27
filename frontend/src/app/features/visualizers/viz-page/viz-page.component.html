@@ -1,0 +1,89 @@
+<div class="min-h-[calc(100dvh_-_3.5rem)] bg-app-bg">
+
+  @if (notFound()) {
+    <!-- 404 state -->
+    <div class="page-container py-20 text-center">
+      <p class="text-5xl font-extrabold text-app-text-muted mb-4">404</p>
+      <p class="text-app-text-2 mb-6">Visualizer not found.</p>
+      <a routerLink="/visualize"
+        class="inline-flex items-center gap-2 btn btn-primary"
+        style="text-decoration: none;">
+        <lucide-icon [img]="ArrowLeft" [size]="15"></lucide-icon>
+        Back to catalog
+      </a>
+    </div>
+  } @else {
+    <div class="page-container py-6">
+
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-1.5 text-xs text-app-text-muted mb-5 flex-wrap">
+        <a routerLink="/visualize"
+          class="hover:text-brand transition-colors"
+          style="text-decoration: none;">
+          Visualizers
+        </a>
+        <lucide-icon [img]="ChevronRight" [size]="12"></lucide-icon>
+        @if (entry()) {
+          <span class="text-app-text-2 font-medium">{{ entry()!.meta.title }}</span>
+        }
+      </nav>
+
+      <!-- Title row -->
+      @if (entry()) {
+        <div class="mb-6">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-app-text tracking-tight">
+            {{ entry()!.meta.title }}
+          </h1>
+          <p class="mt-1.5 text-sm text-app-text-2">{{ entry()!.meta.description }}</p>
+        </div>
+      }
+
+      <!-- Main layout: canvas + pseudocode -->
+      <div class="flex flex-col xl:flex-row gap-6">
+
+        <!-- Left: module canvas -->
+        <div class="flex-1 min-w-0 flex flex-col gap-4">
+
+          <!-- Module injected here -->
+          <div class="rounded-2xl border border-app-border bg-app-surface overflow-hidden">
+            <ng-container #moduleHost></ng-container>
+          </div>
+
+          <!-- Player bar -->
+          <app-player-bar></app-player-bar>
+
+          <!-- Note line -->
+          @if (currentNote()) {
+            <div class="px-4 py-3 rounded-xl bg-app-surface-2 border border-app-border
+                        text-sm text-app-text-2 leading-relaxed min-h-10"
+              [innerHTML]="currentNote()">
+            </div>
+          }
+        </div>
+
+        <!-- Right: pseudocode panel -->
+        @if (pseudoLines().length) {
+          <aside class="xl:w-72 shrink-0">
+            <div class="rounded-xl border border-app-border bg-app-surface overflow-hidden">
+              <div class="px-4 py-3 border-b border-app-border bg-app-surface-2/60">
+                <span class="text-xs font-semibold uppercase tracking-wider text-app-text-muted">
+                  Pseudocode
+                </span>
+              </div>
+              <div class="p-4 font-mono text-xs leading-7 overflow-x-auto">
+                @for (line of pseudoLines(); track $index) {
+                  <div
+                    class="px-2 rounded transition-colors duration-150 whitespace-pre"
+                    [class.bg-purple-500]="activeLine() === $index"
+                    [class.text-white]="activeLine() === $index"
+                    [class.text-app-text-2]="activeLine() !== $index"
+                  >{{ line || ' ' }}</div>
+                }
+              </div>
+            </div>
+          </aside>
+        }
+      </div>
+    </div>
+  }
+</div>

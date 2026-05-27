@@ -39,6 +39,7 @@ import { Subject, Course } from '../../../core/models/types';
   standalone: true,
   imports: [RouterLink, LucideAngularModule],
   templateUrl: './home.html',
+  styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {

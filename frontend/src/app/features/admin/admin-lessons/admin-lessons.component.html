@@ -1,12 +1,13 @@
 <!-- Page header -->
-<div class="flex items-center justify-between mb-6 gap-2 flex-wrap">
+<div class="flex items-center justify-between mb-7 gap-2 flex-wrap">
   <div>
-    <h1 class="section-title">Lessons</h1>
-    <p class="section-sub mt-1">
+    <h1 class="text-2xl font-bold text-app-text">Lessons</h1>
+    <p class="text-sm text-app-text-2 mt-0.5">
       @if (selectedCourseId() && !loadingTree()) {
-      {{ totalLessons() }} lessons across {{ modules().length }} modules
+        <span class="font-medium text-app-text">{{ totalLessons() }}</span> lessons across
+        <span class="font-medium text-app-text">{{ modules().length }}</span> modules
       } @else {
-      Manage the lessons inside a course
+        Manage the lessons inside a course
       }
     </p>
   </div>
@@ -25,18 +26,18 @@
 </div>
 
 <!-- Course selector -->
-<div class="card mb-6">
-  <label class="label" for="course-select">Course</label>
+<div class="bg-app-surface rounded-2xl border border-app-border p-5 mb-6 shadow-card">
+  <label class="label" for="course-select">Select Course</label>
   <div class="relative">
     <select id="course-select" class="input appearance-none pr-9 cursor-pointer" [disabled]="loadingCourses()"
       [ngModel]="selectedCourseId()" (ngModelChange)="selectCourse($any($event))">
       @if (loadingCourses()) {
-      <option [ngValue]="null">Loading courses…</option>
+        <option [ngValue]="null">Loading courses...</option>
       } @else {
-      <option [ngValue]="null">— Select a course —</option>
-      @for (course of courses(); track course.id) {
-      <option [ngValue]="course.id">{{ course.title }}</option>
-      }
+        <option [ngValue]="null">— Select a course —</option>
+        @for (course of courses(); track course.id) {
+          <option [ngValue]="course.id">{{ course.title }}</option>
+        }
       }
     </select>
     <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -47,285 +48,307 @@
 
 <!-- Tree loading -->
 @if (loadingTree()) {
-<div class="space-y-2">
-  @for (i of [1,2,3,4]; track i) {
-  <div class="skeleton h-12 rounded-lg"></div>
-  }
-</div>
+  <div class="space-y-3">
+    @for (i of [1,2,3,4]; track i) {
+      <div class="skeleton h-14 rounded-2xl"></div>
+    }
+  </div>
 }
 
 <!-- No course selected -->
 @if (!selectedCourseId() && !loadingCourses()) {
-<div class="card flex flex-col items-center justify-center py-16 text-center">
-  <lucide-icon name="library" class="w-12 h-12 text-app-text-muted mb-3" />
-  <h3 class="text-base font-semibold text-app-text mb-2">Pick a course</h3>
-  <p class="text-sm text-app-text-2">Choose a course above to view and manage its lessons.</p>
-</div>
+  <div class="bg-app-surface rounded-2xl border border-app-border p-16 flex flex-col items-center justify-center text-center shadow-card">
+    <div class="w-14 h-14 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mb-4">
+      <lucide-icon name="library" class="w-7 h-7 text-app-text-muted" />
+    </div>
+    <h3 class="text-base font-semibold text-app-text mb-1">Pick a course</h3>
+    <p class="text-sm text-app-text-2">Choose a course above to view and manage its lessons.</p>
+  </div>
 }
 
 <!-- Modules + lessons -->
 @if (selectedCourseId() && !loadingTree() && tree()) {
-@if (modules().length === 0) {
-<div class="card flex flex-col items-center justify-center py-16 text-center">
-  <lucide-icon name="book-open" class="w-12 h-12 text-app-text-muted mb-3" />
-  <h3 class="text-base font-semibold text-app-text mb-2">No groups yet</h3>
-  <p class="text-sm text-app-text-2 mb-4">Lessons live inside groups (modules). Create your first group to start.</p>
-  <button (click)="openCreateModule()" class="btn-primary btn-sm flex items-center gap-2">
-    <lucide-icon name="plus" class="w-3.5 h-3.5" />
-    New Group
-  </button>
-</div>
-} @else {
-<div class="space-y-5">
-  @for (module of modules(); track module.id) {
-  <div class="card p-0 overflow-hidden">
-    <!-- Module header (collapse toggle) -->
-    <div class="flex items-center justify-between gap-2 px-3 sm:px-5 py-3" [class.border-b]="isExpanded(module.id)"
-      [class.border-app-border]="isExpanded(module.id)" [ngClass]="isExpanded(module.id) ? 'bg-app-surface-2/50' : ''">
-      <button type="button" (click)="toggleModule(module.id)"
-        class="flex items-center gap-2.5 min-w-0 flex-1 text-left">
-        <lucide-icon name="chevron-down" class="w-4 h-4 text-app-text-muted shrink-0 transition-transform duration-200"
-          [class.-rotate-90]="!isExpanded(module.id)" />
-        <span class="min-w-0">
-          <span class="block text-sm font-semibold text-app-text truncate">
-            <span class="text-app-text-muted">{{ module.order_index }}.</span> {{ module.title }}
-          </span>
-          <span class="text-xs text-app-text-muted">{{ module.lessons.length }} lessons</span>
-        </span>
+  @if (modules().length === 0) {
+    <div class="bg-app-surface rounded-2xl border border-app-border p-16 flex flex-col items-center justify-center text-center shadow-card">
+      <div class="w-14 h-14 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mb-4">
+        <lucide-icon name="book-open" class="w-7 h-7 text-app-text-muted" />
+      </div>
+      <h3 class="text-base font-semibold text-app-text mb-1">No groups yet</h3>
+      <p class="text-sm text-app-text-2 mb-5">Lessons live inside groups (modules). Create your first group to start.</p>
+      <button (click)="openCreateModule()" class="btn-primary btn-sm flex items-center gap-2">
+        <lucide-icon name="plus" class="w-3.5 h-3.5" />
+        New Group
       </button>
-
-      <div class="flex items-center gap-2 shrink-0">
-        @if (deletingModuleId() === module.id) {
-        <span class="hidden sm:inline text-xs text-red-400">Delete group &amp; its lessons?</span>
-        <button (click)="executeDeleteModule(module.id)" [disabled]="deleteModuleLoading()"
-          class="btn-danger btn-sm text-xs">
-          @if (deleteModuleLoading()) { <lucide-icon name="loader-2" class="w-3 h-3 animate-spin" /> }
-          Yes
-        </button>
-        <button (click)="cancelDeleteModule()" class="btn-ghost btn-sm text-xs">No</button>
-        } @else {
-        <button (click)="openCreate(module.id)" class="btn-secondary btn-sm flex items-center gap-1.5">
-          <lucide-icon name="plus" class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">Add lesson</span>
-        </button>
-        <button (click)="openEditModule(module)" class="btn-ghost btn-sm" title="Edit group">
-          <lucide-icon name="pencil" class="w-3.5 h-3.5" />
-        </button>
-        <button (click)="confirmDeleteModule(module.id)" class="btn-ghost btn-sm text-red-400 hover:bg-red-500/10"
-          title="Delete group">
-          <lucide-icon name="trash-2" class="w-3.5 h-3.5" />
-        </button>
-        }
-      </div>
     </div>
-
-    <!-- Lessons (collapsible) -->
-    @if (isExpanded(module.id)) {
-    @if (module.lessons.length === 0) {
-    <p class="px-5 py-4 text-xs text-app-text-muted">No lessons in this group yet.</p>
-    } @else {
-    <div class="divide-y divide-app-border/60">
-      @for (lesson of module.lessons; track lesson.id) {
-      <div class="flex items-center gap-3 px-5 py-3 hover:bg-app-surface-2/40 transition-colors">
-        <span class="text-xs text-app-text-muted w-5 text-right shrink-0 tabular-nums">{{ lesson.order_index }}</span>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium text-app-text truncate">{{ lesson.title }}</p>
-          <p class="text-xs text-app-text-muted truncate">{{ lesson.slug }}</p>
-        </div>
-        <span class="text-[10px] font-medium px-2 py-0.5 rounded-full capitalize shrink-0"
-          [ngClass]="lessonTypeBadge(lesson.lesson_type)">
-          {{ lesson.lesson_type }}
-        </span>
-        <span class="hidden sm:flex items-center gap-1 text-xs text-app-text-muted shrink-0">
-          {{ lesson.duration_minutes }}m
-        </span>
-
-        <div class="flex items-center gap-2 shrink-0">
-          @if (deletingId() === lesson.id) {
-          <span class="text-xs text-red-400">Delete?</span>
-          <button (click)="executeDelete(lesson.id)" [disabled]="deleteLoading()" class="btn-danger btn-sm text-xs">
-            @if (deleteLoading()) { <lucide-icon name="loader-2" class="w-3 h-3 animate-spin" /> }
-            Yes
-          </button>
-          <button (click)="cancelDelete()" class="btn-ghost btn-sm text-xs">No</button>
-          } @else {
-          <button (click)="openEdit(lesson, module.id)" class="btn-secondary btn-sm flex items-center gap-1.5">
-            <lucide-icon name="pencil" class="w-3 h-3" />
-            Edit
-          </button>
-          <button (click)="confirmDelete(lesson.id)" class="btn-ghost btn-sm text-red-400 hover:bg-red-500/10">
-            <lucide-icon name="trash-2" class="w-3.5 h-3.5" />
-          </button>
-          }
-        </div>
-      </div>
-      }
-    </div>
-    }
-    }
-  </div>
-  }
-</div>
-}
-}
-
-<!-- ── Slide-in Panel ──────────────────────────────────────── -->
-@if (panelOpen()) {
-<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in" (click)="closePanel()"></div>
-<div
-  class="fixed inset-y-0 right-0 w-full max-w-xl bg-app-surface border-l border-app-border shadow-popover z-50 flex flex-col animate-slide-up overflow-y-auto">
-  <!-- Header -->
-  <div class="flex items-center justify-between px-6 py-4 border-b border-app-border flex-shrink-0">
-    <h2 class="text-base font-semibold text-app-text">
-      {{ editingLesson() ? 'Edit Lesson' : 'New Lesson' }}
-    </h2>
-    <button (click)="closePanel()" class="btn-icon btn-ghost">
-      <lucide-icon name="x" class="w-4 h-4" />
-    </button>
-  </div>
-
-  @if (loadingContent()) {
-  <div class="flex-1 flex items-center justify-center py-20">
-    <lucide-icon name="loader-2" class="w-6 h-6 text-app-text-muted animate-spin" />
-  </div>
   } @else {
-  <form [formGroup]="lessonForm" (ngSubmit)="save()" class="flex-1 px-6 py-5 space-y-5">
-    <!-- Module -->
-    <div>
-      <label class="label" for="l-module">Module <span class="text-red-400">*</span></label>
-      <select id="l-module" formControlName="module_id" class="input cursor-pointer"
-        [class.opacity-60]="!!editingLesson()">
-        @for (module of modules(); track module.id) {
-        <option [ngValue]="module.id">{{ module.order_index }}. {{ module.title }}</option>
-        }
-      </select>
-      @if (editingLesson()) {
-      <p class="text-xs text-app-text-muted mt-1">Moving a lesson between modules isn't supported here.</p>
-      }
-    </div>
+    <div class="space-y-3">
+      @for (module of modules(); track module.id) {
+        <div class="bg-app-surface rounded-2xl border border-app-border shadow-card overflow-hidden">
+          <!-- Module header (collapse toggle) -->
+          <div
+            class="flex items-center justify-between gap-2 px-4 sm:px-5 py-3.5 transition-colors"
+            [ngClass]="isExpanded(module.id) ? 'border-b border-app-border bg-app-surface-2/40' : 'hover:bg-app-surface-2/30'"
+          >
+            <button type="button" (click)="toggleModule(module.id)"
+              class="flex items-center gap-3 min-w-0 flex-1 text-left">
+              <div class="w-7 h-7 rounded-lg bg-app-surface-2 border border-app-border flex items-center justify-center flex-shrink-0">
+                <lucide-icon name="chevron-down" class="w-3.5 h-3.5 text-app-text-muted transition-transform duration-200"
+                  [class.-rotate-90]="!isExpanded(module.id)" />
+              </div>
+              <span class="min-w-0">
+                <span class="block text-sm font-semibold text-app-text truncate">
+                  <span class="text-app-text-muted font-normal">{{ module.order_index }}.</span> {{ module.title }}
+                </span>
+                <span class="text-xs text-app-text-muted">{{ module.lessons.length }} lesson{{ module.lessons.length === 1 ? '' : 's' }}</span>
+              </span>
+            </button>
 
-    <!-- Title -->
-    <div>
-      <label class="label" for="l-title">Title <span class="text-red-400">*</span></label>
-      <input id="l-title" type="text" formControlName="title" placeholder="e.g. Variables and Data Types" class="input"
-        (input)="onTitleChange($any($event.target).value)" />
-    </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              @if (deletingModuleId() === module.id) {
+                <span class="hidden sm:inline text-xs text-red-400">Delete group &amp; its lessons?</span>
+                <button (click)="executeDeleteModule(module.id)" [disabled]="deleteModuleLoading()"
+                  class="btn-danger btn-sm text-xs">
+                  @if (deleteModuleLoading()) { <lucide-icon name="loader-2" class="w-3 h-3 animate-spin" /> }
+                  Yes
+                </button>
+                <button (click)="cancelDeleteModule()" class="btn-ghost btn-sm text-xs">No</button>
+              } @else {
+                <button (click)="openCreate(module.id)" class="btn-secondary btn-sm flex items-center gap-1.5">
+                  <lucide-icon name="plus" class="w-3.5 h-3.5" />
+                  <span class="hidden sm:inline">Add lesson</span>
+                </button>
+                <button (click)="openEditModule(module)" class="btn-ghost btn-sm" title="Edit group">
+                  <lucide-icon name="pencil" class="w-3.5 h-3.5" />
+                </button>
+                <button (click)="confirmDeleteModule(module.id)" class="btn-ghost btn-sm text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                  title="Delete group">
+                  <lucide-icon name="trash-2" class="w-3.5 h-3.5" />
+                </button>
+              }
+            </div>
+          </div>
 
-    <!-- Slug -->
-    <div>
-      <label class="label" for="l-slug">Slug <span class="text-red-400">*</span></label>
-      <input id="l-slug" type="text" formControlName="slug" placeholder="variables-and-data-types" class="input" />
-      <p class="text-xs text-app-text-muted mt-1">Must be unique within the module.</p>
-    </div>
+          <!-- Lessons (collapsible) -->
+          @if (isExpanded(module.id)) {
+            @if (module.lessons.length === 0) {
+              <p class="px-5 py-5 text-sm text-app-text-muted text-center">No lessons in this group yet.</p>
+            } @else {
+              <div class="divide-y divide-app-border/50">
+                @for (lesson of module.lessons; track lesson.id) {
+                  <div class="flex items-center gap-3 px-5 py-3 hover:bg-app-surface-2/30 transition-colors">
+                    <span class="text-xs text-app-text-muted w-5 text-right shrink-0 tabular-nums">{{ lesson.order_index }}</span>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-app-text truncate">{{ lesson.title }}</p>
+                      <p class="text-xs text-app-text-muted font-mono truncate">{{ lesson.slug }}</p>
+                    </div>
+                    <span class="text-[10px] font-medium px-2 py-0.5 rounded-full capitalize shrink-0"
+                      [ngClass]="lessonTypeBadge(lesson.lesson_type)">
+                      {{ lesson.lesson_type }}
+                    </span>
+                    <span class="hidden sm:flex items-center gap-1 text-xs text-app-text-muted shrink-0">
+                      <lucide-icon name="clock" class="w-3 h-3" />
+                      {{ lesson.duration_minutes }}m
+                    </span>
 
-    <!-- Type + duration + order -->
-    <div class="grid grid-cols-3 gap-2">
-      <div>
-        <label class="label" for="l-type">Type <span class="text-red-400">*</span></label>
-        <select id="l-type" formControlName="lesson_type" class="input cursor-pointer">
-          @for (t of lessonTypes; track t.value) {
-          <option [ngValue]="t.value">{{ t.label }}</option>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      @if (deletingId() === lesson.id) {
+                        <span class="text-xs text-red-400">Delete?</span>
+                        <button (click)="executeDelete(lesson.id)" [disabled]="deleteLoading()" class="btn-danger btn-sm text-xs">
+                          @if (deleteLoading()) { <lucide-icon name="loader-2" class="w-3 h-3 animate-spin" /> }
+                          Yes
+                        </button>
+                        <button (click)="cancelDelete()" class="btn-ghost btn-sm text-xs">No</button>
+                      } @else {
+                        <button (click)="openEdit(lesson, module.id)" class="btn-secondary btn-sm flex items-center gap-1.5">
+                          <lucide-icon name="pencil" class="w-3 h-3" />
+                          Edit
+                        </button>
+                        <button (click)="confirmDelete(lesson.id)" class="btn-ghost btn-sm text-red-400 hover:bg-red-500/10 hover:text-red-300">
+                          <lucide-icon name="trash-2" class="w-3.5 h-3.5" />
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
           }
-        </select>
-      </div>
-      <div>
-        <label class="label" for="l-duration">Minutes</label>
-        <input id="l-duration" type="number" min="0" formControlName="duration_minutes" class="input" />
-      </div>
-      <div>
-        <label class="label" for="l-order">Order</label>
-        <input id="l-order" type="number" min="0" formControlName="order_index" class="input" />
-      </div>
-    </div>
-
-    <!-- Video URL (for video lessons) -->
-    @if (lessonForm.value.lesson_type === 'video') {
-    <div>
-      <label class="label" for="l-video">Video URL</label>
-      <input id="l-video" type="url" formControlName="video_url" placeholder="https://…" class="input" />
-    </div>
-    }
-
-    <!-- Content (markdown) -->
-    <div>
-      <div class="flex items-center justify-between mb-1.5">
-        <label class="label mb-0" for="l-content">Content (Markdown)</label>
-        <button type="button" (click)="togglePreview()" class="btn-ghost btn-sm text-xs">
-          {{ showPreview() ? 'Edit' : 'Preview' }}
-        </button>
-      </div>
-      @if (showPreview()) {
-      <div class="content-prose border border-app-border rounded-lg p-4 min-h-[16rem] bg-app-surface-2/40">
-        <markdown [data]="lessonForm.value.content_md || '_Nothing to preview yet._'"></markdown>
-      </div>
-      } @else {
-      <textarea id="l-content" formControlName="content_md" rows="14"
-        placeholder="# Lesson title&#10;&#10;Write the lesson body in Markdown…"
-        class="input resize-y font-mono text-xs leading-relaxed"></textarea>
+        </div>
       }
-      <p class="text-xs text-app-text-muted mt-1">Tip: the lesson title is shown automatically — you can still start
-        with an <code>#</code> heading; the reader strips a duplicate.</p>
     </div>
+  }
+}
 
-    <!-- Footer -->
-    <div class="flex items-center justify-end gap-3 pt-2">
-      <button type="button" (click)="closePanel()" class="btn-secondary">Cancel</button>
-      <button type="submit" [disabled]="lessonForm.invalid || saveLoading()"
-        class="btn-primary flex items-center gap-2">
-        @if (saveLoading()) { <lucide-icon name="loader-2" class="w-4 h-4 animate-spin" /> }
-        {{ editingLesson() ? 'Save Changes' : 'Create Lesson' }}
+<!-- ── Slide-in Panel (Lesson) ──────────────────────────────────────── -->
+@if (panelOpen()) {
+  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fade-in" (click)="closePanel()"></div>
+  <div
+    class="fixed inset-y-0 right-0 w-full max-w-xl bg-app-surface border-l border-app-border shadow-popover z-50 flex flex-col animate-slide-up overflow-y-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-app-border flex-shrink-0">
+      <div>
+        <h2 class="text-base font-semibold text-app-text">
+          {{ editingLesson() ? 'Edit Lesson' : 'New Lesson' }}
+        </h2>
+        <p class="text-xs text-app-text-muted mt-0.5">
+          {{ editingLesson() ? 'Update lesson details' : 'Fill in the lesson details below' }}
+        </p>
+      </div>
+      <button (click)="closePanel()" class="btn-icon btn-ghost">
+        <lucide-icon name="x" class="w-4 h-4" />
       </button>
     </div>
-  </form>
-  }
-</div>
+
+    @if (loadingContent()) {
+      <div class="flex-1 flex items-center justify-center py-20">
+        <div class="flex flex-col items-center gap-3">
+          <lucide-icon name="loader-2" class="w-6 h-6 text-app-text-muted animate-spin" />
+          <p class="text-sm text-app-text-muted">Loading lesson content...</p>
+        </div>
+      </div>
+    } @else {
+      <form [formGroup]="lessonForm" (ngSubmit)="save()" class="flex-1 px-6 py-6 space-y-5">
+        <!-- Module -->
+        <div>
+          <label class="label" for="l-module">Module <span class="text-red-400">*</span></label>
+          <select id="l-module" formControlName="module_id" class="input cursor-pointer"
+            [class.opacity-60]="!!editingLesson()">
+            @for (module of modules(); track module.id) {
+              <option [ngValue]="module.id">{{ module.order_index }}. {{ module.title }}</option>
+            }
+          </select>
+          @if (editingLesson()) {
+            <p class="text-xs text-app-text-muted mt-1">Moving a lesson between modules is not supported here.</p>
+          }
+        </div>
+
+        <!-- Title -->
+        <div>
+          <label class="label" for="l-title">Title <span class="text-red-400">*</span></label>
+          <input id="l-title" type="text" formControlName="title" placeholder="e.g. Variables and Data Types" class="input"
+            (input)="onTitleChange($any($event.target).value)" />
+        </div>
+
+        <!-- Slug -->
+        <div>
+          <label class="label" for="l-slug">Slug <span class="text-red-400">*</span></label>
+          <input id="l-slug" type="text" formControlName="slug" placeholder="variables-and-data-types" class="input font-mono text-xs" />
+          <p class="text-xs text-app-text-muted mt-1">Must be unique within the module.</p>
+        </div>
+
+        <!-- Type + duration + order -->
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="label" for="l-type">Type <span class="text-red-400">*</span></label>
+            <select id="l-type" formControlName="lesson_type" class="input cursor-pointer">
+              @for (t of lessonTypes; track t.value) {
+                <option [ngValue]="t.value">{{ t.label }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="label" for="l-duration">Minutes</label>
+            <input id="l-duration" type="number" min="0" formControlName="duration_minutes" class="input" />
+          </div>
+          <div>
+            <label class="label" for="l-order">Order</label>
+            <input id="l-order" type="number" min="0" formControlName="order_index" class="input" />
+          </div>
+        </div>
+
+        <!-- Video URL (for video lessons) -->
+        @if (lessonForm.value.lesson_type === 'video') {
+          <div>
+            <label class="label" for="l-video">Video URL</label>
+            <input id="l-video" type="url" formControlName="video_url" placeholder="https://..." class="input" />
+          </div>
+        }
+
+        <!-- Content (markdown) -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="label mb-0" for="l-content">Content (Markdown)</label>
+            <button type="button" (click)="togglePreview()" class="btn-ghost btn-sm text-xs flex items-center gap-1.5">
+              <lucide-icon [name]="showPreview() ? 'pencil' : 'eye'" class="w-3.5 h-3.5" />
+              {{ showPreview() ? 'Edit' : 'Preview' }}
+            </button>
+          </div>
+          @if (showPreview()) {
+            <div class="content-prose border border-app-border rounded-xl p-4 min-h-[16rem] bg-app-surface-2/40">
+              <markdown [data]="lessonForm.value.content_md || '_Nothing to preview yet._'"></markdown>
+            </div>
+          } @else {
+            <textarea id="l-content" formControlName="content_md" rows="14"
+              placeholder="# Lesson title&#10;&#10;Write the lesson body in Markdown..."
+              class="input resize-y font-mono text-xs leading-relaxed"></textarea>
+          }
+          <p class="text-xs text-app-text-muted mt-1">
+            Tip: start with an <code class="text-brand-dark dark:text-brand-light">#</code> heading if you want one; the reader strips a duplicate title automatically.
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-end gap-3 pt-1">
+          <button type="button" (click)="closePanel()" class="btn-secondary">Cancel</button>
+          <button type="submit" [disabled]="lessonForm.invalid || saveLoading()"
+            class="btn-primary flex items-center gap-2">
+            @if (saveLoading()) { <lucide-icon name="loader-2" class="w-4 h-4 animate-spin" /> }
+            {{ editingLesson() ? 'Save Changes' : 'Create Lesson' }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
 }
 
 <!-- ── Group (module) Panel ─────────────────────────────────── -->
 @if (modulePanelOpen()) {
-<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in" (click)="closeModulePanel()"></div>
-<div
-  class="fixed inset-y-0 right-0 w-full max-w-md bg-app-surface border-l border-app-border shadow-popover z-50 flex flex-col animate-slide-up overflow-y-auto">
-  <!-- Header -->
-  <div class="flex items-center justify-between px-6 py-4 border-b border-app-border flex-shrink-0">
-    <h2 class="text-base font-semibold text-app-text">
-      {{ editingModule() ? 'Edit Group' : 'New Group' }}
-    </h2>
-    <button (click)="closeModulePanel()" class="btn-icon btn-ghost">
-      <lucide-icon name="x" class="w-4 h-4" />
-    </button>
-  </div>
-
-  <form [formGroup]="moduleForm" (ngSubmit)="saveModule()" class="flex-1 px-6 py-5 space-y-5">
-    <!-- Title -->
-    <div>
-      <label class="label" for="g-title">Title <span class="text-red-400">*</span></label>
-      <input id="g-title" type="text" formControlName="title" placeholder="e.g. Getting Started" class="input" />
-    </div>
-
-    <!-- Summary -->
-    <div>
-      <label class="label" for="g-summary">Summary</label>
-      <textarea id="g-summary" formControlName="summary" rows="3"
-        placeholder="Optional short description of this group…" class="input resize-none"></textarea>
-    </div>
-
-    <!-- Order -->
-    <div>
-      <label class="label" for="g-order">Order</label>
-      <input id="g-order" type="number" min="0" formControlName="order_index" class="input w-32" />
-      <p class="text-xs text-app-text-muted mt-1">Position of this group within the course.</p>
-    </div>
-
-    <!-- Footer -->
-    <div class="flex items-center justify-end gap-2 pt-2">
-      <button type="button" (click)="closeModulePanel()" class="btn-secondary">Cancel</button>
-      <button type="submit" [disabled]="moduleForm.invalid || moduleSaveLoading()"
-        class="btn-primary flex items-center gap-2">
-        @if (moduleSaveLoading()) { <lucide-icon name="loader-2" class="w-4 h-4 animate-spin" /> }
-        {{ editingModule() ? 'Save Changes' : 'Create Group' }}
+  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fade-in" (click)="closeModulePanel()"></div>
+  <div
+    class="fixed inset-y-0 right-0 w-full max-w-md bg-app-surface border-l border-app-border shadow-popover z-50 flex flex-col animate-slide-up overflow-y-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-app-border flex-shrink-0">
+      <div>
+        <h2 class="text-base font-semibold text-app-text">
+          {{ editingModule() ? 'Edit Group' : 'New Group' }}
+        </h2>
+        <p class="text-xs text-app-text-muted mt-0.5">Groups organise lessons within a course</p>
+      </div>
+      <button (click)="closeModulePanel()" class="btn-icon btn-ghost">
+        <lucide-icon name="x" class="w-4 h-4" />
       </button>
     </div>
-  </form>
-</div>
+
+    <form [formGroup]="moduleForm" (ngSubmit)="saveModule()" class="flex-1 px-6 py-6 space-y-5">
+      <!-- Title -->
+      <div>
+        <label class="label" for="g-title">Title <span class="text-red-400">*</span></label>
+        <input id="g-title" type="text" formControlName="title" placeholder="e.g. Getting Started" class="input" />
+      </div>
+
+      <!-- Summary -->
+      <div>
+        <label class="label" for="g-summary">Summary</label>
+        <textarea id="g-summary" formControlName="summary" rows="3"
+          placeholder="Optional short description of this group..." class="input resize-none"></textarea>
+      </div>
+
+      <!-- Order -->
+      <div>
+        <label class="label" for="g-order">Order</label>
+        <input id="g-order" type="number" min="0" formControlName="order_index" class="input w-32" />
+        <p class="text-xs text-app-text-muted mt-1">Position of this group within the course.</p>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-end gap-3 pt-1">
+        <button type="button" (click)="closeModulePanel()" class="btn-secondary">Cancel</button>
+        <button type="submit" [disabled]="moduleForm.invalid || moduleSaveLoading()"
+          class="btn-primary flex items-center gap-2">
+          @if (moduleSaveLoading()) { <lucide-icon name="loader-2" class="w-4 h-4 animate-spin" /> }
+          {{ editingModule() ? 'Save Changes' : 'Create Group' }}
+        </button>
+      </div>
+    </form>
+  </div>
 }

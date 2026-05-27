@@ -1,0 +1,264 @@
+<div class="uf-root p-4 flex flex-col gap-4">
+
+  <!-- ── Controls bar ──────────────────────────────────────────────────── -->
+  <div class="flex flex-wrap items-start gap-3 p-3 rounded-xl
+              bg-app-surface-2 border border-app-border">
+
+    <!-- Union group -->
+    <fieldset class="flex items-center gap-1.5 min-w-0">
+      <legend class="sr-only">Union operation</legend>
+      <input
+        type="number" min="0" max="9"
+        [value]="unionA()"
+        (input)="onUnionAChange($event)"
+        (keydown)="onUnionAKeydown($event)"
+        aria-label="First node for Union"
+        class="uf-input w-14"
+        placeholder="a"
+      />
+      <span class="text-app-text-muted text-xs font-semibold select-none">,</span>
+      <input
+        type="number" min="0" max="9"
+        [value]="unionB()"
+        (input)="onUnionBChange($event)"
+        (keydown)="onUnionBKeydown($event)"
+        aria-label="Second node for Union"
+        class="uf-input w-14"
+        placeholder="b"
+      />
+      <button
+        (click)="onUnion()"
+        class="uf-btn-primary flex items-center gap-1.5"
+        aria-label="Run Union"
+      >
+        <lucide-icon [img]="GitMerge" [size]="13" aria-hidden="true"></lucide-icon>
+        Union
+      </button>
+    </fieldset>
+
+    <!-- Divider -->
+    <span class="hidden sm:block w-px self-stretch bg-app-border"></span>
+
+    <!-- Find group -->
+    <fieldset class="flex items-center gap-1.5 min-w-0">
+      <legend class="sr-only">Find operation</legend>
+      <input
+        type="number" min="0" max="9"
+        [value]="findX()"
+        (input)="onFindXChange($event)"
+        (keydown)="onFindXKeydown($event)"
+        aria-label="Node for Find"
+        class="uf-input w-14"
+        placeholder="x"
+      />
+      <button
+        (click)="onFind()"
+        class="uf-btn-secondary flex items-center gap-1.5"
+        aria-label="Run Find"
+      >
+        <lucide-icon [img]="SearchIcon" [size]="13" aria-hidden="true"></lucide-icon>
+        Find
+      </button>
+    </fieldset>
+
+    <!-- Reset -->
+    <button
+      (click)="onReset()"
+      class="ml-auto uf-btn-ghost flex items-center gap-1.5"
+      aria-label="Reset to initial state"
+    >
+      <lucide-icon [img]="RefreshCw" [size]="13" aria-hidden="true"></lucide-icon>
+      Reset
+    </button>
+  </div>
+
+  <!-- ── SVG forest canvas ──────────────────────────────────────────────── -->
+  <div class="relative rounded-xl border border-app-border overflow-hidden
+              bg-gradient-to-b from-app-surface to-app-surface-2"
+       [style.height.px]="SVG_H + 20">
+
+    <!-- Radial glow -->
+    <div class="absolute inset-x-0 top-0 h-32 pointer-events-none
+                bg-[radial-gradient(ellipse_at_50%_0%,rgba(139,92,246,0.13),transparent_70%)]">
+    </div>
+
+    <!-- SVG -->
+    <svg
+      class="absolute inset-0 w-full overflow-visible"
+      [attr.viewBox]="'0 0 ' + SVG_W + ' ' + (SVG_H + 20)"
+      [attr.height]="SVG_H + 20"
+      role="img"
+      aria-label="Union-Find forest visualization"
+    >
+      <defs>
+        <!-- ── Node fill gradients ── -->
+
+        <!-- default: semi-transparent purple→blue (member node) -->
+        <linearGradient id="uf-grad-default" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="rgb(139 92 246)"  stop-opacity="0.55" />
+          <stop offset="100%" stop-color="rgb(59 130 246)"  stop-opacity="0.55" />
+        </linearGradient>
+
+        <!-- root: vivid purple→blue -->
+        <linearGradient id="uf-grad-root" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="rgb(139 92 246)" />
+          <stop offset="100%" stop-color="rgb(59 130 246)" />
+        </linearGradient>
+
+        <!-- current (active target): amber -->
+        <linearGradient id="uf-grad-current" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="rgb(251 191 36)" />
+          <stop offset="100%" stop-color="rgb(245 158 11)" />
+        </linearGradient>
+
+        <!-- path (traversal walk): lighter amber/yellow -->
+        <linearGradient id="uf-grad-path" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="rgb(253 224 71)" />
+          <stop offset="100%" stop-color="rgb(251 191 36)" />
+        </linearGradient>
+
+        <!-- merged (path-compressed or union'd): green -->
+        <linearGradient id="uf-grad-merged" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="rgb(74 222 128)" />
+          <stop offset="100%" stop-color="rgb(22 163 74)"  />
+        </linearGradient>
+
+        <!-- ── Arrowhead markers ── -->
+        <marker id="uf-arrow-default" markerWidth="8" markerHeight="8"
+                refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" class="uf-marker-default" />
+        </marker>
+        <marker id="uf-arrow-active" markerWidth="8" markerHeight="8"
+                refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" class="uf-marker-active" />
+        </marker>
+        <marker id="uf-arrow-merged" markerWidth="8" markerHeight="8"
+                refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" class="uf-marker-merged" />
+        </marker>
+      </defs>
+
+      <!-- Edges (child → parent, arrow points toward parent) -->
+      @for (edge of svgLayout().edges; track edge.childId) {
+        <line
+          [attr.x1]="edge.x1"
+          [attr.y1]="edge.y1"
+          [attr.x2]="edge.x2"
+          [attr.y2]="edge.y2"
+          [class]="'uf-edge ' + edge.cls"
+          [attr.marker-end]="edge.markerEnd"
+        ></line>
+      }
+
+      <!-- Nodes -->
+      @for (node of svgLayout().nodes; track node.id) {
+        <g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+
+          <!-- Root crown indicator (ring) -->
+          @if (node.state === 'root') {
+            <circle
+              r="30"
+              class="uf-root-ring"
+              fill="none"
+            ></circle>
+          }
+
+          <!-- Main circle -->
+          <circle
+            [attr.r]="NODE_R"
+            [class]="nodeCircleClass(node.state)"
+          ></circle>
+
+          <!-- Node index label -->
+          <text
+            text-anchor="middle"
+            dominant-baseline="central"
+            [class]="'uf-node-label ' + nodeTextClass(node.state)"
+          >{{ node.id }}</text>
+
+          <!-- Rank badge (shown for roots with rank > 0) -->
+          @if (node.state === 'root' && node.rank > 0) {
+            <g [attr.transform]="'translate(' + (NODE_R - 4) + ',' + (-NODE_R + 4) + ')'">
+              <circle r="9" class="uf-rank-badge"></circle>
+              <text
+                text-anchor="middle"
+                dominant-baseline="central"
+                class="uf-rank-label"
+              >{{ node.rank }}</text>
+            </g>
+          }
+        </g>
+      }
+    </svg>
+  </div>
+
+  <!-- ── Step note ─────────────────────────────────────────────────────── -->
+  <div class="rounded-xl border border-app-border px-4 py-3
+              bg-app-surface text-sm text-app-text leading-relaxed"
+       role="status" aria-live="polite"
+       [innerHTML]="currentNote()">
+  </div>
+
+  <!-- ── Bottom row: pseudocode + legend ───────────────────────────────── -->
+  <div class="flex flex-wrap gap-4">
+
+    <!-- Pseudocode panels -->
+    <div class="flex flex-wrap gap-3 flex-1 min-w-0">
+
+      <!-- Find pseudocode -->
+      <div class="uf-pseudo-panel flex-1 min-w-[160px]">
+        <div class="uf-pseudo-header">Find / Path Compression</div>
+        @for (line of pseudoFind; track $index) {
+          <div
+            class="uf-pseudo-line"
+            [class.uf-pseudo-active]="activeOp() === 'find' && activePseudoLine() === +line[0]"
+          >{{ line }}</div>
+        }
+      </div>
+
+      <!-- Union pseudocode -->
+      <div class="uf-pseudo-panel flex-1 min-w-[160px]">
+        <div class="uf-pseudo-header">Union by Rank</div>
+        @for (line of pseudoUnion; track $index) {
+          <div
+            class="uf-pseudo-line"
+            [class.uf-pseudo-active]="activeOp() === 'union' && activePseudoLine() === +line.slice(0,2).trim()"
+          >{{ line }}</div>
+        }
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="flex flex-col gap-1.5 text-xs text-app-text-muted self-start
+                p-3 rounded-xl bg-app-surface border border-app-border min-w-[130px]">
+      <div class="font-semibold text-app-text mb-0.5 tracking-wide uppercase text-[10px]">
+        Legend
+      </div>
+
+      <span class="flex items-center gap-2">
+        <span class="uf-legend-swatch uf-node-root-swatch"></span>
+        root node
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="uf-legend-swatch uf-node-default-swatch"></span>
+        member node
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="uf-legend-swatch uf-node-current-swatch"></span>
+        active / target
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="uf-legend-swatch uf-node-path-swatch"></span>
+        path to root
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="uf-legend-swatch uf-node-merged-swatch"></span>
+        just merged
+      </span>
+      <span class="flex items-center gap-2 mt-1">
+        <span class="w-5 h-0 border-t-2 border-dashed border-app-text-muted/60 inline-block"></span>
+        parent edge
+      </span>
+    </div>
+  </div>
+</div>

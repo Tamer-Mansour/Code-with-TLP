@@ -4,12 +4,12 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideMarkdown } from 'ngx-markdown';
 import {
   LUCIDE_ICONS, LucideIconProvider,
-  Activity, AlertTriangle, ArrowLeft, ArrowRight, Award, BarChart2,
-  BookOpen, Brain, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
-  Clock, Code, Code2, Cpu, Database, Filter, Flame, FlaskConical, Frown,
-  GitBranch, Globe, GraduationCap, Image, Inbox, Library, Lightbulb,
-  Loader2, Lock, LogOut,
-  Pencil, Percent, Play, Plus, RefreshCw, Search, Send,
+  Activity, AlertCircle, AlertTriangle, ArrowLeft, ArrowRight, Award, BarChart2,
+  BookOpen, Bot, Brain, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
+  Clock, Code, Code2, Cpu, Database, Eye, EyeOff, Filter, Flame, FlaskConical, Frown,
+  GitBranch, Globe, GraduationCap, Image, Inbox, Key, Library, Lightbulb,
+  Loader2, Lock, LogOut, Menu, MessageSquare,
+  Pencil, Percent, Play, Plus, RefreshCw, Search, Send, Settings,
   Server, Shield, Sigma, SquareCode, Star, Target, Terminal, Trash2, TrendingUp,
   Trophy, User, Users, X, XCircle, Zap,
 } from 'lucide-angular';
@@ -26,12 +26,12 @@ export const appConfig: ApplicationConfig = {
     {
       provide: LUCIDE_ICONS,
       useValue: new LucideIconProvider({
-        Activity, AlertTriangle, ArrowLeft, ArrowRight, Award, BarChart2,
-        BookOpen, Brain, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
-        Clock, Code, Code2, Cpu, Database, Filter, Flame, FlaskConical, Frown,
-        GitBranch, Globe, GraduationCap, Image, Inbox, Library, Lightbulb,
-        Loader2, Lock, LogOut,
-        Pencil, Percent, Play, Plus, RefreshCw, Search, Send,
+        Activity, AlertCircle, AlertTriangle, ArrowLeft, ArrowRight, Award, BarChart2,
+        BookOpen, Bot, Brain, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
+        Clock, Code, Code2, Cpu, Database, Eye, EyeOff, Filter, Flame, FlaskConical, Frown,
+        GitBranch, Globe, GraduationCap, Image, Inbox, Key, Library, Lightbulb,
+        Loader2, Lock, LogOut, Menu, MessageSquare,
+        Pencil, Percent, Play, Plus, RefreshCw, Search, Send, Settings,
         Server, Shield, Sigma, SquareCode, Star, Target, Terminal, Trash2, TrendingUp,
         Trophy, User, Users, X, XCircle, Zap,
       }),

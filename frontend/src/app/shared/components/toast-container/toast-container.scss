@@ -1,0 +1,129 @@
+/* ── TLP Toast — Wavy-Edge Card ────────────────────────────────
+   Design: uiverse "wavy-edge alert" by hoshikawamaki.
+   Theme-aware: bg-app-surface card, variant accent on wave + title + close.
+   Variants: success | error | info | warning
+   ─────────────────────────────────────────────────────────── */
+
+/* Slide-in from the right */
+@keyframes tlp-toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(100% + 1.5rem));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Progress bar shrink */
+@keyframes tlp-toast-shrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+/* ── Base card ─────────────────────────────────────────────── */
+.tlp-toast {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 6rem;           /* matches SVG height="96" */
+  overflow: hidden;
+  background: rgb(var(--color-app-surface));
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: tlp-toast-slide-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+}
+
+/* ── Wavy SVG edge ─────────────────────────────────────────── */
+.tlp-toast__wave {
+  flex-shrink: 0;
+  display: block;
+  /* flush to the card's left edge; height stretches with the card */
+  align-self: stretch;
+  height: 100%;
+  width: 16px;
+}
+
+/* ── Content area ──────────────────────────────────────────── */
+.tlp-toast__body {
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 0.625rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tlp-toast__title {
+  font-size: 1.125rem;    /* ~text-lg / text-xl feel */
+  font-weight: 700;
+  line-height: 2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* color is set inline via [style.color]="accentColor()" */
+}
+
+.tlp-toast__message {
+  overflow: hidden;
+  line-height: 1.25rem;
+  max-height: 2.5rem;     /* 2 lines */
+  word-break: break-all;
+  color: rgb(var(--color-app-text-2));
+  font-size: 0.8125rem;
+}
+
+/* ── Close button ──────────────────────────────────────────── */
+.tlp-toast__close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;            /* matches reference w-16 */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  /* stroke color is set inline via [attr.stroke]="accentColor()" */
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #3b82f6 inset;
+  }
+}
+
+/* ── Progress track ────────────────────────────────────────── */
+.tlp-toast__progress-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.1875rem;
+  background: rgba(var(--color-app-border), 0.5);
+  border-radius: 0 0 0.75rem 0.75rem;
+  overflow: hidden;
+}
+
+.tlp-toast__progress-bar {
+  height: 100%;
+  transform-origin: left center;
+  animation: tlp-toast-shrink linear forwards;
+  border-radius: inherit;
+}
+
+.tlp-toast__progress-bar--success {
+  background: #22c55e;
+}
+.tlp-toast__progress-bar--error {
+  background: #cd5c5c;
+}
+.tlp-toast__progress-bar--warning {
+  background: #f59e0b;
+}
+.tlp-toast__progress-bar--info {
+  background: #3b82f6;
+}

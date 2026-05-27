@@ -1,0 +1,41 @@
+<label
+  class="tlp-checkbox"
+  [class.tlp-checkbox--checked]="checked()"
+  [class.tlp-checkbox--disabled]="disabled()"
+  [class.tlp-checkbox--focused]="focused()"
+  [attr.for]="inputId"
+>
+  <!-- Hidden native input for form compat + a11y -->
+  <input
+    type="checkbox"
+    class="sr-only"
+    [id]="inputId"
+    [checked]="checked()"
+    [disabled]="disabled()"
+    (change)="toggle()"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    (keydown)="onKeyDown($event)"
+    [attr.aria-checked]="checked()"
+  />
+
+  <!-- Visual box -->
+  <span class="tlp-checkbox__box" aria-hidden="true">
+    <svg
+      class="tlp-checkbox__check"
+      viewBox="0 0 12 10"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <polyline points="1.5,5 4.5,8.5 10.5,1.5" />
+    </svg>
+  </span>
+
+  @if (label) {
+    <span class="tlp-checkbox__label">{{ label }}</span>
+  }
+  <ng-content />
+</label>

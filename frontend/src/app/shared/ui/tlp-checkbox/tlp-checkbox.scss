@@ -1,0 +1,91 @@
+/* ── TLP Checkbox ─────────────────────────────────────────────
+   Gradient-filled on checked, keyboard-accessible, dark/light aware.
+   ─────────────────────────────────────────────────────────── */
+
+@keyframes tlp-checkbox-pop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes tlp-check-draw {
+  from { stroke-dashoffset: 14; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.tlp-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1;
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+/* ── Visual box ─────────────────────────────────────────────── */
+.tlp-checkbox__box {
+  position: relative;
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 0.3125rem;
+  border: 1.5px solid rgb(var(--color-app-border-2));
+  background: rgb(var(--color-app-surface));
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  /* Gradient fill when checked */
+  .tlp-checkbox--checked & {
+    border-color: transparent;
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    animation: tlp-checkbox-pop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Focus ring */
+  .tlp-checkbox--focused & {
+    box-shadow: 0 0 0 2px #3b82f6, 0 0 0 4px rgb(var(--color-app-bg));
+  }
+
+  /* Hover when unchecked */
+  .tlp-checkbox:not(.tlp-checkbox--checked):not(.tlp-checkbox--disabled):hover & {
+    border-color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.06);
+  }
+}
+
+/* ── Checkmark SVG ──────────────────────────────────────────── */
+.tlp-checkbox__check {
+  width: 0.7rem;
+  height: 0.7rem;
+  color: white;
+  opacity: 0;
+  stroke-dasharray: 14;
+  stroke-dashoffset: 14;
+  transition: opacity 0.08s ease;
+
+  .tlp-checkbox--checked & {
+    opacity: 1;
+    animation: tlp-check-draw 0.18s ease-out 0.04s both;
+  }
+}
+
+/* ── Label text ─────────────────────────────────────────────── */
+.tlp-checkbox__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgb(var(--color-app-text-2));
+  transition: color 0.15s ease;
+
+  .tlp-checkbox--checked & {
+    color: rgb(var(--color-app-text));
+  }
+}

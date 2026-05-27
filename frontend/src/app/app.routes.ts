@@ -129,6 +129,36 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'visualize',
+    loadComponent: () =>
+      import('./features/visualizers/catalog/catalog.component').then(
+        m => m.VizCatalogComponent
+      ),
+  },
+  {
+    path: 'visualize/:slug',
+    loadComponent: () =>
+      import('./features/visualizers/viz-page/viz-page.component').then(
+        m => m.VizPageComponent
+      ),
+  },
+  {
+    path: 'chat',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/chat/chat-page/chat-page.component').then(
+        m => m.ChatPageComponent
+      ),
+  },
+  {
+    path: 'settings/ai-keys',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/chat/ai-keys/ai-keys.component').then(
+        m => m.AiKeysComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: '/catalog',
   },

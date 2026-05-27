@@ -1,0 +1,519 @@
+// =============================================================================
+// Recursion Tree Visualizer — component-scoped styles
+// Uses CSS custom properties that fall back gracefully when host tokens are absent.
+// =============================================================================
+
+// ── Host / root ──────────────────────────────────────────────────────────────
+
+:host {
+  display: block;
+  // Colour tokens (fall back to sensible dark-mode defaults)
+  --rt-surface:       var(--app-surface,       #0f1117);
+  --rt-surface-2:     var(--app-surface-2,     #181c27);
+  --rt-border:        var(--app-border,        rgba(255,255,255,0.08));
+  --rt-text:          var(--app-text,          #e8eaf2);
+  --rt-text-2:        var(--app-text-2,        #9aa0b8);
+  --rt-text-muted:    var(--app-text-muted,    #5c6380);
+  --rt-brand:         var(--brand,             #8b5cf6);
+
+  // Node state colours
+  --rt-calling:       #a78bfa;   // soft violet
+  --rt-returning:     #34d399;   // emerald
+  --rt-memo:          #fb923c;   // amber-orange
+  --rt-done:          #60a5fa;   // blue
+  --rt-idle:          #4b5563;   // cool grey
+}
+
+// ── Root wrapper ─────────────────────────────────────────────────────────────
+
+.rt-root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  color: var(--rt-text);
+}
+
+// ── Controls ─────────────────────────────────────────────────────────────────
+
+.rt-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.75rem;
+  background: var(--rt-surface-2);
+  border: 1px solid var(--rt-border);
+}
+
+.rt-op-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.rt-op-btn {
+  padding: 0.3125rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms, color 150ms, box-shadow 150ms;
+  border: 1px solid var(--rt-border);
+  background: var(--rt-surface);
+  color: var(--rt-text-2);
+
+  &:hover {
+    color: var(--rt-text);
+    background: color-mix(in srgb, var(--rt-brand) 12%, transparent);
+  }
+
+  &--active {
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 2px 10px rgba(139, 92, 246, 0.35);
+  }
+}
+
+.rt-n-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rt-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--rt-text-muted);
+  white-space: nowrap;
+}
+
+.rt-label-hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--rt-text-muted);
+}
+
+.rt-input {
+  width: 4.5rem;
+  padding: 0.3125rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  background: var(--rt-surface);
+  border: 1px solid var(--rt-border);
+  color: var(--rt-text);
+  outline: none;
+  transition: box-shadow 150ms;
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.4);
+  }
+
+  // hide spinner arrows for cleaner look
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button { -webkit-appearance: none; }
+  -moz-appearance: textfield;
+}
+
+.rt-action-group {
+  display: flex;
+  gap: 0.375rem;
+  margin-left: auto;
+}
+
+.rt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3125rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms, box-shadow 150ms;
+  border: none;
+
+  &--primary {
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+
+    &:hover {
+      box-shadow: 0 4px 14px rgba(139, 92, 246, 0.45);
+    }
+  }
+
+  &--ghost {
+    background: var(--rt-surface);
+    border: 1px solid var(--rt-border);
+    color: var(--rt-text-2);
+
+    &:hover {
+      color: var(--rt-text);
+      background: var(--rt-surface-2);
+    }
+  }
+}
+
+// ── Main panel (canvas + pseudo) ─────────────────────────────────────────────
+
+.rt-panel {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 0.75rem;
+  align-items: start;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Canvas ────────────────────────────────────────────────────────────────────
+
+.rt-canvas-wrap {
+  position: relative;
+  border-radius: 0.875rem;
+  border: 1px solid var(--rt-border);
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--rt-surface), var(--rt-surface-2));
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.rt-canvas-glow {
+  position: absolute;
+  inset-x: 0;
+  top: 0;
+  height: 7rem;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, rgba(139, 92, 246, 0.12), transparent 70%);
+}
+
+.rt-canvas-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: 0.5rem;
+  min-height: 280px;
+  cursor: default;
+}
+
+.rt-svg {
+  display: block;
+  overflow: visible;
+}
+
+// ── SVG elements ──────────────────────────────────────────────────────────────
+
+.rt-edge {
+  stroke: var(--rt-border);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: none;
+  transition: stroke 300ms;
+}
+
+.rt-arrow-marker {
+  fill: var(--rt-border);
+}
+
+.rt-node-group {
+  cursor: default;
+}
+
+.rt-circle {
+  stroke-width: 2.5;
+  transition: fill 300ms, stroke 300ms, filter 300ms;
+
+  &--idle {
+    fill: var(--rt-idle);
+    stroke: rgba(75, 85, 99, 0.5);
+    opacity: 0.55;
+  }
+
+  &--calling {
+    fill: var(--rt-calling);
+    stroke: rgba(167, 139, 250, 0.6);
+    filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.55));
+    animation: rt-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  &--returning {
+    fill: var(--rt-returning);
+    stroke: rgba(52, 211, 153, 0.6);
+    filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.5));
+  }
+
+  &--memo-hit {
+    fill: var(--rt-memo);
+    stroke: rgba(251, 146, 60, 0.6);
+    filter: drop-shadow(0 0 8px rgba(251, 146, 60, 0.6));
+    animation: rt-pulse 0.5s ease both;
+  }
+
+  &--done {
+    fill: var(--rt-done);
+    stroke: rgba(96, 165, 250, 0.4);
+    opacity: 0.72;
+  }
+}
+
+.rt-node-label {
+  font-size: 10px;
+  font-weight: 700;
+  fill: #fff;
+  user-select: none;
+  pointer-events: none;
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+}
+
+.rt-return-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  user-select: none;
+  pointer-events: none;
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+  transition: fill 300ms;
+
+  &--calling   { fill: var(--rt-calling); }
+  &--returning { fill: var(--rt-returning); }
+  &--memo-hit  { fill: var(--rt-memo); }
+  &--done      { fill: var(--rt-done); opacity: 0.8; }
+  &--idle      { fill: var(--rt-text-muted); }
+}
+
+// ── Step note ──────────────────────────────────────────────────────────────
+
+.rt-note {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  color: var(--rt-text-2);
+  border-top: 1px solid var(--rt-border);
+  background: color-mix(in srgb, var(--rt-surface-2) 80%, transparent);
+  min-height: 2.25rem;
+  line-height: 1.5;
+
+  b {
+    color: var(--rt-text);
+    font-weight: 700;
+  }
+}
+
+// ── Pseudocode panel ────────────────────────────────────────────────────────
+
+.rt-pseudo-panel {
+  border-radius: 0.875rem;
+  border: 1px solid var(--rt-border);
+  background: var(--rt-surface-2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.rt-pseudo-title {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--rt-text-muted);
+  border-bottom: 1px solid var(--rt-border);
+  background: linear-gradient(90deg, rgba(139,92,246,0.08), transparent);
+}
+
+.rt-pseudo-lines {
+  flex: 1;
+  padding: 0.375rem 0;
+  overflow-y: auto;
+}
+
+.rt-pseudo-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  padding: 0.1875rem 0.625rem;
+  transition: background 200ms;
+
+  &--active {
+    background: rgba(139, 92, 246, 0.18);
+    border-left: 2px solid #8b5cf6;
+    padding-left: 0.5rem;
+
+    .rt-pseudo-text {
+      color: var(--rt-text);
+    }
+  }
+}
+
+.rt-pseudo-ln {
+  font-size: 0.6875rem;
+  color: var(--rt-text-muted);
+  font-family: ui-monospace, monospace;
+  min-width: 1rem;
+  text-align: right;
+  user-select: none;
+}
+
+.rt-pseudo-text {
+  font-size: 0.75rem;
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+  color: var(--rt-text-2);
+  white-space: pre;
+}
+
+// ── Complexity chips ─────────────────────────────────────────────────────────
+
+.rt-complexity {
+  padding: 0.5rem 0.875rem;
+  border-top: 1px solid var(--rt-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem;
+}
+
+.rt-complexity-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rt-complexity-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--rt-text-muted);
+  width: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rt-complexity-chip {
+  font-size: 0.6875rem;
+  font-family: ui-monospace, monospace;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+
+  &--time {
+    background: rgba(139, 92, 246, 0.18);
+    color: #c4b5fd;
+  }
+
+  &--space {
+    background: rgba(59, 130, 246, 0.18);
+    color: #93c5fd;
+  }
+}
+
+// ── Player ────────────────────────────────────────────────────────────────────
+
+.rt-player {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--rt-border);
+  background: var(--rt-surface-2);
+}
+
+.rt-player-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--rt-border);
+  background: var(--rt-surface);
+  color: var(--rt-text-2);
+  cursor: pointer;
+  transition: background 150ms, color 150ms;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background: var(--rt-surface-2);
+    color: var(--rt-text);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  &--play {
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    color: #fff;
+    border-color: transparent;
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.45);
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+    }
+  }
+}
+
+.rt-scrubber {
+  flex: 1;
+  height: 4px;
+  accent-color: #8b5cf6;
+  cursor: pointer;
+}
+
+.rt-step-label {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--rt-text-muted);
+  white-space: nowrap;
+  min-width: 4.5rem;
+  text-align: right;
+}
+
+// ── Legend ────────────────────────────────────────────────────────────────────
+
+.rt-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  font-size: 0.6875rem;
+  color: var(--rt-text-muted);
+}
+
+.rt-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.rt-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &--calling   { background: var(--rt-calling); }
+  &--returning { background: var(--rt-returning); }
+  &--memo      { background: var(--rt-memo); }
+  &--done      { background: var(--rt-done); }
+  &--idle      { background: var(--rt-idle); }
+}
+
+// ── Keyframe animations ───────────────────────────────────────────────────────
+
+@keyframes rt-pop {
+  0%   { transform: scale(0.1); opacity: 0; }
+  70%  { transform: scale(1.18); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes rt-pulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.22); }
+  70%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}

@@ -1,74 +1,85 @@
-<div class="pt-14">
-  <div class="page-container py-8">
+<div>
+  <div class="page-container py-10">
 
     <!-- Page header -->
     <header class="mb-8">
-      <div class="flex items-center gap-2 mb-2">
-        <lucide-icon [img]="Code2" [size]="22" class="text-brand"></lucide-icon>
-        <h1 class="text-3xl font-bold text-app-text">Exercises</h1>
+      <div class="flex items-center gap-3 mb-2">
+        <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 shadow-sm">
+          <lucide-icon [img]="Code2" [size]="18" class="text-white"></lucide-icon>
+        </div>
+        <h1 class="text-2xl font-bold text-app-text tracking-tight">Exercises</h1>
       </div>
-      <p class="text-app-text-2">Practice your coding skills with LeetCode-style exercises.</p>
+      <p class="text-sm text-app-text-muted ml-12">Practice your coding skills with LeetCode-style exercises.</p>
     </header>
 
-    <!-- Filters -->
-    <div class="card mb-8">
-      <div class="flex flex-col sm:flex-row gap-3">
-        <!-- Search -->
-        <div class="relative flex-1">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <lucide-icon [img]="Search" [size]="15" class="text-app-text-muted"></lucide-icon>
-          </div>
-          <input
-            type="search"
-            [value]="searchValue"
-            (input)="onSearchChange($any($event.target).value)"
-            placeholder="Search exercises..."
-            class="input pl-9"
-            aria-label="Search exercises"
-          />
+    <!-- Filter bar -->
+    <div class="flex flex-col sm:flex-row gap-2.5 mb-6 p-3 rounded-2xl bg-app-surface border border-app-border shadow-card">
+      <!-- Search -->
+      <div class="relative flex-1">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <lucide-icon [img]="Search" [size]="14" class="text-app-text-muted"></lucide-icon>
         </div>
+        <input
+          type="search"
+          [value]="searchValue"
+          (input)="onSearchChange($any($event.target).value)"
+          placeholder="Search exercises..."
+          class="input pl-9 h-9 text-sm bg-app-bg border-app-border rounded-xl focus:ring-1 focus:ring-brand/50"
+          aria-label="Search exercises"
+        />
+      </div>
 
-        <!-- Difficulty filter -->
-        <div class="relative">
-          <select
-            [value]="difficultyValue"
-            (change)="onDifficultyChange($any($event.target).value)"
-            class="input appearance-none pr-9 min-w-[160px]"
-            aria-label="Filter by difficulty"
-          >
-            @for (opt of difficulties; track opt.value) {
-              <option [value]="opt.value">{{ opt.label }}</option>
-            }
-          </select>
-          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <lucide-icon [img]="ChevronDown" [size]="14" class="text-app-text-muted"></lucide-icon>
-          </div>
+      <!-- Difficulty filter -->
+      <div class="relative">
+        <select
+          [value]="difficultyValue"
+          (change)="onDifficultyChange($any($event.target).value)"
+          class="input appearance-none pr-8 h-9 text-sm min-w-[148px] bg-app-bg border-app-border rounded-xl focus:ring-1 focus:ring-brand/50"
+          aria-label="Filter by difficulty"
+        >
+          @for (opt of difficulties; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+        <div class="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none">
+          <lucide-icon [img]="ChevronDown" [size]="13" class="text-app-text-muted"></lucide-icon>
         </div>
+      </div>
 
-        <!-- Language filter -->
-        <div class="relative">
-          <select
-            [value]="languageValue"
-            (change)="onLanguageChange($any($event.target).value)"
-            class="input appearance-none pr-9 min-w-[160px]"
-            aria-label="Filter by language"
-          >
-            @for (opt of languages; track opt.value) {
-              <option [value]="opt.value">{{ opt.label }}</option>
-            }
-          </select>
-          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <lucide-icon [img]="ChevronDown" [size]="14" class="text-app-text-muted"></lucide-icon>
-          </div>
+      <!-- Language filter -->
+      <div class="relative">
+        <select
+          [value]="languageValue"
+          (change)="onLanguageChange($any($event.target).value)"
+          class="input appearance-none pr-8 h-9 text-sm min-w-[148px] bg-app-bg border-app-border rounded-xl focus:ring-1 focus:ring-brand/50"
+          aria-label="Filter by language"
+        >
+          @for (opt of languages; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+        <div class="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none">
+          <lucide-icon [img]="ChevronDown" [size]="13" class="text-app-text-muted"></lucide-icon>
         </div>
       </div>
     </div>
 
     <!-- Loading skeleton -->
     @if (loading()) {
-      <div class="space-y-2">
-        @for (_ of [1,2,3,4,5,6,7,8,9,10]; track $index) {
-          <div class="skeleton h-16 rounded-xl animate-pulse"></div>
+      <div class="rounded-2xl border border-app-border bg-app-surface overflow-hidden divide-y divide-app-border">
+        @for (_ of [1,2,3,4,5,6,7,8]; track $index) {
+          <div class="flex items-center gap-4 px-5 py-3.5 animate-pulse">
+            <div class="w-4 h-4 rounded-full bg-app-surface-2 shrink-0"></div>
+            <div class="flex-1 min-w-0 space-y-1.5">
+              <div class="h-3.5 bg-app-surface-2 rounded-md w-2/5"></div>
+              <div class="h-2.5 bg-app-surface-2 rounded-md w-1/4"></div>
+            </div>
+            <div class="hidden xl:flex gap-1">
+              <div class="h-5 w-12 bg-app-surface-2 rounded-md"></div>
+              <div class="h-5 w-14 bg-app-surface-2 rounded-md"></div>
+            </div>
+            <div class="h-5 w-14 bg-app-surface-2 rounded-full shrink-0"></div>
+          </div>
         }
       </div>
     }
@@ -76,13 +87,13 @@
     <!-- Error state -->
     @if (error() && !loading()) {
       <div class="flex flex-col items-center justify-center py-24 text-center">
-        <div class="w-12 h-12 rounded-full bg-red-950 border border-red-800 flex items-center justify-center mb-4">
+        <div class="w-11 h-11 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4">
           <lucide-icon [img]="RefreshCw" [size]="20" class="text-red-400"></lucide-icon>
         </div>
-        <p class="text-app-text font-medium mb-1">Failed to load exercises</p>
-        <p class="text-app-text-2 text-sm mb-4">{{ error() }}</p>
+        <p class="text-sm font-semibold text-app-text mb-1">Failed to load exercises</p>
+        <p class="text-xs text-app-text-muted mb-4">{{ error() }}</p>
         <button (click)="onSearchChange(searchValue)" class="btn btn-secondary btn-sm">
-          <lucide-icon [img]="RefreshCw" [size]="14"></lucide-icon>
+          <lucide-icon [img]="RefreshCw" [size]="13"></lucide-icon>
           Retry
         </button>
       </div>
@@ -91,16 +102,16 @@
     <!-- Empty state -->
     @if (!loading() && !error() && exercises().length === 0) {
       <div class="flex flex-col items-center justify-center py-24 text-center">
-        <div class="w-14 h-14 rounded-xl bg-app-surface-2 border border-app-border flex items-center justify-center mb-5">
-          <lucide-icon [img]="Inbox" [size]="28" class="text-app-border-2"></lucide-icon>
+        <div class="w-12 h-12 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mb-4">
+          <lucide-icon [img]="Inbox" [size]="24" class="text-app-text-muted"></lucide-icon>
         </div>
-        <p class="text-app-text font-semibold mb-2">No exercises found</p>
-        <p class="text-app-text-2 text-sm max-w-xs">
+        <p class="text-sm font-semibold text-app-text mb-1.5">No exercises found</p>
+        <p class="text-xs text-app-text-muted max-w-xs mb-5">
           Try adjusting your search or filters to find what you're looking for.
         </p>
         <button
           (click)="onSearchChange(''); onDifficultyChange(''); onLanguageChange('')"
-          class="btn btn-ghost btn-sm mt-5"
+          class="btn btn-ghost btn-sm text-xs"
         >
           Clear all filters
         </button>
@@ -109,89 +120,89 @@
 
     <!-- Exercise list -->
     @if (!loading() && !error() && exercises().length > 0) {
-      <div class="card p-0 overflow-hidden divide-y divide-app-border">
+      <div class="rounded-2xl border border-app-border bg-app-surface overflow-hidden divide-y divide-app-border shadow-card">
         @for (exercise of exercises(); track trackById($index, exercise)) {
           <a
             [routerLink]="['/exercises', exercise.slug]"
-            class="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3 hover:bg-app-surface-2/60 transition-colors no-underline group"
+            class="flex items-center gap-3 sm:gap-4 px-5 py-3.5 hover:bg-app-surface-2/60 transition-colors duration-150 no-underline group"
             [attr.aria-label]="'Solve ' + exercise.title"
           >
-            <!-- Status / type indicator -->
-            <span class="shrink-0 w-5 flex justify-center">
+            <!-- Solved / unsolved indicator -->
+            <span class="shrink-0 w-4 flex justify-center">
               @if (solvedIds().has(exercise.id)) {
-                <lucide-icon [img]="CheckCircle2" [size]="18" class="text-green-500 dark:text-green-400"></lucide-icon>
+                <lucide-icon [img]="CheckCircle2" [size]="16" class="text-green-500 dark:text-green-400"></lucide-icon>
               } @else {
-                <lucide-icon [img]="Code2" [size]="16" class="text-app-text-muted group-hover:text-brand transition-colors"></lucide-icon>
+                <div class="w-3.5 h-3.5 rounded-full border-2 border-app-border-2 group-hover:border-brand/60 transition-colors duration-150"></div>
               }
             </span>
 
-            <!-- Title + meta (flex-1) -->
+            <!-- Title + meta -->
             <div class="flex-1 min-w-0">
-              <h2 class="text-sm font-semibold text-app-text group-hover:text-brand dark:group-hover:text-brand-light transition-colors truncate leading-snug">
+              <h2 class="text-sm font-semibold text-app-text group-hover:text-brand dark:group-hover:text-brand-light transition-colors duration-150 truncate leading-snug">
                 {{ exercise.title }}
               </h2>
-              <div class="flex items-center gap-2 mt-0.5 text-xs text-app-text-muted min-w-0">
+              <div class="flex items-center gap-2 mt-0.5 text-[11px] text-app-text-muted min-w-0">
                 @if (exercise.course_title) {
                   <span class="flex items-center gap-1 min-w-0 truncate">
-                    <lucide-icon [img]="BookOpen" [size]="11" class="shrink-0 text-brand"></lucide-icon>
+                    <lucide-icon [img]="BookOpen" [size]="11" class="shrink-0 text-brand/70"></lucide-icon>
                     <span class="truncate">{{ exercise.course_title }}</span>
                   </span>
-                  <span class="text-app-border-2 shrink-0">•</span>
+                  <span class="text-app-border-2 shrink-0">·</span>
                 }
                 <span class="flex items-center gap-1 shrink-0">
-                  <lucide-icon [img]="Zap" [size]="11" class="text-amber-400"></lucide-icon>
+                  <lucide-icon [img]="Zap" [size]="10" class="text-amber-400"></lucide-icon>
                   {{ exercise.points }} pts
                 </span>
               </div>
             </div>
 
-            <!-- Language pills (large screens only) -->
-            <div class="hidden xl:flex flex-nowrap items-center gap-1 shrink-0 max-w-[220px] overflow-hidden">
+            <!-- Language pills (xl+) -->
+            <div class="hidden xl:flex flex-nowrap items-center gap-1 shrink-0 max-w-[200px] overflow-hidden">
               @for (lang of exercise.supported_languages; track lang) {
-                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-app-surface-2 border border-app-border text-[10px] text-app-text-2 font-mono whitespace-nowrap">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-md bg-app-surface-2 border border-app-border text-[10px] text-app-text-2 font-mono whitespace-nowrap">
                   {{ LANGUAGE_LABELS[lang] || lang }}
                 </span>
               }
             </div>
 
-            <!-- Difficulty -->
-            <span [class]="difficultyBadge(exercise.difficulty)" class="shrink-0">
+            <!-- Difficulty chip -->
+            <span [class]="difficultyBadge(exercise.difficulty)" class="shrink-0 text-[11px] px-2 py-0.5">
               {{ difficultyLabel(exercise.difficulty) }}
             </span>
 
-            <!-- Solved label (small+ screens) -->
+            <!-- Solved label -->
             @if (solvedIds().has(exercise.id)) {
-              <span class="hidden sm:inline text-xs font-medium text-green-600 dark:text-green-400 shrink-0">Solved</span>
+              <span class="hidden sm:inline text-[11px] font-medium text-green-600 dark:text-green-400 shrink-0">Solved</span>
             }
 
             <!-- Arrow -->
-            <lucide-icon [img]="ArrowRight" [size]="16"
-              class="shrink-0 text-app-text-muted group-hover:text-brand group-hover:translate-x-0.5 transition-all"></lucide-icon>
+            <lucide-icon [img]="ArrowRight" [size]="14"
+              class="shrink-0 text-app-text-muted group-hover:text-brand group-hover:translate-x-0.5 transition-all duration-150"></lucide-icon>
           </a>
         }
       </div>
 
-      <!-- Load more -->
+      <!-- Load more / count -->
       @if (hasMore()) {
-        <div class="flex justify-center mt-10">
+        <div class="flex justify-center mt-8">
           <button
             (click)="loadMore()"
-            class="btn btn-secondary"
+            class="btn btn-secondary btn-sm gap-2"
             [disabled]="loadingMore()"
             [attr.aria-busy]="loadingMore()"
           >
             @if (loadingMore()) {
-              <div class="w-4 h-4 border-2 border-app-border border-t-brand rounded-full animate-spin"></div>
+              <div class="w-3.5 h-3.5 border-2 border-app-border border-t-brand rounded-full animate-spin"></div>
               Loading...
             } @else {
-              <lucide-icon [img]="Plus" [size]="16"></lucide-icon>
-              Load more exercises
+              <lucide-icon [img]="Plus" [size]="14"></lucide-icon>
+              Load more
             }
           </button>
         </div>
       } @else if (exercises().length > 0) {
-        <p class="text-center text-xs text-app-text-muted mt-10">
-          Showing all {{ exercises().length }} exercise{{ exercises().length !== 1 ? 's' : '' }}
+        <p class="text-center text-[11px] text-app-text-muted mt-8">
+          {{ exercises().length }} exercise{{ exercises().length !== 1 ? 's' : '' }} total
         </p>
       }
     }

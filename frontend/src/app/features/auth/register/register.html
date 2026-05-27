@@ -1,190 +1,336 @@
-<div class="min-h-dvh flex items-center justify-center bg-app-bg bg-grid px-4 py-16">
-  <div class="card max-w-md w-full mx-auto animate-fade-in">
+<!-- Full-screen split layout: side panel (lg+) + auth card -->
+<div class="min-h-dvh flex bg-app-bg">
 
-    <!-- Header -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-brand/10 border border-brand/30 mb-4">
-        <lucide-icon [img]="Code2" [size]="22" class="text-brand"></lucide-icon>
+  <!-- ── Left side panel (hidden below lg) ─────────────────── -->
+  <aside class="hidden lg:flex lg:w-[44%] xl:w-[40%] relative flex-col justify-between overflow-hidden
+                bg-gradient-to-br from-violet-950 via-purple-900 to-blue-900 p-10 xl:p-14">
+
+    <!-- Subtle grid overlay -->
+    <div class="absolute inset-0 bg-grid opacity-[0.08] pointer-events-none"></div>
+
+    <!-- Ambient blobs -->
+    <div class="absolute -top-24 -right-16 w-80 h-80 rounded-full
+                bg-purple-500/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-72 h-72 rounded-full
+                bg-blue-500/20 blur-3xl pointer-events-none"></div>
+
+    <!-- Brand mark -->
+    <div class="relative z-10 flex items-center gap-3">
+      <div class="flex items-center justify-center w-10 h-10 rounded-xl
+                  bg-white/10 border border-white/20 backdrop-blur-sm">
+        <lucide-icon [img]="Code2" [size]="20" class="text-white"></lucide-icon>
       </div>
-      <h1 class="text-2xl font-bold text-app-text mb-1">Create your account</h1>
-      <p class="text-sm text-app-text-2">Start your learning journey today</p>
+      <span class="text-lg font-semibold text-white tracking-tight">Code with TLP</span>
     </div>
 
-    <!-- Form -->
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="flex flex-col gap-5">
-
-      <!-- Username -->
+    <!-- Centre copy -->
+    <div class="relative z-10 flex-1 flex flex-col justify-center gap-8 py-10">
       <div>
-        <label for="username" class="label">
-          Username <span class="text-red-400" aria-hidden="true">*</span>
-        </label>
-        <input
-          id="username"
-          type="text"
-          formControlName="username"
-          autocomplete="username"
-          placeholder="your_username"
-          [class]="usernameCtrl.invalid && usernameCtrl.touched ? 'input-error' : 'input'"
-          aria-describedby="username-error"
-        />
-        @if (usernameCtrl.invalid && usernameCtrl.touched) {
-          <p id="username-error" class="mt-1.5 text-xs text-red-400 flex items-center gap-1" role="alert">
-            <lucide-icon [img]="AlertCircle" [size]="12"></lucide-icon>
-            @if (usernameCtrl.hasError('required')) { Username is required. }
-            @else if (usernameCtrl.hasError('minlength')) { Minimum 3 characters. }
-            @else if (usernameCtrl.hasError('pattern')) { Letters, numbers, underscores, dots and dashes only. }
-          </p>
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+                    bg-white/10 border border-white/15 text-white/80 text-xs font-medium mb-5">
+          <lucide-icon [img]="Sparkles" [size]="12"></lucide-icon>
+          Join thousands of developers
+        </div>
+        <h2 class="text-3xl xl:text-4xl font-bold text-white leading-snug mb-3">
+          Start your journey<br>today. It's free.
+        </h2>
+        <p class="text-white/60 text-sm leading-relaxed max-w-xs">
+          Create your account and get instant access to hundreds of curated coding challenges designed to make you better, faster.
+        </p>
+      </div>
+
+      <!-- Feature bullets -->
+      <ul class="flex flex-col gap-3">
+        @for (feature of [
+          { icon: CircleCheck, text: 'Free access to problem catalog' },
+          { icon: Terminal,     text: 'In-browser code execution engine' },
+          { icon: Zap,          text: 'Instant feedback on every submission' }
+        ]; track feature.text) {
+          <li class="flex items-center gap-3">
+            <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg
+                        bg-white/10 border border-white/15">
+              <lucide-icon [img]="feature.icon" [size]="15" class="text-white/80"></lucide-icon>
+            </div>
+            <span class="text-white/70 text-sm">{{ feature.text }}</span>
+          </li>
         }
-      </div>
+      </ul>
+    </div>
 
-      <!-- Email -->
-      <div>
-        <label for="email" class="label">
-          Email <span class="text-red-400" aria-hidden="true">*</span>
-        </label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          autocomplete="email"
-          placeholder="you@example.com"
-          [class]="emailCtrl.invalid && emailCtrl.touched ? 'input-error' : 'input'"
-          aria-describedby="email-error"
-        />
-        @if (emailCtrl.invalid && emailCtrl.touched) {
-          <p id="email-error" class="mt-1.5 text-xs text-red-400 flex items-center gap-1" role="alert">
-            <lucide-icon [img]="AlertCircle" [size]="12"></lucide-icon>
-            @if (emailCtrl.hasError('required')) { Email is required. }
-            @else { Please enter a valid email address. }
-          </p>
-        }
-      </div>
+    <!-- Bottom quote -->
+    <div class="relative z-10 border-t border-white/10 pt-6">
+      <p class="text-white/50 text-xs leading-relaxed italic">
+        "Every expert was once a beginner."
+      </p>
+      <p class="text-white/35 text-xs mt-1">— Helen Hayes</p>
+    </div>
+  </aside>
 
-      <!-- Full name (optional) -->
-      <div>
-        <label for="full_name" class="label">
-          Full Name <span class="text-app-text-muted text-xs font-normal">(optional)</span>
-        </label>
-        <input
-          id="full_name"
-          type="text"
-          formControlName="full_name"
-          autocomplete="name"
-          placeholder="Jane Doe"
-          class="input"
-        />
-      </div>
+  <!-- ── Right: auth card column ────────────────────────────── -->
+  <main class="flex flex-1 items-center justify-center px-4 py-12 sm:px-8">
 
-      <!-- Password -->
-      <div>
-        <label for="password" class="label">
-          Password <span class="text-red-400" aria-hidden="true">*</span>
-        </label>
-        <div class="relative">
-          <input
-            id="password"
-            [type]="showPassword() ? 'text' : 'password'"
-            formControlName="password"
-            autocomplete="new-password"
-            placeholder="Min 8 characters"
-            [class]="(passwordCtrl.invalid && passwordCtrl.touched ? 'input-error' : 'input') + ' pr-10'"
-            aria-describedby="password-error"
-          />
+    <!-- Mobile brand (visible below lg) -->
+    <div class="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 lg:hidden">
+      <div class="flex items-center justify-center w-8 h-8 rounded-lg
+                  bg-brand/10 border border-brand/30">
+        <lucide-icon [img]="Code2" [size]="16" class="text-brand"></lucide-icon>
+      </div>
+      <span class="text-sm font-semibold text-app-text">Code with TLP</span>
+    </div>
+
+    <!-- Auth card -->
+    <div class="w-full max-w-md animate-slide-up">
+
+      <!-- Card shell: rounded-2xl, soft border, layered shadow -->
+      <div class="bg-app-surface rounded-2xl border border-app-border
+                  shadow-[0_2px_8px_rgba(0,0,0,0.06),0_8px_32px_rgba(0,0,0,0.10)]
+                  dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),0_8px_40px_rgba(0,0,0,0.45)]
+                  p-8 sm:p-10">
+
+        <!-- Header -->
+        <div class="mb-8">
+          <h1 class="text-2xl font-bold text-app-text mb-1.5">Create your account</h1>
+          <p class="text-sm text-app-text-muted">Start your learning journey today</p>
+        </div>
+
+        <!-- Form -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="flex flex-col gap-5">
+
+          <!-- Username + Email row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <!-- Username -->
+            <div class="flex flex-col gap-1.5">
+              <label for="username" class="label">
+                Username
+                <span class="text-red-400 ml-0.5" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="username"
+                type="text"
+                formControlName="username"
+                autocomplete="username"
+                placeholder="your_username"
+                [class]="(usernameCtrl.invalid && usernameCtrl.touched
+                  ? 'input-error'
+                  : 'input') + ' h-11 text-base sm:text-sm'"
+                aria-describedby="username-error"
+              />
+              @if (usernameCtrl.invalid && usernameCtrl.touched) {
+                <p id="username-error"
+                   class="flex items-center gap-1.5 text-xs text-red-400"
+                   role="alert">
+                  <lucide-icon [img]="AlertCircle" [size]="12" class="shrink-0"></lucide-icon>
+                  @if (usernameCtrl.hasError('required')) { Required. }
+                  @else if (usernameCtrl.hasError('minlength')) { Min 3 characters. }
+                  @else if (usernameCtrl.hasError('pattern')) { Letters, numbers, _ . - only. }
+                </p>
+              }
+            </div>
+
+            <!-- Email -->
+            <div class="flex flex-col gap-1.5">
+              <label for="email" class="label">
+                Email
+                <span class="text-red-400 ml-0.5" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                placeholder="you@example.com"
+                [class]="(emailCtrl.invalid && emailCtrl.touched
+                  ? 'input-error'
+                  : 'input') + ' h-11 text-base sm:text-sm'"
+                aria-describedby="email-error"
+              />
+              @if (emailCtrl.invalid && emailCtrl.touched) {
+                <p id="email-error"
+                   class="flex items-center gap-1.5 text-xs text-red-400"
+                   role="alert">
+                  <lucide-icon [img]="AlertCircle" [size]="12" class="shrink-0"></lucide-icon>
+                  @if (emailCtrl.hasError('required')) { Required. }
+                  @else { Valid email required. }
+                </p>
+              }
+            </div>
+          </div>
+
+          <!-- Full name (optional) -->
+          <div class="flex flex-col gap-1.5">
+            <label for="full_name" class="label">
+              Full Name
+              <span class="text-app-text-muted text-xs font-normal ml-1">(optional)</span>
+            </label>
+            <input
+              id="full_name"
+              type="text"
+              formControlName="full_name"
+              autocomplete="name"
+              placeholder="Jane Doe"
+              class="input h-11 text-base sm:text-sm"
+            />
+          </div>
+
+          <!-- Password + Confirm password row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <!-- Password -->
+            <div class="flex flex-col gap-1.5">
+              <label for="password" class="label">
+                Password
+                <span class="text-red-400 ml-0.5" aria-hidden="true">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  formControlName="password"
+                  autocomplete="new-password"
+                  placeholder="Min 8 chars"
+                  [class]="(passwordCtrl.invalid && passwordCtrl.touched
+                    ? 'input-error'
+                    : 'input') + ' h-11 pr-11 text-base sm:text-sm'"
+                  aria-describedby="password-error"
+                />
+                <button
+                  type="button"
+                  (click)="togglePassword()"
+                  class="absolute inset-y-0 right-0 flex items-center justify-center w-11
+                         text-app-text-muted hover:text-app-text-2 transition-colors cursor-pointer"
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+                >
+                  @if (showPassword()) {
+                    <lucide-icon [img]="EyeOff" [size]="15"></lucide-icon>
+                  } @else {
+                    <lucide-icon [img]="Eye" [size]="15"></lucide-icon>
+                  }
+                </button>
+              </div>
+              @if (passwordCtrl.invalid && passwordCtrl.touched) {
+                <p id="password-error"
+                   class="flex items-center gap-1.5 text-xs text-red-400"
+                   role="alert">
+                  <lucide-icon [img]="AlertCircle" [size]="12" class="shrink-0"></lucide-icon>
+                  @if (passwordCtrl.hasError('required')) { Required. }
+                  @else if (passwordCtrl.hasError('minlength')) { Min 8 characters. }
+                </p>
+              }
+            </div>
+
+            <!-- Confirm password -->
+            <div class="flex flex-col gap-1.5">
+              <label for="confirm_password" class="label">
+                Confirm
+                <span class="text-red-400 ml-0.5" aria-hidden="true">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="confirm_password"
+                  [type]="showConfirm() ? 'text' : 'password'"
+                  formControlName="confirm_password"
+                  autocomplete="new-password"
+                  placeholder="••••••••"
+                  [class]="((confirmPasswordCtrl.invalid && confirmPasswordCtrl.touched) || passwordsMismatch
+                    ? 'input-error'
+                    : 'input') + ' h-11 pr-11 text-base sm:text-sm'"
+                  aria-describedby="confirm-error"
+                />
+                <button
+                  type="button"
+                  (click)="toggleConfirm()"
+                  class="absolute inset-y-0 right-0 flex items-center justify-center w-11
+                         text-app-text-muted hover:text-app-text-2 transition-colors cursor-pointer"
+                  [attr.aria-label]="showConfirm() ? 'Hide password' : 'Show password'"
+                >
+                  @if (showConfirm()) {
+                    <lucide-icon [img]="EyeOff" [size]="15"></lucide-icon>
+                  } @else {
+                    <lucide-icon [img]="Eye" [size]="15"></lucide-icon>
+                  }
+                </button>
+              </div>
+              @if (confirmPasswordCtrl.invalid && confirmPasswordCtrl.touched) {
+                <p id="confirm-error"
+                   class="flex items-center gap-1.5 text-xs text-red-400"
+                   role="alert">
+                  <lucide-icon [img]="AlertCircle" [size]="12" class="shrink-0"></lucide-icon>
+                  Please confirm.
+                </p>
+              } @else if (passwordsMismatch) {
+                <p id="confirm-error"
+                   class="flex items-center gap-1.5 text-xs text-red-400"
+                   role="alert">
+                  <lucide-icon [img]="AlertCircle" [size]="12" class="shrink-0"></lucide-icon>
+                  Passwords do not match.
+                </p>
+              }
+            </div>
+          </div>
+
+          <!-- Global error banner -->
+          @if (errorMessage()) {
+            <div
+              class="flex items-start gap-2.5 p-3.5 rounded-xl
+                     bg-red-950/50 border border-red-800/60 text-red-300"
+              role="alert"
+              aria-live="assertive"
+            >
+              <lucide-icon [img]="AlertCircle" [size]="16" class="shrink-0 mt-0.5"></lucide-icon>
+              <p class="text-sm">{{ errorMessage() }}</p>
+            </div>
+          }
+
+          <!-- Submit — gradient fill, always white text -->
           <button
-            type="button"
-            (click)="togglePassword()"
-            class="absolute inset-y-0 right-0 flex items-center pr-3 text-app-text-muted hover:text-app-text-2 transition-colors"
-            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            type="submit"
+            class="relative mt-1 h-11 w-full inline-flex items-center justify-center gap-2
+                   rounded-xl text-sm font-semibold text-white
+                   bg-gradient-to-r from-purple-500 to-blue-500
+                   hover:from-purple-600 hover:to-blue-600
+                   active:from-purple-700 active:to-blue-700
+                   transition-all duration-150
+                   shadow-[0_2px_12px_rgba(139,92,246,0.35)]
+                   hover:shadow-[0_4px_20px_rgba(139,92,246,0.5)]
+                   focus-visible:outline-none focus-visible:ring-2
+                   focus-visible:ring-purple-500 focus-visible:ring-offset-2
+                   focus-visible:ring-offset-app-surface
+                   disabled:opacity-50 disabled:cursor-not-allowed
+                   cursor-pointer"
+            [disabled]="loading()"
+            [attr.aria-busy]="loading()"
           >
-            @if (showPassword()) {
-              <lucide-icon [img]="EyeOff" [size]="16"></lucide-icon>
+            @if (loading()) {
+              <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              Creating account...
             } @else {
-              <lucide-icon [img]="Eye" [size]="16"></lucide-icon>
+              Create account
             }
           </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-3 my-6">
+          <div class="flex-1 h-px bg-app-border"></div>
+          <span class="text-xs text-app-text-muted">or</span>
+          <div class="flex-1 h-px bg-app-border"></div>
         </div>
-        @if (passwordCtrl.invalid && passwordCtrl.touched) {
-          <p id="password-error" class="mt-1.5 text-xs text-red-400 flex items-center gap-1" role="alert">
-            <lucide-icon [img]="AlertCircle" [size]="12"></lucide-icon>
-            @if (passwordCtrl.hasError('required')) { Password is required. }
-            @else if (passwordCtrl.hasError('minlength')) { Minimum 8 characters required. }
-          </p>
-        }
+
+        <!-- Footer link -->
+        <p class="text-center text-sm text-app-text-muted">
+          Already have an account?
+          <a routerLink="/login"
+             class="font-semibold text-brand hover:text-brand-dark
+                    dark:text-brand-light dark:hover:text-brand-light
+                    ml-1 transition-colors">
+            Log in
+          </a>
+        </p>
+
       </div>
+      <!-- /card shell -->
 
-      <!-- Confirm password -->
-      <div>
-        <label for="confirm_password" class="label">
-          Confirm Password <span class="text-red-400" aria-hidden="true">*</span>
-        </label>
-        <div class="relative">
-          <input
-            id="confirm_password"
-            [type]="showConfirm() ? 'text' : 'password'"
-            formControlName="confirm_password"
-            autocomplete="new-password"
-            placeholder="••••••••"
-            [class]="((confirmPasswordCtrl.invalid && confirmPasswordCtrl.touched) || passwordsMismatch ? 'input-error' : 'input') + ' pr-10'"
-            aria-describedby="confirm-error"
-          />
-          <button
-            type="button"
-            (click)="toggleConfirm()"
-            class="absolute inset-y-0 right-0 flex items-center pr-3 text-app-text-muted hover:text-app-text-2 transition-colors"
-            [attr.aria-label]="showConfirm() ? 'Hide password' : 'Show password'"
-          >
-            @if (showConfirm()) {
-              <lucide-icon [img]="EyeOff" [size]="16"></lucide-icon>
-            } @else {
-              <lucide-icon [img]="Eye" [size]="16"></lucide-icon>
-            }
-          </button>
-        </div>
-        @if (confirmPasswordCtrl.invalid && confirmPasswordCtrl.touched) {
-          <p id="confirm-error" class="mt-1.5 text-xs text-red-400 flex items-center gap-1" role="alert">
-            <lucide-icon [img]="AlertCircle" [size]="12"></lucide-icon>
-            Please confirm your password.
-          </p>
-        } @else if (passwordsMismatch) {
-          <p id="confirm-error" class="mt-1.5 text-xs text-red-400 flex items-center gap-1" role="alert">
-            <lucide-icon [img]="AlertCircle" [size]="12"></lucide-icon>
-            Passwords do not match.
-          </p>
-        }
-      </div>
-
-      <!-- Global error -->
-      @if (errorMessage()) {
-        <div
-          class="flex items-start gap-2.5 p-3.5 rounded-lg bg-red-950/50 border border-red-800/60 text-red-300"
-          role="alert"
-          aria-live="assertive"
-        >
-          <lucide-icon [img]="AlertCircle" [size]="16" class="shrink-0 mt-0.5"></lucide-icon>
-          <p class="text-sm">{{ errorMessage() }}</p>
-        </div>
-      }
-
-      <!-- Submit -->
-      <button
-        type="submit"
-        class="btn btn-primary w-full justify-center"
-        [disabled]="loading()"
-        [attr.aria-busy]="loading()"
-      >
-        @if (loading()) {
-          <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-          Creating account...
-        } @else {
-          Create account
-        }
-      </button>
-    </form>
-
-    <!-- Footer -->
-    <p class="text-center text-sm text-app-text-2 mt-6">
-      Already have an account?
-      <a routerLink="/login" class="text-brand hover:text-brand-dark dark:text-brand-light dark:hover:text-brand font-medium ml-1">Log in</a>
-    </p>
-  </div>
+    </div>
+  </main>
 </div>

@@ -1,0 +1,147 @@
+// ── Binary Heap Visualizer — scoped component styles ─────────────────────────
+// All rules are prefixed so they don't leak out of this component.
+// Theme tokens (--app-*, --brand) are consumed from the host application.
+
+// ── Node circles ─────────────────────────────────────────────────────────────
+
+.heap-node-circle {
+  transition: fill 0.25s ease, filter 0.25s ease, transform 0.25s ease;
+  transform-origin: center;
+}
+
+// State variants
+.heap-node--default {
+  fill: url(#heapGradDefault);
+}
+
+.heap-node--compare {
+  fill: #f59e0b; // amber-500
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
+  transform: scale(1.08);
+}
+
+.heap-node--swap {
+  fill: #3b82f6; // blue-500
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.7));
+  transform: scale(1.12);
+}
+
+.heap-node--active {
+  fill: #a855f7; // purple-500
+  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.65));
+  transform: scale(1.1);
+}
+
+.heap-node--done {
+  fill: #22c55e; // green-500
+  filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.55));
+}
+
+.heap-node--removed {
+  fill: #ef4444; // red-500
+  opacity: 0.5;
+}
+
+// ── Glow rings ────────────────────────────────────────────────────────────────
+
+.heap-glow-ring {
+  fill: none;
+  opacity: 0.25;
+  stroke-width: 0;
+}
+
+.heap-glow--compare { fill: rgba(245, 158, 11, 0.3); }
+.heap-glow--swap    { fill: rgba(59, 130, 246, 0.3);  }
+.heap-glow--active  { fill: rgba(168, 85, 247, 0.3);  }
+.heap-glow--done    { fill: rgba(34, 197, 94, 0.25);  }
+.heap-glow--removed { fill: rgba(239, 68, 68, 0.25);  }
+
+// ── Node labels ───────────────────────────────────────────────────────────────
+
+.heap-node-label {
+  fill: #ffffff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.heap-index-label {
+  fill: var(--app-text-muted, #94a3b8);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 10px;
+  pointer-events: none;
+  user-select: none;
+}
+
+// ── Backing array cells ───────────────────────────────────────────────────────
+
+.heap-cell {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.heap-cell--default {
+  background: linear-gradient(135deg, rgb(139 92 246), rgb(59 130 246));
+}
+
+.heap-cell--compare {
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5);
+  transform: translateY(-3px);
+}
+
+.heap-cell--swap {
+  background: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  transform: translateY(-4px) scaleX(1.05);
+}
+
+.heap-cell--active {
+  background: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.5);
+  transform: translateY(-3px);
+}
+
+.heap-cell--done {
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.45);
+}
+
+.heap-cell--removed {
+  background: #ef4444;
+  opacity: 0.5;
+}
+
+// ── Pseudocode highlight ──────────────────────────────────────────────────────
+
+.pseudo-active {
+  background: rgba(139, 92, 246, 0.18);
+  color: rgb(196, 170, 252);
+  font-weight: 700;
+  border-left: 3px solid #8b5cf6;
+  padding-left: calc(0.5rem - 3px); // compensate for border
+}
+
+// ── Legend dot ────────────────────────────────────────────────────────────────
+
+.legend-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// The legend dots reuse the same node-state classes (circle variant falls back
+// gracefully: `fill` is ignored on a <span>, but `background` colours are set
+// inline via the heap-node--* classes where applicable).
+// Override fill-based colours with matching backgrounds for <span> elements:
+
+span.heap-node--default { background: linear-gradient(135deg, #8b5cf6, #3b82f6); }
+span.heap-node--compare { background: #f59e0b; }
+span.heap-node--swap    { background: #3b82f6; }
+span.heap-node--active  { background: #a855f7; }
+span.heap-node--done    { background: #22c55e; }

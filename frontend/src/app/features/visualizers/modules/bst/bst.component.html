@@ -1,0 +1,157 @@
+<div class="p-4 flex flex-col gap-4">
+
+  <!-- Controls row -->
+  <div class="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-app-surface-2 border border-app-border">
+
+    <!-- Insert -->
+    <div class="flex items-center gap-1.5">
+      <input
+        type="number"
+        [value]="insertValue()"
+        (input)="onInsertInput($event)"
+        (keydown)="onInsertKeydown($event)"
+        placeholder="value"
+        class="w-20 px-2 py-1.5 rounded-lg text-sm bg-app-surface border border-app-border
+               text-app-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+      />
+      <button
+        (click)="onInsert()"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-white bg-gradient-to-br from-purple-500 to-blue-500
+               hover:from-purple-600 hover:to-blue-600 transition-all"
+      >
+        <lucide-icon [img]="Plus" [size]="13"></lucide-icon>
+        Insert
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="flex items-center gap-1.5">
+      <input
+        type="number"
+        [value]="searchValue()"
+        (input)="onSearchInput($event)"
+        (keydown)="onSearchKeydown($event)"
+        placeholder="value"
+        class="w-20 px-2 py-1.5 rounded-lg text-sm bg-app-surface border border-app-border
+               text-app-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+      />
+      <button
+        (click)="onSearch()"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-app-text-2 hover:text-app-text bg-app-surface border border-app-border
+               hover:bg-app-surface-2 transition-all"
+      >
+        <lucide-icon [img]="Search" [size]="13"></lucide-icon>
+        Search
+      </button>
+    </div>
+
+    <!-- Traversals -->
+    <div class="flex items-center gap-1.5">
+      <button (click)="onTraversal('in')"
+        class="px-3 py-1.5 rounded-lg text-xs font-semibold text-app-text-2 hover:text-app-text
+               bg-app-surface border border-app-border hover:bg-app-surface-2 transition-all">
+        In-order
+      </button>
+      <button (click)="onTraversal('pre')"
+        class="px-3 py-1.5 rounded-lg text-xs font-semibold text-app-text-2 hover:text-app-text
+               bg-app-surface border border-app-border hover:bg-app-surface-2 transition-all">
+        Pre-order
+      </button>
+      <button (click)="onTraversal('post')"
+        class="px-3 py-1.5 rounded-lg text-xs font-semibold text-app-text-2 hover:text-app-text
+               bg-app-surface border border-app-border hover:bg-app-surface-2 transition-all">
+        Post-order
+      </button>
+    </div>
+
+    <!-- Random + Reset -->
+    <div class="ml-auto flex items-center gap-1.5">
+      <button (click)="onRandom()"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-app-text-2 hover:text-app-text bg-app-surface border border-app-border
+               hover:bg-app-surface-2 transition-all">
+        <lucide-icon [img]="Shuffle" [size]="13"></lucide-icon>
+        Random
+      </button>
+      <button (click)="onReset()"
+        class="px-3 py-1.5 rounded-lg text-xs font-semibold text-app-text-2 hover:text-app-text
+               bg-app-surface border border-app-border hover:bg-app-surface-2 transition-all">
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- SVG Tree stage -->
+  <div class="relative rounded-xl border border-app-border overflow-auto
+              bg-gradient-to-b from-app-surface to-app-surface-2 min-h-[360px]">
+
+    <!-- Radial glow -->
+    <div class="absolute inset-x-0 top-0 h-28 pointer-events-none
+                bg-[radial-gradient(ellipse_at_50%_0%,rgba(139,92,246,0.1),transparent_70%)]"></div>
+
+    <!-- Relative container for nodes + svg -->
+    <div class="relative inline-block min-w-full p-3"
+         [style.width.px]="svgLayout().width"
+         [style.height.px]="svgLayout().height">
+
+      <!-- SVG edges -->
+      <svg class="absolute inset-0 overflow-visible pointer-events-none"
+           [attr.width]="svgLayout().width"
+           [attr.height]="svgLayout().height">
+        @for (edge of svgLayout().edges; track $index) {
+          <line
+            [attr.x1]="edge.x1" [attr.y1]="edge.y1"
+            [attr.x2]="edge.x2" [attr.y2]="edge.y2"
+            class="stroke-app-border transition-all duration-300"
+            stroke-width="2.5"
+          ></line>
+        }
+      </svg>
+
+      <!-- Nodes -->
+      @for (node of svgLayout().nodes; track node.id) {
+        @if (node.visible) {
+          <div
+            [class]="nodeClass(node)"
+            [style.width.px]="NODE_R * 2"
+            [style.height.px]="NODE_R * 2"
+            [style.left.px]="node.x"
+            [style.top.px]="node.y"
+          >
+            {{ node.value }}
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-app-text-muted">
+    <span class="flex items-center gap-1.5">
+      <span class="w-3 h-3 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 inline-block"></span>
+      node
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+      visiting
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+      found / inserted
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+      not found / duplicate
+    </span>
+  </div>
+</div>
+
+<style>
+  @keyframes pop {
+    0%   { transform: scale(0); }
+    70%  { transform: scale(1.18); }
+    100% { transform: scale(1); }
+  }
+</style>

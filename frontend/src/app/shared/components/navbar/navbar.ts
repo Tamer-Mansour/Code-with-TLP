@@ -10,7 +10,8 @@ import { NgClass } from '@angular/common';
 import {
   LucideAngularModule,
   Code2, BookOpen, LayoutDashboard, ChevronDown,
-  Menu, X, User, LogOut, Shield, BarChart2, Sun, Moon,
+  Menu, X, User, LogOut, Shield, BarChart2, Sun, Moon, Activity,
+  Bot, Key,
 } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -41,6 +42,9 @@ export class NavbarComponent {
   readonly BarChart2      = BarChart2;
   readonly Sun            = Sun;
   readonly Moon           = Moon;
+  readonly Activity       = Activity;
+  readonly Bot            = Bot;
+  readonly Key            = Key;
 
   toggleMobile(): void {
     this.mobileOpen.update(v => !v);

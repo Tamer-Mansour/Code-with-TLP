@@ -1,0 +1,250 @@
+<div class="p-4 flex flex-col gap-4">
+
+  <!-- ── Controls row ──────────────────────────────────────────────────── -->
+  <div class="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-app-surface-2 border border-app-border">
+
+    <!-- Algorithm selector -->
+    <div class="flex items-center gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wide text-app-text-muted">Algorithm</span>
+      @for (op of ['BFS', 'DFS']; track op) {
+        <button
+          (click)="selectOp(op === 'BFS' ? 'BFS' : 'DFS')"
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150"
+          [class.text-white]="selectedOp() === op"
+          [class.bg-gradient-to-br]="selectedOp() === op"
+          [class.from-purple-500]="selectedOp() === op"
+          [class.to-blue-500]="selectedOp() === op"
+          [class.shadow-md]="selectedOp() === op"
+          [class.text-app-text-2]="selectedOp() !== op"
+          [class.bg-app-surface]="selectedOp() !== op"
+          [class.border]="selectedOp() !== op"
+          [class.border-app-border]="selectedOp() !== op"
+          [class.hover:bg-app-surface-2]="selectedOp() !== op"
+        >
+          {{ op }}
+        </button>
+      }
+    </div>
+
+    <!-- Start node selector -->
+    <div class="flex items-center gap-1.5 flex-wrap">
+      <span class="text-xs font-semibold uppercase tracking-wide text-app-text-muted">Start</span>
+      @for (id of nodeIds; track id) {
+        <button
+          (click)="selectStart(id)"
+          class="w-7 h-7 rounded-full text-xs font-bold transition-all duration-150"
+          [class.text-white]="selectedStart() === id"
+          [class.bg-gradient-to-br]="selectedStart() === id"
+          [class.from-purple-500]="selectedStart() === id"
+          [class.to-blue-500]="selectedStart() === id"
+          [class.shadow-lg]="selectedStart() === id"
+          [class.text-app-text-2]="selectedStart() !== id"
+          [class.bg-app-surface]="selectedStart() !== id"
+          [class.border]="selectedStart() !== id"
+          [class.border-app-border]="selectedStart() !== id"
+        >
+          {{ id }}
+        </button>
+      }
+    </div>
+
+    <!-- Run + Reset -->
+    <div class="ml-auto flex items-center gap-1.5">
+      <button
+        (click)="onRun()"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-white bg-gradient-to-br from-purple-500 to-blue-500
+               hover:from-purple-600 hover:to-blue-600 transition-all shadow-sm"
+      >
+        <lucide-icon [img]="Play" [size]="12"></lucide-icon>
+        Run
+      </button>
+      <button
+        (click)="onReset()"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-app-text-2 hover:text-app-text bg-app-surface border border-app-border
+               hover:bg-app-surface-2 transition-all"
+      >
+        <lucide-icon [img]="RotateCcw" [size]="12"></lucide-icon>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Main content: graph + sidebar ─────────────────────────────────── -->
+  <div class="flex flex-col lg:flex-row gap-4">
+
+    <!-- SVG graph stage -->
+    <div class="relative rounded-xl border border-app-border overflow-hidden
+                bg-gradient-to-br from-app-surface to-app-surface-2 flex-1 min-h-[340px]">
+
+      <!-- Radial glow -->
+      <div class="absolute inset-0 pointer-events-none
+                  bg-[radial-gradient(ellipse_at_30%_20%,rgba(139,92,246,0.10),transparent_65%)]"></div>
+
+      <svg
+        class="w-full h-full"
+        [attr.viewBox]="'0 0 ' + SVG_W + ' ' + SVG_H"
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="Graph traversal canvas"
+      >
+        <!-- Gradient definitions (referenced by fill) -->
+        <defs>
+          <!-- Idle: purple → blue (brand accent) -->
+          <linearGradient id="grad-idle" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#a855f7" />
+            <stop offset="100%" stop-color="#3b82f6" />
+          </linearGradient>
+          <!-- Current: amber → orange -->
+          <linearGradient id="grad-current" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#fbbf24" />
+            <stop offset="100%" stop-color="#f97316" />
+          </linearGradient>
+          <!-- Frontier: cyan → sky -->
+          <linearGradient id="grad-frontier" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#22d3ee" />
+            <stop offset="100%" stop-color="#0ea5e9" />
+          </linearGradient>
+          <!-- Visited: green → emerald -->
+          <linearGradient id="grad-visited" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#4ade80" />
+            <stop offset="100%" stop-color="#16a34a" />
+          </linearGradient>
+          <!-- Tree edge: purple → blue stroke -->
+          <linearGradient id="grad-edge-tree" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"   stop-color="#a855f7" />
+            <stop offset="100%" stop-color="#60a5fa" />
+          </linearGradient>
+        </defs>
+
+        <!-- Edges (drawn behind nodes) -->
+        @for (edge of svgLayout().edges; track edge.key) {
+          <line
+            [attr.x1]="edge.x1"
+            [attr.y1]="edge.y1"
+            [attr.x2]="edge.x2"
+            [attr.y2]="edge.y2"
+            [class]="edge.treeEdge ? 'edge-tree' : 'edge-default'"
+            stroke-linecap="round"
+          ></line>
+        }
+
+        <!-- Nodes -->
+        @for (node of svgLayout().nodes; track node.id) {
+          <g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+            <!-- Outer glow ring (state-driven opacity) -->
+            <circle
+              [attr.r]="NODE_R + 7"
+              [class]="'node-ring node-ring--' + node.state"
+              fill="none"
+              stroke-width="2"
+            ></circle>
+            <!-- Main circle -->
+            <circle
+              [attr.r]="NODE_R"
+              [class]="'node-circle node-circle--' + node.state"
+            ></circle>
+            <!-- Label -->
+            <text
+              text-anchor="middle"
+              dominant-baseline="central"
+              font-size="13"
+              font-weight="700"
+              font-family="inherit"
+              fill="white"
+              class="select-none pointer-events-none"
+            >{{ node.label }}</text>
+          </g>
+        }
+      </svg>
+    </div>
+
+    <!-- Sidebar: buffer + visited set -->
+    <div class="flex flex-col gap-3 lg:w-52 shrink-0">
+
+      <!-- Queue / Stack panel -->
+      <div class="rounded-xl border border-app-border bg-app-surface-2 p-3 flex flex-col gap-2">
+        <div class="flex items-center gap-1.5">
+          <lucide-icon [img]="ChevronRight" [size]="14" class="text-purple-400"></lucide-icon>
+          <span class="text-xs font-bold uppercase tracking-wide text-app-text-muted">
+            {{ bufferLabel() }}
+          </span>
+          @if (currentBuffer().length) {
+            <span class="ml-auto text-xs font-semibold text-purple-400">
+              {{ currentBuffer().length }}
+            </span>
+          }
+        </div>
+
+        <div class="flex flex-wrap gap-1.5 min-h-[36px]">
+          @if (currentBuffer().length === 0) {
+            <span class="text-xs text-app-text-muted italic">empty</span>
+          }
+          @for (id of currentBuffer(); track $index) {
+            <span class="chip-buffer">{{ id }}</span>
+          }
+        </div>
+
+        @if (selectedOp() === 'BFS') {
+          <p class="text-[10px] text-app-text-muted leading-tight">
+            Front of queue dequeued first (FIFO).
+          </p>
+        } @else {
+          <p class="text-[10px] text-app-text-muted leading-tight">
+            Top of stack popped first (LIFO).
+          </p>
+        }
+      </div>
+
+      <!-- Visited set panel -->
+      <div class="rounded-xl border border-app-border bg-app-surface-2 p-3 flex flex-col gap-2">
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-green-500 shrink-0"></span>
+          <span class="text-xs font-bold uppercase tracking-wide text-app-text-muted">Visited</span>
+          @if (currentVisited().length) {
+            <span class="ml-auto text-xs font-semibold text-green-400">
+              {{ currentVisited().length }}/{{ nodeIds.length }}
+            </span>
+          }
+        </div>
+
+        <div class="flex flex-wrap gap-1.5 min-h-[36px]">
+          @if (currentVisited().length === 0) {
+            <span class="text-xs text-app-text-muted italic">none yet</span>
+          }
+          @for (id of currentVisited(); track id) {
+            <span class="chip-visited">{{ id }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="rounded-xl border border-app-border bg-app-surface-2 p-3 flex flex-col gap-2">
+        <span class="text-xs font-bold uppercase tracking-wide text-app-text-muted">Legend</span>
+        <div class="flex flex-col gap-1.5 text-xs text-app-text-2">
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 shrink-0"></span>
+            Idle
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 shrink-0 ring-2 ring-amber-300/50"></span>
+            Current
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-sky-500 shrink-0 ring-2 ring-cyan-300/40"></span>
+            Frontier (queue/stack)
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 shrink-0"></span>
+            Visited
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="w-5 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 rounded shrink-0"></span>
+            Tree edge
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

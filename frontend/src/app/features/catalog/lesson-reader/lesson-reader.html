@@ -1,12 +1,29 @@
-<div class="pt-14">
+<!-- ═══════════════════════════════════════════════════════════════
+     LESSON READER  — styled shell
+     All logic / bindings are PRESERVED from the original.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ── Reading-progress bar (fixed, full-width) ───────────────── -->
+<div
+  class="fixed top-0 left-0 right-0 h-0.5 z-50 bg-transparent"
+  aria-hidden="true"
+>
+  <div
+    class="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-[width] duration-200 ease-out"
+    [style.width]="readingProgressPct() + '%'"
+  ></div>
+</div>
+
+<!-- ── Page wrapper ────────────────────────────────────────────── -->
+<div>
   <div class="page-container py-8">
 
-    <!-- Loading skeleton -->
+    <!-- ── Loading skeleton ──────────────────────────────────── -->
     @if (loading()) {
       <div class="animate-pulse space-y-6">
         <div class="skeleton h-4 w-48 rounded"></div>
         <div class="skeleton h-8 w-80 rounded-lg"></div>
-        <div class="lg:grid lg:grid-cols-[1fr_280px] gap-8 mt-6">
+        <div class="lg:grid lg:grid-cols-[1fr_288px] gap-8 mt-6">
           <div class="space-y-4">
             @for (_ of [1,2,3,4,5]; track $index) {
               <div class="skeleton h-4 rounded" [style.width]="($index % 3 === 0 ? '70%' : '100%')"></div>
@@ -17,62 +34,84 @@
       </div>
     }
 
-    <!-- Error -->
+    <!-- ── Error ──────────────────────────────────────────────── -->
     @if (error() && !loading()) {
       <div class="text-center py-24">
         <p class="text-app-text font-medium">{{ error() }}</p>
-        <a routerLink="/catalog" class="btn btn-secondary mt-4 inline-flex no-underline">← Back to Catalog</a>
+        <a routerLink="/catalog" class="btn btn-secondary mt-4 inline-flex no-underline">
+          <lucide-icon [img]="ArrowLeft" [size]="14"></lucide-icon>
+          Back to Catalog
+        </a>
       </div>
     }
 
-    <!-- Content -->
+    <!-- ── Main content ──────────────────────────────────────── -->
     @if (!loading() && !error() && lesson()) {
       @let ls = lesson()!;
 
       <!-- Breadcrumb -->
-      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-app-text-muted mb-8">
+      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-app-text-muted mb-6">
         <a routerLink="/catalog" class="hover:text-app-text-2 transition-colors no-underline">Catalog</a>
         <lucide-icon [img]="ChevronRight" [size]="12"></lucide-icon>
         @if (courseSlug()) {
-          <a [routerLink]="['/catalog/courses', courseSlug()]" class="hover:text-app-text-2 transition-colors no-underline truncate max-w-[8rem]">
-            {{ courseSlug() }}
-          </a>
+          <a
+            [routerLink]="['/catalog/courses', courseSlug()]"
+            class="hover:text-app-text-2 transition-colors no-underline truncate max-w-[8rem]"
+          >{{ courseSlug() }}</a>
           <lucide-icon [img]="ChevronRight" [size]="12"></lucide-icon>
         }
         <span class="text-app-text-2 truncate max-w-xs">{{ ls.title }}</span>
       </nav>
 
-      <div class="lg:grid lg:grid-cols-[1fr_280px] gap-8 items-start">
+      <!-- Two-column layout -->
+      <div class="lg:grid lg:grid-cols-[1fr_288px] gap-8 items-start">
 
-        <!-- Left: Main lesson content -->
+        <!-- ════════════════════════════════════════════════════
+             LEFT — main lesson body
+             ════════════════════════════════════════════════════ -->
         <main class="min-w-0">
-          <!-- Lesson header -->
-          <header class="mb-10 pb-6 border-b border-app-border">
-            <div class="flex flex-wrap items-center gap-2 mb-4">
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
-                [class]="lessonTypeBadgeClass(ls.lesson_type)"
-              >
-                <lucide-icon [img]="lessonIcon(ls.lesson_type)" [size]="11"></lucide-icon>
-                {{ lessonTypeLabel(ls.lesson_type) }}
-              </span>
-              <span class="text-xs text-app-text-muted flex items-center gap-1">
-                <lucide-icon [img]="Clock" [size]="12"></lucide-icon>
-                {{ ls.duration_minutes }} min read
-              </span>
-              @if (isCompleted) {
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400">
-                  <lucide-icon [img]="CheckCircle2" [size]="11"></lucide-icon>
-                  Completed
+
+          <!-- ── Lesson header card ──────────────────────────── -->
+          <header class="relative mb-8 rounded-2xl overflow-hidden border border-app-border bg-app-surface shadow-card">
+
+            <!-- Gradient accent strip at top of card -->
+            <div class="h-1 w-full bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400"></div>
+
+            <div class="px-6 py-6 sm:px-8 sm:py-7">
+
+              <!-- Meta row: type badge · duration · completed pill -->
+              <div class="flex flex-wrap items-center gap-2 mb-4">
+                <span
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                  [class]="lessonTypeBadgeClass(ls.lesson_type)"
+                >
+                  <lucide-icon [img]="lessonIcon(ls.lesson_type)" [size]="11"></lucide-icon>
+                  {{ lessonTypeLabel(ls.lesson_type) }}
                 </span>
-              }
+
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs text-app-text-muted bg-app-surface-2 border border-app-border">
+                  <lucide-icon [img]="Clock" [size]="11"></lucide-icon>
+                  {{ ls.duration_minutes }} min read
+                </span>
+
+                @if (isCompleted) {
+                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400 border border-green-200 dark:border-green-800/50">
+                    <lucide-icon [img]="CheckCircle2" [size]="11"></lucide-icon>
+                    Completed
+                  </span>
+                }
+              </div>
+
+              <!-- Title -->
+              <h1 class="text-2xl sm:text-3xl font-bold text-app-text leading-tight tracking-tight">
+                {{ ls.title }}
+              </h1>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-app-text leading-tight">{{ ls.title }}</h1>
           </header>
 
-          <!-- Video embed -->
+          <!-- ── Video embed ─────────────────────────────────── -->
           @if (ls.lesson_type === 'video' && ls.video_url) {
-            <div class="mb-8 rounded-xl overflow-hidden border border-app-border bg-app-surface aspect-video">
+            <div class="mb-8 rounded-xl overflow-hidden border border-app-border bg-app-surface aspect-video shadow-card">
               <iframe
                 [src]="ls.video_url"
                 class="w-full h-full"
@@ -84,16 +123,16 @@
             </div>
           }
 
-          <!-- Markdown content -->
-          @if (ls.content_md) {
-            <div class="content-prose mb-8">
+          <!-- ── Markdown content (hidden for quiz lessons) ─── -->
+          @if (ls.lesson_type !== 'quiz' && ls.content_md) {
+            <div class="content-prose mb-8 px-1 sm:px-0">
               <markdown [data]="contentBody" [disableSanitizer]="false"></markdown>
             </div>
           }
 
-          <!-- Exercise link -->
+          <!-- ── Exercise link ───────────────────────────────── -->
           @if (ls.lesson_type === 'exercise') {
-            <div class="card mb-8 flex items-center justify-between gap-4">
+            <div class="mb-8 rounded-xl border border-app-border bg-app-surface shadow-card p-5 flex items-center justify-between gap-4">
               <div>
                 <p class="text-sm font-semibold text-app-text mb-1">Coding Exercise</p>
                 <p class="text-xs text-app-text-2">This lesson has an associated coding exercise.</p>
@@ -109,13 +148,191 @@
             </div>
           }
 
-          <!-- Prev / Next navigation -->
-          <nav class="flex items-center justify-between gap-4 pt-6 border-t border-app-border" aria-label="Lesson navigation">
+          <!-- ════════════════════════════════════════════════════
+               QUIZ BODY
+               Rendered only when lesson_type === 'quiz'
+               ════════════════════════════════════════════════════ -->
+          @if (ls.lesson_type === 'quiz') {
+
+            <!-- Quiz loading skeleton -->
+            @if (quizLoading()) {
+              <div class="animate-pulse space-y-4 mb-8">
+                @for (_ of [1,2,3]; track $index) {
+                  <div class="rounded-2xl border border-app-border bg-app-surface p-5 space-y-3">
+                    <div class="skeleton h-4 w-3/4 rounded"></div>
+                    @for (__ of [1,2,3,4]; track $index) {
+                      <div class="skeleton h-10 rounded-xl"></div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Score summary (shown after submission) -->
+            @if (quizScore(); as score) {
+              <div
+                class="mb-6 rounded-2xl overflow-hidden border shadow-card"
+                [class]="score.passed
+                  ? 'border-green-300 dark:border-green-700/60 bg-green-50 dark:bg-green-950/30'
+                  : 'border-red-300 dark:border-red-700/60 bg-red-50 dark:bg-red-950/30'"
+              >
+                <div
+                  class="h-1 w-full bg-gradient-to-r"
+                  [class]="score.passed ? 'from-green-400 to-emerald-500' : 'from-red-400 to-rose-500'"
+                ></div>
+                <div class="px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4">
+                  <lucide-icon
+                    [img]="score.passed ? CheckCircle2 : XCircle"
+                    [size]="32"
+                    [class]="score.passed ? 'text-green-500 dark:text-green-400 shrink-0' : 'text-red-500 dark:text-red-400 shrink-0'"
+                  ></lucide-icon>
+                  <div>
+                    <p
+                      class="text-lg font-bold"
+                      [class]="score.passed ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'"
+                    >
+                      {{ score.passed ? 'Quiz passed!' : 'Not quite — review your answers below.' }}
+                    </p>
+                    <p
+                      class="text-sm mt-0.5"
+                      [class]="score.passed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'"
+                    >
+                      {{ score.correct }} / {{ score.total }} correct
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Question cards -->
+            @if (!quizLoading() && quizQuestions().length > 0) {
+              <div class="space-y-5 mb-8">
+                @for (question of quizQuestions(); track question.id; let qIdx = $index) {
+                  @let result = getResult(question.id);
+                  <div
+                    class="rounded-2xl border bg-app-surface shadow-card overflow-hidden transition-shadow duration-200"
+                    [class]="result
+                      ? (result.is_correct
+                          ? 'border-green-300 dark:border-green-700/60'
+                          : 'border-red-300 dark:border-red-700/60')
+                      : 'border-app-border hover:shadow-lg'"
+                  >
+                    <!-- Top accent bar -->
+                    <div
+                      class="h-0.5 w-full bg-gradient-to-r"
+                      [class]="result
+                        ? (result.is_correct ? 'from-green-400 to-emerald-500' : 'from-red-400 to-rose-500')
+                        : 'from-purple-500 to-blue-500'"
+                    ></div>
+
+                    <div class="px-5 py-5">
+                      <!-- Question prompt -->
+                      <p class="text-sm font-semibold text-app-text mb-4 leading-relaxed">
+                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-white text-[10px] font-bold mr-2 shrink-0 align-middle">
+                          {{ qIdx + 1 }}
+                        </span>
+                        {{ question.prompt }}
+                      </p>
+
+                      <!-- Options -->
+                      <div class="space-y-2.5">
+                        @for (option of question.options; track $index; let optIdx = $index) {
+                          @let isSelected = (quizSelections().get(question.id) ?? -1) === optIdx;
+                          @let isCorrectOpt = result && result.correct_index === optIdx;
+                          @let isWrongSelected = result && isSelected && !result.is_correct && result.selected_index === optIdx;
+
+                          <button
+                            type="button"
+                            (click)="selectOption(question.id, optIdx)"
+                            [disabled]="!!result"
+                            class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+                            [class]="
+                              isCorrectOpt
+                                ? 'border-green-400 dark:border-green-600 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300 cursor-default'
+                                : isWrongSelected
+                                  ? 'border-red-400 dark:border-red-600 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 cursor-default'
+                                  : isSelected
+                                    ? 'border-transparent bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md'
+                                    : 'border-app-border bg-app-surface-2/60 text-app-text-2 hover:border-purple-400/60 hover:bg-app-surface-2 disabled:cursor-default'
+                            "
+                          >
+                            <!-- Leading icon -->
+                            @if (isCorrectOpt) {
+                              <lucide-icon [img]="CheckCircle2" [size]="16" class="shrink-0 text-green-500"></lucide-icon>
+                            } @else if (isWrongSelected) {
+                              <lucide-icon [img]="XCircle" [size]="16" class="shrink-0 text-red-500"></lucide-icon>
+                            } @else {
+                              <!-- Radio circle indicator -->
+                              <span
+                                class="shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors"
+                                [class]="isSelected ? 'border-white' : 'border-app-border'"
+                              >
+                                @if (isSelected) {
+                                  <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                                }
+                              </span>
+                            }
+                            <span>{{ option }}</span>
+                          </button>
+                        }
+                      </div>
+
+                      <!-- Explanation (shown after submission) -->
+                      @if (result?.explanation) {
+                        <div class="mt-4 px-4 py-3 rounded-xl bg-app-surface-2/80 border border-app-border">
+                          <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider mb-1">Explanation</p>
+                          <p class="text-sm text-app-text-2 leading-relaxed">{{ result!.explanation }}</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <!-- Submit button (hidden after submission) -->
+              @if (!quizResults()) {
+                <div class="flex justify-end mb-8">
+                  <button
+                    type="button"
+                    (click)="submitQuiz()"
+                    [disabled]="!allAnswered() || quizSubmitting()"
+                    class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-blue-500 shadow-md transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:brightness-110 disabled:hover:brightness-100"
+                  >
+                    @if (quizSubmitting()) {
+                      <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Submitting...
+                    } @else {
+                      <lucide-icon [img]="ListChecks" [size]="15"></lucide-icon>
+                      Submit answers
+                    }
+                  </button>
+                </div>
+              }
+            }
+
+            <!-- Empty state when no questions returned -->
+            @if (!quizLoading() && quizQuestions().length === 0) {
+              <div class="mb-8 rounded-2xl border border-app-border bg-app-surface shadow-card p-8 text-center">
+                <lucide-icon [img]="ListChecks" [size]="28" class="text-app-text-muted mx-auto mb-3"></lucide-icon>
+                <p class="text-sm font-semibold text-app-text mb-1">No questions yet</p>
+                <p class="text-xs text-app-text-muted">This quiz has no questions configured.</p>
+              </div>
+            }
+          }
+          <!-- ── End quiz body ───────────────────────────────── -->
+
+          <!-- ── Prev / Next navigation ──────────────────────── -->
+          <nav
+            class="flex items-center justify-between gap-4 pt-6 mt-2 border-t border-app-border"
+            aria-label="Lesson navigation"
+          >
             <!-- Previous -->
             @if (prevLesson) {
-              <a [routerLink]="['/catalog/lessons', prevLesson.id]"
-                 [queryParams]="navQueryParams()"
-                 class="btn btn-secondary btn-sm flex items-center gap-1.5 no-underline">
+              <a
+                [routerLink]="['/catalog/lessons', prevLesson.id]"
+                [queryParams]="navQueryParams()"
+                class="btn btn-secondary btn-sm flex items-center gap-1.5 no-underline"
+              >
                 <lucide-icon [img]="ArrowLeft" [size]="14"></lucide-icon>
                 <span class="hidden sm:block">Previous</span>
               </a>
@@ -126,9 +343,9 @@
               </button>
             }
 
-            <!-- Completed / Mark Complete -->
+            <!-- Center: complete indicator / mark-complete button -->
             @if (isCompleted) {
-              <span class="flex items-center gap-1.5 text-sm text-green-400 font-medium">
+              <span class="flex items-center gap-1.5 text-sm text-green-500 dark:text-green-400 font-medium">
                 <lucide-icon [img]="CheckCircle2" [size]="16"></lucide-icon>
                 Completed
               </span>
@@ -148,14 +365,27 @@
               </button>
             }
 
-            <!-- Next -->
+            <!-- Next — disabled by quiz gate when not yet submitted -->
             @if (nextLesson) {
-              <a [routerLink]="['/catalog/lessons', nextLesson.id]"
-                 [queryParams]="navQueryParams()"
-                 class="btn btn-primary btn-sm flex items-center gap-1.5 no-underline">
-                <span class="hidden sm:block">Next</span>
-                <lucide-icon [img]="ArrowRight" [size]="14"></lucide-icon>
-              </a>
+              @if (quizGateOpen()) {
+                <a
+                  [routerLink]="['/catalog/lessons', nextLesson.id]"
+                  [queryParams]="navQueryParams()"
+                  class="btn btn-primary btn-sm flex items-center gap-1.5 no-underline"
+                >
+                  <span class="hidden sm:block">Next</span>
+                  <lucide-icon [img]="ArrowRight" [size]="14"></lucide-icon>
+                </a>
+              } @else {
+                <button
+                  class="btn btn-primary btn-sm flex items-center gap-1.5"
+                  disabled
+                  title="Submit the quiz to continue"
+                >
+                  <span class="hidden sm:block">Next</span>
+                  <lucide-icon [img]="ArrowRight" [size]="14"></lucide-icon>
+                </button>
+              }
             } @else {
               <button class="btn btn-secondary btn-sm flex items-center gap-1.5" disabled>
                 <span class="hidden sm:block">Next</span>
@@ -165,71 +395,112 @@
           </nav>
         </main>
 
-        <!-- Right sidebar -->
+        <!-- ════════════════════════════════════════════════════
+             RIGHT — sidebar
+             ════════════════════════════════════════════════════ -->
         <aside class="mt-8 lg:mt-0 lg:sticky lg:top-20 space-y-4">
 
-          <!-- Progress + timer -->
-          <div class="card space-y-3">
-            <h3 class="text-sm font-semibold text-app-text">Your Progress</h3>
-
-            <!-- Live time-on-page counter -->
-            <div class="flex items-center justify-between px-1">
-              <span class="text-xs text-app-text-muted flex items-center gap-1.5">
-                <lucide-icon [img]="Timer" [size]="12"></lucide-icon>
+          <!-- ── Time-on-page counter widget ────────────────── -->
+          <div class="rounded-2xl overflow-hidden border border-app-border bg-app-surface shadow-card">
+            <div class="h-0.5 w-full bg-gradient-to-r from-purple-500 to-blue-500"></div>
+            <div class="px-5 py-4 flex items-center justify-between gap-3">
+              <span class="flex items-center gap-2 text-xs font-semibold text-app-text-muted uppercase tracking-widest">
+                <lucide-icon [img]="Timer" [size]="14" class="shrink-0"></lucide-icon>
                 Time on page
               </span>
-              <span class="text-xs font-mono font-semibold text-app-text-2 tabular-nums">{{ timeSpentLabel }}</span>
+              <span class="font-mono font-bold text-lg text-app-text tabular-nums">{{ timeSpentLabel }}</span>
             </div>
-
-            @if (auth.isAuthenticated()) {
-              @if (isCompleted) {
-                <div class="flex items-center gap-2 p-3 rounded-lg bg-green-100 dark:bg-green-950/40 border border-green-300 dark:border-green-800/40">
-                  <lucide-icon [img]="CheckCircle2" [size]="16" class="text-green-600 dark:text-green-400 shrink-0"></lucide-icon>
-                  <p class="text-sm text-green-700 dark:text-green-400 font-medium">Lesson completed</p>
-                </div>
-              } @else {
-                <button
-                  (click)="markComplete()"
-                  class="btn btn-primary w-full justify-center"
-                  [disabled]="marking()"
-                >
-                  @if (marking()) {
-                    <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    Saving...
-                  } @else {
-                    <lucide-icon [img]="CheckCircle2" [size]="15"></lucide-icon>
-                    Mark as Complete
-                  }
-                </button>
-                <p class="text-xs text-app-text-muted text-center">
-                  Mark when you've finished this lesson
-                </p>
-              }
-            } @else {
-              <a routerLink="/login" class="btn btn-primary btn-sm w-full justify-center no-underline">Log in to track progress</a>
-            }
           </div>
 
-          <!-- Course outline (if course context available) -->
+          <!-- ── Quiz gate hint (quiz lessons only, gate closed) -->
+          @if (ls.lesson_type === 'quiz' && !quizGateOpen()) {
+            <div class="rounded-2xl overflow-hidden border border-amber-300 dark:border-amber-700/60 bg-amber-50 dark:bg-amber-950/20 shadow-card">
+              <div class="h-0.5 w-full bg-gradient-to-r from-amber-400 to-orange-400"></div>
+              <div class="px-5 py-4 flex items-start gap-3">
+                <lucide-icon [img]="ListChecks" [size]="16" class="text-amber-500 shrink-0 mt-0.5"></lucide-icon>
+                <div>
+                  <p class="text-xs font-semibold text-amber-700 dark:text-amber-300 mb-0.5">Quiz required</p>
+                  <p class="text-xs text-amber-600 dark:text-amber-400 leading-snug">
+                    Submit all answers to unlock the Next button.
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- ── Progress / Mark-complete card ──────────────── -->
+          <div class="rounded-2xl overflow-hidden border border-app-border bg-app-surface shadow-card">
+            <div class="h-0.5 w-full bg-gradient-to-r from-purple-500 to-blue-500"></div>
+            <div class="px-5 py-4 space-y-3">
+              <div class="flex items-center gap-2">
+                <lucide-icon [img]="BookOpen" [size]="14" class="text-app-text-muted shrink-0"></lucide-icon>
+                <h3 class="text-xs font-semibold text-app-text-muted uppercase tracking-widest">Your Progress</h3>
+              </div>
+
+              @if (auth.isAuthenticated()) {
+                @if (isCompleted) {
+                  <div class="flex items-center gap-2.5 p-3 rounded-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/40">
+                    <lucide-icon [img]="CheckCircle2" [size]="18" class="text-green-600 dark:text-green-400 shrink-0"></lucide-icon>
+                    <p class="text-sm text-green-700 dark:text-green-400 font-semibold">Lesson completed</p>
+                  </div>
+                } @else {
+                  <button
+                    (click)="markComplete()"
+                    class="btn btn-primary w-full justify-center"
+                    [disabled]="marking()"
+                  >
+                    @if (marking()) {
+                      <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Saving...
+                    } @else {
+                      <lucide-icon [img]="CheckCircle2" [size]="15"></lucide-icon>
+                      Mark as Complete
+                    }
+                  </button>
+                  <p class="text-xs text-app-text-muted text-center">
+                    Mark when you've finished this lesson
+                  </p>
+                }
+              } @else {
+                <a routerLink="/login" class="btn btn-primary btn-sm w-full justify-center no-underline">
+                  Log in to track progress
+                </a>
+              }
+            </div>
+          </div>
+
+          <!-- ── Course outline ──────────────────────────────── -->
           @if (courseTree()) {
-            <div class="card p-0 overflow-hidden">
+            <div class="rounded-2xl overflow-hidden border border-app-border bg-app-surface shadow-card">
+              <div class="h-0.5 w-full bg-gradient-to-r from-purple-500 to-blue-500"></div>
               <div class="px-5 py-3.5 border-b border-app-border">
-                <h3 class="text-sm font-semibold text-app-text">Course Outline</h3>
+                <h3 class="text-xs font-semibold text-app-text-muted uppercase tracking-widest">Course Outline</h3>
               </div>
               <div class="divide-y divide-app-border/60 max-h-96 overflow-y-auto">
                 @for (module of courseTree()!.modules; track module.id) {
                   <div>
-                    <div class="px-4 py-2.5 bg-app-surface-2/50">
-                      <p class="text-xs font-semibold text-app-text-2 uppercase tracking-wide leading-snug">{{ module.title }}</p>
+                    <!-- Module group header -->
+                    <div class="px-4 py-2 bg-app-surface-2/60">
+                      <p class="text-[10px] font-bold text-app-text-muted uppercase tracking-widest leading-snug">
+                        {{ module.title }}
+                      </p>
                     </div>
+                    <!-- Lesson items -->
                     @for (item of module.lessons; track item.id) {
                       <a
                         [routerLink]="['/catalog/lessons', item.id]"
                         [queryParams]="navQueryParams()"
-                        class="flex items-center gap-2.5 px-4 py-2 hover:bg-app-surface-2/70 transition-colors no-underline group/item"
+                        class="flex items-center gap-2.5 px-4 py-2.5 transition-colors no-underline group/item"
                         [class.bg-brand]="item.id === ls.id"
                         [class.bg-opacity-5]="item.id === ls.id"
+                        [class.hover:bg-app-surface-2]="item.id !== ls.id"
                       >
+                        <!-- Active indicator bar -->
+                        <span
+                          class="w-0.5 self-stretch rounded-full shrink-0 transition-colors"
+                          [class.bg-brand]="item.id === ls.id"
+                          [class.bg-transparent]="item.id !== ls.id"
+                        ></span>
                         <lucide-icon
                           [img]="lessonIcon(item.lesson_type)"
                           [size]="12"
@@ -242,7 +513,6 @@
                           [class.text-brand-light]="item.id === ls.id"
                           [class.font-semibold]="item.id === ls.id"
                           [class.text-app-text-2]="item.id !== ls.id"
-                          [class.group-hover-item-text-app-text]="item.id !== ls.id"
                         >{{ item.title }}</span>
                       </a>
                     }

@@ -16,7 +16,7 @@ import {
 } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs/operators';
-import { LucideAngularModule, Code2, Eye, EyeOff, AlertCircle } from 'lucide-angular';
+import { LucideAngularModule, Code2, Eye, EyeOff, AlertCircle, Sparkles, CircleCheck, Terminal, Zap } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 
@@ -43,6 +43,10 @@ export class RegisterComponent {
   readonly Eye = Eye;
   readonly EyeOff = EyeOff;
   readonly AlertCircle = AlertCircle;
+  readonly Sparkles = Sparkles;
+  readonly CircleCheck = CircleCheck;
+  readonly Terminal = Terminal;
+  readonly Zap = Zap;
 
   readonly loading = signal(false);
   readonly showPassword = signal(false);

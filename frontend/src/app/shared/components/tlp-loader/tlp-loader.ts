@@ -9,12 +9,10 @@ import {
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-tlp-loader',
   standalone: true,
-  imports: [NgClass],
   templateUrl: './tlp-loader.html',
   styleUrl: './tlp-loader.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

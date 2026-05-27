@@ -36,6 +36,30 @@
         Exercises
       </a>
 
+      <a
+        routerLink="/visualize"
+        routerLinkActive="text-app-text bg-app-surface-2"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150"
+        style="text-decoration: none;"
+      >
+        <lucide-icon [img]="Activity" [size]="14"></lucide-icon>
+        Visualize
+      </a>
+
+      @if (auth.isAuthenticated()) {
+        <a
+          routerLink="/chat"
+          routerLinkActive="text-app-text bg-app-surface-2"
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150"
+          style="text-decoration: none;"
+        >
+          <lucide-icon [img]="Bot" [size]="14"></lucide-icon>
+          TLP Chat
+        </a>
+      }
+
       @if (auth.isAuthenticated()) {
         <a
           routerLink="/dashboard"
@@ -127,6 +151,13 @@
                 Profile
               </a>
 
+              <a routerLink="/settings/ai-keys" (click)="closeDropdown()"
+                class="flex items-center gap-2.5 px-3 py-2 text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+                style="text-decoration: none;" role="menuitem">
+                <lucide-icon [img]="Key" [size]="14"></lucide-icon>
+                AI Keys
+              </a>
+
               @if (auth.isAdmin()) {
                 <a routerLink="/admin" (click)="closeDropdown()"
                   class="flex items-center gap-2.5 px-3 py-2 text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
@@ -185,6 +216,22 @@
           Exercises
         </a>
 
+        <a routerLink="/visualize" routerLinkActive="text-app-text bg-app-surface-2" (click)="closeMobile()"
+          class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+          style="text-decoration: none;">
+          <lucide-icon [img]="Activity" [size]="16"></lucide-icon>
+          Visualize
+        </a>
+
+        @if (auth.isAuthenticated()) {
+          <a routerLink="/chat" routerLinkActive="text-app-text bg-app-surface-2" (click)="closeMobile()"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+            style="text-decoration: none;">
+            <lucide-icon [img]="Bot" [size]="16"></lucide-icon>
+            TLP Chat
+          </a>
+        }
+
         @if (auth.isAuthenticated()) {
           <a routerLink="/dashboard" routerLinkActive="text-app-text bg-app-surface-2" (click)="closeMobile()"
             class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
@@ -219,6 +266,13 @@
             style="text-decoration: none;">
             <lucide-icon [img]="User" [size]="16"></lucide-icon>
             Profile
+          </a>
+
+          <a routerLink="/settings/ai-keys" (click)="closeMobile()"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+            style="text-decoration: none;">
+            <lucide-icon [img]="Key" [size]="16"></lucide-icon>
+            AI Keys
           </a>
 
           @if (auth.isAdmin()) {

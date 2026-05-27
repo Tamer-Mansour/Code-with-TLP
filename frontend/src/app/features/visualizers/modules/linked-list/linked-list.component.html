@@ -1,0 +1,212 @@
+<div class="ll-root flex flex-col gap-4 p-4 select-none">
+
+  <!-- ── Controls ──────────────────────────────────────────────────────────── -->
+  <div class="flex flex-wrap items-center gap-3 p-3 rounded-xl
+              bg-app-surface-2 border border-app-border">
+
+    <!-- Operation buttons -->
+    <div class="flex flex-wrap gap-1.5">
+      @for (op of operations; track op) {
+        <button
+          type="button"
+          (click)="selectOp(op)"
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 outline-none
+                 focus-visible:ring-2 focus-visible:ring-brand/60"
+          [class.text-white]="selectedOp() === op"
+          [class.bg-gradient-to-br]="selectedOp() === op"
+          [class.from-purple-500]="selectedOp() === op"
+          [class.to-blue-500]="selectedOp() === op"
+          [class.shadow-md]="selectedOp() === op"
+          [class.text-app-text-2]="selectedOp() !== op"
+          [class.bg-app-surface]="selectedOp() !== op"
+          [class.border]="selectedOp() !== op"
+          [class.border-app-border]="selectedOp() !== op"
+          [class.hover:bg-app-surface-2]="selectedOp() !== op"
+        >{{ op }}</button>
+      }
+    </div>
+
+    <!-- Value input + run -->
+    @if (needsValue()) {
+      <div class="flex items-center gap-2">
+        <input
+          type="number"
+          [value]="inputValue()"
+          (input)="onInputChange($event)"
+          (keydown)="onInputKeydown($event)"
+          placeholder="value"
+          class="w-24 px-2 py-1.5 rounded-lg text-sm bg-app-surface border border-app-border
+                 text-app-text placeholder-app-text-muted outline-none
+                 focus:ring-2 focus:ring-brand/50 transition"
+        />
+        <button
+          type="button"
+          (click)="run()"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+                 bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow
+                 hover:opacity-90 active:scale-95 transition-all outline-none
+                 focus-visible:ring-2 focus-visible:ring-brand/60"
+        >
+          <lucide-icon [img]="Plus" [size]="13"></lucide-icon>
+          Run
+        </button>
+      </div>
+    } @else {
+      <!-- Reverse has no value input -->
+      <button
+        type="button"
+        (click)="run()"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+               bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow
+               hover:opacity-90 active:scale-95 transition-all outline-none
+               focus-visible:ring-2 focus-visible:ring-brand/60"
+      >
+        <lucide-icon [img]="RefreshCw" [size]="13"></lucide-icon>
+        Reverse
+      </button>
+    }
+
+    <!-- Reset -->
+    <button
+      type="button"
+      (click)="reset()"
+      class="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+             text-app-text-2 hover:text-app-text bg-app-surface border border-app-border
+             hover:bg-app-surface-2 transition-all outline-none
+             focus-visible:ring-2 focus-visible:ring-brand/60"
+    >
+      <lucide-icon [img]="RotateCcw" [size]="13"></lucide-icon>
+      Reset
+    </button>
+  </div>
+
+  <!-- ── Complexity badge ───────────────────────────────────────────────────── -->
+  @if (currentComplexity(); as cx) {
+    <div class="flex items-center gap-3 text-xs">
+      <span class="text-app-text-muted font-medium uppercase tracking-wide">Complexity</span>
+      <span class="px-2 py-0.5 rounded-full bg-app-surface-2 border border-app-border text-app-text-2 font-mono">
+        Time: <span class="text-brand font-bold">{{ cx.time }}</span>
+      </span>
+      <span class="px-2 py-0.5 rounded-full bg-app-surface-2 border border-app-border text-app-text-2 font-mono">
+        Space: <span class="text-brand font-bold">{{ cx.space }}</span>
+      </span>
+    </div>
+  }
+
+  <!-- ── Canvas ─────────────────────────────────────────────────────────────── -->
+  <div class="ll-canvas relative rounded-xl border border-app-border overflow-x-auto
+              bg-gradient-to-b from-app-surface to-app-surface-2"
+       style="min-height: 180px;">
+
+    <!-- Radial ambient glow -->
+    <div class="absolute inset-x-0 top-0 h-28 pointer-events-none
+                bg-[radial-gradient(ellipse_at_50%_0%,rgba(139,92,246,0.10),transparent_70%)]"></div>
+
+    <!-- Nodes + arrows row -->
+    <div class="relative flex items-center gap-0 px-6 py-10 min-w-max">
+
+      <!-- HEAD pointer label -->
+      @if (displayNodes().length > 0) {
+        <div class="ll-head-label absolute top-3 left-6 flex flex-col items-center gap-0.5"
+             style="min-width: 72px;">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-brand">head</span>
+          <div class="w-px h-3 bg-brand/60"></div>
+        </div>
+      }
+
+      @if (displayNodes().length === 0) {
+        <!-- Empty state -->
+        <div class="flex items-center gap-2 text-app-text-muted text-sm italic py-4">
+          <span>null</span>
+          <span class="text-xs">— list is empty</span>
+        </div>
+      } @else {
+        <!-- Nodes -->
+        @for (node of displayNodes(); track trackById($index, node); let last = $last) {
+
+          <!-- Node box -->
+          <div [class]="nodeClass(node.state)" [attr.data-nodeid]="node.id">
+            <!-- Value -->
+            <span class="node-value">{{ node.value }}</span>
+            <!-- State badge (shown when not idle) -->
+            @if (node.state !== 'idle' && node.state !== 'head') {
+              <span class="node-badge">{{ node.state }}</span>
+            }
+            @if (node.state === 'head') {
+              <span class="node-badge node-badge-head">head</span>
+            }
+          </div>
+
+          <!-- Arrow to next node (or null terminator) -->
+          <div class="ll-arrow-wrap flex items-center">
+            @if (!last) {
+              <div [class]="arrowClass(node.state)">
+                <!-- Arrow shaft -->
+                <div class="arrow-shaft"></div>
+                <!-- Arrowhead SVG -->
+                <svg width="10" height="12" viewBox="0 0 10 12" class="arrow-head" aria-hidden="true">
+                  <path d="M0 0 L10 6 L0 12 Z" />
+                </svg>
+              </div>
+            } @else {
+              <!-- Null terminator -->
+              <div class="ll-null-term">
+                <div class="null-shaft"></div>
+                <span class="null-label">null</span>
+              </div>
+            }
+          </div>
+
+        }
+      }
+    </div>
+  </div>
+
+  <!-- ── Note / explanation ─────────────────────────────────────────────────── -->
+  @if (currentNote()) {
+    <div class="ll-note px-4 py-2.5 rounded-xl border border-app-border
+                bg-app-surface text-app-text-2 text-sm leading-relaxed"
+         [innerHTML]="currentNote()">
+    </div>
+  }
+
+  <!-- ── Legend ─────────────────────────────────────────────────────────────── -->
+  <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-app-text-muted">
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot bg-gradient-to-br from-purple-500 to-blue-500"></span>
+      idle
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot bg-brand/80"></span>
+      head
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot bg-amber-400"></span>
+      visiting
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot bg-cyan-400"></span>
+      active / current
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot bg-green-500"></span>
+      found / sorted
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot bg-red-500"></span>
+      deleting
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot bg-emerald-400"></span>
+      new node
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot bg-violet-400"></span>
+      pointer set
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="legend-dot bg-fuchsia-400"></span>
+      pointer flipped
+    </span>
+  </div>
+</div>

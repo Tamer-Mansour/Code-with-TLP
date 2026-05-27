@@ -1,0 +1,36 @@
+<label
+  class="tlp-switch"
+  [class.tlp-switch--on]="on()"
+  [class.tlp-switch--disabled]="disabled()"
+  [class.tlp-switch--focused]="focused()"
+  [attr.for]="inputId"
+>
+  @if (label && labelPosition === 'before') {
+    <span class="tlp-switch__label">{{ label }}</span>
+  }
+
+  <!-- Hidden native checkbox -->
+  <input
+    type="checkbox"
+    class="sr-only"
+    role="switch"
+    [id]="inputId"
+    [checked]="on()"
+    [disabled]="disabled()"
+    [attr.aria-checked]="on()"
+    (change)="toggle()"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    (keydown)="onKeyDown($event)"
+  />
+
+  <!-- Visual track -->
+  <span class="tlp-switch__track" aria-hidden="true">
+    <span class="tlp-switch__thumb"></span>
+  </span>
+
+  @if (label && labelPosition === 'after') {
+    <span class="tlp-switch__label">{{ label }}</span>
+  }
+  <ng-content />
+</label>

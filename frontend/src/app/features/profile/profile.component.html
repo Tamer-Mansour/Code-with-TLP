@@ -1,4 +1,6 @@
-<!-- ── BANNER / HERO ─────────────────────────────────────── -->
+<!-- ══════════════════════════════════════════════════════
+     PROFILE HERO / BANNER
+     ══════════════════════════════════════════════════════ -->
 <div class="relative overflow-hidden" [style]="bannerStyle()">
 
   <!-- Geometric pattern overlay -->
@@ -16,15 +18,13 @@
   <div class="max-w-4xl mx-auto px-6 py-10">
     <div class="flex flex-col sm:flex-row items-start sm:items-end gap-6">
 
-      <!-- ── Avatar ── -->
+      <!-- Avatar -->
       <div class="relative flex-shrink-0">
-        <!-- Animated glow ring for Diamond+ -->
         @if (rankInfo().animated) {
           <div class="absolute -inset-2 rounded-full rank-glow-ring"
                [style.box-shadow]="'0 0 18px 6px ' + rankInfo().glowColor">
           </div>
         }
-        <!-- Avatar circle -->
         <div class="relative w-24 h-24 rounded-full border-4 overflow-hidden z-10"
              [style.border-color]="rankInfo().accentColor">
           @if (user()?.avatar_url) {
@@ -37,7 +37,7 @@
             </div>
           }
         </div>
-        <!-- Rank pip badge under avatar -->
+        <!-- Rank pip -->
         <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 z-20
                      flex items-center gap-1 px-2.5 py-0.5 rounded-full
                      text-[10px] font-bold shadow-lg whitespace-nowrap select-none"
@@ -48,7 +48,7 @@
         </div>
       </div>
 
-      <!-- ── Name + info ── -->
+      <!-- Name + info -->
       <div class="flex-1 min-w-0 pb-2 pt-2 sm:pt-0">
         <h1 class="text-2xl sm:text-3xl font-bold leading-tight truncate"
             [style.color]="rankInfo().textColor">
@@ -58,7 +58,7 @@
           &#64;{{ user()?.username }}
         </p>
         @if (user()?.bio) {
-          <p class="text-sm opacity-70 mt-2 max-w-md leading-relaxed" [style.color]="rankInfo().textColor">
+          <p class="text-sm opacity-75 mt-2 max-w-md leading-relaxed" [style.color]="rankInfo().textColor">
             {{ user()!.bio }}
           </p>
         }
@@ -68,19 +68,19 @@
         </p>
       </div>
 
-      <!-- ── Edit button ── -->
+      <!-- Edit button -->
       <button
         (click)="openEdit()"
-        class="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg
+        class="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl
                text-sm font-medium transition-all duration-150 border
-               bg-white/10 hover:bg-white/20 border-white/25 backdrop-blur-sm"
+               bg-white/10 hover:bg-white/20 active:bg-white/30 border-white/25 backdrop-blur-sm"
         [style.color]="rankInfo().textColor">
         <lucide-icon name="pencil" class="w-4 h-4" />
         Edit Profile
       </button>
     </div>
 
-    <!-- ── Rank progress bar ── -->
+    <!-- Rank progress bar -->
     <div class="mt-7">
       <div class="flex justify-between items-center mb-1.5">
         <span class="text-xs font-semibold opacity-80" [style.color]="rankInfo().textColor">
@@ -112,75 +112,113 @@
   </div>
 </div>
 
-<!-- ── CONTENT ────────────────────────────────────────────── -->
-<div class="max-w-4xl mx-auto px-6 py-8 space-y-8">
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE BODY
+     ══════════════════════════════════════════════════════ -->
+<div class="max-w-4xl mx-auto px-6 py-8 space-y-6">
 
   <!-- Loading skeletons -->
   @if (loading()) {
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
       @for (i of [1,2,3,4]; track i) {
-        <div class="skeleton h-24 rounded-xl"></div>
+        <div class="skeleton h-28 rounded-2xl"></div>
       }
     </div>
-    <div class="skeleton h-40 rounded-xl"></div>
+    <div class="skeleton h-48 rounded-2xl"></div>
+    <div class="skeleton h-64 rounded-2xl"></div>
   }
 
   @if (!loading()) {
 
-    <!-- ── Stats row ── -->
+    <!-- ── Stats row ───────────────────────────────────── -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="card text-center">
-        <p class="text-3xl font-bold text-gradient tabular-nums">{{ totalScore() | number }}</p>
-        <p class="text-xs text-app-text-muted mt-1.5 flex items-center justify-center gap-1">
-          <lucide-icon name="zap" class="w-3 h-3" /> Total Score
-        </p>
+
+      <!-- Total Score -->
+      <div class="bg-app-surface rounded-2xl border border-app-border shadow-card p-5 flex flex-col gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center
+                    bg-gradient-to-br from-purple-500/15 to-blue-500/15
+                    dark:from-purple-500/20 dark:to-blue-500/20">
+          <lucide-icon name="zap" class="w-[18px] h-[18px] text-purple-500" />
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gradient tabular-nums leading-none">
+            {{ totalScore() | number }}
+          </p>
+          <p class="text-xs text-app-text-muted mt-1.5 font-medium">Total Score</p>
+        </div>
       </div>
-      <div class="card text-center">
-        <p class="text-3xl font-bold text-green-500 tabular-nums">{{ acceptedSubmissions().length | number }}</p>
-        <p class="text-xs text-app-text-muted mt-1.5 flex items-center justify-center gap-1">
-          <lucide-icon name="check-circle" class="w-3 h-3" /> Solved
-        </p>
+
+      <!-- Solved -->
+      <div class="bg-app-surface rounded-2xl border border-app-border shadow-card p-5 flex flex-col gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center
+                    bg-green-500/10 dark:bg-green-500/15">
+          <lucide-icon name="check-circle" class="w-[18px] h-[18px] text-green-500" />
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-green-500 tabular-nums leading-none">
+            {{ acceptedSubmissions().length | number }}
+          </p>
+          <p class="text-xs text-app-text-muted mt-1.5 font-medium">Solved</p>
+        </div>
       </div>
-      <div class="card text-center">
-        <p class="text-3xl font-bold text-blue-400 tabular-nums">{{ acceptanceRate() | number:'1.0-1' }}%</p>
-        <p class="text-xs text-app-text-muted mt-1.5 flex items-center justify-center gap-1">
-          <lucide-icon name="trending-up" class="w-3 h-3" /> Acceptance
-        </p>
+
+      <!-- Acceptance Rate -->
+      <div class="bg-app-surface rounded-2xl border border-app-border shadow-card p-5 flex flex-col gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center
+                    bg-blue-500/10 dark:bg-blue-500/15">
+          <lucide-icon name="trending-up" class="w-[18px] h-[18px] text-blue-400" />
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-blue-400 tabular-nums leading-none">
+            {{ acceptanceRate() | number:'1.0-1' }}%
+          </p>
+          <p class="text-xs text-app-text-muted mt-1.5 font-medium">Acceptance</p>
+        </div>
       </div>
-      <div class="card text-center">
-        <p class="text-3xl font-bold text-app-text tabular-nums">{{ totalSubmissions() | number }}</p>
-        <p class="text-xs text-app-text-muted mt-1.5 flex items-center justify-center gap-1">
-          <lucide-icon name="activity" class="w-3 h-3" /> Submissions
-        </p>
+
+      <!-- Total Submissions -->
+      <div class="bg-app-surface rounded-2xl border border-app-border shadow-card p-5 flex flex-col gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center
+                    bg-app-surface-2 dark:bg-app-surface-2">
+          <lucide-icon name="activity" class="w-[18px] h-[18px] text-app-text-2" />
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-app-text tabular-nums leading-none">
+            {{ totalSubmissions() | number }}
+          </p>
+          <p class="text-xs text-app-text-muted mt-1.5 font-medium">Submissions</p>
+        </div>
       </div>
     </div>
 
-    <!-- ── Rank card + Languages ── -->
+
+    <!-- ── Rank card + Language breakdown ─────────────── -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-      <!-- Rank card -->
-      <div class="card relative overflow-hidden">
-        <!-- Decorative icon watermark -->
-        <div class="absolute right-3 top-3 opacity-[0.06] pointer-events-none">
+      <!-- Rank Card -->
+      <div class="bg-app-surface rounded-2xl border border-app-border shadow-card p-6 relative overflow-hidden">
+        <!-- Watermark icon -->
+        <div class="absolute right-4 top-4 opacity-[0.05] pointer-events-none select-none">
           <lucide-icon [name]="rankInfo().icon" class="w-28 h-28" />
         </div>
 
-        <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider mb-4">Current Rank</p>
+        <p class="text-[11px] font-semibold text-app-text-muted uppercase tracking-wider mb-4">Current Rank</p>
 
         <div class="flex items-center gap-4">
-          <!-- Rank emblem -->
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg"
+          <!-- Emblem -->
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-popover"
                [style.background]="'linear-gradient(135deg,' + rankInfo().gradientFrom + ',' + rankInfo().gradientTo + ')'">
             <lucide-icon [name]="rankInfo().icon" class="w-7 h-7 text-white" />
           </div>
-          <div>
-            <p class="text-xl font-bold text-app-text">{{ rankInfo().name }}</p>
-            <p class="text-xs text-app-text-muted">{{ rankInfo().label }}</p>
-            <p class="text-xs text-app-text-muted mt-0.5">{{ totalScore() }} total points</p>
+          <div class="min-w-0">
+            <p class="text-xl font-bold text-app-text leading-tight">{{ rankInfo().name }}</p>
+            <p class="text-xs text-app-text-muted mt-0.5">{{ rankInfo().label }}</p>
+            <p class="text-xs text-app-text-muted mt-0.5 tabular-nums">{{ totalScore() | number }} total points</p>
           </div>
         </div>
 
-        <!-- All-rank tier strip -->
+        <!-- Tier strip -->
         <div class="mt-5">
           <div class="flex items-center gap-1">
             @for (r of RANKS; track r.tier) {
@@ -190,32 +228,46 @@
               </div>
             }
           </div>
-          <div class="flex justify-between mt-1">
+          <div class="flex justify-between mt-1.5">
             <span class="text-[10px] text-app-text-muted">Newcomer</span>
             <span class="text-[10px] text-app-text-muted">Legend</span>
           </div>
         </div>
       </div>
 
-      <!-- Language breakdown -->
-      <div class="card">
-        <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider mb-4">Top Languages (Solved)</p>
+      <!-- Language Breakdown -->
+      <div class="bg-app-surface rounded-2xl border border-app-border shadow-card p-6">
+        <p class="text-[11px] font-semibold text-app-text-muted uppercase tracking-wider mb-4">
+          Top Languages (Solved)
+        </p>
+
         @if (languageCounts().length === 0) {
           <div class="flex flex-col items-center justify-center py-6 text-center">
-            <lucide-icon name="code-2" class="w-8 h-8 text-app-text-muted mb-2" />
-            <p class="text-sm text-app-text-muted">No solved problems yet.</p>
-            <a routerLink="/exercises" class="text-xs text-brand mt-1 hover:underline">Browse exercises</a>
+            <div class="w-12 h-12 rounded-2xl bg-app-surface-2 flex items-center justify-center mb-3">
+              <lucide-icon name="code-2" class="w-5 h-5 text-app-text-muted" />
+            </div>
+            <p class="text-sm font-medium text-app-text mb-1">No solved problems yet</p>
+            <p class="text-xs text-app-text-muted mb-3">Your language stats appear after your first accepted submission.</p>
+            <a routerLink="/exercises"
+               class="inline-flex items-center gap-1.5 text-xs font-medium text-brand hover:text-brand-dark dark:hover:text-brand-light transition-colors">
+              <lucide-icon name="arrow-right" class="w-3 h-3" />
+              Browse exercises
+            </a>
           </div>
         } @else {
-          <div class="space-y-3">
+          <div class="space-y-4">
             @for (entry of languageCounts(); track entry[0]) {
               <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span class="font-medium text-app-text">{{ LANGUAGE_LABELS[entry[0]] ?? entry[0] }}</span>
-                  <span class="text-app-text-muted">{{ entry[1] }} solved</span>
+                <div class="flex justify-between items-center mb-1.5">
+                  <span class="text-sm font-medium text-app-text">
+                    {{ LANGUAGE_LABELS[entry[0]] ?? entry[0] }}
+                  </span>
+                  <span class="text-xs font-medium text-app-text-muted tabular-nums">
+                    {{ entry[1] }} solved
+                  </span>
                 </div>
-                <div class="h-1.5 bg-app-surface-2 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full bg-brand transition-all duration-500"
+                <div class="h-2 bg-app-surface-2 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-700 ease-out"
                        [style.width.%]="(entry[1] / acceptedSubmissions().length) * 100">
                   </div>
                 </div>
@@ -226,11 +278,23 @@
       </div>
     </div>
 
-    <!-- ── Recent Submissions ── -->
+
+    <!-- ── Recent Submissions ──────────────────────────── -->
     @if (totalSubmissions() > 0) {
-      <div>
-        <h2 class="text-base font-semibold text-app-text mb-3">Recent Submissions</h2>
-        <div class="table-wrap">
+      <div class="bg-app-surface rounded-2xl border border-app-border shadow-card overflow-hidden">
+        <!-- Card header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-app-border">
+          <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-app-surface-2 flex items-center justify-center">
+              <lucide-icon name="clock" class="w-3.5 h-3.5 text-app-text-muted" />
+            </div>
+            <h2 class="text-sm font-semibold text-app-text">Recent Submissions</h2>
+          </div>
+          <span class="text-xs text-app-text-muted tabular-nums">Last {{ recentSubmissions().length }}</span>
+        </div>
+
+        <!-- Table (no extra border wrapper needed — card IS the container) -->
+        <div class="overflow-x-auto">
           <table class="table">
             <thead>
               <tr>
@@ -251,7 +315,7 @@
                   <td>
                     <span [ngClass]="getStatusBadge(sub.status)">{{ getStatusLabel(sub.status) }}</span>
                   </td>
-                  <td class="font-mono text-xs font-semibold">{{ sub.score }}</td>
+                  <td class="font-mono text-xs font-semibold tabular-nums">{{ sub.score }}</td>
                   <td class="text-xs text-app-text-muted">{{ sub.created_at | date:'mediumDate' }}</td>
                 </tr>
               }
@@ -260,66 +324,79 @@
         </div>
       </div>
     } @else {
-      <div class="card flex flex-col items-center justify-center py-12 text-center">
-        <lucide-icon name="code-2" class="w-10 h-10 text-app-text-muted mb-3" />
-        <p class="text-sm font-medium text-app-text mb-1">No submissions yet</p>
-        <p class="text-xs text-app-text-muted mb-4">Solve exercises to build your profile and climb the ranks.</p>
+      <!-- Empty state card -->
+      <div class="bg-app-surface rounded-2xl border border-app-border shadow-card p-12
+                   flex flex-col items-center justify-center text-center">
+        <div class="w-14 h-14 rounded-2xl bg-app-surface-2 flex items-center justify-center mb-4">
+          <lucide-icon name="code-2" class="w-6 h-6 text-app-text-muted" />
+        </div>
+        <p class="text-sm font-semibold text-app-text mb-1">No submissions yet</p>
+        <p class="text-xs text-app-text-muted mb-5 max-w-xs leading-relaxed">
+          Solve exercises to build your profile and climb the ranks.
+        </p>
         <a routerLink="/exercises" class="btn-primary btn-sm">Browse Exercises</a>
       </div>
     }
 
-  }
+  }<!-- end !loading -->
 </div>
 
 
-<!-- ── EDIT PROFILE PANEL ──────────────────────────────────── -->
+<!-- ══════════════════════════════════════════════════════
+     EDIT PROFILE PANEL (slide-in drawer)
+     ══════════════════════════════════════════════════════ -->
 @if (editOpen()) {
   <!-- Backdrop -->
   <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
        (click)="closeEdit()">
   </div>
 
-  <!-- Panel -->
+  <!-- Drawer -->
   <div class="fixed inset-y-0 right-0 w-full max-w-md bg-app-surface border-l border-app-border
                shadow-popover z-50 flex flex-col overflow-y-auto animate-slide-up">
 
-    <!-- Header -->
+    <!-- Drawer header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-app-border flex-shrink-0">
-      <h2 class="text-base font-semibold text-app-text">Edit Profile</h2>
-      <button (click)="closeEdit()" class="btn-icon btn-ghost">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500/15 to-blue-500/15
+                     flex items-center justify-center">
+          <lucide-icon name="pencil" class="w-3.5 h-3.5 text-purple-500" />
+        </div>
+        <h2 class="text-base font-semibold text-app-text">Edit Profile</h2>
+      </div>
+      <button (click)="closeEdit()" class="btn-icon btn-ghost" aria-label="Close">
         <lucide-icon name="x" class="w-4 h-4" />
       </button>
     </div>
 
-    <!-- Form -->
-    <form [formGroup]="editForm" (ngSubmit)="saveProfile()" class="flex-1 px-6 py-5 space-y-5">
+    <!-- Form body -->
+    <form [formGroup]="editForm" (ngSubmit)="saveProfile()" class="flex-1 px-6 py-6 space-y-6">
 
-      <!-- Avatar upload -->
-      <div>
-        <label class="label">Avatar</label>
+      <!-- ── Avatar upload ── -->
+      <div class="bg-app-surface-2 rounded-2xl p-4 space-y-4">
+        <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider">Avatar</p>
         <div class="flex items-center gap-4">
 
-          <!-- Preview circle — click to pick file -->
+          <!-- Preview circle -->
           <label class="relative w-16 h-16 rounded-full overflow-hidden border-2 border-app-border
                          flex-shrink-0 cursor-pointer group" title="Click to upload image">
             @if (avatarPreview()) {
               <img [src]="avatarPreview()" alt="avatar preview" class="w-full h-full object-cover" />
             } @else {
               <div class="w-full h-full flex items-center justify-center
-                           text-lg font-bold bg-app-surface-2 text-app-text-muted">
+                           text-lg font-bold bg-app-surface text-app-text-muted">
                 {{ initials() }}
               </div>
             }
-            <!-- Hover overlay -->
             <div class="absolute inset-0 bg-black/50 flex items-center justify-center
-                         opacity-0 group-hover:opacity-100 transition-opacity">
+                         opacity-0 group-hover:opacity-100 transition-opacity duration-150">
               <lucide-icon name="camera" class="w-5 h-5 text-white" />
             </div>
             <input type="file" accept="image/*" class="sr-only"
                    (change)="onAvatarFileChange($event)" />
           </label>
 
-          <!-- Actions -->
+          <!-- Upload actions -->
           <div class="flex flex-col gap-2">
             <label class="btn-secondary btn-sm cursor-pointer inline-flex items-center gap-1.5">
               <lucide-icon name="upload" class="w-3.5 h-3.5" />
@@ -334,105 +411,119 @@
                 Remove
               </button>
             }
-            <p class="text-[11px] text-app-text-muted">JPEG, PNG or WebP — max 2 MB</p>
+            <p class="text-[11px] text-app-text-muted leading-snug">
+              JPEG, PNG or WebP — max 2 MB
+            </p>
           </div>
         </div>
 
         @if (avatarError()) {
-          <p class="text-xs text-red-400 mt-2 flex items-center gap-1">
-            <lucide-icon name="alert-circle" class="w-3.5 h-3.5" />
+          <p class="text-xs text-red-400 flex items-center gap-1.5">
+            <lucide-icon name="alert-circle" class="w-3.5 h-3.5 flex-shrink-0" />
             {{ avatarError() }}
           </p>
         }
       </div>
 
-      <!-- Full Name -->
+      <!-- ── Full Name ── -->
       <div>
-        <label class="label">Full Name</label>
-        <input type="text" formControlName="full_name" placeholder="Your name" class="input" />
+        <label class="label" for="edit-full-name">Full Name</label>
+        <input id="edit-full-name" type="text" formControlName="full_name"
+               placeholder="Your display name" class="input" />
       </div>
 
-      <!-- Bio -->
+      <!-- ── Bio ── -->
       <div>
-        <label class="label">Bio</label>
-        <textarea formControlName="bio" rows="3"
+        <label class="label" for="edit-bio">Bio</label>
+        <textarea id="edit-bio" formControlName="bio" rows="3"
                   placeholder="Tell us about yourself..."
-                  class="input resize-none">
+                  class="input resize-none leading-relaxed">
         </textarea>
+        <p class="text-[11px] text-app-text-muted mt-1.5">Shown on your public profile.</p>
       </div>
 
       <!-- ── Banner Style Picker ── -->
       <div>
-        <p class="label">Profile Banner Style</p>
+        <p class="label">Banner Style</p>
         <div class="grid grid-cols-3 gap-2">
           @for (opt of BG_OPTIONS; track opt.value) {
             <button type="button"
                     (click)="setBg(opt.value)"
-                    class="relative h-16 rounded-xl overflow-hidden border-2 transition-all duration-150"
+                    class="relative h-16 rounded-xl overflow-hidden border-2 transition-all duration-150
+                           focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2
+                           focus-visible:ring-offset-app-surface"
                     [class.border-brand]="selectedBg() === opt.value"
                     [class.border-app-border]="selectedBg() !== opt.value">
-              <!-- Mini preview of the banner style -->
               <div class="absolute inset-0" [style]="getBannerPreview(opt.value)"></div>
               @if (opt.value === 'geometric') {
                 <div class="absolute inset-0"
-                     style="background-image: repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0px,rgba(255,255,255,.07) 1px,transparent 1px,transparent 28px);background-size:14px 14px;">
+                     style="background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0px,rgba(255,255,255,.07) 1px,transparent 1px,transparent 28px);background-size:14px 14px;">
                 </div>
               }
-              <span class="absolute bottom-1 inset-x-0 text-center text-[10px] font-semibold text-white drop-shadow">
+              <span class="absolute bottom-1 inset-x-0 text-center text-[10px] font-semibold text-white drop-shadow-sm">
                 {{ opt.label }}
               </span>
               @if (selectedBg() === opt.value) {
                 <div class="absolute top-1 right-1 w-4 h-4 rounded-full bg-brand
-                             flex items-center justify-center shadow">
+                             flex items-center justify-center shadow-sm">
                   <lucide-icon name="check-circle-2" class="w-3 h-3 text-white" />
                 </div>
               }
             </button>
           }
         </div>
-        <p class="text-xs text-app-text-muted mt-2">Banner colors are determined by your current rank.</p>
+        <p class="text-[11px] text-app-text-muted mt-2">
+          Banner colors are determined by your current rank.
+        </p>
       </div>
 
       <!-- ── Change Password (collapsible) ── -->
-      <div class="rounded-xl border border-app-border overflow-hidden">
+      <div class="rounded-2xl border border-app-border overflow-hidden">
         <button type="button"
                 (click)="togglePasswordSection()"
                 class="w-full flex items-center justify-between px-4 py-3
                        text-sm font-medium text-app-text
-                       bg-app-surface-2 hover:bg-app-border transition-colors">
+                       bg-app-surface-2 hover:bg-app-border transition-colors duration-150">
           <div class="flex items-center gap-2">
             <lucide-icon name="lock" class="w-4 h-4 text-app-text-muted" />
             Change Password
           </div>
           <lucide-icon [name]="passwordOpen() ? 'chevron-up' : 'chevron-down'"
-                       class="w-4 h-4 text-app-text-muted" />
+                       class="w-4 h-4 text-app-text-muted transition-transform duration-150" />
         </button>
+
         @if (passwordOpen()) {
-          <div class="p-4 border-t border-app-border animate-slide-down">
-            <label class="label">New Password</label>
-            <input type="password" formControlName="new_password"
+          <div class="px-4 py-4 border-t border-app-border animate-slide-down space-y-1.5">
+            <label class="label" for="edit-new-password">New Password</label>
+            <input id="edit-new-password" type="password" formControlName="new_password"
                    placeholder="Minimum 8 characters"
                    class="input" />
             @if (editForm.get('new_password')?.errors?.['minlength'] && editForm.get('new_password')?.touched) {
-              <p class="text-xs text-red-400 mt-1">Password must be at least 8 characters.</p>
+              <p class="text-xs text-red-400 flex items-center gap-1">
+                <lucide-icon name="alert-circle" class="w-3 h-3 flex-shrink-0" />
+                Password must be at least 8 characters.
+              </p>
             }
           </div>
         }
       </div>
 
-      <!-- Footer actions -->
-      <div class="flex items-center justify-end gap-3 pt-2
-                   sticky bottom-0 bg-app-surface py-4 -mx-6 px-6 border-t border-app-border">
-        <button type="button" (click)="closeEdit()" class="btn-secondary">Cancel</button>
-        <button type="submit"
-                [disabled]="editForm.invalid || saving()"
-                class="btn-primary flex items-center gap-2">
-          @if (saving()) {
-            <lucide-icon name="loader-2" class="w-4 h-4 animate-spin" />
-          }
-          Save Changes
-        </button>
-      </div>
     </form>
-  </div>
+
+    <!-- Drawer footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-4
+                 border-t border-app-border bg-app-surface flex-shrink-0">
+      <button type="button" (click)="closeEdit()" class="btn-secondary">Cancel</button>
+      <button type="submit" form="edit-profile-form"
+              (click)="saveProfile()"
+              [disabled]="editForm.invalid || saving()"
+              class="btn-primary flex items-center gap-2 min-w-[110px] justify-center">
+        @if (saving()) {
+          <lucide-icon name="loader-2" class="w-4 h-4 animate-spin" />
+        }
+        Save Changes
+      </button>
+    </div>
+
+  </div><!-- end drawer -->
 }
