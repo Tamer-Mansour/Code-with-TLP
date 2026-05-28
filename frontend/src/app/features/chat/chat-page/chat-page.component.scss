@@ -87,16 +87,25 @@
 .chat-aurora::before { background: rgb(var(--color-brand-light-rgb)); top: -12%; left: 8%;  animation: tlp-float-a 16s ease-in-out infinite; }
 .chat-aurora::after  { background: rgb(var(--color-brand-rgb)); bottom: -12%; right: 8%; animation: tlp-float-b 20s ease-in-out infinite; }
 
-/* Animated conic gradient-border for the composer — Claude-style clean border with subtle focus glow */
+/* Claude-style clean input — no visible focus ring, just a subtle border */
 .composer-glow {
-  border: 1.5px solid rgb(var(--color-app-border)) !important;
+  border: 1px solid rgb(var(--color-app-border)) !important;
   background: rgb(var(--color-app-surface));
   border-radius: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.2s ease;
 }
 .composer-glow:focus-within {
-  border-color: rgba(var(--color-brand-rgb), 0.5) !important;
-  box-shadow: 0 0 0 1px rgba(var(--color-brand-rgb), 0.25);
+  border-color: rgb(var(--color-app-border)) !important;
+  box-shadow: none !important;
+  background: rgb(var(--color-app-surface-2));
+}
+
+/* Kill the global :focus-visible ring on the composer textarea */
+.composer-glow textarea:focus-visible {
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* Rotating halo behind the welcome hero orb (kept for compatibility) */

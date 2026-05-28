@@ -10,7 +10,7 @@
       </div>
       <h1 class="text-3xl sm:text-4xl font-extrabold text-app-text tracking-tight">
         Watch algorithms
-        <span class="brand-gradient-text">
+        <span class="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
           come alive.
         </span>
       </h1>
@@ -20,30 +20,35 @@
       </p>
     </div>
 
-    <!-- ── Combined Flat Grid ────────────────────────────────────── -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-16">
-      @for (entry of entries; track entry.meta.slug) {
+    <!-- ── Grouped category sections ─────────────────────────────── -->
+    @for (group of grouped; track group.category) {
+    <section class="mb-16">
+
+      <!-- Category heading -->
+      <h2 class="text-xs font-semibold uppercase tracking-widest text-app-text-muted mb-8 pb-2
+                   border-b border-app-border">
+        {{ group.category }}
+      </h2>
+
+      <!-- Folder card grid
+             pt on each cell handled inside .folder-card (90px) so the
+             fanned files never clip into the row above. -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5
+                    gap-x-6 gap-y-16">
+
+        @for (entry of group.entries; track entry.meta.slug) {
 
         <!-- Whole card is an <a> — no checkbox, hover/focus triggers -->
-        <a
-          [routerLink]="['/visualize', entry.meta.slug]"
-          class="folder-card"
-          [attr.aria-label]="'Open ' + entry.meta.title + ' visualizer'"
-        >
+        <a [routerLink]="['/visualize', entry.meta.slug]" class="folder-card"
+          [attr.aria-label]="'Open ' + entry.meta.title + ' visualizer'">
 
           <!-- Hint row -->
           <div class="hint-wrapper">
             <span class="hint-text">Open visualizer</span>
-            <svg class="hint-arrow" viewBox="0 0 40 40" fill="none"
-                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path
-                d="M 35 5 C 35 5, 15 5, 10 25 M 10 25 L 3 18 M 10 25 L 18 22"
-                stroke="rgb(var(--color-brand-light-rgb))"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                fill="none"
-              />
+            <svg class="hint-arrow" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true">
+              <path d="M 35 5 C 35 5, 15 5, 10 25 M 10 25 L 3 18 M 10 25 L 18 22" stroke="#a78bfa" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" fill="none" />
             </svg>
           </div>
 
@@ -51,21 +56,17 @@
           <div class="folder-container">
 
             <!-- Back panel (brand purple) -->
-            <svg class="folder-back" viewBox="0 0 50 40"
-                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <svg class="folder-back" viewBox="0 0 50 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <defs>
                 <linearGradient id="folder-back-grad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%"   style="stop-color:rgb(var(--color-brand-light-rgb))"/>
-                  <stop offset="100%" style="stop-color:rgb(var(--color-brand-rgb))"/>
+                  <stop offset="0%" stop-color="#8b5cf6" />
+                  <stop offset="100%" stop-color="#3b82f6" />
                 </linearGradient>
               </defs>
-              <path
-                d="M0 4C0 1.79086 1.79086 0 4 0H16.524C17.721 0 18.8415 0.54051
-                   19.574 1.4673L22.426 5.0654C23.1585 5.99219 24.279 6.5327
-                   25.476 6.5327H46C48.2091 6.5327 50 8.32356 50 10.5327V36
-                   C50 38.2091 48.2091 40 46 40H4C1.79086 40 0 38.2091 0 36V4Z"
-                fill="url(#folder-back-grad)"
-              />
+              <path d="M0 4C0 1.79086 1.79086 0 4 0H16.524C17.721 0 18.8415 0.54051
+                       19.574 1.4673L22.426 5.0654C23.1585 5.99219 24.279 6.5327
+                       25.476 6.5327H46C48.2091 6.5327 50 8.32356 50 10.5327V36
+                       C50 38.2091 48.2091 40 46 40H4C1.79086 40 0 38.2091 0 36V4Z" fill="url(#folder-back-grad)" />
             </svg>
 
             <!-- Decorative search bar -->
@@ -76,29 +77,25 @@
 
             <!-- Files — one per operation (max 5) -->
             @for (op of getOps(entry); track op; let i = $index) {
-              <div class="file {{ fileClass(i) }}" aria-hidden="true">
-                <div class="shine"></div>
-                <div class="file-text">{{ op }}</div>
-                <div class="file-tag">step</div>
-              </div>
+            <div class="file {{ fileClass(i) }}" aria-hidden="true">
+              <div class="shine"></div>
+              <div class="file-text">{{ op }}</div>
+              <div class="file-tag">step</div>
+            </div>
             }
 
             <!-- Front face (semi-transparent brand blue) -->
             <div class="folder-front-wrapper">
-              <svg class="folder-front" viewBox="0 0 50 34"
-                   xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <svg class="folder-front" viewBox="0 0 50 34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
                   <linearGradient id="folder-front-grad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%"   style="stop-color:rgba(var(--color-brand-light-rgb),0.72)"/>
-                    <stop offset="100%" style="stop-color:rgba(var(--color-brand-rgb),0.65)"/>
+                    <stop offset="0%" stop-color="rgba(139,92,246,0.72)" />
+                    <stop offset="100%" stop-color="rgba(59,130,246,0.65)" />
                   </linearGradient>
                 </defs>
-                <path
-                  d="M0 4C0 1.79086 1.79086 0 4 0H46C48.2091 0 50 1.79086
-                     50 4V30C50 32.2091 48.2091 34 46 34H4C1.79086 34
-                     0 32.2091 0 30V4Z"
-                  fill="url(#folder-front-grad)"
-                />
+                <path d="M0 4C0 1.79086 1.79086 0 4 0H46C48.2091 0 50 1.79086
+                         50 4V30C50 32.2091 48.2091 34 46 34H4C1.79086 34
+                         0 32.2091 0 30V4Z" fill="url(#folder-front-grad)" />
               </svg>
               <!-- Category label engraved on the front -->
               <div class="folder-label" aria-hidden="true">{{ entry.meta.category }}</div>
@@ -120,8 +117,10 @@
 
         </a><!-- /folder-card -->
 
-      }
-    </div>
+        }
+      </div><!-- /grid -->
+    </section>
+    }
 
   </div>
 </div>
