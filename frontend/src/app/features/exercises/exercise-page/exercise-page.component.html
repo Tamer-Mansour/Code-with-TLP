@@ -1,478 +1,450 @@
-<!-- TLP wave loader — shown during code execution / submission -->
-@if (isRunning() || isSubmitting()) {
-  <app-tlp-loader
-    [loading]="true"
-    [overlay]="true"
-    [label]="isSubmitting() ? 'Submitting…' : 'Running code…'"
-  />
-}
-
 <!-- Loading skeleton -->
 @if (loading()) {
-  <div class="flex h-[calc(100vh-3.5rem)] bg-app-bg overflow-hidden">
-    <div class="w-1/2 flex flex-col border-r border-app-border p-6 gap-4">
-      <div class="skeleton h-8 w-2/3 rounded-xl"></div>
-      <div class="skeleton h-5 w-1/4 rounded-full"></div>
-      <div class="skeleton h-px w-full my-1"></div>
-      <div class="skeleton h-4 w-full rounded-lg"></div>
-      <div class="skeleton h-4 w-full rounded-lg"></div>
-      <div class="skeleton h-4 w-3/4 rounded-lg"></div>
-      <div class="skeleton h-32 w-full rounded-2xl mt-2"></div>
-    </div>
-    <div class="w-1/2 flex flex-col">
-      <div class="skeleton h-10 rounded-none flex-shrink-0"></div>
-      <div class="skeleton flex-1 rounded-none"></div>
-      <div class="skeleton flex-shrink-0 rounded-none" style="height: 260px;"></div>
-    </div>
+<div class="flex h-[calc(100vh-3.5rem)] bg-app-bg overflow-hidden">
+  <div class="w-1/2 flex flex-col border-r border-app-border p-6 gap-4">
+    <div class="skeleton h-8 w-2/3 rounded-xl"></div>
+    <div class="skeleton h-5 w-1/4 rounded-full"></div>
+    <div class="skeleton h-px w-full my-1"></div>
+    <div class="skeleton h-4 w-full rounded-lg"></div>
+    <div class="skeleton h-4 w-full rounded-lg"></div>
+    <div class="skeleton h-4 w-3/4 rounded-lg"></div>
+    <div class="skeleton h-32 w-full rounded-2xl mt-2"></div>
   </div>
+  <div class="w-1/2 flex flex-col">
+    <div class="skeleton h-10 rounded-none flex-shrink-0"></div>
+    <div class="skeleton flex-1 rounded-none"></div>
+    <div class="skeleton flex-shrink-0 rounded-none" style="height: 260px;"></div>
+  </div>
+</div>
 }
 
 @if (!loading() && exercise()) {
-  <div class="flex h-[calc(100vh-3.5rem)] overflow-hidden">
+<div class="flex h-[calc(100vh-3.5rem)] overflow-hidden">
 
-    <!-- ═══ LEFT PANE: Problem ════════════════════════════════════════════ -->
-    <div class="w-1/2 flex flex-col border-r border-app-border bg-app-bg overflow-hidden min-w-0">
+  <!-- ═══ LEFT PANE: Problem ════════════════════════════════════════════ -->
+  <div class="w-1/2 flex flex-col border-r border-app-border bg-app-bg overflow-hidden min-w-0">
 
-      <!-- Tab bar -->
-      <div class="flex flex-shrink-0 bg-app-surface border-b border-app-border px-1 gap-0.5 pt-1">
-        <button
-          (click)="setTab('description')"
-          [ngClass]="activeTab() === 'description'
+    <!-- Tab bar -->
+    <div class="flex flex-shrink-0 bg-app-surface border-b border-app-border px-1 gap-0.5 pt-1">
+      <button (click)="setTab('description')" [ngClass]="activeTab() === 'description'
             ? 'text-app-text bg-app-bg border border-app-border border-b-app-bg rounded-t-lg -mb-px'
             : 'text-app-text-muted hover:text-app-text-2 hover:bg-app-surface-2 rounded-t-lg'"
-          class="px-4 py-2 text-xs font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap"
-        >Description</button>
-        <button
-          (click)="setTab('testcases')"
-          [ngClass]="activeTab() === 'testcases'
+        class="px-4 py-2 text-xs font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap">Description</button>
+      <button (click)="setTab('testcases')" [ngClass]="activeTab() === 'testcases'
             ? 'text-app-text bg-app-bg border border-app-border border-b-app-bg rounded-t-lg -mb-px'
             : 'text-app-text-muted hover:text-app-text-2 hover:bg-app-surface-2 rounded-t-lg'"
-          class="px-4 py-2 text-xs font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap"
-        >Test Cases</button>
-        <button
-          (click)="setTab('submissions')"
-          [ngClass]="activeTab() === 'submissions'
+        class="px-4 py-2 text-xs font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap">Test
+        Cases</button>
+      <button (click)="setTab('submissions')" [ngClass]="activeTab() === 'submissions'
             ? 'text-app-text bg-app-bg border border-app-border border-b-app-bg rounded-t-lg -mb-px'
             : 'text-app-text-muted hover:text-app-text-2 hover:bg-app-surface-2 rounded-t-lg'"
-          class="px-4 py-2 text-xs font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap flex items-center gap-1.5"
-        >
-          Submissions
-          @if (submissions().length > 0) {
-            <span class="inline-flex items-center justify-center min-w-[1.25rem] h-4 px-1 rounded-full bg-brand/15 text-brand text-[10px] font-semibold tabular-nums">
-              {{ submissions().length }}
-            </span>
-          }
-        </button>
-      </div>
-
-      <!-- Tab content -->
-      <div class="flex-1 overflow-y-auto">
-
-        <!-- ── Description ──────────────────────────────────── -->
-        @if (activeTab() === 'description') {
-          <div class="p-6">
-
-            <!-- Title + difficulty -->
-            <div class="flex items-start justify-between gap-3 mb-5">
-              <h1 class="text-xl font-bold text-app-text leading-snug">{{ exercise()!.title }}</h1>
-              <span [ngClass]="difficultyBadge()" class="flex-shrink-0 capitalize mt-0.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-                {{ exercise()!.difficulty }}
-              </span>
-            </div>
-
-            <!-- Meta chips -->
-            <div class="flex flex-wrap items-center gap-2 mb-6 pb-5 border-b border-app-border">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 text-xs font-semibold text-purple-600 dark:text-purple-400">
-                <lucide-icon name="zap" class="w-3 h-3" />
-                {{ exercise()!.points }} pts
-              </span>
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-app-surface-2 border border-app-border text-xs text-app-text-2">
-                <lucide-icon name="clock" class="w-3 h-3 text-app-text-muted" />
-                {{ exercise()!.time_limit_ms }}ms
-              </span>
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-app-surface-2 border border-app-border text-xs text-app-text-2">
-                <lucide-icon name="cpu" class="w-3 h-3 text-app-text-muted" />
-                {{ exercise()!.memory_limit_mb }}MB
-              </span>
-            </div>
-
-            <!-- Problem statement (rendered Markdown) -->
-            <div class="content-prose">
-              <markdown [data]="promptBody()" />
-            </div>
-
-            <!-- Supported languages -->
-            <div class="mt-8 pt-5 border-t border-app-border">
-              <p class="text-[10px] font-bold text-app-text-muted uppercase tracking-widest mb-3">Supported Languages</p>
-              <div class="flex flex-wrap gap-2">
-                @for (lang of supportedLanguagesList(); track lang) {
-                  <span
-                    class="px-2.5 py-1 rounded-lg border text-xs font-medium transition-all duration-150"
-                    [class.border-purple-500]="lang === selectedLanguage()"
-                    [class.border-blue-500]="lang === selectedLanguage()"
-                    [class.text-blue-600]="lang === selectedLanguage()"
-                    [class.dark:text-blue-400]="lang === selectedLanguage()"
-                    [class.bg-blue-50]="lang === selectedLanguage()"
-                    [class.dark:bg-blue-500\/10]="lang === selectedLanguage()"
-                    [class.bg-app-surface-2]="lang !== selectedLanguage()"
-                    [class.border-app-border]="lang !== selectedLanguage()"
-                    [class.text-app-text-2]="lang !== selectedLanguage()"
-                  >
-                    {{ LANGUAGE_LABELS[lang] ?? lang }}
-                  </span>
-                }
-              </div>
-            </div>
-          </div>
+        class="px-4 py-2 text-xs font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+        Submissions
+        @if (submissions().length > 0) {
+        <span
+          class="inline-flex items-center justify-center min-w-[1.25rem] h-4 px-1 rounded-full bg-brand/15 text-brand text-[10px] font-semibold tabular-nums">
+          {{ submissions().length }}
+        </span>
         }
-
-        <!-- ── Test Cases ────────────────────────────────────── -->
-        @if (activeTab() === 'testcases') {
-          <div class="p-6 space-y-3">
-            <h2 class="text-xs font-bold text-app-text-muted uppercase tracking-widest mb-4">Visible Test Cases</h2>
-            @if (visibleTestCases().length === 0) {
-              <div class="flex flex-col items-center justify-center py-16 text-center">
-                <div class="w-12 h-12 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mb-3">
-                  <lucide-icon name="flask-conical" class="w-5 h-5 text-app-text-muted" />
-                </div>
-                <p class="text-sm text-app-text-2">No visible test cases.</p>
-              </div>
-            } @else {
-              @for (tc of visibleTestCases(); track tc.id; let i = $index) {
-                <div class="rounded-2xl border border-app-border bg-app-surface overflow-hidden">
-                  <!-- Case header -->
-                  <div class="flex items-center justify-between px-4 py-2.5 bg-app-surface-2 border-b border-app-border">
-                    <span class="text-xs font-semibold text-app-text">{{ tc.name ?? ('Case ' + (i + 1)) }}</span>
-                    @if (actualOutputMap()[tc.id] !== undefined) {
-                      @if (actualOutputMap()[tc.id].trim() === tc.expected_stdout.trim()) {
-                        <span class="badge-accepted text-[10px] flex items-center gap-1">
-                          <lucide-icon name="check" class="w-3 h-3" />Passed
-                        </span>
-                      } @else {
-                        <span class="badge-wrong text-[10px] flex items-center gap-1">
-                          <lucide-icon name="x" class="w-3 h-3" />Failed
-                        </span>
-                      }
-                    }
-                  </div>
-                  <!-- Case body -->
-                  <div class="p-4 grid grid-cols-1 gap-3">
-                    <div>
-                      <p class="text-[10px] font-bold text-app-text-muted uppercase tracking-widest mb-1.5">Input</p>
-                      <pre class="code-block text-xs whitespace-pre-wrap break-all">{{ tc.stdin || '(empty)' }}</pre>
-                    </div>
-                    <div>
-                      <p class="text-[10px] font-bold text-app-text-muted uppercase tracking-widest mb-1.5">Expected Output</p>
-                      <pre class="code-block text-xs whitespace-pre-wrap break-all">{{ tc.expected_stdout }}</pre>
-                    </div>
-                    @if (actualOutputMap()[tc.id] !== undefined) {
-                      <div>
-                        <p class="text-[10px] font-bold text-app-text-muted uppercase tracking-widest mb-1.5">Your Output</p>
-                        <pre class="code-block text-xs whitespace-pre-wrap break-all"
-                          [class.text-green-600]="actualOutputMap()[tc.id].trim() === tc.expected_stdout.trim()"
-                          [class.dark:text-green-400]="actualOutputMap()[tc.id].trim() === tc.expected_stdout.trim()"
-                          [class.text-red-500]="actualOutputMap()[tc.id].trim() !== tc.expected_stdout.trim()"
-                          [class.dark:text-red-400]="actualOutputMap()[tc.id].trim() !== tc.expected_stdout.trim()"
-                        >{{ actualOutputMap()[tc.id] }}</pre>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-            }
-          </div>
-        }
-
-        <!-- ── Submissions ───────────────────────────────────── -->
-        @if (activeTab() === 'submissions') {
-          <div class="p-6">
-            <h2 class="text-xs font-bold text-app-text-muted uppercase tracking-widest mb-4">My Submissions</h2>
-            @if (submissionsLoading()) {
-              <div class="space-y-2">
-                @for (i of [1,2,3]; track i) {
-                  <div class="skeleton h-11 rounded-xl"></div>
-                }
-              </div>
-            } @else if (submissions().length === 0) {
-              <div class="flex flex-col items-center justify-center py-16 text-center">
-                <div class="w-12 h-12 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mb-3">
-                  <lucide-icon name="send" class="w-5 h-5 text-app-text-muted" />
-                </div>
-                <p class="text-sm text-app-text-2">No submissions yet.</p>
-                <p class="text-xs text-app-text-muted mt-1">Submit your solution to see results here.</p>
-              </div>
-            } @else {
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Status</th>
-                      <th>Score</th>
-                      <th>Language</th>
-                      <th>Runtime</th>
-                      <th>Date</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (s of submissions(); track s.id) {
-                      <tr class="cursor-pointer hover:bg-app-surface-2 transition-colors duration-100"
-                          [class.bg-brand\/5]="viewingSubmission()?.id === s.id"
-                          (click)="openSubmissionCode(s.id)">
-                        <td><span [ngClass]="getStatusBadge(s.status)" class="text-[10px]">{{ getStatusLabel(s.status) }}</span></td>
-                        <td class="font-mono text-xs tabular-nums text-app-text">{{ s.score }}/{{ exercise()!.points }}</td>
-                        <td class="text-xs">{{ LANGUAGE_LABELS[s.language] ?? s.language }}</td>
-                        <td class="font-mono text-xs tabular-nums">{{ formatRuntime(s.runtime_ms) }}</td>
-                        <td class="text-app-text-muted text-xs">{{ s.created_at | date:'short' }}</td>
-                        <td class="text-app-text-muted">
-                          @if (loadingSubmissionCode() && viewingSubmission() === null) {
-                            <lucide-icon name="loader-2" class="w-3.5 h-3.5 animate-spin" />
-                          } @else {
-                            <lucide-icon name="code-2" class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100" />
-                          }
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            }
-          </div>
-        }
-
-        <!-- ── Submission code viewer ── -->
-        @if (viewingSubmission()) {
-          <div class="border-t border-app-border bg-app-surface">
-            <div class="flex items-center justify-between px-4 py-2.5 bg-app-surface-2 border-b border-app-border">
-              <div class="flex items-center gap-2">
-                <lucide-icon name="code-2" class="w-3.5 h-3.5 text-brand" />
-                <span class="text-xs font-semibold text-app-text">
-                  Submission #{{ viewingSubmission()!.id }}
-                  <span class="font-normal text-app-text-muted ml-1">· {{ LANGUAGE_LABELS[viewingSubmission()!.language] ?? viewingSubmission()!.language }}</span>
-                </span>
-              </div>
-              <button (click)="closeSubmissionCode()" class="btn-icon btn-ghost p-1.5">
-                <lucide-icon name="x" class="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <pre class="overflow-x-auto p-4 text-xs font-mono leading-relaxed text-[#d4d4d4] max-h-64 overflow-y-auto"
-                 style="background:#1e1e1e;">{{ viewingSubmission()!.code }}</pre>
-          </div>
-        }
-
-      </div>
+      </button>
     </div>
 
-    <!-- ═══ RIGHT PANE: Editor + Console (always JetBrains dark) ═════════ -->
-    <div class="flex-1 flex flex-col overflow-hidden min-w-0" style="background:#2b2b2b;">
+    <!-- Tab content -->
+    <div class="flex-1 overflow-y-auto">
 
-      <!-- ── Editor toolbar ──────────────────────────────────── -->
-      <div class="flex flex-shrink-0 items-center justify-between px-3 h-11 border-b" style="background:#3c3f41; border-color:#3d3d3d;">
+      <!-- ── Description ──────────────────────────────────── -->
+      @if (activeTab() === 'description') {
+      <div class="p-6">
 
-        <!-- Language selector -->
-        <div class="relative inline-flex items-center gap-1.5">
-          <div class="w-2 h-2 rounded-full flex-shrink-0" style="background:#6a8759;"></div>
-          <select
-            [ngModel]="selectedLanguage()"
-            (ngModelChange)="setLanguage($event)"
-            class="appearance-none border-0 outline-none cursor-pointer text-xs pl-0.5 pr-5 py-1 rounded"
-            style="background:transparent; color:#a9b7c6;"
-          >
+        <!-- Title + difficulty -->
+        <div class="flex items-start justify-between gap-3 mb-5">
+          <h1 class="text-xl font-bold text-app-text leading-snug">{{ exercise()!.title }}</h1>
+          <span [ngClass]="difficultyBadge()"
+            class="flex-shrink-0 capitalize mt-0.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+            {{ exercise()!.difficulty }}
+          </span>
+        </div>
+
+        <!-- Meta chips -->
+        <div class="flex flex-wrap items-center gap-2 mb-6 pb-5 border-b border-app-border">
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 text-xs font-semibold text-purple-600 dark:text-purple-400">
+            <lucide-icon name="zap" class="w-3 h-3" />
+            {{ exercise()!.points }} pts
+          </span>
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-app-surface-2 border border-app-border text-xs text-app-text-2">
+            <lucide-icon name="clock" class="w-3 h-3 text-app-text-muted" />
+            {{ exercise()!.time_limit_ms }}ms
+          </span>
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-app-surface-2 border border-app-border text-xs text-app-text-2">
+            <lucide-icon name="cpu" class="w-3 h-3 text-app-text-muted" />
+            {{ exercise()!.memory_limit_mb }}MB
+          </span>
+        </div>
+
+        <!-- Problem statement (rendered Markdown) -->
+        <div class="content-prose">
+          <markdown [data]="promptBody()" />
+        </div>
+
+        <!-- Supported languages -->
+        <div class="mt-8 pt-5 border-t border-app-border">
+          <p class="text-[10px] font-bold text-app-text-muted uppercase tracking-widest mb-3">Supported Languages</p>
+          <div class="flex flex-wrap gap-2">
             @for (lang of supportedLanguagesList(); track lang) {
-              <option [value]="lang" style="background:#3c3f41; color:#a9b7c6;">
-                {{ LANGUAGE_LABELS[lang] ?? lang }}
-              </option>
+            <span class="px-2.5 py-1 rounded-lg border text-xs font-medium transition-all duration-150"
+              [class.border-purple-500]="lang === selectedLanguage()"
+              [class.border-blue-500]="lang === selectedLanguage()" [class.text-blue-600]="lang === selectedLanguage()"
+              [class.dark:text-blue-400]="lang === selectedLanguage()" [class.bg-blue-50]="lang === selectedLanguage()"
+              [class.dark:bg-blue-500\/10]="lang === selectedLanguage()"
+              [class.bg-app-surface-2]="lang !== selectedLanguage()"
+              [class.border-app-border]="lang !== selectedLanguage()"
+              [class.text-app-text-2]="lang !== selectedLanguage()">
+              {{ LANGUAGE_LABELS[lang] ?? lang }}
+            </span>
             }
-          </select>
-          <lucide-icon name="chevron-down" class="absolute right-0 w-3 h-3 pointer-events-none" style="color:#6b6b6b;"></lucide-icon>
-        </div>
-
-        <!-- Action buttons -->
-        <div class="flex items-center gap-2">
-          <!-- Run -->
-          <button
-            (click)="runCode()"
-            [disabled]="isRunning() || isSubmitting()"
-            class="inline-flex items-center gap-1.5 px-3.5 h-7 rounded-lg text-xs font-semibold transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50"
-            [style.background]="isRunning() ? '#3a7c42' : '#499c54'"
-            style="color:#fff; letter-spacing:.01em;"
-          >
-            @if (isRunning()) {
-              <lucide-icon name="loader-2" class="w-3 h-3 animate-spin" />
-              <span>Running…</span>
-            } @else {
-              <lucide-icon name="play" class="w-3 h-3" />
-              <span>Run</span>
-              <kbd class="ml-0.5 text-[9px] font-mono px-1 py-px rounded opacity-70" style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.18);">⌃↵</kbd>
-            }
-          </button>
-
-          <!-- Submit — gradient pill -->
-          <button
-            (click)="submitCode()"
-            [disabled]="isSubmitting() || isRunning()"
-            class="inline-flex items-center gap-1.5 px-3.5 h-7 rounded-lg text-xs font-semibold transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
-            [style.background]="isSubmitting()
-              ? 'linear-gradient(135deg,#5b21b6,#1d4ed8)'
-              : 'linear-gradient(135deg,#8b5cf6,#3b82f6)'"
-            style="color:#fff; letter-spacing:.01em;"
-          >
-            @if (isSubmitting()) {
-              <lucide-icon name="loader-2" class="w-3 h-3 animate-spin" />
-              <span>Submitting…</span>
-            } @else {
-              <lucide-icon name="send" class="w-3 h-3" />
-              <span>Submit</span>
-            }
-          </button>
+          </div>
         </div>
       </div>
+      }
 
-      <!-- ── Monaco editor ───────────────────────────────────── -->
-      <div class="flex-1 overflow-hidden min-h-0">
-        <app-monaco-editor
-          [value]="code()"
-          (valueChange)="setCode($event)"
-          [language]="monacoLanguage()"
-          theme="darcula"
-          [readOnly]="false"
-        />
+      <!-- ── Test Cases ────────────────────────────────────── -->
+      @if (activeTab() === 'testcases') {
+      <div class="p-6 space-y-3">
+        <h2 class="text-xs font-bold text-app-text-muted uppercase tracking-widest mb-4">Visible Test Cases</h2>
+        @if (visibleTestCases().length === 0) {
+        <div class="flex flex-col items-center justify-center py-16 text-center">
+          <div
+            class="w-12 h-12 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mb-3">
+            <lucide-icon name="flask-conical" class="w-5 h-5 text-app-text-muted" />
+          </div>
+          <p class="text-sm text-app-text-2">No visible test cases.</p>
+        </div>
+        } @else {
+        @for (tc of visibleTestCases(); track tc.id; let i = $index) {
+        <div class="rounded-2xl border border-app-border bg-app-surface overflow-hidden">
+          <!-- Case header -->
+          <div class="flex items-center justify-between px-4 py-2.5 bg-app-surface-2 border-b border-app-border">
+            <span class="text-xs font-semibold text-app-text">{{ tc.name ?? ('Case ' + (i + 1)) }}</span>
+            @if (actualOutputMap()[tc.id] !== undefined) {
+            @if (actualOutputMap()[tc.id].trim() === tc.expected_stdout.trim()) {
+            <span class="badge-accepted text-[10px] flex items-center gap-1">
+              <lucide-icon name="check" class="w-3 h-3" />Passed
+            </span>
+            } @else {
+            <span class="badge-wrong text-[10px] flex items-center gap-1">
+              <lucide-icon name="x" class="w-3 h-3" />Failed
+            </span>
+            }
+            }
+          </div>
+          <!-- Case body -->
+          <div class="p-4 grid grid-cols-1 gap-3">
+            <div>
+              <p class="text-[10px] font-bold text-app-text-muted uppercase tracking-widest mb-1.5">Input</p>
+              <pre class="code-block text-xs whitespace-pre-wrap break-all">{{ tc.stdin || '(empty)' }}</pre>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold text-app-text-muted uppercase tracking-widest mb-1.5">Expected Output</p>
+              <pre class="code-block text-xs whitespace-pre-wrap break-all">{{ tc.expected_stdout }}</pre>
+            </div>
+            @if (actualOutputMap()[tc.id] !== undefined) {
+            <div>
+              <p class="text-[10px] font-bold text-app-text-muted uppercase tracking-widest mb-1.5">Your Output</p>
+              <pre class="code-block text-xs whitespace-pre-wrap break-all"
+                [class.text-green-600]="actualOutputMap()[tc.id].trim() === tc.expected_stdout.trim()"
+                [class.dark:text-green-400]="actualOutputMap()[tc.id].trim() === tc.expected_stdout.trim()"
+                [class.text-red-500]="actualOutputMap()[tc.id].trim() !== tc.expected_stdout.trim()"
+                [class.dark:text-red-400]="actualOutputMap()[tc.id].trim() !== tc.expected_stdout.trim()">{{ actualOutputMap()[tc.id] }}</pre>
+            </div>
+            }
+          </div>
+        </div>
+        }
+        }
       </div>
+      }
 
-      <!-- ── Console (JetBrains Run tool window) ─────────────── -->
-      <div class="flex-shrink-0 flex flex-col border-t" style="height:320px; background:#1e1f22; border-color:#3d3d3d;">
+      <!-- ── Submissions ───────────────────────────────────── -->
+      @if (activeTab() === 'submissions') {
+      <div class="p-6">
+        <h2 class="text-xs font-bold text-app-text-muted uppercase tracking-widest mb-4">My Submissions</h2>
+        @if (submissionsLoading()) {
+        <div class="space-y-2">
+          @for (i of [1,2,3]; track i) {
+          <div class="skeleton h-11 rounded-xl"></div>
+          }
+        </div>
+        } @else if (submissions().length === 0) {
+        <div class="flex flex-col items-center justify-center py-16 text-center">
+          <div
+            class="w-12 h-12 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mb-3">
+            <lucide-icon name="send" class="w-5 h-5 text-app-text-muted" />
+          </div>
+          <p class="text-sm text-app-text-2">No submissions yet.</p>
+          <p class="text-xs text-app-text-muted mt-1">Submit your solution to see results here.</p>
+        </div>
+        } @else {
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Score</th>
+                <th>Language</th>
+                <th>Runtime</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of submissions(); track s.id) {
+              <tr class="cursor-pointer hover:bg-app-surface-2 transition-colors duration-100"
+                [class.bg-brand\/5]="viewingSubmission()?.id === s.id" (click)="openSubmissionCode(s.id)">
+                <td><span [ngClass]="getStatusBadge(s.status)" class="text-[10px]">{{ getStatusLabel(s.status) }}</span>
+                </td>
+                <td class="font-mono text-xs tabular-nums text-app-text">{{ s.score }}/{{ exercise()!.points }}</td>
+                <td class="text-xs">{{ LANGUAGE_LABELS[s.language] ?? s.language }}</td>
+                <td class="font-mono text-xs tabular-nums">{{ formatRuntime(s.runtime_ms) }}</td>
+                <td class="text-app-text-muted text-xs">{{ s.created_at | date:'short' }}</td>
+                <td class="text-app-text-muted">
+                  @if (loadingSubmissionCode() && viewingSubmission() === null) {
+                  <lucide-icon name="loader-2" class="w-3.5 h-3.5 animate-spin" />
+                  } @else {
+                  <lucide-icon name="code-2" class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100" />
+                  }
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
+      </div>
+      }
 
-        <!-- Console header -->
-        <div class="flex flex-shrink-0 items-center justify-between px-4 h-9 border-b" style="background:#252527; border-color:#3d3d3d;">
+      <!-- ── Submission code viewer ── -->
+      @if (viewingSubmission()) {
+      <div class="border-t border-app-border bg-app-surface">
+        <div class="flex items-center justify-between px-4 py-2.5 bg-app-surface-2 border-b border-app-border">
           <div class="flex items-center gap-2">
-            <lucide-icon name="terminal" class="w-3.5 h-3.5" style="color:#6a8759;"></lucide-icon>
-            <span class="text-xs font-semibold tracking-wide" style="color:#a9b7c6;">Console</span>
+            <lucide-icon name="code-2" class="w-3.5 h-3.5 text-brand" />
+            <span class="text-xs font-semibold text-app-text">
+              Submission #{{ viewingSubmission()!.id }}
+              <span class="font-normal text-app-text-muted ml-1">· {{ LANGUAGE_LABELS[viewingSubmission()!.language] ??
+                viewingSubmission()!.language }}</span>
+            </span>
           </div>
-          <div class="flex items-center gap-3">
-            @if (runResult() && !isRunning()) {
-              <div class="flex items-center gap-3 text-[10px] font-mono tabular-nums" style="color:#606366;">
-                @if (runResult()!.runtime_ms != null) {
-                  <span>{{ runResult()!.runtime_ms }}ms</span>
-                }
-                @if (runResult()!.memory_kb != null) {
-                  <span>{{ runResult()!.memory_kb }}KB</span>
-                }
-                <span [ngClass]="statusBadgeClass()" class="text-[10px]">{{ statusLabel() }}</span>
-              </div>
-              <button
-                (click)="clearOutput()"
-                title="Clear output"
-                class="inline-flex items-center justify-center w-5 h-5 rounded transition-colors hover:bg-white/10"
-                style="color:#606366;"
-              >
-                <lucide-icon name="x" class="w-3 h-3" />
-              </button>
-            }
-          </div>
+          <button (click)="closeSubmissionCode()" class="btn-icon btn-ghost p-1.5">
+            <lucide-icon name="x" class="w-3.5 h-3.5" />
+          </button>
         </div>
-
-        <!-- Stdin input -->
-        <div class="flex-shrink-0 border-b px-4 pt-2 pb-2" style="border-color:#3d3d3d;">
-          <p class="text-[9px] font-bold uppercase tracking-[0.15em] mb-1" style="color:#4d5154;">stdin</p>
-          <textarea
-            [value]="stdinInput()"
-            (input)="stdinInput.set($any($event.target).value)"
-            rows="3"
-            placeholder="(no input)"
-            spellcheck="false"
-            class="w-full resize-none font-mono text-xs outline-none bg-transparent"
-            style="color:#a9b7c6; line-height:1.5; caret-color:#a9b7c6;"
-          ></textarea>
-        </div>
-
-        <!-- Console body -->
-        <div class="flex-1 overflow-y-auto p-4 font-mono text-xs leading-relaxed" style="color:#a9b7c6;">
-
-          <!-- Idle -->
-          @if (!runResult() && !isRunning()) {
-            <div class="flex items-center gap-2" style="color:#4d5154;">
-              <span class="select-none" style="color:#3d4043;">$</span>
-              <span>Press <strong style="color:#606366;">Run</strong> or
-                <kbd class="text-[9px] font-mono px-1 py-px rounded" style="color:#606366;border:1px solid #3d4043;">Ctrl+Enter</kbd>
-                to execute your code…
-              </span>
-            </div>
-          }
-
-          <!-- Running -->
-          @if (isRunning()) {
-            <div class="flex items-center gap-2.5" style="color:#6a8759;">
-              <lucide-icon name="loader-2" class="w-3.5 h-3.5 animate-spin" />
-              <span>Executing code…</span>
-            </div>
-          }
-
-          <!-- Results -->
-          @if (runResult() && !isRunning()) {
-
-            <!-- Exit status line -->
-            <div class="mb-4 pb-3 border-b text-[11px]" style="border-color:#3d3d3d; color:#606366;">
-              <span [style.color]="runResult()!.status === 'accepted' ? '#6a8759' : '#cc7832'">●</span>
-              &nbsp;Process finished with exit code
-              <span style="color:#a9b7c6;" class="font-semibold">
-                {{ runResult()!.status === 'accepted' ? '0' : '1' }}
-              </span>
-            </div>
-
-            <!-- stdout -->
-            @if (runResult()!.stdout) {
-              <div class="mb-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[9px] font-bold uppercase tracking-[0.15em]" style="color:#4d5154;">stdout</span>
-                  <div class="flex-1" style="border-top:1px solid #3d3d3d;"></div>
-                </div>
-                <pre class="whitespace-pre-wrap break-all" style="color:#a9b7c6;">{{ runResult()!.stdout }}</pre>
-              </div>
-            }
-
-            <!-- stderr -->
-            @if (runResult()!.stderr) {
-              <div class="mb-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[9px] font-bold uppercase tracking-[0.15em]" style="color:#cc7832;">stderr</span>
-                  <div class="flex-1" style="border-top:1px solid #3d3d3d;"></div>
-                </div>
-                <pre class="whitespace-pre-wrap break-all" style="color:#cc7832;">{{ runResult()!.stderr }}</pre>
-              </div>
-            }
-
-            <!-- error -->
-            @if (runResult()!.error) {
-              <div class="mb-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[9px] font-bold uppercase tracking-[0.15em]" style="color:#e06c75;">error</span>
-                  <div class="flex-1" style="border-top:1px solid #3d3d3d;"></div>
-                </div>
-                <pre class="whitespace-pre-wrap break-all" style="color:#e06c75;">{{ runResult()!.error }}</pre>
-              </div>
-            }
-
-            @if (!runResult()!.stdout && !runResult()!.stderr && !runResult()!.error) {
-              <span style="color:#4d5154;">(no output)</span>
-            }
-          }
-
-        </div>
+        <pre class="overflow-x-auto p-4 text-xs font-mono leading-relaxed text-[#d4d4d4] max-h-64 overflow-y-auto"
+          style="background:#1e1e1e;">{{ viewingSubmission()!.code }}</pre>
       </div>
+      }
 
     </div>
   </div>
+
+  <!-- ═══ RIGHT PANE: Editor + Console (always JetBrains dark) ═════════ -->
+  <div class="flex-1 flex flex-col overflow-hidden min-w-0" style="background:#2b2b2b;">
+
+    <!-- ── Editor toolbar ──────────────────────────────────── -->
+    <div class="flex flex-shrink-0 items-center justify-between px-3 h-11 border-b"
+      style="background:#3c3f41; border-color:#3d3d3d;">
+
+      <!-- Language selector -->
+      <div class="relative inline-flex items-center gap-1.5">
+        <div class="w-2 h-2 rounded-full flex-shrink-0" style="background:#6a8759;"></div>
+        <select [ngModel]="selectedLanguage()" (ngModelChange)="setLanguage($event)"
+          class="appearance-none border-0 outline-none cursor-pointer text-xs pl-0.5 pr-5 py-1 rounded"
+          style="background:transparent; color:#a9b7c6;">
+          @for (lang of supportedLanguagesList(); track lang) {
+          <option [value]="lang" style="background:#3c3f41; color:#a9b7c6;">
+            {{ LANGUAGE_LABELS[lang] ?? lang }}
+          </option>
+          }
+        </select>
+        <lucide-icon name="chevron-down" class="absolute right-0 w-3 h-3 pointer-events-none"
+          style="color:#6b6b6b;"></lucide-icon>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex items-center gap-2">
+        @if (isRunning() || isSubmitting()) {
+          <div class="spinner-inline">
+            <div class="spinner-bars">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <span class="spinner-text">{{ isSubmitting() ? 'Submitting…' : 'Running…' }}</span>
+          </div>
+        } @else {
+          <!-- Run -->
+          <button (click)="runCode()"
+            class="inline-flex items-center gap-1.5 px-3.5 h-7 rounded-lg text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50"
+            style="background:#499c54; color:#fff; letter-spacing:.01em;">
+            <lucide-icon name="play" class="w-3 h-3" />
+            <span>Run</span>
+            <kbd class="ml-0.5 text-[9px] font-mono px-1 py-px rounded opacity-70"
+              style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.18);">⌃↵</kbd>
+          </button>
+
+          <!-- Submit — gradient pill -->
+          <button (click)="submitCode()"
+            class="inline-flex items-center gap-1.5 px-3.5 h-7 rounded-lg text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
+            style="background:linear-gradient(135deg,#8b5cf6,#3b82f6); color:#fff; letter-spacing:.01em;">
+            <lucide-icon name="send" class="w-3 h-3" />
+            <span>Submit</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- ── Monaco editor ───────────────────────────────────── -->
+    <div class="flex-1 overflow-hidden min-h-0">
+      <app-monaco-editor [value]="code()" (valueChange)="setCode($event)" [language]="monacoLanguage()" theme="darcula"
+        [readOnly]="false" />
+    </div>
+
+    <!-- ── Console (JetBrains Run tool window) ─────────────── -->
+    <div class="flex-shrink-0 flex flex-col border-t" style="height:320px; background:#1e1f22; border-color:#3d3d3d;">
+
+      <!-- Console header -->
+      <div class="flex flex-shrink-0 items-center justify-between px-4 h-9 border-b"
+        style="background:#252527; border-color:#3d3d3d;">
+        <div class="flex items-center gap-2">
+          <lucide-icon name="terminal" class="w-3.5 h-3.5" style="color:#6a8759;"></lucide-icon>
+          <span class="text-xs font-semibold tracking-wide" style="color:#a9b7c6;">Console</span>
+        </div>
+        <div class="flex items-center gap-3">
+          @if (runResult() && !isRunning()) {
+          <div class="flex items-center gap-3 text-[10px] font-mono tabular-nums" style="color:#606366;">
+            @if (runResult()!.runtime_ms != null) {
+            <span>{{ runResult()!.runtime_ms }}ms</span>
+            }
+            @if (runResult()!.memory_kb != null) {
+            <span>{{ runResult()!.memory_kb }}KB</span>
+            }
+            <span [ngClass]="statusBadgeClass()" class="text-[10px]">{{ statusLabel() }}</span>
+          </div>
+          <button (click)="clearOutput()" title="Clear output"
+            class="inline-flex items-center justify-center w-5 h-5 rounded transition-colors hover:bg-white/10"
+            style="color:#606366;">
+            <lucide-icon name="x" class="w-3 h-3" />
+          </button>
+          }
+        </div>
+      </div>
+
+      <!-- Stdin input -->
+      <div class="flex-shrink-0 border-b px-4 pt-2 pb-2" style="border-color:#3d3d3d;">
+        <p class="text-[9px] font-bold uppercase tracking-[0.15em] mb-1" style="color:#4d5154;">stdin</p>
+        <textarea [value]="stdinInput()" (input)="stdinInput.set($any($event.target).value)" rows="3"
+          placeholder="(no input)" spellcheck="false"
+          class="w-full resize-none font-mono text-xs outline-none bg-transparent"
+          style="color:#a9b7c6; line-height:1.5; caret-color:#a9b7c6;"></textarea>
+      </div>
+
+      <!-- Console body -->
+      <div class="flex-1 overflow-y-auto p-4 font-mono text-xs leading-relaxed" style="color:#a9b7c6;">
+
+        <!-- Idle -->
+        @if (!runResult() && !isRunning()) {
+        <div class="flex items-center gap-2" style="color:#4d5154;">
+          <span class="select-none" style="color:#3d4043;">$</span>
+          <span>Press <strong style="color:#606366;">Run</strong> or
+            <kbd class="text-[9px] font-mono px-1 py-px rounded"
+              style="color:#606366;border:1px solid #3d4043;">Ctrl+Enter</kbd>
+            to execute your code…
+          </span>
+        </div>
+        }
+
+        <!-- Running -->
+        @if (isRunning()) {
+        <div class="flex items-center gap-2.5" style="color:#6a8759;">
+          <lucide-icon name="loader-2" class="w-3.5 h-3.5 animate-spin" />
+          <span>Executing code…</span>
+        </div>
+        }
+
+        <!-- Results -->
+        @if (runResult() && !isRunning()) {
+
+        <!-- Exit status line -->
+        <div class="mb-4 pb-3 border-b text-[11px]" style="border-color:#3d3d3d; color:#606366;">
+          <span [style.color]="runResult()!.status === 'accepted' ? '#6a8759' : '#cc7832'">●</span>
+          &nbsp;Process finished with exit code
+          <span style="color:#a9b7c6;" class="font-semibold">
+            {{ runResult()!.status === 'accepted' ? '0' : '1' }}
+          </span>
+        </div>
+
+        <!-- stdout -->
+        @if (runResult()!.stdout) {
+        <div class="mb-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[9px] font-bold uppercase tracking-[0.15em]" style="color:#4d5154;">stdout</span>
+            <div class="flex-1" style="border-top:1px solid #3d3d3d;"></div>
+          </div>
+          <pre class="whitespace-pre-wrap break-all" style="color:#a9b7c6;">{{ runResult()!.stdout }}</pre>
+        </div>
+        }
+
+        <!-- stderr -->
+        @if (runResult()!.stderr) {
+        <div class="mb-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[9px] font-bold uppercase tracking-[0.15em]" style="color:#cc7832;">stderr</span>
+            <div class="flex-1" style="border-top:1px solid #3d3d3d;"></div>
+          </div>
+          <pre class="whitespace-pre-wrap break-all" style="color:#cc7832;">{{ runResult()!.stderr }}</pre>
+        </div>
+        }
+
+        <!-- error -->
+        @if (runResult()!.error) {
+        <div class="mb-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[9px] font-bold uppercase tracking-[0.15em]" style="color:#e06c75;">error</span>
+            <div class="flex-1" style="border-top:1px solid #3d3d3d;"></div>
+          </div>
+          <pre class="whitespace-pre-wrap break-all" style="color:#e06c75;">{{ runResult()!.error }}</pre>
+        </div>
+        }
+
+        @if (!runResult()!.stdout && !runResult()!.stderr && !runResult()!.error) {
+        <span style="color:#4d5154;">(no output)</span>
+        }
+        }
+
+      </div>
+    </div>
+
+  </div>
+</div>
 }
 
 <!-- Exercise not found -->
 @if (!loading() && !exercise()) {
-  <div class="flex items-center justify-center h-[calc(100vh-3.5rem)]">
-    <div class="text-center">
-      <div class="w-16 h-16 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mx-auto mb-5">
-        <lucide-icon name="frown" class="w-8 h-8 text-app-text-muted" />
-      </div>
-      <h2 class="text-lg font-bold text-app-text mb-2">Exercise Not Found</h2>
-      <p class="text-sm text-app-text-2">The exercise you're looking for doesn't exist.</p>
+<div class="flex items-center justify-center h-[calc(100vh-3.5rem)]">
+  <div class="text-center">
+    <div
+      class="w-16 h-16 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mx-auto mb-5">
+      <lucide-icon name="frown" class="w-8 h-8 text-app-text-muted" />
     </div>
+    <h2 class="text-lg font-bold text-app-text mb-2">Exercise Not Found</h2>
+    <p class="text-sm text-app-text-2">The exercise you're looking for doesn't exist.</p>
   </div>
+</div>
 }

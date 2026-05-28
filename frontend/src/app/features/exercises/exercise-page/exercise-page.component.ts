@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 import { LucideAngularModule } from 'lucide-angular';
 import { MonacoEditorComponent } from '../../../shared/components/monaco-editor/monaco-editor';
-import { TlpLoaderComponent } from '../../../shared/components/tlp-loader/tlp-loader';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { SubmissionService } from '../../../core/services/submission.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -35,8 +34,9 @@ type ActiveTab = 'description' | 'testcases' | 'submissions';
   selector: 'app-exercise-page',
   standalone: true,
   templateUrl: './exercise-page.component.html',
+  styleUrl: './exercise-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass, DatePipe, FormsModule, LucideAngularModule, MonacoEditorComponent, MarkdownModule, TlpLoaderComponent],
+  imports: [NgClass, DatePipe, FormsModule, LucideAngularModule, MonacoEditorComponent, MarkdownModule],
 })
 export class ExercisePageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

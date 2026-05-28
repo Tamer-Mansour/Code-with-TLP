@@ -50,11 +50,6 @@
   text-decoration: none;
   cursor: pointer;
   outline: none;
-
-  // Generous top padding so lifted files don't overlap the row above.
-  // The grid itself also has row-gap; this pt handles the folder 3-D lift zone.
-  padding-top: 90px;
-
   // Perspective for the 3-D flip of folder-container
   perspective: 1200px;
 

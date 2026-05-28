@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LucideAngularModule, Activity } from 'lucide-angular';
+import { LucideAngularModule, Activity, Code2, Layers } from 'lucide-angular';
 import { getVizByCategory, VizRegistryEntry } from '../core/registry';
 
 @Component({
@@ -13,12 +13,18 @@ import { getVizByCategory, VizRegistryEntry } from '../core/registry';
 })
 export class VizCatalogComponent {
   readonly Activity = Activity;
+  readonly Code2 = Code2;
+  readonly Layers = Layers;
 
   readonly grouped: { category: string; entries: VizRegistryEntry[] }[] =
     Object.entries(getVizByCategory()).map(([category, entries]) => ({ category, entries }));
 
   readonly entries: VizRegistryEntry[] =
     Object.values(getVizByCategory()).flat();
+
+  get totalOps(): number {
+    return this.entries.reduce((sum, e) => sum + e.meta.operations.length, 0);
+  }
 
   /** Slice operations to max 5 for the folder "files". */
   getOps(entry: VizRegistryEntry): string[] {
