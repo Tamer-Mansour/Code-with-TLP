@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
+import os
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routes import admin, auth, catalog, chat, interview, progress, quiz, submissions, users
 from app.core.config import settings
@@ -96,6 +98,11 @@ def create_app() -> FastAPI:
     app.include_router(chat.router, prefix=prefix)
     app.include_router(interview.router, prefix=prefix)
     app.include_router(admin.router, prefix=prefix)
+
+    # Serve Angular frontend from static/ folder (production only)
+    static_dir = os.path.join(os.path.dirname(__file__), "..", "static")
+    if os.path.isdir(static_dir):
+        app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
     @app.get("/health", tags=["meta"])
     def health():

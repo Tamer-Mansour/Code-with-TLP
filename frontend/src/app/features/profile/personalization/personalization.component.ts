@@ -8,7 +8,6 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { UserSettingsService } from '../../../core/services/user-settings.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -77,7 +76,7 @@ const FONT_OPTIONS: FontOption[] = [
   templateUrl: './personalization.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, NgClass, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule],
 })
 export class PersonalizationComponent implements OnInit {
   readonly settingsService = inject(UserSettingsService);
