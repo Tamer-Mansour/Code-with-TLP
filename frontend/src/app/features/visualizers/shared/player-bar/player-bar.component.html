@@ -28,7 +28,7 @@
     (click)="player.toggle()"
     [disabled]="!player.frames().length"
     class="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold text-white disabled:opacity-40
-           bg-gradient-to-br from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600
+           brand-gradient brand-gradient-hover
            transition-all shadow-sm"
     [attr.aria-label]="player.playing() ? 'Pause' : 'Play'"
   >
@@ -61,7 +61,7 @@
       [value]="player.frames().length ? progressInt() : 0"
       (input)="onSeek($event)"
       class="w-full h-1.5 rounded-full appearance-none cursor-pointer
-             bg-app-surface-2 accent-purple-500"
+             bg-app-surface-2"
       aria-label="Seek"
     />
   </div>
@@ -81,7 +81,7 @@
       [value]="speedToSlider(player.speed())"
       (input)="onSlider($event)"
       class="w-20 h-1.5 rounded-full appearance-none cursor-pointer
-             bg-app-surface-2 accent-purple-500"
+             bg-app-surface-2"
       aria-label="Playback speed"
     />
   </div>

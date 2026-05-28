@@ -13,8 +13,8 @@
         <div class="flex items-center gap-2">
           <!-- Animated orb mark -->
           <div class="relative w-6 h-6 shrink-0">
-            <div class="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 opacity-20 animate-pulse-soft"></div>
-            <div class="absolute inset-0.5 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full brand-gradient opacity-20 animate-pulse-soft"></div>
+            <div class="absolute inset-0.5 rounded-full brand-gradient flex items-center justify-center">
               <lucide-icon [img]="Bot" [size]="11" class="text-white"></lucide-icon>
             </div>
           </div>
@@ -40,7 +40,7 @@
           </div>
         } @else if (sessions().length === 0) {
           <div class="flex flex-col items-center justify-center h-full py-12 px-4 text-center">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/15 to-blue-500/15 border border-purple-500/20 flex items-center justify-center mb-3">
+            <div class="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center mb-3">
               <lucide-icon [img]="MessageSquare" [size]="18" class="text-brand"></lucide-icon>
             </div>
             <p class="text-xs text-app-text-muted">No conversations yet.</p>
@@ -53,11 +53,7 @@
             <button
               (click)="selectSession(session.id)"
               class="group w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-left transition-all duration-150 cursor-pointer mb-0.5"
-              [class.bg-gradient-to-r]="activeSessionId() === session.id"
-              [class.from-purple-500/10]="activeSessionId() === session.id"
-              [class.to-blue-500/10]="activeSessionId() === session.id"
-              [class.border]="activeSessionId() === session.id"
-              [class.border-purple-500/20]="activeSessionId() === session.id"
+              [class.bg-brand/10]="activeSessionId() === session.id"
               [class.text-app-text]="activeSessionId() === session.id"
               [class.font-medium]="activeSessionId() === session.id"
               [class.text-app-text-2]="activeSessionId() !== session.id"
@@ -118,13 +114,11 @@
       <!-- Gradient header orb + title -->
       <div class="flex items-center gap-2.5 min-w-0 flex-1">
         <div class="relative w-7 h-7 shrink-0">
-          <!-- Pulsing ring -->
           <div
-            class="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 opacity-25"
+            class="absolute inset-0 rounded-full brand-gradient opacity-25"
             [class.animate-pulse]="streaming()"
           ></div>
-          <!-- Solid orb -->
-          <div class="absolute inset-0.5 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-sm">
+          <div class="absolute inset-0.5 rounded-full brand-gradient flex items-center justify-center shadow-sm">
             <lucide-icon [img]="Bot" [size]="13" class="text-white"></lucide-icon>
           </div>
         </div>
@@ -134,7 +128,7 @@
               {{ getSessionTitle(sessions()[(sessions().findIndex(s => s.id === activeSessionId()))]) }}
             </p>
             @if (streaming()) {
-              <p class="text-[10px] text-purple-500 dark:text-purple-400 font-medium leading-tight">
+              <p class="text-[10px] text-brand font-medium leading-tight">
                 Generating response...
               </p>
             }
@@ -152,7 +146,7 @@
             (click)="togglePicker()"
             class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-app-border bg-app-surface text-xs text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150 max-w-[200px]"
           >
-            <div class="w-3.5 h-3.5 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 shrink-0 flex items-center justify-center">
+            <div class="w-3.5 h-3.5 rounded-full brand-gradient shrink-0 flex items-center justify-center">
               <lucide-icon [img]="Bot" [size]="8" class="text-white"></lucide-icon>
             </div>
             <span class="truncate">{{ selectedKeyLabel() }}</span>
@@ -171,14 +165,12 @@
                   <button
                     (click)="onKeyChange(key.id)"
                     class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
-                    [class.bg-gradient-to-r]="selectedKeyId() === key.id"
-                    [class.from-purple-500/10]="selectedKeyId() === key.id"
-                    [class.to-blue-500/10]="selectedKeyId() === key.id"
+                    [class.bg-brand/10]="selectedKeyId() === key.id"
                     [class.text-brand]="selectedKeyId() === key.id"
                     [class.text-app-text-2]="selectedKeyId() !== key.id"
                     [class.hover:bg-app-surface-2]="selectedKeyId() !== key.id"
                   >
-                    <div class="w-2 h-2 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 shrink-0"></div>
+                    <div class="w-2 h-2 rounded-full brand-gradient shrink-0"></div>
                     {{ key.label || key.provider }}
                     <span class="text-app-text-muted font-normal ml-auto">{{ key.masked_key }}</span>
                   </button>
@@ -215,10 +207,10 @@
         <!-- No AI keys state -->
         <div class="flex flex-col items-center justify-center h-full px-6 text-center animate-fade-in">
           <div class="relative mb-6">
-            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/20 flex items-center justify-center">
+            <div class="w-20 h-20 rounded-2xl bg-brand/15 border border-brand/20 flex items-center justify-center">
               <lucide-icon [img]="Bot" [size]="32" class="text-brand"></lucide-icon>
             </div>
-            <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+            <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full brand-gradient flex items-center justify-center">
               <lucide-icon [img]="Settings" [size]="10" class="text-white"></lucide-icon>
             </div>
           </div>
@@ -237,39 +229,20 @@
         </div>
 
       } @else if (!activeSessionId() && messages().length === 0) {
-        <!-- Welcome / empty state with suggested prompts -->
-        <div class="flex flex-col items-center justify-center h-full px-6 text-center animate-fade-in">
-          <!-- Hero orb -->
-          <div class="tlp-orb-ring relative mb-6 w-20 h-20">
-            <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/25 to-blue-500/25 blur-xl animate-pulse-soft"></div>
-            <div class="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
-              <lucide-icon [img]="Bot" [size]="34" class="text-white"></lucide-icon>
+        <!-- Empty state — centered TLP logo -->
+        <div class="tlp-empty-state flex flex-col items-center justify-center h-full">
+          <div class="tlp-empty-orb relative">
+            <!-- Soft outer glow halo -->
+            <div class="absolute -inset-12 rounded-full tlp-orbit-glow"></div>
+            <!-- Rotating conic ring -->
+            <div class="tlp-orb-ring-empty absolute -inset-2 rounded-2xl"></div>
+            <!-- Pulsing shadow -->
+            <div class="absolute -inset-6 rounded-3xl bg-brand/10 blur-2xl animate-pulse-soft"></div>
+            <div class="tlp-orb-main relative w-24 h-24 rounded-2xl brand-gradient flex items-center justify-center shadow-2xl">
+              <div class="w-16 h-16 rounded-xl bg-white/10 backdrop-blur-[1px] flex items-center justify-center">
+                <img src="tlp-logo.svg" alt="TLP" class="tlp-logo-white w-12 h-12" />
+              </div>
             </div>
-          </div>
-
-          <h2 class="text-3xl sm:text-4xl font-extrabold mb-2 tracking-tight bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
-            How can I help you learn today?
-          </h2>
-          <p class="text-sm text-app-text-2 max-w-sm mb-8 leading-relaxed">
-            Your AI study companion — ask anything, debug code, or plan what to learn next. Pick a starter below, or just start typing.
-          </p>
-
-          <!-- Suggested prompts grid -->
-          <div class="grid grid-cols-2 gap-2 w-full max-w-lg">
-            @for (prompt of suggestedPrompts; track prompt.label) {
-              <button
-                (click)="send(prompt.text)"
-                class="group flex items-start gap-2.5 p-3 rounded-xl border border-app-border bg-app-surface hover:border-purple-500/30 hover:bg-gradient-to-br hover:from-purple-500/5 hover:to-blue-500/5 text-left transition-all duration-200 shadow-card hover:shadow-popover"
-              >
-                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500/15 to-blue-500/15 border border-purple-500/15 flex items-center justify-center shrink-0 mt-0.5 group-hover:from-purple-500/25 group-hover:to-blue-500/25 transition-all duration-200">
-                  <lucide-icon [img]="getSuggestionIcon(prompt.icon)" [size]="13" class="text-brand"></lucide-icon>
-                </div>
-                <div class="min-w-0">
-                  <p class="text-xs font-semibold text-app-text mb-0.5 group-hover:text-brand transition-colors">{{ prompt.label }}</p>
-                  <p class="text-[10px] text-app-text-muted leading-relaxed line-clamp-2">{{ prompt.text }}</p>
-                </div>
-              </button>
-            }
           </div>
         </div>
 
@@ -277,8 +250,8 @@
         <div class="flex items-center justify-center h-full">
           <div class="flex flex-col items-center gap-3">
             <div class="relative w-10 h-10">
-              <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 animate-pulse-soft"></div>
-              <div class="absolute inset-1 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+              <div class="absolute inset-0 rounded-xl bg-brand/20 animate-pulse-soft"></div>
+              <div class="absolute inset-1 rounded-lg brand-gradient flex items-center justify-center">
                 <lucide-icon [img]="Bot" [size]="16" class="text-white"></lucide-icon>
               </div>
             </div>
@@ -299,7 +272,7 @@
                   @if (msg.attachments && msg.attachments.length > 0) {
                     <div class="flex flex-wrap gap-1 justify-end">
                       @for (att of msg.attachments; track att.name) {
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-brand/10 text-brand border border-brand/20">
                           <lucide-icon [img]="Paperclip" [size]="9"></lucide-icon>
                           {{ att.name }}
                         </span>
@@ -307,7 +280,7 @@
                     </div>
                   }
                   <!-- Bubble -->
-                  <div class="bg-gradient-to-br from-purple-500 to-blue-500 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm shadow-purple-500/20">
+                  <div class="brand-gradient text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm">
                     <p class="text-sm leading-relaxed whitespace-pre-wrap">{{ msg.content }}</p>
                   </div>
                 </div>
@@ -320,9 +293,9 @@
                 <!-- Orb avatar -->
                 <div class="relative w-8 h-8 shrink-0 mt-0.5">
                   @if (msg.streaming) {
-                    <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 opacity-30 animate-pulse"></div>
+                    <div class="absolute inset-0 rounded-xl brand-gradient opacity-30 animate-pulse"></div>
                   }
-                  <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-sm">
+                  <div class="absolute inset-0 rounded-xl brand-gradient flex items-center justify-center shadow-sm">
                     <lucide-icon [img]="Bot" [size]="14" class="text-white"></lucide-icon>
                   </div>
                 </div>
@@ -331,14 +304,14 @@
                 <div class="flex-1 min-w-0">
                   <div
                     class="bg-app-surface border border-app-border rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-card"
-                    [class.border-purple-500/20]="msg.streaming"
+                    [class.border-brand/20]="msg.streaming"
                   >
                     @if (msg.streaming && !msg.content) {
                       <!-- Typing dots -->
                       <div class="flex items-center gap-1.5 py-0.5">
-                        <span class="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style="animation-delay: 0ms; animation-duration: 900ms;"></span>
-                        <span class="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style="animation-delay: 180ms; animation-duration: 900ms;"></span>
-                        <span class="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style="animation-delay: 360ms; animation-duration: 900ms;"></span>
+                        <span class="w-2 h-2 rounded-full bg-brand/80 animate-bounce" style="animation-delay: 0ms; animation-duration: 900ms;"></span>
+                        <span class="w-2 h-2 rounded-full bg-brand/60 animate-bounce" style="animation-delay: 180ms; animation-duration: 900ms;"></span>
+                        <span class="w-2 h-2 rounded-full bg-brand/40 animate-bounce" style="animation-delay: 360ms; animation-duration: 900ms;"></span>
                       </div>
                     } @else {
                       <!-- Full markdown — rendered live while streaming AND when complete -->
@@ -380,11 +353,10 @@
               @for (att of attachments(); track $index) {
                 <div
                   class="inline-flex items-center gap-1 pl-2 pr-1 py-0.5 rounded-full text-[11px] font-medium transition-all duration-150"
-                  [class.bg-purple-500/10]="!isUnsupported(att)"
-                  [class.text-purple-600]="!isUnsupported(att)"
-                  [class.dark:text-purple-400]="!isUnsupported(att)"
+                  [class.bg-brand/10]="!isUnsupported(att)"
+                  [class.text-brand]="!isUnsupported(att)"
                   [class.border]="true"
-                  [class.border-purple-500/20]="!isUnsupported(att)"
+                  [class.border-brand/20]="!isUnsupported(att)"
                   [class.bg-red-500/10]="isUnsupported(att)"
                   [class.text-red-500]="isUnsupported(att)"
                   [class.border-red-500/20]="isUnsupported(att)"
@@ -410,7 +382,7 @@
             <button
               (click)="openFilePicker()"
               [disabled]="streaming()"
-              class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-app-text-muted hover:text-brand hover:bg-purple-500/10 transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed mb-0.5"
+              class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-app-text-muted hover:text-brand hover:bg-brand/10 transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed mb-0.5"
               title="Attach file"
               aria-label="Attach file"
             >
@@ -446,7 +418,7 @@
             @if (streaming()) {
               <button
                 (click)="stopStreaming()"
-                class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30 text-brand hover:from-red-500/20 hover:to-red-500/20 hover:border-red-500/30 hover:text-red-500 transition-all duration-150 mb-0.5"
+                class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center bg-brand/20 border border-brand/30 text-brand hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-500 transition-all duration-150 mb-0.5"
                 title="Stop generating"
                 aria-label="Stop generating"
               >
@@ -457,12 +429,9 @@
                 (click)="send()"
                 [disabled]="!inputText().trim() && attachments().length === 0"
                 class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150 disabled:opacity-35 disabled:cursor-not-allowed mb-0.5"
-                [class.bg-gradient-to-br]="inputText().trim() || attachments().length > 0"
-                [class.from-purple-500]="inputText().trim() || attachments().length > 0"
-                [class.to-blue-500]="inputText().trim() || attachments().length > 0"
+                [class.brand-gradient]="inputText().trim() || attachments().length > 0"
                 [class.text-white]="inputText().trim() || attachments().length > 0"
                 [class.shadow-sm]="inputText().trim() || attachments().length > 0"
-                [class.shadow-purple-500/25]="inputText().trim() || attachments().length > 0"
                 [class.bg-app-surface-2]="!inputText().trim() && attachments().length === 0"
                 [class.text-app-text-muted]="!inputText().trim() && attachments().length === 0"
                 aria-label="Send message"

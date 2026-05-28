@@ -5,17 +5,20 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { NgClass, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { AdminService } from '../../../core/services/admin.service';
 import { AdminStats } from '../../../core/models/types';
+import { TerminalCardComponent } from '../../../shared/components/terminal-card/terminal-card';
 
 interface StatCard {
   label: string;
   key: keyof AdminStats;
   icon: string;
-  colorClass: string;
-  bgClass: string;
+  themeColor: 'blue' | 'green' | 'purple' | 'amber' | 'rose' | 'cyan';
+  promptPath: string;
+  badgeText: string;
+  footerText: string;
 }
 
 @Component({
@@ -23,7 +26,7 @@ interface StatCard {
   standalone: true,
   templateUrl: './admin-stats.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass, DecimalPipe, LucideAngularModule],
+  imports: [DecimalPipe, LucideAngularModule, TerminalCardComponent],
 })
 export class AdminStatsComponent implements OnInit {
   private readonly adminService = inject(AdminService);
@@ -33,14 +36,78 @@ export class AdminStatsComponent implements OnInit {
   error = signal(false);
 
   readonly statCards: StatCard[] = [
-    { label: 'Total Users',      key: 'users_total',          icon: 'users',          colorClass: 'text-brand',       bgClass: 'bg-brand/10' },
-    { label: 'Students',         key: 'students',             icon: 'graduation-cap', colorClass: 'text-blue-400',    bgClass: 'bg-blue-500/10' },
-    { label: 'Admins',           key: 'admins',               icon: 'shield',         colorClass: 'text-purple-400',  bgClass: 'bg-purple-500/10' },
-    { label: 'Published Courses',key: 'courses_published',    icon: 'book-open',      colorClass: 'text-green-400',   bgClass: 'bg-green-500/10' },
-    { label: 'Exercises',        key: 'exercises_published',  icon: 'code-2',         colorClass: 'text-yellow-400',  bgClass: 'bg-yellow-500/10' },
-    { label: 'Submissions',      key: 'submissions',          icon: 'send',           colorClass: 'text-orange-400',  bgClass: 'bg-orange-500/10' },
-    { label: 'Accepted',         key: 'submissions_accepted', icon: 'check-circle-2', colorClass: 'text-emerald-400', bgClass: 'bg-emerald-500/10' },
-    { label: 'Active Users',     key: 'users_active',         icon: 'activity',       colorClass: 'text-cyan-400',    bgClass: 'bg-cyan-500/10' },
+    {
+      label: 'Total Users',
+      key: 'users_total',
+      icon: 'users',
+      themeColor: 'blue',
+      promptPath: '~/users/all',
+      badgeText: 'Users',
+      footerText: 'Registered accounts',
+    },
+    {
+      label: 'Active Users',
+      key: 'users_active',
+      icon: 'activity',
+      themeColor: 'cyan',
+      promptPath: '~/users/active',
+      badgeText: 'Active',
+      footerText: 'Currently engaged',
+    },
+    {
+      label: 'Students',
+      key: 'students',
+      icon: 'graduation-cap',
+      themeColor: 'blue',
+      promptPath: '~/users/students',
+      badgeText: 'Students',
+      footerText: 'Registered learners',
+    },
+    {
+      label: 'Admins',
+      key: 'admins',
+      icon: 'shield',
+      themeColor: 'purple',
+      promptPath: '~/users/admins',
+      badgeText: 'Admins',
+      footerText: 'Staff credentials',
+    },
+    {
+      label: 'Published Courses',
+      key: 'courses_published',
+      icon: 'book-open',
+      themeColor: 'blue',
+      promptPath: '~/catalog/courses',
+      badgeText: 'Courses',
+      footerText: 'Published courses',
+    },
+    {
+      label: 'Exercises',
+      key: 'exercises_published',
+      icon: 'code-2',
+      themeColor: 'purple',
+      promptPath: '~/catalog/exercises',
+      badgeText: 'Exercises',
+      footerText: 'Coding exercises',
+    },
+    {
+      label: 'Submissions',
+      key: 'submissions',
+      icon: 'send',
+      themeColor: 'amber',
+      promptPath: '~/sandbox/submissions',
+      badgeText: 'Submissions',
+      footerText: 'Total submission entries',
+    },
+    {
+      label: 'Accepted',
+      key: 'submissions_accepted',
+      icon: 'check-circle-2',
+      themeColor: 'green',
+      promptPath: '~/sandbox/accepted',
+      badgeText: 'Accepted',
+      footerText: 'Successful answers',
+    },
   ];
 
   ngOnInit(): void {

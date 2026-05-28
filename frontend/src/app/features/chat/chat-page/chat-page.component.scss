@@ -10,6 +10,61 @@
 @keyframes tlp-float-a { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(8%, 6%) scale(1.15); } }
 @keyframes tlp-float-b { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-8%, -6%) scale(1.1); } }
 
+/* Empty state TLP logo — Claude-style centered branding */
+@keyframes tlp-orb-breathe {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(var(--color-brand-rgb), 0.2), 0 0 120px rgba(var(--color-brand-dark-rgb), 0.1); }
+  50% { transform: scale(1.03); box-shadow: 0 0 80px rgba(var(--color-brand-rgb), 0.3), 0 0 160px rgba(var(--color-brand-dark-rgb), 0.15); }
+}
+
+@keyframes tlp-logo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes tlp-orbit-expand {
+  0%, 100% { opacity: 0.25; transform: scale(0.9); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+.tlp-empty-state {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.tlp-empty-orb {
+  animation: tlp-logo-float 4s ease-in-out infinite;
+}
+
+.tlp-orbit-glow {
+  background: radial-gradient(circle, rgba(var(--color-brand-rgb), 0.18) 0%, rgba(var(--color-brand-dark-rgb), 0.08) 40%, transparent 70%);
+  border-radius: 50%;
+  animation: tlp-orbit-expand 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.tlp-orb-ring-empty {
+  background: conic-gradient(from var(--tlp-angle), rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)), rgb(var(--color-brand-dark-rgb)), rgb(var(--color-brand-light-rgb)));
+  filter: blur(10px);
+  opacity: 0.55;
+  animation: tlp-spin 5s linear infinite;
+  pointer-events: none;
+}
+
+.tlp-orb-main {
+  animation: tlp-orb-breathe 3s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.tlp-logo-white {
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Ambient aurora drifting behind the glassy header / composer */
 .chat-aurora {
   position: absolute;
@@ -29,29 +84,28 @@
   opacity: 0.14;
   will-change: transform;
 }
-.chat-aurora::before { background: #8b5cf6; top: -12%; left: 8%;  animation: tlp-float-a 16s ease-in-out infinite; }
-.chat-aurora::after  { background: #3b82f6; bottom: -12%; right: 8%; animation: tlp-float-b 20s ease-in-out infinite; }
+.chat-aurora::before { background: rgb(var(--color-brand-light-rgb)); top: -12%; left: 8%;  animation: tlp-float-a 16s ease-in-out infinite; }
+.chat-aurora::after  { background: rgb(var(--color-brand-rgb)); bottom: -12%; right: 8%; animation: tlp-float-b 20s ease-in-out infinite; }
 
-/* Animated conic gradient-border for the composer.
-   Reliable padding-box / border-box technique (NOT mask-composite). */
+/* Animated conic gradient-border for the composer — Claude-style clean border with subtle focus glow */
 .composer-glow {
-  border: 1.5px solid transparent !important;
-  background:
-    linear-gradient(rgb(var(--color-app-surface)), rgb(var(--color-app-surface))) padding-box,
-    conic-gradient(from var(--tlp-angle), #8b5cf6, #3b82f6, #22d3ee, #8b5cf6) border-box !important;
-  animation: tlp-spin 8s linear infinite;
+  border: 1.5px solid rgb(var(--color-app-border)) !important;
+  background: rgb(var(--color-app-surface));
+  border-radius: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .composer-glow:focus-within {
-  box-shadow: 0 0 30px -6px rgba(139, 92, 246, 0.45);
+  border-color: rgba(var(--color-brand-rgb), 0.5) !important;
+  box-shadow: 0 0 0 1px rgba(var(--color-brand-rgb), 0.25);
 }
 
-/* Rotating halo behind the welcome hero orb */
+/* Rotating halo behind the welcome hero orb (kept for compatibility) */
 .tlp-orb-ring::before {
   content: "";
   position: absolute;
   inset: -7px;
   border-radius: 1.4rem;
-  background: conic-gradient(from var(--tlp-angle), #8b5cf6, #3b82f6, #22d3ee, #8b5cf6);
+  background: conic-gradient(from var(--tlp-angle), rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)), rgb(var(--color-brand-dark-rgb)), rgb(var(--color-brand-light-rgb)));
   filter: blur(9px);
   opacity: 0.6;
   z-index: -1;
@@ -61,6 +115,9 @@
 @media (prefers-reduced-motion: reduce) {
   .chat-aurora::before,
   .chat-aurora::after,
-  .composer-glow,
-  .tlp-orb-ring::before { animation: none; }
+  .tlp-orb-ring::before,
+  .tlp-orb-ring-empty,
+  .tlp-orb-main,
+  .tlp-empty-orb,
+  .tlp-orbit-glow { animation: none; }
 }

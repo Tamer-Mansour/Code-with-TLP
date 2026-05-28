@@ -451,7 +451,7 @@ export class BstComponent implements OnInit, Visualizer {
   nodeClass(n: RenderedNode): string {
     const base = 'absolute rounded-full flex items-center justify-center font-bold text-sm text-white transition-all duration-300 select-none';
     const stateClasses: Record<string, string> = {
-      default: 'bg-gradient-to-br from-purple-500 to-blue-500 shadow-md',
+      default: 'brand-gradient shadow-md',
       visit:   'bg-gradient-to-br from-amber-400 to-amber-500 shadow-[0_0_0_4px_rgba(245,158,11,0.35)]',
       found:   'bg-gradient-to-br from-green-400 to-green-600 shadow-[0_0_0_4px_rgba(34,197,94,0.4)]',
       miss:    'bg-gradient-to-br from-red-400 to-red-600 shadow-[0_0_0_4px_rgba(239,68,68,0.4)]',

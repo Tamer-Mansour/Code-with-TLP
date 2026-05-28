@@ -17,6 +17,9 @@ export class VizCatalogComponent {
   readonly grouped: { category: string; entries: VizRegistryEntry[] }[] =
     Object.entries(getVizByCategory()).map(([category, entries]) => ({ category, entries }));
 
+  readonly entries: VizRegistryEntry[] =
+    Object.values(getVizByCategory()).flat();
+
   /** Slice operations to max 5 for the folder "files". */
   getOps(entry: VizRegistryEntry): string[] {
     return entry.meta.operations.slice(0, 5);

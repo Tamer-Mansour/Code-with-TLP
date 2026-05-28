@@ -9,6 +9,7 @@ import {
 import { NgClass, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { TerminalCardComponent } from '../../shared/components/terminal-card/terminal-card';
 import { AuthService } from '../../core/services/auth.service';
 import { ProgressService } from '../../core/services/progress.service';
 import { SubmissionService } from '../../core/services/submission.service';
@@ -28,7 +29,7 @@ import {
   standalone: true,
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass, DatePipe, RouterLink, LucideAngularModule],
+  imports: [NgClass, DatePipe, RouterLink, LucideAngularModule, TerminalCardComponent],
 })
 export class DashboardComponent implements OnInit {
   private readonly auth = inject(AuthService);

@@ -35,17 +35,17 @@
 // ── State variants ─────────────────────────────────────────────────────────────
 
 .node-idle {
-  background: linear-gradient(135deg, rgb(139 92 246), rgb(59 130 246));
-  border-color: rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)));
+  border-color: rgba(var(--color-brand-rgb), 0.4);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
+  box-shadow: 0 2px 8px rgba(var(--color-brand-rgb), 0.25);
 }
 
 .node-head {
-  background: linear-gradient(135deg, rgb(59 130 246), rgb(99 102 241));
-  border-color: rgb(99 102 241);
+  background: linear-gradient(135deg, rgb(var(--color-brand-rgb)), rgb(var(--color-brand-light-rgb)));
+  border-color: rgb(var(--color-brand-light-rgb));
   color: #fff;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35), 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 0 0 3px rgba(var(--color-brand-light-rgb), 0.35), 0 4px 12px rgba(var(--color-brand-light-rgb), 0.3);
 }
 
 .node-visit {
@@ -90,10 +90,10 @@
 }
 
 .node-pointer {
-  background: linear-gradient(135deg, #a78bfa, #7c3aed);
-  border-color: #7c3aed;
+  background: linear-gradient(135deg, rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)));
+  border-color: rgb(var(--color-brand-rgb));
   color: #fff;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.35);
+  box-shadow: 0 0 0 3px rgba(var(--color-brand-rgb), 0.35);
 }
 
 .node-flip {
@@ -139,7 +139,7 @@
 }
 
 .node-badge-head {
-  background: rgb(99 102 241);
+  background: rgb(var(--color-brand-light-rgb));
 }
 
 // ── Arrows ─────────────────────────────────────────────────────────────────────
@@ -171,13 +171,13 @@
 
 // Arrow color variants
 .arrow-idle {
-  .arrow-shaft { background: rgb(139 92 246 / 0.5); }
-  .arrow-head  { fill: rgb(139 92 246 / 0.5); }
+  .arrow-shaft { background: rgba(var(--color-brand-rgb), 0.5); }
+  .arrow-head  { fill: rgba(var(--color-brand-rgb), 0.5); }
 }
 
 .arrow-active {
-  .arrow-shaft { background: #a78bfa; }
-  .arrow-head  { fill: #a78bfa; }
+  .arrow-shaft { background: rgb(var(--color-brand-light-rgb)); }
+  .arrow-head  { fill: rgb(var(--color-brand-light-rgb)); }
 }
 
 .arrow-flip {
@@ -207,7 +207,7 @@
 .null-shaft {
   height: 2px;
   width: 20px;
-  background: rgb(139 92 246 / 0.35);
+  background: rgba(var(--color-brand-rgb), 0.35);
   border-radius: 1px;
 }
 
@@ -258,13 +258,13 @@
 
 .ll-canvas {
   scrollbar-width: thin;
-  scrollbar-color: rgb(139 92 246 / 0.3) transparent;
+  scrollbar-color: rgba(var(--color-brand-rgb), 0.3) transparent;
 
   &::-webkit-scrollbar {
     height: 4px;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgb(139 92 246 / 0.3);
+    background: rgba(var(--color-brand-rgb), 0.3);
     border-radius: 2px;
   }
 }

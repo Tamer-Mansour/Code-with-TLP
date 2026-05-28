@@ -17,9 +17,8 @@ import { FormsModule } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 import {
   LucideAngularModule,
-  LucideIconData,
   Bot, Plus, Trash2, Send, Loader2, MessageSquare, Settings, ChevronDown,
-  Paperclip, X, Square, Sparkles, Zap, Code, HelpCircle, BookOpen,
+  Paperclip, X, Square,
 } from 'lucide-angular';
 import { ChatService, ChatSession, ChatMessage, AiKey, AiProvider } from '../../../core/services/chat.service';
 
@@ -35,13 +34,6 @@ interface LocalMessage {
   streaming?: boolean;
   attachments?: { name: string }[];
 }
-
-const SUGGESTED_PROMPTS: { icon: string; label: string; text: string }[] = [
-  { icon: 'sparkles', label: 'Explain a concept',   text: 'Explain the concept of Big O notation and why it matters in algorithm design.' },
-  { icon: 'code',     label: 'Write code',           text: 'Write a Python function that finds the longest common subsequence of two strings.' },
-  { icon: 'zap',      label: 'Debug this',           text: 'Help me debug: my binary search always returns -1 even when the value exists.' },
-  { icon: 'book',     label: 'Study plan',           text: 'Create a 2-week study plan to master dynamic programming for coding interviews.' },
-];
 
 @Component({
   selector: 'app-chat-page',
@@ -71,14 +63,6 @@ export class ChatPageComponent implements OnInit, OnDestroy, AfterViewChecked, A
   readonly Paperclip     = Paperclip;
   readonly X             = X;
   readonly Square        = Square;
-  readonly Sparkles      = Sparkles;
-  readonly Zap           = Zap;
-  readonly Code          = Code;
-  readonly HelpCircle    = HelpCircle;
-  readonly BookOpen      = BookOpen;
-
-  // Suggestions
-  readonly suggestedPrompts = SUGGESTED_PROMPTS;
 
   // State
   readonly sessions        = signal<ChatSession[]>([]);
@@ -480,15 +464,5 @@ export class ChatPageComponent implements OnInit, OnDestroy, AfterViewChecked, A
 
   isUnsupported(att: Attachment): boolean {
     return att.name.startsWith('[unsupported]');
-  }
-
-  getSuggestionIcon(icon: string): LucideIconData {
-    switch (icon) {
-      case 'sparkles': return this.Sparkles;
-      case 'code':     return this.Code;
-      case 'zap':      return this.Zap;
-      case 'book':     return this.BookOpen;
-      default:         return this.HelpCircle;
-    }
   }
 }

@@ -8,7 +8,9 @@
       style="text-decoration: none; color: inherit;"
       aria-label="Code with TLP home"
     >
-      <img src="logo.png" alt="Code with TLP" class="w-8 h-8 object-contain rounded-lg" />
+      <img src="logo.png" alt="Code with TLP"
+           class="w-8 h-8 object-contain rounded-lg"
+           style="filter: drop-shadow(0 0 6px rgba(var(--color-brand-rgb), 0.5));" />
       <span class="font-semibold text-sm tracking-tight text-app-text">Code with TLP</span>
     </a>
 
@@ -168,6 +170,13 @@
                 <lucide-icon [img]="Key" [size]="14"></lucide-icon>
                 AI Keys
               </a>
+
+              <button (click)="openPersonalization()"
+                class="flex items-center gap-2.5 px-3 py-2 text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors w-full text-left"
+                role="menuitem">
+                <lucide-icon [img]="Settings" [size]="14"></lucide-icon>
+                Personalization
+              </button>
 
               @if (auth.isAdmin()) {
                 <a routerLink="/admin" (click)="closeDropdown()"

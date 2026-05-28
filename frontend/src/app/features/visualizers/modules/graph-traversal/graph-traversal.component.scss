@@ -63,7 +63,7 @@
 .edge-tree {
   stroke: url(#grad-edge-tree);
   stroke-width: 3;
-  filter: drop-shadow(0 0 3px rgba(139, 92, 246, 0.55));
+  filter: drop-shadow(0 0 3px rgba(var(--color-brand-rgb), 0.55));
   transition: stroke 0.3s ease, stroke-width 0.3s ease;
 }
 
@@ -79,7 +79,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   color: #fff;
-  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  background: linear-gradient(135deg, rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)));
   box-shadow: 0 1px 5px rgba(99, 60, 220, 0.45);
   letter-spacing: 0.03em;
   flex-shrink: 0;

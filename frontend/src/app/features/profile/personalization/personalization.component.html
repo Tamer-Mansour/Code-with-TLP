@@ -1,0 +1,242 @@
+<style>
+  /* 3D Perspective color picker — scoped to personalization drawer */
+  .persp-color-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    transform-style: preserve-3d;
+    transform: perspective(1000px);
+  }
+
+  .persp-color-btn {
+    position: relative;
+    flex-shrink: 0;
+    width: 32px;
+    height: 40px;
+    border: none;
+    outline: none;
+    transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .persp-color-btn::after {
+    position: absolute;
+    content: "";
+    inset: 0;
+    width: 40px;
+    height: 40px;
+    background-color: var(--c);
+    border-radius: 8px;
+    transform: scale(1.2);
+    pointer-events: none;
+    transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+
+  .persp-color-btn.selected::after {
+    outline: 2px solid rgb(var(--color-app-text));
+    outline-offset: 2px;
+    transform: scale(1.35);
+  }
+
+  .persp-color-btn::before {
+    position: absolute;
+    content: attr(aria-label);
+    left: 50%;
+    bottom: 54px;
+    font-size: 10px;
+    line-height: 14px;
+    transform: translateX(-50%);
+    padding: 2px 0.5rem;
+    background-color: rgb(var(--color-app-surface));
+    color: rgb(var(--color-app-text));
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    white-space: nowrap;
+    border: 1px solid rgb(var(--color-app-border));
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .persp-color-btn:hover {
+    transform: scale(1.5);
+    z-index: 99999;
+  }
+
+  .persp-color-btn:hover::before {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .persp-color-btn:active::after {
+    transform: scale(1.1);
+  }
+
+  .persp-color-btn:hover + * {
+    transform: scale(1.3);
+    z-index: 9999;
+  }
+
+  .persp-color-btn:hover + * + * {
+    transform: scale(1.15);
+    z-index: 999;
+  }
+
+  .persp-color-btn:has(+ *:hover) {
+    transform: scale(1.3);
+    z-index: 9999;
+  }
+
+  .persp-color-btn:has(+ * + *:hover) {
+    transform: scale(1.15);
+    z-index: 999;
+  }
+</style>
+
+@if (settingsService.isDrawerOpen()) {
+  <!-- Backdrop -->
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-fade-in"
+       (click)="close()">
+  </div>
+
+  <!-- Drawer -->
+  <div class="fixed inset-y-0 right-0 w-full max-w-md bg-app-surface border-l border-app-border
+              shadow-popover z-50 flex flex-col overflow-y-auto animate-slide-up">
+
+    <!-- Drawer header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-app-border flex-shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500/15 to-blue-500/15
+                     flex items-center justify-center">
+          <lucide-icon name="palette" class="w-3.5 h-3.5 text-purple-500" />
+        </div>
+        <h2 class="text-base font-semibold text-app-text">Personalization</h2>
+      </div>
+      <button (click)="close()" class="btn-icon btn-ghost" aria-label="Close">
+        <lucide-icon name="x" class="w-4 h-4" />
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="flex-1 px-6 py-6 space-y-6">
+
+      <!-- ── Theme Toggle ──────────────────────────────────── -->
+      <div class="bg-app-surface-2 rounded-2xl p-4 space-y-3">
+        <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider">Theme Mode</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            (click)="setTheme('light')"
+            [disabled]="saving()"
+            class="relative flex items-center gap-2.5 p-3 rounded-xl border-2 transition-all duration-150
+                   focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-app-surface-2"
+            [class.border-brand]="settings()?.theme === 'light'"
+            [class.border-transparent]="settings()?.theme !== 'light'"
+            [class.bg-brand/10]="settings()?.theme === 'light'"
+            [class.hover:border-app-border-2]="settings()?.theme !== 'light'">
+            <lucide-icon name="sun" class="w-4 h-4 text-amber-500 flex-shrink-0" />
+            <span class="text-sm font-medium text-app-text">Light</span>
+            @if (settings()?.theme === 'light') {
+              <lucide-icon name="check" class="w-4 h-4 text-brand ml-auto" />
+            }
+          </button>
+          <button
+            (click)="setTheme('dark')"
+            [disabled]="saving()"
+            class="relative flex items-center gap-2.5 p-3 rounded-xl border-2 transition-all duration-150
+                   focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-app-surface-2"
+            [class.border-brand]="settings()?.theme === 'dark'"
+            [class.border-transparent]="settings()?.theme !== 'dark'"
+            [class.bg-brand/10]="settings()?.theme === 'dark'"
+            [class.hover:border-app-border-2]="settings()?.theme !== 'dark'">
+            <lucide-icon name="moon" class="w-4 h-4 text-indigo-400 flex-shrink-0" />
+            <span class="text-sm font-medium text-app-text">Dark</span>
+            @if (settings()?.theme === 'dark') {
+              <lucide-icon name="check" class="w-4 h-4 text-brand ml-auto" />
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Accent Color — 3D Picker ──────────────────────── -->
+      <div class="bg-app-surface-2 rounded-2xl p-4 space-y-3">
+        <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider">Accent Color</p>
+        <div class="persp-color-picker justify-center py-3">
+          @for (opt of COLOR_OPTIONS; track opt.value) {
+            <button
+              class="persp-color-btn"
+              [class.selected]="settings()?.color_scheme === opt.value"
+              (click)="setColorScheme(opt.value)"
+              [disabled]="saving()"
+              [attr.aria-label]="opt.label"
+              [style.--c]="opt.hex"
+            ></button>
+          }
+        </div>
+      </div>
+
+      <!-- ── Typography ─────────────────────────────────────── -->
+      <div class="bg-app-surface-2 rounded-2xl p-4 space-y-3">
+        <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider">Typography</p>
+        <div class="space-y-1.5">
+          @for (opt of FONT_OPTIONS; track opt.value) {
+            <button
+              (click)="setFontFamily(opt.value)"
+              [disabled]="saving()"
+              class="w-full flex items-center gap-2.5 p-2.5 rounded-xl border transition-all duration-150 text-left
+                     focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2
+                     focus-visible:ring-offset-app-surface-2"
+              [class.border-brand]="settings()?.font_family === opt.value"
+              [class.border-transparent]="settings()?.font_family !== opt.value"
+              [class.bg-brand/5]="settings()?.font_family === opt.value"
+              [class.hover:border-app-border-2]="settings()?.font_family !== opt.value"
+            >
+              <span class="text-sm font-medium text-app-text w-36 flex-shrink-0 truncate">{{ opt.label }}</span>
+              <span class="text-xs text-app-text-muted truncate"
+                    [style.font-family]="opt.value">
+                {{ opt.preview }}
+              </span>
+              @if (settings()?.font_family === opt.value) {
+                <lucide-icon name="check" class="w-3.5 h-3.5 text-brand flex-shrink-0 ml-auto" />
+              }
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- ── Backdrop Image ─────────────────────────────────── -->
+      <div class="bg-app-surface-2 rounded-2xl p-4 space-y-3">
+        <p class="text-xs font-semibold text-app-text-muted uppercase tracking-wider">Profile Backdrop</p>
+
+        @if (previewUrl()) {
+          <div class="relative w-full h-28 rounded-xl overflow-hidden border border-app-border">
+            <img [src]="previewUrl()" alt="Backdrop preview"
+                 class="w-full h-full object-cover"
+                 (error)="$any($event.target).style.display = 'none'" />
+          </div>
+        }
+
+        <div class="flex items-center gap-2">
+          <input
+            [ngModel]="backdropUrlInput()"
+            (ngModelChange)="backdropUrlInput.set($event)"
+            type="url"
+            placeholder="https://example.com/backdrop.jpg"
+            class="input flex-1 text-xs"
+          />
+          <button (click)="saveBackgroundUrl()" [disabled]="saving()"
+                  class="btn-primary btn-sm flex-shrink-0">Save</button>
+        </div>
+        @if (previewUrl()) {
+          <button (click)="clearBackgroundUrl()" [disabled]="saving()"
+                  class="btn-ghost btn-sm text-red-400 w-full justify-center">
+            Remove backdrop
+          </button>
+        }
+      </div>
+
+    </div>
+  </div>
+}

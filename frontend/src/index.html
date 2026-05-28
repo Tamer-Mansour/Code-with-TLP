@@ -15,24 +15,30 @@
       if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.add('dark');
       }
+      var scheme = localStorage.getItem('color_scheme');
+      if (scheme) {
+        document.documentElement.dataset['colorScheme'] = scheme;
+      }
     })();
   </script>
   <style>
     #tlp-splash {
       position: fixed; inset: 0; z-index: 9999;
-      background: #09090b;
+      background: #fafafa;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       gap: 20px;
       transition: opacity 0.35s ease;
     }
+    .dark #tlp-splash { background: #09090b; }
     #tlp-splash.fade-out { opacity: 0; pointer-events: none; }
     #tlp-splash-box { width: 140px; }
     #tlp-splash-box svg { width: 100%; height: auto; display: block; }
     #tlp-splash-label {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-      font-size: 13px; color: #8892b0; letter-spacing: 0.05em; margin: 0;
+      font-size: 13px; color: #71717a; letter-spacing: 0.05em; margin: 0;
     }
+    .dark #tlp-splash-label { color: #8892b0; }
     /* Wave animation */
     #tlp-splash-box svg g[id] {
       transform-box: fill-box; transform-origin: center center;
@@ -46,6 +52,24 @@
       0%, 60%, 100% { transform: translateY(0); }
       30%           { transform: translateY(-10%); }
     }
+    /* Brand color glow on splash logo from stored color_scheme */
+    [data-color-scheme="red"]     #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(239,68,68,0.5)); }
+    [data-color-scheme="orange"]  #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(249,115,22,0.5)); }
+    [data-color-scheme="amber"]   #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(245,158,11,0.5)); }
+    [data-color-scheme="yellow"]  #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(234,179,8,0.5)); }
+    [data-color-scheme="lime"]    #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(132,204,22,0.5)); }
+    [data-color-scheme="green"]   #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(34,197,94,0.5)); }
+    [data-color-scheme="emerald"] #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(16,185,129,0.5)); }
+    [data-color-scheme="teal"]    #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(20,184,166,0.5)); }
+    [data-color-scheme="cyan"]    #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(6,182,212,0.5)); }
+    [data-color-scheme="sky"]     #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(14,165,233,0.5)); }
+    [data-color-scheme="blue"]    #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(59,130,246,0.5)); }
+    [data-color-scheme="indigo"]  #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(99,102,241,0.5)); }
+    [data-color-scheme="violet"]  #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(139,92,246,0.5)); }
+    [data-color-scheme="purple"]  #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(168,85,247,0.5)); }
+    [data-color-scheme="pink"]    #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(236,72,153,0.5)); }
+    [data-color-scheme="rose"]    #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(244,63,94,0.5)); }
+    [data-color-scheme="slate"]   #tlp-splash-box { filter: drop-shadow(0 0 12px rgba(100,116,139,0.5)); }
   </style>
 </head>
 <body>

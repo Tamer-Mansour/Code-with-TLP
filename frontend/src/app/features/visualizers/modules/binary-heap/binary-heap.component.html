@@ -16,15 +16,14 @@
         placeholder="1 – 999"
         class="w-24 px-2 py-1.5 rounded-lg text-sm
                bg-app-surface border border-app-border text-app-text
-               focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-      />
-      <button
-        (click)="onInsert()"
-        [disabled]="!insertValue()"
-        class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
-               text-white bg-gradient-to-br from-purple-500 to-blue-500
-               hover:from-purple-600 hover:to-blue-600 disabled:opacity-40
-               disabled:cursor-not-allowed transition-all"
+                focus:outline-none focus:ring-2 focus:ring-brand/50"
+       />
+       <button
+         (click)="onInsert()"
+         [disabled]="!insertValue()"
+         class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                text-white brand-gradient brand-gradient-hover disabled:opacity-40
+                disabled:cursor-not-allowed transition-all"
       >
         <lucide-icon [img]="Plus" [size]="13"></lucide-icon>
         Insert
@@ -53,9 +52,9 @@
         placeholder="e.g. 3,1,7,9,4"
         class="w-36 px-2 py-1.5 rounded-lg text-sm
                bg-app-surface border border-app-border text-app-text
-               focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-      />
-      <button
+                focus:outline-none focus:ring-2 focus:ring-brand/50"
+       />
+       <button
         (click)="onBuildHeap()"
         class="px-3 py-1.5 rounded-lg text-xs font-semibold
                text-app-text-2 hover:text-app-text
@@ -97,7 +96,7 @@
 
     <!-- Radial glow -->
     <div class="absolute inset-x-0 top-0 h-32 pointer-events-none
-                bg-[radial-gradient(ellipse_at_50%_0%,rgba(139,92,246,0.12),transparent_70%)]">
+                bg-[radial-gradient(ellipse_at_50%_0%,rgba(var(--color-brand-rgb),0.12),transparent_70%)]">
     </div>
 
     <!-- SVG tree -->
@@ -110,8 +109,8 @@
       <!-- Gradient definitions -->
       <defs>
         <linearGradient id="heapGradDefault" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%"   stop-color="#8b5cf6" />
-          <stop offset="100%" stop-color="#3b82f6" />
+          <stop offset="0%"   style="stop-color:rgb(var(--color-brand-light-rgb))" />
+          <stop offset="100%" style="stop-color:rgb(var(--color-brand-rgb))" />
         </linearGradient>
       </defs>
       <!-- Edges -->

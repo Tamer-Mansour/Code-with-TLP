@@ -11,10 +11,11 @@ import {
   LucideAngularModule,
   Code2, BookOpen, LayoutDashboard, ChevronDown,
   Menu, X, User, LogOut, Shield, BarChart2, Sun, Moon, Activity,
-  Bot, Key, MessageCircleQuestion,
+  Bot, Key, MessageCircleQuestion, Settings,
 } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { UserSettingsService } from '../../../core/services/user-settings.service';
 
 @Component({
   selector: 'app-navbar',
@@ -26,6 +27,7 @@ import { ThemeService } from '../../../core/services/theme.service';
 export class NavbarComponent {
   readonly auth  = inject(AuthService);
   readonly theme = inject(ThemeService);
+  readonly settingsService = inject(UserSettingsService);
 
   readonly mobileOpen   = signal(false);
   readonly dropdownOpen = signal(false);
@@ -46,6 +48,7 @@ export class NavbarComponent {
   readonly Bot            = Bot;
   readonly Key            = Key;
   readonly MessageCircleQuestion = MessageCircleQuestion;
+  readonly Settings = Settings;
 
   toggleMobile(): void {
     this.mobileOpen.update(v => !v);
@@ -55,6 +58,11 @@ export class NavbarComponent {
   toggleDropdown(): void { this.dropdownOpen.update(v => !v); }
   closeMobile(): void    { this.mobileOpen.set(false); }
   closeDropdown(): void  { this.dropdownOpen.set(false); }
+
+  openPersonalization(): void {
+    this.dropdownOpen.set(false);
+    this.settingsService.openDrawer();
+  }
 
   logout(): void {
     this.dropdownOpen.set(false);

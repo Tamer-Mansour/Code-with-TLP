@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar';
 import { ToastContainerComponent } from './shared/components/toast-container/toast-container';
+import { PersonalizationComponent } from './features/profile/personalization/personalization.component';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,7 @@ import { ToastContainerComponent } from './shared/components/toast-container/toa
     RouterOutlet,
     NavbarComponent,
     ToastContainerComponent,
+    PersonalizationComponent,
   ],
   template: `
     <app-navbar />
@@ -17,6 +19,7 @@ import { ToastContainerComponent } from './shared/components/toast-container/toa
       <router-outlet />
     </main>
     <app-toast-container />
+    <app-personalization />
   `,
 })
 export class App {}

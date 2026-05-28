@@ -74,7 +74,7 @@
                 @for (line of pseudoLines(); track $index) {
                   <div
                     class="px-2 rounded transition-colors duration-150 whitespace-pre"
-                    [class.bg-purple-500]="activeLine() === $index"
+                    [class.brand-gradient]="activeLine() === $index"
                     [class.text-white]="activeLine() === $index"
                     [class.text-app-text-2]="activeLine() !== $index"
                   >{{ line || ' ' }}</div>

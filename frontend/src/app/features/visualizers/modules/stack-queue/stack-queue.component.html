@@ -10,9 +10,7 @@
           (click)="selectOp(op)"
           class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150"
           [class.text-white]="selectedOp() === op"
-          [class.bg-gradient-to-br]="selectedOp() === op"
-          [class.from-purple-500]="selectedOp() === op"
-          [class.to-blue-500]="selectedOp() === op"
+          [class.brand-gradient]="selectedOp() === op"
           [class.shadow-md]="selectedOp() === op"
           [class.text-app-text-2]="selectedOp() !== op"
           [class.bg-app-surface]="selectedOp() !== op"
@@ -43,8 +41,8 @@
     <button
       (click)="execute()"
       class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
-             bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow
-             hover:opacity-90 transition-all"
+             brand-gradient brand-gradient-hover text-white shadow
+             transition-all"
     >
       @if (selectedOp() === 'Stack Push' || selectedOp() === 'Queue Enqueue') {
         <lucide-icon [img]="Plus" [size]="13"></lucide-icon>
@@ -81,7 +79,7 @@
 
         <!-- Radial glow -->
         <div class="absolute inset-x-0 top-0 h-16 pointer-events-none
-                    bg-[radial-gradient(ellipse_at_50%_0%,rgba(139,92,246,0.12),transparent_70%)]"></div>
+                    bg-[radial-gradient(ellipse_at_50%_0%,rgba(var(--color-brand-rgb),0.12),transparent_70%)]"></div>
 
         <!-- Elements (bottom→top displayed left→right) -->
         <div class="relative z-10 flex items-end justify-start gap-2 px-4 pb-5 pt-4 flex-wrap min-h-[120px]">
@@ -132,7 +130,7 @@
 
         <!-- Radial glow -->
         <div class="absolute inset-x-0 top-0 h-16 pointer-events-none
-                    bg-[radial-gradient(ellipse_at_50%_0%,rgba(139,92,246,0.12),transparent_70%)]"></div>
+                    bg-[radial-gradient(ellipse_at_50%_0%,rgba(var(--color-brand-rgb),0.12),transparent_70%)]"></div>
 
         <!-- Flow arrows (decorative) -->
         <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1
@@ -191,7 +189,7 @@
   <!-- Legend -->
   <div class="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-app-text-2">
     <span class="flex items-center gap-1.5">
-      <span class="w-3 h-3 rounded-sm bg-gradient-to-br from-purple-500 to-blue-500 inline-block"></span>
+      <span class="w-3 h-3 rounded-sm brand-gradient inline-block"></span>
       default
     </span>
     <span class="flex items-center gap-1.5">

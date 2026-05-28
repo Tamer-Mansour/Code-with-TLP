@@ -9,7 +9,7 @@
 .note-banner {
   b {
     font-weight: 700;
-    color: var(--color-purple-400, #c084fc);
+    color: var(--color-purple-400, rgb(var(--color-brand-light-rgb)));
   }
 }
 
@@ -80,7 +80,7 @@
   &.dijk-edge--tree {
     stroke: url(#dijk-grad-tree-edge);
     stroke-width: 3.5;
-    filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0.65));
+    filter: drop-shadow(0 0 5px rgba(var(--color-brand-rgb), 0.65));
   }
 }
 
@@ -91,7 +91,7 @@
   transition: fill 0.3s ease;
 
   &.dijk-weight-label--tree {
-    fill: #c084fc; // purple-400
+    fill: rgb(var(--color-brand-light-rgb)); // purple-400
     font-weight: 700;
   }
 

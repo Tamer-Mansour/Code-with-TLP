@@ -1,0 +1,54 @@
+<div class="flex flex-col h-full w-full rounded-xl border backdrop-blur-md overflow-hidden select-none transition-all duration-300 hover:-translate-y-1 hover:shadow-popover group"
+     [ngClass]="[colorClasses().card, colorClasses().glow]">
+  
+  <!-- Mac-Style Window Header -->
+  <div class="flex items-center justify-between px-4 py-2.5 border-b"
+       [ngClass]="colorClasses().header">
+    <div class="flex items-center gap-1.5 flex-shrink-0">
+      <span class="w-3 h-3 rounded-full bg-[#ff5f57] border border-black/5 inline-block"></span>
+      <span class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-black/5 inline-block"></span>
+      <span class="w-3 h-3 rounded-full bg-[#28c941] border border-black/5 inline-block"></span>
+    </div>
+    
+    <!-- Title and Icon -->
+    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold tracking-wider uppercase"
+         [ngClass]="colorClasses().titleText">
+      <lucide-icon [name]="icon()" class="w-3 h-3 flex-shrink-0" />
+      <span>{{ title() }}</span>
+    </div>
+  </div>
+
+  <!-- Terminal Content Area -->
+  <div class="flex flex-col flex-1 p-5 font-mono">
+    
+    <!-- Shell Prompt Row -->
+    <div class="flex items-center gap-2 flex-wrap mb-3.5">
+      <span class="text-xs font-bold leading-none" [ngClass]="colorClasses().promptPath">{{ promptPath() }}</span>
+      <span class="text-xs font-extrabold leading-none" [ngClass]="colorClasses().promptArrow">❯</span>
+      <span class="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase leading-none" [ngClass]="colorClasses().badge">
+        {{ badgeText() }}
+      </span>
+    </div>
+
+    <!-- Main Value Metric & Cursor -->
+    <div class="flex items-baseline flex-1 min-h-[44px]">
+      @if (loading()) {
+        <div class="h-9 w-20 rounded animate-pulse bg-current opacity-20 my-1"></div>
+      } @else {
+        <span class="text-3xl font-bold tracking-tight select-all leading-none"
+             [ngClass]="colorClasses().valueText">
+          {{ value() }}@if (suffix()) {<span class="text-lg font-medium opacity-85 ml-0.5">{{ suffix() }}</span>}
+        </span>
+      }
+    </div>
+
+    <!-- Subtitle/Footer description -->
+    <div class="mt-4 flex items-center justify-between text-xs"
+         [ngClass]="colorClasses().footerText">
+      <span class="font-medium select-text line-clamp-1 leading-normal pr-2">{{ footerText() }}</span>
+      <!-- Small thematic icon on the bottom right -->
+      <lucide-icon [name]="icon()" class="w-4 h-4 opacity-30 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
+    </div>
+
+  </div>
+</div>

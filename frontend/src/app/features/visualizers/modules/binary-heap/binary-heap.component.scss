@@ -21,14 +21,14 @@
 }
 
 .heap-node--swap {
-  fill: #3b82f6; // blue-500
-  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.7));
+  fill: rgb(var(--color-brand-rgb)); // blue-500
+  filter: drop-shadow(0 0 8px rgba(var(--color-brand-rgb), 0.7));
   transform: scale(1.12);
 }
 
 .heap-node--active {
-  fill: #a855f7; // purple-500
-  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.65));
+  fill: rgb(var(--color-brand-light-rgb)); // purple-500
+  filter: drop-shadow(0 0 8px rgba(var(--color-brand-light-rgb), 0.65));
   transform: scale(1.1);
 }
 
@@ -51,8 +51,8 @@
 }
 
 .heap-glow--compare { fill: rgba(245, 158, 11, 0.3); }
-.heap-glow--swap    { fill: rgba(59, 130, 246, 0.3);  }
-.heap-glow--active  { fill: rgba(168, 85, 247, 0.3);  }
+.heap-glow--swap    { fill: rgba(var(--color-brand-rgb), 0.3);  }
+.heap-glow--active  { fill: rgba(var(--color-brand-light-rgb), 0.3);  }
 .heap-glow--done    { fill: rgba(34, 197, 94, 0.25);  }
 .heap-glow--removed { fill: rgba(239, 68, 68, 0.25);  }
 
@@ -84,7 +84,7 @@
 }
 
 .heap-cell--default {
-  background: linear-gradient(135deg, rgb(139 92 246), rgb(59 130 246));
+  background: linear-gradient(135deg, rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)));
 }
 
 .heap-cell--compare {
@@ -94,14 +94,14 @@
 }
 
 .heap-cell--swap {
-  background: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  background: rgb(var(--color-brand-rgb));
+  box-shadow: 0 0 0 2px rgba(var(--color-brand-rgb), 0.5);
   transform: translateY(-4px) scaleX(1.05);
 }
 
 .heap-cell--active {
-  background: #a855f7;
-  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.5);
+  background: rgb(var(--color-brand-light-rgb));
+  box-shadow: 0 0 0 2px rgba(var(--color-brand-light-rgb), 0.5);
   transform: translateY(-3px);
 }
 
@@ -118,10 +118,10 @@
 // ── Pseudocode highlight ──────────────────────────────────────────────────────
 
 .pseudo-active {
-  background: rgba(139, 92, 246, 0.18);
+  background: rgba(var(--color-brand-rgb), 0.18);
   color: rgb(196, 170, 252);
   font-weight: 700;
-  border-left: 3px solid #8b5cf6;
+  border-left: 3px solid rgb(var(--color-brand-rgb));
   padding-left: calc(0.5rem - 3px); // compensate for border
 }
 
@@ -140,8 +140,8 @@
 // inline via the heap-node--* classes where applicable).
 // Override fill-based colours with matching backgrounds for <span> elements:
 
-span.heap-node--default { background: linear-gradient(135deg, #8b5cf6, #3b82f6); }
+span.heap-node--default { background: linear-gradient(135deg, rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb))); }
 span.heap-node--compare { background: #f59e0b; }
-span.heap-node--swap    { background: #3b82f6; }
-span.heap-node--active  { background: #a855f7; }
+span.heap-node--swap    { background: rgb(var(--color-brand-rgb)); }
+span.heap-node--active  { background: rgb(var(--color-brand-light-rgb)); }
 span.heap-node--done    { background: #22c55e; }

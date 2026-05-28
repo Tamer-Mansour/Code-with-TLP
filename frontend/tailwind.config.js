@@ -14,10 +14,10 @@ module.exports = {
         'app-text':       'rgb(var(--color-app-text) / <alpha-value>)',
         'app-text-2':     'rgb(var(--color-app-text-2) / <alpha-value>)',
         'app-text-muted': 'rgb(var(--color-app-text-muted) / <alpha-value>)',
-        // Brand (static across modes)
-        'brand':          '#3b82f6',
-        'brand-dark':     '#2563eb',
-        'brand-light':    '#60a5fa',
+        // Brand (driven by --color-brand-rgb, default blue)
+        'brand':          'rgb(var(--color-brand-rgb, 59 130 246) / <alpha-value>)',
+        'brand-dark':     'rgb(var(--color-brand-dark-rgb, 37 99 235) / <alpha-value>)',
+        'brand-light':    'rgb(var(--color-brand-light-rgb, 96 165 250) / <alpha-value>)',
         // Difficulty labels (kept for utility — used by badge classes via dark:)
         'easy':           '#16a34a', // green-600  — works on both light + dark bg
         'medium':         '#d97706', // amber-600
@@ -33,6 +33,28 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
+        inter: ['Inter', 'system-ui', 'sans-serif'],
+        roboto: ['Roboto', 'system-ui', 'sans-serif'],
+        outfit: ['Outfit', 'system-ui', 'sans-serif'],
+        'jetbrains-mono': ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
+        'fira-code': ['Fira Code', 'Consolas', 'monospace'],
+        poppins: ['Poppins', 'system-ui', 'sans-serif'],
+        nunito: ['Nunito', 'system-ui', 'sans-serif'],
+        'open-sans': ['Open Sans', 'system-ui', 'sans-serif'],
+        lato: ['Lato', 'system-ui', 'sans-serif'],
+        montserrat: ['Montserrat', 'system-ui', 'sans-serif'],
+        raleway: ['Raleway', 'system-ui', 'sans-serif'],
+        ubuntu: ['Ubuntu', 'system-ui', 'sans-serif'],
+        'source-sans-3': ['Source Sans 3', 'system-ui', 'sans-serif'],
+        'dm-sans': ['DM Sans', 'system-ui', 'sans-serif'],
+        'space-grotesk': ['Space Grotesk', 'system-ui', 'sans-serif'],
+        tajawal: ['Tajawal', 'system-ui', 'sans-serif'],
+        cairo: ['Cairo', 'system-ui', 'sans-serif'],
+        amiri: ['Amiri', 'system-ui', 'serif'],
+        'noto-naskh-arabic': ['Noto Naskh Arabic', 'system-ui', 'serif'],
+        'el-messiri': ['El Messiri', 'system-ui', 'sans-serif'],
+        changa: ['Changa', 'system-ui', 'sans-serif'],
+        'readex-pro': ['Readex Pro', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'xs':   ['0.75rem',  { lineHeight: '1rem' }],

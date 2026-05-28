@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { Observable, tap, switchMap, catchError, from, EMPTY } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { User, TokenPair, LoginRequest, RegisterRequest } from '../models/types';
+import { UserSettingsService } from './user-settings.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly userSettings = inject(UserSettingsService);
   private readonly base = `${environment.apiUrl}/auth`;
 
   readonly currentUser = signal<User | null>(null);
@@ -23,6 +25,9 @@ export class AuthService {
       }),
       tap(() => {
         this.loadUser().subscribe();
+      }),
+      tap(() => {
+        this.userSettings.load().subscribe();
       })
     );
   }
@@ -66,7 +71,9 @@ export class AuthService {
 
     return new Promise<void>((resolve) => {
       this.loadUser().subscribe({
-        next: () => resolve(),
+        next: () => {
+          this.userSettings.load().subscribe({ next: () => resolve(), error: () => resolve() });
+        },
         error: () => {
           this.refreshToken().pipe(
             switchMap(() => this.loadUser()),
@@ -76,7 +83,9 @@ export class AuthService {
               return EMPTY;
             })
           ).subscribe({
-            next: () => resolve(),
+            next: () => {
+              this.userSettings.load().subscribe({ next: () => resolve(), error: () => resolve() });
+            },
             error: () => resolve(),
             complete: () => resolve(),
           });

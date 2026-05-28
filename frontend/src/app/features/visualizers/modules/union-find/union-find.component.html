@@ -79,7 +79,7 @@
 
     <!-- Radial glow -->
     <div class="absolute inset-x-0 top-0 h-32 pointer-events-none
-                bg-[radial-gradient(ellipse_at_50%_0%,rgba(139,92,246,0.13),transparent_70%)]">
+                bg-[radial-gradient(ellipse_at_50%_0%,rgba(var(--color-brand-rgb),0.13),transparent_70%)]">
     </div>
 
     <!-- SVG -->
@@ -95,14 +95,14 @@
 
         <!-- default: semi-transparent purple→blue (member node) -->
         <linearGradient id="uf-grad-default" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%"   stop-color="rgb(139 92 246)"  stop-opacity="0.55" />
-          <stop offset="100%" stop-color="rgb(59 130 246)"  stop-opacity="0.55" />
+          <stop offset="0%"   style="stop-color:rgb(var(--color-brand-light-rgb));stop-opacity:0.55" />
+          <stop offset="100%" style="stop-color:rgb(var(--color-brand-rgb));stop-opacity:0.55" />
         </linearGradient>
 
         <!-- root: vivid purple→blue -->
         <linearGradient id="uf-grad-root" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%"   stop-color="rgb(139 92 246)" />
-          <stop offset="100%" stop-color="rgb(59 130 246)" />
+          <stop offset="0%"   style="stop-color:rgb(var(--color-brand-light-rgb))" />
+          <stop offset="100%" style="stop-color:rgb(var(--color-brand-rgb))" />
         </linearGradient>
 
         <!-- current (active target): amber -->

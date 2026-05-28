@@ -271,6 +271,32 @@ export interface AdminStats {
   submissions_accepted: number;
 }
 
+// ── User Settings ─────────────────────────────────────────
+export type ThemeMode = 'light' | 'dark';
+export type FontFamily = 'Inter' | 'Roboto' | 'Outfit' | 'JetBrains Mono' | 'Fira Code' | 'Poppins' | 'Nunito' | 'Open Sans' | 'Lato' | 'Montserrat' | 'Raleway' | 'Ubuntu' | 'Source Sans 3' | 'DM Sans' | 'Space Grotesk' | 'Tajawal' | 'Cairo' | 'Amiri' | 'Noto Naskh Arabic' | 'El Messiri' | 'Changa' | 'Readex Pro';
+export type ColorScheme = 'blue' | 'green' | 'purple' | 'amber' | 'rose' | 'cyan' | 'slate' | 'red' | 'orange' | 'yellow' | 'lime' | 'emerald' | 'teal' | 'sky' | 'indigo' | 'violet' | 'pink';
+export type ProfileLayout = 'default' | 'minimal' | 'split';
+
+export interface UserSettings {
+  id: number;
+  user_id: number;
+  theme: ThemeMode;
+  font_family: FontFamily;
+  color_scheme: ColorScheme;
+  background_image_url?: string;
+  profile_layout: ProfileLayout;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserSettingsUpdate {
+  theme?: ThemeMode;
+  font_family?: FontFamily;
+  color_scheme?: ColorScheme;
+  background_image_url?: string;
+  profile_layout?: ProfileLayout;
+}
+
 // ── Helpers ───────────────────────────────────────────────
 export const LANGUAGE_LABELS: Record<string, string | undefined> = {
   python: 'Python',

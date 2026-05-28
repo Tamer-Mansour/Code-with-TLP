@@ -5,13 +5,13 @@ import { provideMarkdown } from 'ngx-markdown';
 import {
   LUCIDE_ICONS, LucideIconProvider,
   Activity, AlertCircle, AlertTriangle, ArrowLeft, ArrowRight, Award, BarChart2,
-  BookOpen, Bot, Brain, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
+  BookOpen, Bot, Brain, Calendar, Camera, Check, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
   Clock, Code, Code2, Cpu, Database, Eye, EyeOff, Filter, Flame, FlaskConical, Frown,
   GitBranch, Globe, GraduationCap, Image, Inbox, Key, Library, Lightbulb,
-  Loader2, Lock, LogOut, Menu, MessageSquare,
-  Pencil, Percent, Play, Plus, RefreshCw, Search, Send, Settings,
-  Server, Shield, Sigma, SquareCode, Star, Target, Terminal, Trash2, TrendingUp,
-  Trophy, User, Users, X, XCircle, Zap,
+  Loader2, Lock, LogOut, Menu, MessageSquare, Monitor, Moon,
+  Palette, Pencil, Percent, Play, Plus, RefreshCw, Search, Send, Settings,
+  Server, Shield, Sigma, SquareCode, Star, Sun, Target, Terminal, Trash2, TrendingUp,
+  Trophy, Type, Upload, User, Users, X, XCircle, Zap,
 } from 'lucide-angular';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
@@ -27,13 +27,13 @@ export const appConfig: ApplicationConfig = {
       provide: LUCIDE_ICONS,
       useValue: new LucideIconProvider({
         Activity, AlertCircle, AlertTriangle, ArrowLeft, ArrowRight, Award, BarChart2,
-        BookOpen, Bot, Brain, Calendar, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
+        BookOpen, Bot, Brain, Calendar, Camera, Check, CheckCircle, CheckCircle2, ChevronDown, ChevronUp,
         Clock, Code, Code2, Cpu, Database, Eye, EyeOff, Filter, Flame, FlaskConical, Frown,
         GitBranch, Globe, GraduationCap, Image, Inbox, Key, Library, Lightbulb,
-        Loader2, Lock, LogOut, Menu, MessageSquare,
-        Pencil, Percent, Play, Plus, RefreshCw, Search, Send, Settings,
-        Server, Shield, Sigma, SquareCode, Star, Target, Terminal, Trash2, TrendingUp,
-        Trophy, User, Users, X, XCircle, Zap,
+        Loader2, Lock, LogOut, Menu, MessageSquare, Monitor, Moon,
+        Palette, Pencil, Percent, Play, Plus, RefreshCw, Search, Send, Settings,
+        Server, Shield, Sigma, SquareCode, Star, Sun, Target, Terminal, Trash2, TrendingUp,
+        Trophy, Type, Upload, User, Users, X, XCircle, Zap,
       }),
       multi: true,
     },

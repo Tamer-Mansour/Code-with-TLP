@@ -17,6 +17,7 @@ from app.models.progress import Enrollment, LessonProgress, ProgressStatus
 from app.models.quiz import QuizQuestion, QuizAnswer
 from app.models.ai import UserAIKey, ChatSession, ChatMessage
 from app.models.interview import InterviewCategory, InterviewQuestion
+from app.models.user_settings import UserSettings
 
 __all__ = [
     "InterviewCategory",
@@ -47,4 +48,5 @@ __all__ = [
     "Enrollment",
     "LessonProgress",
     "ProgressStatus",
+    "UserSettings",
 ]

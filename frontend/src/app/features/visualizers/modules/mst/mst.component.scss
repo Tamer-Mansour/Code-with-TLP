@@ -11,7 +11,7 @@
 
   &.mst-node--idle {
     fill: url(#mst-grad-idle);
-    filter: drop-shadow(0 1px 4px rgba(99, 102, 241, 0.40));
+    filter: drop-shadow(0 1px 4px rgba(var(--color-brand-light-rgb), 0.40));
   }
 
   &.mst-node--in-mst {
