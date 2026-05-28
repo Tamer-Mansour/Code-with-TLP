@@ -12,6 +12,12 @@ env/
 .env
 .env.local
 
+# SSL Certificates
+codewithtlp.me/
+*.crt
+*.key
+*.pem
+
 # Databases (SQLite)
 *.db
 *.sqlite
@@ -46,3 +52,14 @@ Thumbs.db
 .mypy_cache/
 .ruff_cache/
 .pyright/
+
+# Claude AI
+.claude/
+
+# PowerShell scripts
+*.ps1
+
+# Docker configurations
+docker-compose*.yml
+Dockerfile*
+.dockerignore
