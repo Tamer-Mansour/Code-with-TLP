@@ -1,0 +1,213 @@
+<div>
+
+  <!-- ── Hero ──────────────────────────────────────────────────────── -->
+  <section class="relative bg-grid pt-16 pb-14 text-center overflow-hidden">
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+      <div class="w-[600px] h-[300px] bg-purple-500/5 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="page-container relative">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25 text-purple-400 text-xs font-medium mb-6">
+        <lucide-icon [img]="MessageCircleQuestion" [size]="12"></lucide-icon>
+        Technical Interview Preparation
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl font-bold text-gradient mb-4 leading-tight">
+        Interview Prep
+      </h1>
+      <p class="text-base sm:text-lg text-app-text-2 max-w-xl mx-auto mb-10 leading-relaxed">
+        Master the most common technical interview questions. Browse by category or search across all topics.
+      </p>
+
+      <!-- Search bar -->
+      <div class="max-w-lg mx-auto relative">
+        <div class="relative flex items-center">
+          <lucide-icon
+            [img]="Search"
+            [size]="16"
+            class="absolute left-4 text-app-text-muted pointer-events-none z-10"
+          ></lucide-icon>
+          <input
+            type="search"
+            placeholder="Search interview questions..."
+            [ngModel]="searchQuery"
+            (ngModelChange)="onSearchChange($event)"
+            class="w-full pl-10 pr-10 py-3 rounded-2xl border border-app-border bg-app-surface text-app-text text-sm placeholder:text-app-text-muted focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/50 transition-all duration-150 shadow-card"
+            aria-label="Search interview questions"
+          />
+          @if (isSearchActive()) {
+            <button
+              type="button"
+              (click)="clearSearch()"
+              class="absolute right-3 text-app-text-muted hover:text-app-text transition-colors"
+              aria-label="Clear search"
+            >
+              <lucide-icon [img]="X" [size]="16"></lucide-icon>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Content ───────────────────────────────────────────────────── -->
+  <div class="page-container py-12">
+
+    <!-- Loading skeleton -->
+    @if (loading()) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        @for (_ of [1,2,3,4,5,6]; track $index) {
+          <div class="skeleton h-44 rounded-2xl"></div>
+        }
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (error() && !loading()) {
+      <div class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="w-12 h-12 rounded-full bg-red-950 border border-red-800 flex items-center justify-center mb-4">
+          <lucide-icon [img]="ClipboardList" [size]="20" class="text-red-400"></lucide-icon>
+        </div>
+        <p class="text-app-text font-medium mb-1">Something went wrong</p>
+        <p class="text-app-text-2 text-sm">{{ error() }}</p>
+      </div>
+    }
+
+    <!-- ── SEARCH RESULTS (when query is active) ──────────────────── -->
+    @if (isSearchActive() && !loading()) {
+      <div>
+        <!-- Status bar -->
+        <div class="flex items-center justify-between mb-6">
+          <p class="text-sm text-app-text-2">
+            @if (searching()) {
+              Searching...
+            } @else {
+              <span class="font-semibold text-app-text">{{ searchResults().length }}</span>
+              result{{ searchResults().length !== 1 ? 's' : '' }} for
+              <span class="font-semibold text-purple-400">"{{ searchQuery }}"</span>
+            }
+          </p>
+          <button
+            type="button"
+            (click)="clearSearch()"
+            class="text-xs text-app-text-muted hover:text-app-text transition-colors flex items-center gap-1"
+          >
+            <lucide-icon [img]="X" [size]="12"></lucide-icon>
+            Clear
+          </button>
+        </div>
+
+        <!-- Searching spinner -->
+        @if (searching()) {
+          <div class="flex items-center justify-center py-16">
+            <div class="w-8 h-8 border-2 border-app-border border-t-purple-500 rounded-full animate-spin"></div>
+          </div>
+        }
+
+        <!-- Result list -->
+        @if (!searching() && searchResults().length > 0) {
+          <div class="space-y-3">
+            @for (q of searchResults(); track q.id) {
+              <div class="rounded-2xl border border-app-border bg-app-surface shadow-card p-5 hover:border-purple-500/30 hover:shadow-popover transition-all duration-200">
+                <div class="flex flex-wrap items-start gap-3 mb-2">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold {{ difficultyClass(q.difficulty) }}">
+                    {{ difficultyLabel(q.difficulty) }}
+                  </span>
+                  @for (tag of q.tags; track tag) {
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-app-surface-2 text-app-text-muted border border-app-border">
+                      {{ tag }}
+                    </span>
+                  }
+                </div>
+                <p class="text-sm font-semibold text-app-text leading-snug">{{ q.question }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Empty search results -->
+        @if (!searching() && searchResults().length === 0) {
+          <div class="flex flex-col items-center justify-center py-20 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-app-surface-2 border border-app-border flex items-center justify-center mb-4">
+              <lucide-icon [img]="Search" [size]="24" class="text-app-text-muted"></lucide-icon>
+            </div>
+            <p class="text-app-text font-medium mb-1">No results found</p>
+            <p class="text-app-text-2 text-sm">Try a different search term or browse categories below.</p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── CATEGORY GRID (default view) ──────────────────────────── -->
+    @if (!isSearchActive() && !loading() && !error()) {
+      @if (categories().length === 0) {
+        <div class="text-center py-16 text-app-text-2">No interview categories available yet.</div>
+      } @else {
+        <div>
+          <div class="mb-7">
+            <h2 class="section-title">Browse by Category</h2>
+            <p class="section-sub">Select a topic to explore questions and detailed answers</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            @for (cat of categories(); track cat.id) {
+              <a
+                [routerLink]="['/interview', cat.slug]"
+                class="group relative flex flex-col rounded-2xl border border-app-border bg-app-surface no-underline overflow-hidden shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-purple-500/30 hover:shadow-popover hover:ring-1 hover:ring-purple-500/15"
+                [attr.aria-label]="cat.name"
+              >
+                <div class="p-5 flex flex-col gap-4 flex-1">
+
+                  <!-- Icon chip -->
+                  <div class="flex items-start justify-between gap-3">
+                    <div
+                      class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105"
+                      [style.background]="'linear-gradient(135deg, ' + (cat.color || '#a855f7') + '28, ' + (cat.color || '#a855f7') + '10)'"
+                      [style.box-shadow]="'0 0 0 1px ' + (cat.color || '#a855f7') + '30'"
+                    >
+                      <lucide-icon
+                        [img]="categoryIcon(cat.icon)"
+                        [size]="20"
+                        [style.color]="cat.color || '#a855f7'"
+                      ></lucide-icon>
+                    </div>
+
+                    <!-- Question count badge -->
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-app-surface-2 text-app-text-muted border border-app-border shrink-0 mt-1">
+                      {{ cat.question_count }} Q&amp;A
+                    </span>
+                  </div>
+
+                  <!-- Name + description -->
+                  <div class="flex-1">
+                    <h3 class="text-sm font-semibold text-app-text group-hover:text-purple-400 transition-colors leading-snug mb-1.5">
+                      {{ cat.name }}
+                    </h3>
+                    @if (cat.description) {
+                      <p class="text-xs text-app-text-muted line-clamp-2 leading-relaxed">
+                        {{ cat.description }}
+                      </p>
+                    }
+                  </div>
+
+                  <!-- Footer CTA -->
+                  <div class="flex items-center mt-auto pt-3 border-t border-app-border/40">
+                    <span class="text-xs font-medium text-app-text-muted group-hover:text-purple-400 transition-colors">
+                      View questions
+                    </span>
+                    <lucide-icon
+                      [img]="ArrowRight"
+                      [size]="13"
+                      class="ml-1 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-purple-400"
+                    ></lucide-icon>
+                  </div>
+                </div>
+              </a>
+            }
+          </div>
+        </div>
+      }
+    }
+
+  </div>
+</div>

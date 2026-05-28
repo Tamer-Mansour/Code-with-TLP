@@ -16,8 +16,11 @@ from app.models.submission import Submission, TestCaseResult, SubmissionStatus
 from app.models.progress import Enrollment, LessonProgress, ProgressStatus
 from app.models.quiz import QuizQuestion, QuizAnswer
 from app.models.ai import UserAIKey, ChatSession, ChatMessage
+from app.models.interview import InterviewCategory, InterviewQuestion
 
 __all__ = [
+    "InterviewCategory",
+    "InterviewQuestion",
     "QuizQuestion",
     "QuizAnswer",
     "UserAIKey",

@@ -1,0 +1,191 @@
+// ── MST component — scoped styles ─────────────────────────────────────────
+
+:host {
+  display: block;
+}
+
+// ── Node circles ──────────────────────────────────────────────────────────
+
+.mst-node {
+  transition: fill 0.3s ease, filter 0.3s ease;
+
+  &.mst-node--idle {
+    fill: url(#mst-grad-idle);
+    filter: drop-shadow(0 1px 4px rgba(99, 102, 241, 0.40));
+  }
+
+  &.mst-node--in-mst {
+    fill: url(#mst-grad-in-mst);
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.70));
+  }
+
+  &.mst-node--considering {
+    fill: url(#mst-grad-considering);
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.80));
+  }
+
+  &.mst-node--frontier {
+    fill: url(#mst-grad-frontier);
+    filter: drop-shadow(0 0 7px rgba(34, 211, 238, 0.65));
+  }
+
+  &.mst-node--rejected {
+    fill: url(#mst-grad-rejected);
+    filter: drop-shadow(0 0 6px rgba(244, 63, 94, 0.60));
+  }
+}
+
+// ── Glow rings ────────────────────────────────────────────────────────────
+
+.mst-ring {
+  transition: stroke 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+
+  &.mst-ring--in-mst {
+    stroke: rgba(16, 185, 129, 0.45);
+    opacity: 1;
+  }
+
+  &.mst-ring--considering {
+    stroke: rgba(251, 191, 36, 0.55);
+    opacity: 1;
+  }
+
+  &.mst-ring--frontier {
+    stroke: rgba(34, 211, 238, 0.40);
+    opacity: 1;
+  }
+
+  &.mst-ring--idle,
+  &.mst-ring--rejected {
+    opacity: 0;
+  }
+}
+
+// ── Edge lines ────────────────────────────────────────────────────────────
+
+.mst-edge {
+  transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
+
+  &.mst-edge--idle {
+    stroke: rgba(148, 163, 184, 0.30);
+    stroke-width: 2;
+  }
+
+  &.mst-edge--in-mst {
+    stroke: url(#mst-grad-edge-mst);
+    stroke-width: 3.5;
+    filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.55));
+  }
+
+  &.mst-edge--considering {
+    stroke: url(#mst-grad-edge-considering);
+    stroke-width: 3;
+    filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.65));
+  }
+
+  &.mst-edge--rejected {
+    stroke: rgba(244, 63, 94, 0.35);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+  }
+}
+
+// ── Weight label bubbles ──────────────────────────────────────────────────
+
+.weight-bubble {
+  transition: fill 0.3s ease, filter 0.3s ease;
+
+  &.weight-bubble--idle {
+    fill: rgba(30, 41, 59, 0.85);
+    stroke: rgba(148, 163, 184, 0.25);
+    stroke-width: 1;
+  }
+
+  &.weight-bubble--in-mst {
+    fill: rgba(16, 185, 129, 0.20);
+    stroke: rgba(16, 185, 129, 0.60);
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.50));
+  }
+
+  &.weight-bubble--considering {
+    fill: rgba(251, 191, 36, 0.20);
+    stroke: rgba(251, 191, 36, 0.70);
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.55));
+  }
+
+  &.weight-bubble--rejected {
+    fill: rgba(244, 63, 94, 0.10);
+    stroke: rgba(244, 63, 94, 0.35);
+    stroke-width: 1;
+  }
+}
+
+.weight-label {
+  fill: rgba(148, 163, 184, 0.80);
+  transition: fill 0.3s ease;
+
+  &.weight-label--mst {
+    fill: #34d399;
+  }
+
+  &.weight-label--considering {
+    fill: #fcd34d;
+  }
+}
+
+// ── Kruskal edge-row states ────────────────────────────────────────────────
+
+.edge-row--pending {
+  background: transparent;
+  color: var(--app-text-2, #94a3b8);
+}
+
+.edge-row--considering {
+  background: rgba(251, 191, 36, 0.10);
+  border: 1px solid rgba(251, 191, 36, 0.30);
+  color: #fcd34d;
+}
+
+.edge-row--in-mst {
+  background: rgba(16, 185, 129, 0.10);
+  border: 1px solid rgba(16, 185, 129, 0.30);
+  color: #34d399;
+}
+
+.edge-row--rejected {
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.20);
+  color: #f87171;
+  opacity: 0.65;
+}
+
+// ── MST node chips (Prim sidebar) ─────────────────────────────────────────
+
+.chip-mst-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #10b981, #0d9488);
+  box-shadow: 0 1px 5px rgba(16, 185, 129, 0.45);
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+// ── Legend rows ───────────────────────────────────────────────────────────
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--app-text-2, #94a3b8);
+}

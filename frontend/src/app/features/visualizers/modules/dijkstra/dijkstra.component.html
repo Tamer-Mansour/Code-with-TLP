@@ -1,0 +1,331 @@
+<div class="p-4 flex flex-col gap-4">
+
+  <!-- ── Controls row ──────────────────────────────────────────────────── -->
+  <div class="flex flex-wrap items-center gap-3 p-3 rounded-xl
+              bg-app-surface-2 border border-app-border">
+
+    <!-- Start node selector -->
+    <div class="flex items-center gap-1.5 flex-wrap">
+      <span class="text-xs font-semibold uppercase tracking-wide text-app-text-muted">
+        Source
+      </span>
+      @for (id of nodeIds; track id) {
+        <button
+          (click)="selectStart(id)"
+          class="w-7 h-7 rounded-full text-xs font-bold transition-all duration-150"
+          [class.text-white]="selectedStart() === id"
+          [class.bg-gradient-to-br]="selectedStart() === id"
+          [class.from-purple-500]="selectedStart() === id"
+          [class.to-blue-500]="selectedStart() === id"
+          [class.shadow-lg]="selectedStart() === id"
+          [class.text-app-text-2]="selectedStart() !== id"
+          [class.bg-app-surface]="selectedStart() !== id"
+          [class.border]="selectedStart() !== id"
+          [class.border-app-border]="selectedStart() !== id"
+        >
+          {{ id }}
+        </button>
+      }
+    </div>
+
+    <!-- Player controls -->
+    <div class="ml-auto flex items-center gap-1.5">
+      <!-- Step back -->
+      <button
+        (click)="onStepBack()"
+        [disabled]="atStart()"
+        class="px-2 py-1.5 rounded-lg text-xs font-semibold
+               text-app-text-2 bg-app-surface border border-app-border
+               hover:bg-app-surface-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        title="Step back"
+      >
+        &#8592;
+      </button>
+
+      <!-- Play / Pause -->
+      <button
+        (click)="onToggle()"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-white bg-gradient-to-br from-purple-500 to-blue-500
+               hover:from-purple-600 hover:to-blue-600 transition-all shadow-sm"
+      >
+        <lucide-icon [img]="Play" [size]="12"></lucide-icon>
+        {{ isPlaying() ? 'Pause' : 'Play' }}
+      </button>
+
+      <!-- Step forward -->
+      <button
+        (click)="onStep()"
+        [disabled]="atEnd()"
+        class="px-2 py-1.5 rounded-lg text-xs font-semibold
+               text-app-text-2 bg-app-surface border border-app-border
+               hover:bg-app-surface-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        title="Step forward"
+      >
+        &#8594;
+      </button>
+
+      <!-- Step counter -->
+      <span class="text-xs font-mono text-app-text-muted min-w-[52px] text-center">
+        {{ stepLabel() }}
+      </span>
+
+      <!-- Run -->
+      <button
+        (click)="onRun()"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-white bg-gradient-to-br from-purple-500 to-blue-500
+               hover:from-purple-600 hover:to-blue-600 transition-all shadow-sm"
+      >
+        <lucide-icon [img]="Play" [size]="12"></lucide-icon>
+        Run
+      </button>
+
+      <!-- Reset -->
+      <button
+        (click)="onReset()"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+               text-app-text-2 hover:text-app-text bg-app-surface border border-app-border
+               hover:bg-app-surface-2 transition-all"
+      >
+        <lucide-icon [img]="RotateCcw" [size]="12"></lucide-icon>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Step note banner ───────────────────────────────────────────────── -->
+  <div class="rounded-xl border border-app-border bg-app-surface-2 px-4 py-2.5
+              text-sm text-app-text-2 leading-relaxed note-banner min-h-[44px]"
+       [innerHTML]="currentNote()">
+  </div>
+
+  <!-- ── Main content: SVG graph + side panels ─────────────────────────── -->
+  <div class="flex flex-col lg:flex-row gap-4">
+
+    <!-- SVG graph stage -->
+    <div class="relative rounded-xl border border-app-border overflow-hidden
+                bg-gradient-to-br from-app-surface to-app-surface-2 flex-1 min-h-[360px]">
+
+      <!-- Radial glow backdrop -->
+      <div class="absolute inset-0 pointer-events-none
+                  bg-[radial-gradient(ellipse_at_30%_20%,rgba(139,92,246,0.10),transparent_65%)]">
+      </div>
+
+      <svg
+        class="w-full h-full"
+        [attr.viewBox]="'0 0 ' + SVG_W + ' ' + SVG_H"
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="Dijkstra shortest path graph canvas"
+      >
+        <defs>
+          <!-- Node gradient: idle (purple → blue) -->
+          <linearGradient id="dijk-grad-idle" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#a855f7" />
+            <stop offset="100%" stop-color="#3b82f6" />
+          </linearGradient>
+          <!-- Node gradient: current (amber → orange) -->
+          <linearGradient id="dijk-grad-current" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#fbbf24" />
+            <stop offset="100%" stop-color="#f97316" />
+          </linearGradient>
+          <!-- Node gradient: frontier (cyan → sky) -->
+          <linearGradient id="dijk-grad-frontier" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#22d3ee" />
+            <stop offset="100%" stop-color="#0ea5e9" />
+          </linearGradient>
+          <!-- Node gradient: visited / settled (green → emerald) -->
+          <linearGradient id="dijk-grad-visited" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#4ade80" />
+            <stop offset="100%" stop-color="#16a34a" />
+          </linearGradient>
+          <!-- Tree-edge stroke gradient -->
+          <linearGradient id="dijk-grad-tree-edge" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"   stop-color="#a855f7" />
+            <stop offset="100%" stop-color="#60a5fa" />
+          </linearGradient>
+          <!-- Relaxed-edge stroke gradient -->
+          <linearGradient id="dijk-grad-relax-edge" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"   stop-color="#fbbf24" />
+            <stop offset="100%" stop-color="#f97316" />
+          </linearGradient>
+        </defs>
+
+        <!-- ── Edges (drawn behind nodes) ──────────────────────────────── -->
+        @for (edge of svgLayout().edges; track edge.key) {
+          <g>
+            <line
+              [attr.x1]="edge.x1"
+              [attr.y1]="edge.y1"
+              [attr.x2]="edge.x2"
+              [attr.y2]="edge.y2"
+              [class]="'dijk-edge dijk-edge--' + edge.state"
+              stroke-linecap="round"
+            ></line>
+            <!-- Weight label at mid-point -->
+            <text
+              [attr.x]="edge.mx"
+              [attr.y]="edge.my - 6"
+              text-anchor="middle"
+              dominant-baseline="central"
+              font-size="10"
+              font-weight="600"
+              font-family="inherit"
+              class="dijk-weight-label select-none pointer-events-none"
+              [class.dijk-weight-label--tree]="edge.state === 'tree'"
+              [class.dijk-weight-label--relaxed]="edge.state === 'relaxed'"
+            >{{ edge.weight }}</text>
+          </g>
+        }
+
+        <!-- ── Nodes ───────────────────────────────────────────────────── -->
+        @for (node of svgLayout().nodes; track node.id) {
+          <g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+            <!-- Glow ring (visible for active states) -->
+            <circle
+              [attr.r]="NODE_R + 8"
+              [class]="'dijk-node-ring dijk-node-ring--' + node.state"
+              fill="none"
+              stroke-width="2"
+            ></circle>
+            <!-- Main circle -->
+            <circle
+              [attr.r]="NODE_R"
+              [class]="'dijk-node-circle dijk-node-circle--' + node.state"
+            ></circle>
+            <!-- Node label -->
+            <text
+              text-anchor="middle"
+              dominant-baseline="central"
+              dy="-4"
+              font-size="13"
+              font-weight="700"
+              font-family="inherit"
+              fill="white"
+              class="select-none pointer-events-none"
+            >{{ node.label }}</text>
+            <!-- Distance label below node letter -->
+            <text
+              text-anchor="middle"
+              dominant-baseline="central"
+              dy="9"
+              font-size="9"
+              font-weight="600"
+              font-family="inherit"
+              fill="rgba(255,255,255,0.85)"
+              class="select-none pointer-events-none"
+            >{{ node.dist }}</text>
+          </g>
+        }
+      </svg>
+    </div>
+
+    <!-- ── Right sidebar ─────────────────────────────────────────────── -->
+    <div class="flex flex-col gap-3 lg:w-56 shrink-0">
+
+      <!-- Distance table panel -->
+      <div class="rounded-xl border border-app-border bg-app-surface-2 p-3 flex flex-col gap-2">
+        <div class="flex items-center gap-1.5">
+          <lucide-icon [img]="Table2" [size]="14" class="text-purple-400"></lucide-icon>
+          <span class="text-xs font-bold uppercase tracking-wide text-app-text-muted">
+            Distance Table
+          </span>
+        </div>
+
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="text-app-text-muted text-[10px] uppercase tracking-wide">
+              <th class="text-left pb-1 font-semibold">Node</th>
+              <th class="text-right pb-1 font-semibold">Dist</th>
+              <th class="text-right pb-1 font-semibold">Via</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of distTable(); track row.node) {
+              <tr
+                class="border-t border-app-border/50 transition-colors duration-150"
+                [class.row-settled]="settledNodes().includes(row.node)"
+              >
+                <td class="py-0.5 font-bold text-app-text">{{ row.node }}</td>
+                <td class="py-0.5 text-right font-mono"
+                    [class.text-purple-400]="row.dist !== 1/0 && !settledNodes().includes(row.node)"
+                    [class.text-green-400]="settledNodes().includes(row.node)"
+                    [class.text-app-text-muted]="row.dist === 1/0">
+                  {{ distLabelFn(row.dist) }}
+                </td>
+                <td class="py-0.5 text-right text-app-text-muted">
+                  {{ row.prev ?? '—' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Priority queue panel -->
+      <div class="rounded-xl border border-app-border bg-app-surface-2 p-3 flex flex-col gap-2">
+        <div class="flex items-center gap-1.5">
+          <lucide-icon [img]="ListOrdered" [size]="14" class="text-cyan-400"></lucide-icon>
+          <span class="text-xs font-bold uppercase tracking-wide text-app-text-muted">
+            Priority Queue
+          </span>
+          @if (pqEntries().length) {
+            <span class="ml-auto text-xs font-semibold text-cyan-400">
+              {{ pqEntries().length }}
+            </span>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1 min-h-[40px]">
+          @if (pqEntries().length === 0) {
+            <span class="text-xs text-app-text-muted italic">empty</span>
+          }
+          @for (entry of pqEntries(); track $index) {
+            <div class="flex items-center gap-2">
+              <span class="chip-pq">{{ entry.node }}</span>
+              <span class="text-xs font-mono text-app-text-2">d = {{ entry.dist }}</span>
+            </div>
+          }
+        </div>
+
+        <p class="text-[10px] text-app-text-muted leading-tight">
+          Sorted by tentative distance (min-heap).
+        </p>
+      </div>
+
+      <!-- Legend panel -->
+      <div class="rounded-xl border border-app-border bg-app-surface-2 p-3 flex flex-col gap-2">
+        <span class="text-xs font-bold uppercase tracking-wide text-app-text-muted">
+          Legend
+        </span>
+        <div class="flex flex-col gap-1.5 text-xs text-app-text-2">
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 shrink-0"></span>
+            Idle
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 shrink-0 ring-2 ring-amber-300/50"></span>
+            Current (being settled)
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-sky-500 shrink-0 ring-2 ring-cyan-300/40"></span>
+            Frontier (in PQ)
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 shrink-0"></span>
+            Settled (final dist)
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="w-5 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 rounded shrink-0"></span>
+            Shortest path tree edge
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="w-5 h-0.5 bg-gradient-to-r from-amber-400 to-orange-400 rounded shrink-0"></span>
+            Edge being relaxed
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

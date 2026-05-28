@@ -159,6 +159,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'interview',
+    loadComponent: () =>
+      import('./features/interview/interview-list/interview-list.component').then(
+        (m) => m.InterviewListComponent
+      ),
+  },
+  {
+    path: 'interview/:slug',
+    loadComponent: () =>
+      import('./features/interview/interview-category/interview-category.component').then(
+        (m) => m.InterviewCategoryComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: '/catalog',
   },

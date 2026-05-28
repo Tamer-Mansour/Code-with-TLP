@@ -1,0 +1,129 @@
+// ── Dijkstra component — scoped styles ────────────────────────────────────
+
+:host {
+  display: block;
+}
+
+// ── Step-note banner ──────────────────────────────────────────────────────
+
+.note-banner {
+  b {
+    font-weight: 700;
+    color: var(--color-purple-400, #c084fc);
+  }
+}
+
+// ── Node main circles ─────────────────────────────────────────────────────
+
+.dijk-node-circle {
+  transition: fill 0.3s ease, filter 0.3s ease;
+
+  &.dijk-node-circle--idle {
+    fill: url(#dijk-grad-idle);
+    filter: drop-shadow(0 1px 4px rgba(99, 60, 220, 0.40));
+  }
+
+  &.dijk-node-circle--current {
+    fill: url(#dijk-grad-current);
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.85));
+  }
+
+  &.dijk-node-circle--frontier {
+    fill: url(#dijk-grad-frontier);
+    filter: drop-shadow(0 0 7px rgba(34, 211, 238, 0.70));
+  }
+
+  &.dijk-node-circle--visited {
+    fill: url(#dijk-grad-visited);
+    filter: drop-shadow(0 1px 4px rgba(34, 197, 94, 0.45));
+  }
+}
+
+// ── Glow rings ────────────────────────────────────────────────────────────
+
+.dijk-node-ring {
+  transition: stroke 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+
+  &.dijk-node-ring--current {
+    stroke: rgba(251, 191, 36, 0.50);
+    opacity: 1;
+  }
+
+  &.dijk-node-ring--frontier {
+    stroke: rgba(34, 211, 238, 0.40);
+    opacity: 1;
+  }
+
+  &.dijk-node-ring--visited,
+  &.dijk-node-ring--idle {
+    opacity: 0;
+  }
+}
+
+// ── Edges ─────────────────────────────────────────────────────────────────
+
+.dijk-edge {
+  transition: stroke 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease;
+
+  &.dijk-edge--default {
+    stroke: rgba(148, 163, 184, 0.32);
+    stroke-width: 2;
+  }
+
+  &.dijk-edge--relaxed {
+    stroke: url(#dijk-grad-relax-edge);
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.55));
+  }
+
+  &.dijk-edge--tree {
+    stroke: url(#dijk-grad-tree-edge);
+    stroke-width: 3.5;
+    filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0.65));
+  }
+}
+
+// ── Edge weight labels ────────────────────────────────────────────────────
+
+.dijk-weight-label {
+  fill: rgba(148, 163, 184, 0.80);
+  transition: fill 0.3s ease;
+
+  &.dijk-weight-label--tree {
+    fill: #c084fc; // purple-400
+    font-weight: 700;
+  }
+
+  &.dijk-weight-label--relaxed {
+    fill: #fbbf24; // amber-400
+    font-weight: 700;
+  }
+}
+
+// ── Distance table rows ───────────────────────────────────────────────────
+
+.row-settled {
+  td {
+    color: rgba(74, 222, 128, 0.90); // green tint for settled nodes
+    font-weight: 600;
+  }
+}
+
+// ── Priority queue chips ──────────────────────────────────────────────────
+
+.chip-pq {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+  box-shadow: 0 1px 5px rgba(14, 165, 233, 0.45);
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}

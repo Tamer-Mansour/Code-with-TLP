@@ -130,6 +130,54 @@ export const VIZ_REGISTRY: Record<string, VizRegistryEntry> = {
     loadComponent: () =>
       import('../modules/recursion-tree/recursion-tree.component').then(m => m.RecursionTreeComponent),
   },
+
+  'dijkstra': {
+    meta: {
+      slug: 'dijkstra',
+      title: "Dijkstra's Shortest Path",
+      category: 'Graphs',
+      description: "Single-source shortest paths on a weighted graph — watch edge relaxation, the distance table, and the priority queue evolve.",
+      operations: ['Shortest Path'],
+    },
+    loadComponent: () =>
+      import('../modules/dijkstra/dijkstra.component').then(m => m.DijkstraComponent),
+  },
+
+  'mst': {
+    meta: {
+      slug: 'mst',
+      title: 'Minimum Spanning Tree',
+      category: 'Graphs',
+      description: "Build the MST of a weighted graph with Prim's or Kruskal's algorithm — see edges considered, added, or rejected.",
+      operations: ['Prim', 'Kruskal'],
+    },
+    loadComponent: () =>
+      import('../modules/mst/mst.component').then(m => m.MstComponent),
+  },
+
+  'avl-tree': {
+    meta: {
+      slug: 'avl-tree',
+      title: 'AVL Tree (Self-Balancing)',
+      category: 'Trees',
+      description: 'A self-balancing BST — watch balance factors and LL/LR/RL/RR rotations keep the tree O(log n) tall on every insert.',
+      operations: ['Insert', 'Random Build'],
+    },
+    loadComponent: () =>
+      import('../modules/avl-tree/avl-tree.component').then(m => m.AvlTreeComponent),
+  },
+
+  'trie': {
+    meta: {
+      slug: 'trie',
+      title: 'Trie (Prefix Tree)',
+      category: 'Strings & Tries',
+      description: 'Insert, search, and prefix-match words in a trie — follow the character path being walked or created.',
+      operations: ['Insert', 'Search', 'Starts-With'],
+    },
+    loadComponent: () =>
+      import('../modules/trie/trie.component').then(m => m.TrieComponent),
+  },
 };
 
 /** Flat list for the catalog grid. */

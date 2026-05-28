@@ -47,6 +47,17 @@
         Visualize
       </a>
 
+      <a
+        routerLink="/interview"
+        routerLinkActive="text-app-text bg-app-surface-2"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150"
+        style="text-decoration: none;"
+      >
+        <lucide-icon [img]="MessageCircleQuestion" [size]="14"></lucide-icon>
+        Interview
+      </a>
+
       @if (auth.isAuthenticated()) {
         <a
           routerLink="/chat"
@@ -221,6 +232,13 @@
           style="text-decoration: none;">
           <lucide-icon [img]="Activity" [size]="16"></lucide-icon>
           Visualize
+        </a>
+
+        <a routerLink="/interview" routerLinkActive="text-app-text bg-app-surface-2" (click)="closeMobile()"
+          class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
+          style="text-decoration: none;">
+          <lucide-icon [img]="MessageCircleQuestion" [size]="16"></lucide-icon>
+          Interview
         </a>
 
         @if (auth.isAuthenticated()) {

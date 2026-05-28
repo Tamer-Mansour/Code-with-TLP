@@ -1,0 +1,190 @@
+<div class="avl-root p-4 flex flex-col gap-4">
+
+  <!-- ── Controls ──────────────────────────────────────────────────────── -->
+  <div class="flex flex-wrap items-center gap-3 p-3 rounded-xl
+              bg-app-surface-2 border border-app-border">
+
+    <!-- Insert -->
+    <div class="flex items-center gap-1.5">
+      <input
+        type="number"
+        [value]="insertValue()"
+        (input)="onInsertInput($event)"
+        (keydown)="onInsertKeydown($event)"
+        placeholder="value"
+        class="w-20 px-2 py-1.5 rounded-lg text-sm
+               bg-app-surface border border-app-border text-app-text
+               focus:outline-none focus:ring-2 focus:ring-brand/50"
+      />
+      <button
+        (click)="onInsert()"
+        class="avl-btn avl-btn--primary flex items-center gap-1.5 px-3 py-1.5"
+      >
+        <lucide-icon [img]="Plus" [size]="13"></lucide-icon>
+        Insert
+      </button>
+    </div>
+
+    <!-- Divider -->
+    <span class="w-px h-5 bg-app-border hidden sm:block"></span>
+
+    <!-- Random build -->
+    <button
+      (click)="onRandom()"
+      class="avl-btn avl-btn--ghost flex items-center gap-1.5 px-3 py-1.5"
+    >
+      <lucide-icon [img]="Shuffle" [size]="13"></lucide-icon>
+      Random Build
+    </button>
+
+    <!-- Reset -->
+    <button
+      (click)="onReset()"
+      class="avl-btn avl-btn--ghost flex items-center gap-1.5 px-3 py-1.5 ml-auto"
+    >
+      <lucide-icon [img]="RefreshCw" [size]="13"></lucide-icon>
+      Reset
+    </button>
+  </div>
+
+  <!-- ── SVG Stage ───────────────────────────────────────────────────────── -->
+  <div class="avl-stage relative rounded-xl border border-app-border overflow-auto min-h-[360px]">
+
+    <!-- Ambient glow -->
+    <div class="absolute inset-x-0 top-0 h-32 pointer-events-none
+                bg-[radial-gradient(ellipse_at_50%_0%,var(--avl-glow),transparent_70%)]"></div>
+
+    <!-- Canvas -->
+    <div class="relative inline-block min-w-full p-3"
+         [style.width.px]="svgLayout().width"
+         [style.height.px]="svgLayout().height">
+
+      <!-- SVG edges -->
+      <svg class="absolute inset-0 overflow-visible pointer-events-none"
+           [attr.width]="svgLayout().width"
+           [attr.height]="svgLayout().height">
+        @for (edge of svgLayout().edges; track $index) {
+          <line
+            [attr.x1]="edge.x1"
+            [attr.y1]="edge.y1"
+            [attr.x2]="edge.x2"
+            [attr.y2]="edge.y2"
+            class="avl-edge transition-all duration-300"
+            stroke-width="2.5"
+          ></line>
+        }
+      </svg>
+
+      <!-- Nodes -->
+      @for (node of svgLayout().nodes; track node.id) {
+        @if (node.visible) {
+          <!-- Node circle -->
+          <div
+            [class]="nodeClass(node)"
+            [style.width.px]="NODE_R * 2"
+            [style.height.px]="NODE_R * 2"
+            [style.left.px]="node.x"
+            [style.top.px]="node.y"
+          >
+            {{ node.value }}
+          </div>
+
+          <!-- Balance-factor badge, offset below the node centre -->
+          <div
+            [class]="bfClass(node.bf)"
+            [style.left.px]="node.x + NODE_R - 9"
+            [style.top.px]="node.y + NODE_R * 2 + 2"
+          >
+            {{ node.bf >= 0 ? '+' : '' }}{{ node.bf }}
+          </div>
+
+          <!-- Height badge, offset above the node -->
+          <div
+            class="absolute text-[9px] font-mono text-app-text-muted
+                   leading-none pointer-events-none select-none"
+            [style.left.px]="node.x + NODE_R - 5"
+            [style.top.px]="node.y - 12"
+          >
+            h={{ node.height }}
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- ── Pseudocode panel ───────────────────────────────────────────────── -->
+  <details class="rounded-xl border border-app-border overflow-hidden">
+    <summary
+      class="px-4 py-2.5 text-xs font-semibold text-app-text-2 cursor-pointer
+             bg-app-surface-2 hover:bg-app-surface transition-colors select-none"
+    >
+      Pseudocode
+    </summary>
+    <div class="avl-pseudo bg-app-surface px-4 py-3 text-xs font-mono leading-6
+                text-app-text-muted overflow-x-auto">
+      @for (line of pseudoLines; track $index) {
+        <div
+          class="avl-pseudo__line px-2 rounded transition-colors duration-200"
+          [class.avl-pseudo__line--active]="
+            (player.currentFrame()?.pseudoLine ?? -1) === $index
+          "
+        >{{ line }}</div>
+      }
+    </div>
+  </details>
+
+  <!-- ── Legend ─────────────────────────────────────────────────────────── -->
+  <div class="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-app-text-muted">
+    <span class="flex items-center gap-1.5">
+      <span class="avl-legend-dot avl-legend-dot--default"></span>
+      node
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="avl-legend-dot avl-legend-dot--visit"></span>
+      visiting
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="avl-legend-dot avl-legend-dot--new"></span>
+      inserted
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="avl-legend-dot avl-legend-dot--unbalanced"></span>
+      unbalanced
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="avl-legend-dot avl-legend-dot--rotated"></span>
+      rotated
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="avl-bf-swatch avl-bf-swatch--danger"></span>
+      |bf| &gt; 1
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="avl-bf-swatch avl-bf-swatch--warn"></span>
+      bf = ±1
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="avl-bf-swatch avl-bf-swatch--ok"></span>
+      bf = 0
+    </span>
+  </div>
+
+  <!-- Rotation legend -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+    @for (r of rotationInfo; track r.label) {
+      <div class="flex items-start gap-2 rounded-lg px-3 py-2
+                  bg-app-surface border border-app-border">
+        <lucide-icon
+          [img]="r.ccw ? RotateCcw : RotateCw"
+          [size]="14"
+          class="mt-0.5 text-brand flex-shrink-0"
+        ></lucide-icon>
+        <div>
+          <div class="font-semibold text-app-text">{{ r.label }}</div>
+          <div class="text-app-text-muted leading-tight">{{ r.desc }}</div>
+        </div>
+      </div>
+    }
+  </div>
+
+</div>

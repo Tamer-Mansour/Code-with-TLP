@@ -11,7 +11,7 @@ import {
   LucideAngularModule,
   Code2, BookOpen, LayoutDashboard, ChevronDown,
   Menu, X, User, LogOut, Shield, BarChart2, Sun, Moon, Activity,
-  Bot, Key,
+  Bot, Key, MessageCircleQuestion,
 } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -45,6 +45,7 @@ export class NavbarComponent {
   readonly Activity       = Activity;
   readonly Bot            = Bot;
   readonly Key            = Key;
+  readonly MessageCircleQuestion = MessageCircleQuestion;
 
   toggleMobile(): void {
     this.mobileOpen.update(v => !v);
