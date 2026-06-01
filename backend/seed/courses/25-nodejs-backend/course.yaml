@@ -1,0 +1,143 @@
+subject:
+  slug: web-development
+  name: Web Development
+  description: Build modern web applications — from frontend frameworks to backend services and APIs.
+  icon: globe
+  color: "#f59e0b"
+  order_index: 7
+
+course:
+  slug: nodejs-backend
+  title: Node.js Backend Development
+  summary: Building HTTP APIs in Node - the event loop, Express, validation, auth.
+  description: |
+    Node.js is the JavaScript runtime for backends. This course covers the
+    event loop, HTTP servers (native and Express), REST API design,
+    validation, authentication, error handling, and the operational
+    practices for shipping Node services to production.
+  difficulty: intermediate
+  estimated_hours: 12
+  is_published: true
+  order_index: 25
+
+modules:
+  - title: Node Fundamentals
+    summary: Runtime, event loop, modules.
+    order_index: 1
+    lessons:
+      - slug: node-runtime
+        title: The Node Runtime and Event Loop
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/node-runtime.md
+      - slug: node-quiz
+        title: Quiz - Node Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/node-quiz.md
+
+  - title: HTTP and Express
+    summary: Building APIs.
+    order_index: 2
+    lessons:
+      - slug: native-http
+        title: Native http and JSON
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/native-http.md
+      - slug: express-basics
+        title: Express - Routing and Middleware
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/express-basics.md
+      - slug: rest-design
+        title: REST API Design
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/rest-design.md
+
+  - title: Production Concerns
+    summary: Validation, auth, errors.
+    order_index: 3
+    lessons:
+      - slug: auth-and-jwt
+        title: Authentication with JWT
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/auth-and-jwt.md
+      - slug: route-match-exercise
+        title: Route Matcher
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/route-match-exercise.md
+        exercises:
+          - slug: node-route-matcher
+            title: Express-style Route Matcher
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/node-route-matcher.prompt.md
+            supported_languages: [python]
+            tags: [routing, parsing]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = [ln for ln in sys.stdin.read().splitlines() if ln]
+                    n = int(lines[0])
+                    routes = []
+                    for i in range(1, n+1):
+                        routes.append(lines[i].split("/")[1:])
+                    queries = lines[n+1:]
+                    for q in queries:
+                        parts = q.split("/")[1:]
+                        matched = "NO MATCH"
+                        for rt in routes:
+                            if len(rt) != len(parts):
+                                continue
+                            params = {}
+                            ok = True
+                            for seg_pattern, seg_actual in zip(rt, parts):
+                                if seg_pattern.startswith(":"):
+                                    params[seg_pattern[1:]] = seg_actual
+                                elif seg_pattern != seg_actual:
+                                    ok = False
+                                    break
+                            if ok:
+                                matched = "/" + "/".join(rt)
+                                if params:
+                                    pstr = " ".join(f"{k}={v}" for k, v in params.items())
+                                    matched += " " + pstr
+                                break
+                        print(matched)
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "2\n/users/:id\n/posts/:postId/comments/:cid\n/users/42\n/posts/9/comments/3\n/about\n"
+                expected_stdout: "/users/:id id=42\n/posts/:postId/comments/:cid postId=9 cid=3\nNO MATCH"
+                is_hidden: false
+                weight: 1
+              - name: exact-match
+                stdin: "2\n/about\n/users/:id\n/about\n/users/1\n"
+                expected_stdout: "/about\n/users/:id id=1"
+                is_hidden: false
+                weight: 1
+              - name: precedence-by-order
+                stdin: "2\n/users/me\n/users/:id\n/users/me\n/users/42\n"
+                expected_stdout: "/users/me\n/users/:id id=42"
+                is_hidden: true
+                weight: 1
+              - name: no-match
+                stdin: "1\n/users/:id\n/items/3\n"
+                expected_stdout: "NO MATCH"
+                is_hidden: true
+                weight: 1

@@ -1,0 +1,173 @@
+subject:
+  slug: databases
+  name: Databases
+  description: Relational, document, and in-memory data stores — design, query, and operate them in production.
+  icon: database
+  color: "#10b981"
+  order_index: 5
+
+course:
+  slug: mongodb-nosql
+  title: MongoDB and Document Databases
+  summary: Documents, queries, aggregation, indexes, and operating a MongoDB cluster.
+  description: |
+    Document databases trade relational guarantees for a flexible schema and a
+    query model that maps cleanly to objects. MongoDB is the most widely used
+    example. This course covers documents, CRUD, the aggregation framework,
+    indexes, schema design (embed vs reference), transactions, replication, and
+    sharding.
+  difficulty: intermediate
+  estimated_hours: 16
+  is_published: true
+  order_index: 13
+
+modules:
+  - title: Documents and the Mongo Shell
+    summary: What a document is and how to talk to a MongoDB server.
+    order_index: 1
+    lessons:
+      - slug: nosql-vs-sql
+        title: NoSQL vs SQL - When to Use What
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/nosql-vs-sql.md
+      - slug: install-and-mongosh
+        title: Installing MongoDB and mongosh
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/install-and-mongosh.md
+      - slug: documents-and-bson
+        title: Documents, BSON, and the _id Field
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/documents-and-bson.md
+      - slug: mongo-basics-quiz
+        title: Quiz - Mongo Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/mongo-basics-quiz.md
+
+  - title: CRUD Operations
+    summary: insert, find, update, delete with operators.
+    order_index: 2
+    lessons:
+      - slug: crud-find-and-projection
+        title: find, Filters, and Projection
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/crud-find-and-projection.md
+      - slug: crud-update-delete
+        title: updateOne, updateMany, deleteMany
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/crud-update-delete.md
+
+  - title: The Aggregation Framework
+    summary: Pipeline stages - $match, $group, $project, $sort, $lookup.
+    order_index: 3
+    lessons:
+      - slug: aggregation-pipeline
+        title: The Aggregation Pipeline
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/aggregation-pipeline.md
+      - slug: aggregation-exercise
+        title: Simulate a $group + $sort Pipeline
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/aggregation-exercise.md
+        exercises:
+          - slug: mongo-group-sum
+            title: Group and Sum (Aggregation Simulation)
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/mongo-group-sum.prompt.md
+            supported_languages: [python]
+            tags: [mongodb, aggregation]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    if not data:
+                        return
+                    n = int(data[0])
+                    sums = {}
+                    for ln in data[1:1+n]:
+                        cat, amt = ln.split(",")
+                        sums[cat] = sums.get(cat, 0) + int(amt)
+                    # sort by total desc, then category asc
+                    items = sorted(sums.items(), key=lambda kv: (-kv[1], kv[0]))
+                    print("\n".join(f"{k},{v}" for k, v in items))
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "5\nbooks,10\ntoys,5\nbooks,20\ntoys,15\nbooks,7\n"
+                expected_stdout: "books,37\ntoys,20"
+                is_hidden: false
+                weight: 1
+              - name: alpha-tiebreak
+                stdin: "4\nz,10\na,10\nb,5\nc,5\n"
+                expected_stdout: "a,10\nz,10\nb,5\nc,5"
+                is_hidden: false
+                weight: 1
+              - name: one-group
+                stdin: "3\nx,1\nx,2\nx,3\n"
+                expected_stdout: "x,6"
+                is_hidden: true
+                weight: 1
+              - name: many-groups
+                stdin: "6\na,1\nb,2\nc,3\nb,2\na,1\nc,3\n"
+                expected_stdout: "c,6\nb,4\na,2"
+                is_hidden: true
+                weight: 1
+
+  - title: Indexes in MongoDB
+    summary: Single field, compound, and the ESR rule.
+    order_index: 4
+    lessons:
+      - slug: indexes-and-esr
+        title: Indexes, Compound Indexes, and ESR
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/indexes-and-esr.md
+      - slug: explain-mongo
+        title: explain() and Query Plans
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/explain-mongo.md
+
+  - title: Schema Design - Embed vs Reference
+    summary: When to nest documents and when to use references.
+    order_index: 5
+    lessons:
+      - slug: embed-vs-reference
+        title: Embed vs Reference
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/embed-vs-reference.md
+
+  - title: Operations - Replication and Sharding
+    summary: Replica sets for HA and sharding for horizontal scale.
+    order_index: 6
+    lessons:
+      - slug: replica-sets
+        title: Replica Sets and Failover
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/replica-sets.md
+      - slug: sharding
+        title: Sharding for Scale
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/sharding.md

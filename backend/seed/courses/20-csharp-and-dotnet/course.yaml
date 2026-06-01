@@ -1,0 +1,143 @@
+subject:
+  slug: programming-languages
+  name: Programming Languages
+  description: Master modern programming languages — from Python and JavaScript to Rust and Go.
+  icon: code
+  color: "#3b82f6"
+  order_index: 6
+
+course:
+  slug: csharp-and-dotnet
+  title: C# and .NET
+  summary: C# language fundamentals plus LINQ, async, and intro to ASP.NET Core.
+  description: |
+    C# is Microsoft's flagship language: object-oriented, garbage-collected, with
+    first-class LINQ and async. This course covers the language, the type system,
+    LINQ, async/await, and the ASP.NET Core web framework you'll reach for
+    in production.
+  difficulty: intermediate
+  estimated_hours: 14
+  is_published: true
+  order_index: 20
+
+modules:
+  - title: C# Basics
+    summary: dotnet CLI, types, and the language flavor.
+    order_index: 1
+    lessons:
+      - slug: dotnet-and-hello
+        title: dotnet CLI and Hello, C#
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/dotnet-and-hello.md
+      - slug: csharp-types
+        title: Types, Nullable, var
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/csharp-types.md
+      - slug: csharp-quiz
+        title: Quiz - C# Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/csharp-quiz.md
+
+  - title: OOP and Records
+    summary: Classes, records, structs, interfaces.
+    order_index: 2
+    lessons:
+      - slug: classes-records-structs
+        title: Classes, Records, Structs
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/classes-records-structs.md
+
+  - title: LINQ and Async
+    summary: Querying collections and async/await.
+    order_index: 3
+    lessons:
+      - slug: linq
+        title: LINQ
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/linq.md
+      - slug: async-await-csharp
+        title: async / await
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/async-await-csharp.md
+      - slug: linq-exercise
+        title: LINQ-style Aggregation
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/linq-exercise.md
+        exercises:
+          - slug: cs-net-linq-aggregate
+            title: GroupBy Average (LINQ Simulation)
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/cs-net-linq-aggregate.prompt.md
+            supported_languages: [python]
+            tags: [linq, aggregation]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0])
+                    sums = {}
+                    counts = {}
+                    for ln in lines[1:1+n]:
+                        cat, val = ln.split(",")
+                        v = int(val)
+                        sums[cat] = sums.get(cat, 0) + v
+                        counts[cat] = counts.get(cat, 0) + 1
+                    avgs = [(c, sums[c] / counts[c]) for c in sums]
+                    avgs.sort(key=lambda kv: (-kv[1], kv[0]))
+                    for c, a in avgs:
+                        # print integer if exact, else format like .2f
+                        if abs(a - int(a)) < 1e-9:
+                            print(f"{c} {int(a)}")
+                        else:
+                            print(f"{c} {a:.2f}")
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "5\nA,10\nB,20\nA,30\nB,40\nC,50\n"
+                expected_stdout: "C 50\nB 30\nA 20"
+                is_hidden: false
+                weight: 1
+              - name: decimals
+                stdin: "3\nx,1\nx,2\nx,4\n"
+                expected_stdout: "x 2.33"
+                is_hidden: false
+                weight: 1
+              - name: ties
+                stdin: "4\na,10\nb,10\nc,5\nd,5\n"
+                expected_stdout: "a 10\nb 10\nc 5\nd 5"
+                is_hidden: true
+                weight: 1
+              - name: single
+                stdin: "1\nz,100\n"
+                expected_stdout: "z 100"
+                is_hidden: true
+                weight: 1
+
+  - title: ASP.NET Core
+    summary: Minimal APIs and dependency injection.
+    order_index: 4
+    lessons:
+      - slug: aspnet-core-minimal
+        title: ASP.NET Core Minimal APIs
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/aspnet-core-minimal.md

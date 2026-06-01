@@ -1,0 +1,134 @@
+subject:
+  slug: devops-cloud
+  name: DevOps and Cloud
+  description: Ship and operate software at scale — containers, orchestration, cloud platforms, and CI/CD.
+  icon: cloud
+  color: "#8b5cf6"
+  order_index: 8
+
+course:
+  slug: linux-sysadmin
+  title: Linux System Administration
+  summary: Shell, filesystem, processes, users, networking, systemd, scripting.
+  description: |
+    Practical Linux administration for developers and ops engineers. Covers the
+    shell, the filesystem, permissions, processes, package management, systemd,
+    networking basics, text processing, and bash scripting.
+  difficulty: beginner
+  estimated_hours: 12
+  is_published: true
+  order_index: 29
+
+modules:
+  - title: Filesystem and Shell
+    summary: Navigation, permissions, paths.
+    order_index: 1
+    lessons:
+      - slug: shell-basics
+        title: Shell Basics and Navigation
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/shell-basics.md
+      - slug: permissions
+        title: Permissions and Ownership
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/permissions.md
+      - slug: linux-quiz
+        title: Quiz - Linux Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/linux-quiz.md
+
+  - title: Processes and Services
+    summary: ps, kill, systemd.
+    order_index: 2
+    lessons:
+      - slug: processes
+        title: Processes - ps, kill, signals
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/processes.md
+      - slug: systemd
+        title: systemd and Services
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/systemd.md
+
+  - title: Text Processing and Scripting
+    summary: grep, sed, awk, bash.
+    order_index: 3
+    lessons:
+      - slug: text-processing
+        title: grep, sed, awk
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/text-processing.md
+      - slug: bash-scripting
+        title: Bash Scripting Basics
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/bash-scripting.md
+      - slug: permissions-octal-exercise
+        title: Permissions to Octal
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/permissions-octal-exercise.md
+        exercises:
+          - slug: linux-perm-octal
+            title: rwx to Octal Permissions
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/linux-perm-octal.prompt.md
+            supported_languages: [python]
+            tags: [unix, permissions]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def to_octal(rwx):
+                    # rwx is 9 chars like "rwxr-xr-x"
+                    out = ""
+                    for i in range(0, 9, 3):
+                        triple = rwx[i:i+3]
+                        v = (4 if triple[0] == 'r' else 0) + \
+                            (2 if triple[1] == 'w' else 0) + \
+                            (1 if triple[2] == 'x' else 0)
+                        out += str(v)
+                    return out
+
+                def solve():
+                    lines = [ln.strip() for ln in sys.stdin.read().splitlines() if ln.strip()]
+                    for ln in lines:
+                        print(to_octal(ln))
+
+                solve()
+            test_cases:
+              - name: standard
+                stdin: "rwxr-xr-x\nrw-r--r--\nrwxrwxrwx\n"
+                expected_stdout: "755\n644\n777"
+                is_hidden: false
+                weight: 1
+              - name: minimal
+                stdin: "---------\n"
+                expected_stdout: "000"
+                is_hidden: false
+                weight: 1
+              - name: mixed
+                stdin: "rwx------\nr--r--r--\n-w-r-x-w-\n"
+                expected_stdout: "700\n444\n252"
+                is_hidden: true
+                weight: 1
+              - name: empty
+                stdin: "\n"
+                expected_stdout: ""
+                is_hidden: true
+                weight: 1

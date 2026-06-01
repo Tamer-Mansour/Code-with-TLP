@@ -1,0 +1,146 @@
+subject:
+  slug: programming-languages
+  name: Programming Languages
+  description: Master modern programming languages — from Python and JavaScript to Rust and Go.
+  icon: code
+  color: "#3b82f6"
+  order_index: 6
+
+course:
+  slug: java-programming
+  title: Java Programming
+  summary: Java SE - OOP, collections, generics, streams, and concurrency.
+  description: |
+    Java remains one of the most widely deployed languages in the world.
+    This course covers the language fundamentals, the collections framework,
+    generics, streams, lambdas, exceptions, and concurrency essentials you
+    need to write idiomatic, modern Java code.
+  difficulty: intermediate
+  estimated_hours: 18
+  is_published: true
+  order_index: 19
+
+modules:
+  - title: Java Basics
+    summary: JVM, syntax, and types.
+    order_index: 1
+    lessons:
+      - slug: jvm-and-hello-java
+        title: The JVM and Hello, Java
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/jvm-and-hello-java.md
+      - slug: java-types
+        title: Types and Operators
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/java-types.md
+      - slug: java-basics-quiz
+        title: Quiz - Java Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/java-basics-quiz.md
+
+  - title: OOP in Java
+    summary: Classes, interfaces, inheritance.
+    order_index: 2
+    lessons:
+      - slug: classes-and-interfaces
+        title: Classes, Interfaces, Records
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/classes-and-interfaces.md
+      - slug: inheritance-and-polymorphism
+        title: Inheritance and Polymorphism
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/inheritance-and-polymorphism.md
+
+  - title: Collections, Generics, Streams
+    summary: List, Map, generics, and the Streams API.
+    order_index: 3
+    lessons:
+      - slug: collections-framework
+        title: Collections Framework
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/collections-framework.md
+      - slug: generics-in-java
+        title: Generics
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/generics-in-java.md
+      - slug: streams-and-lambdas
+        title: Streams and Lambdas
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/streams-and-lambdas.md
+      - slug: word-count-exercise
+        title: Word Count
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/word-count-exercise.md
+        exercises:
+          - slug: java-word-count
+            title: Top-N Word Count (Streams Simulation)
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/java-word-count.prompt.md
+            supported_languages: [python]
+            tags: [streams, hashing]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    k = int(lines[0])
+                    text = " ".join(lines[1:])
+                    words = text.split()
+                    counts = {}
+                    for w in words:
+                        counts[w] = counts.get(w, 0) + 1
+                    items = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:k]
+                    for word, c in items:
+                        print(f"{word} {c}")
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "3\nthe quick brown fox jumps over the lazy dog the\n"
+                expected_stdout: "the 3\nbrown 1\ndog 1"
+                is_hidden: false
+                weight: 1
+              - name: alpha-tiebreak
+                stdin: "2\nb a a b c\n"
+                expected_stdout: "a 2\nb 2"
+                is_hidden: false
+                weight: 1
+              - name: k-larger
+                stdin: "5\none two\n"
+                expected_stdout: "one 1\ntwo 1"
+                is_hidden: true
+                weight: 1
+              - name: multiline
+                stdin: "2\nhello world\nhello again\n"
+                expected_stdout: "hello 2\nagain 1"
+                is_hidden: true
+                weight: 1
+
+  - title: Concurrency
+    summary: Threads, Executors, CompletableFuture.
+    order_index: 4
+    lessons:
+      - slug: threads-and-executors
+        title: Threads and ExecutorService
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/threads-and-executors.md

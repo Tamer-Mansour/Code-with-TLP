@@ -1,0 +1,179 @@
+subject:
+  slug: programming-languages
+  name: Programming Languages
+  description: Master modern programming languages — from Python and JavaScript to Rust and Go.
+  icon: code
+  color: "#3b82f6"
+  order_index: 6
+
+course:
+  slug: python-programming-mastery
+  title: Python Programming Mastery
+  summary: From syntax through async, typing, packaging, and idiomatic Python.
+  description: |
+    Python from first principles to advanced features. Beginners get a solid
+    grounding in syntax, data structures, and OOP; experienced developers get
+    decorators, generators, async/await, typing, dataclasses, and the standard
+    library tools they reach for daily.
+  difficulty: beginner
+  estimated_hours: 22
+  is_published: true
+  order_index: 16
+
+modules:
+  - title: Python Basics
+    summary: Syntax, types, and control flow.
+    order_index: 1
+    lessons:
+      - slug: hello-python
+        title: Hello, Python
+        type: reading
+        duration_minutes: 8
+        content_file: lessons/hello-python.md
+      - slug: types-and-operators
+        title: Types and Operators
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/types-and-operators.md
+      - slug: control-flow
+        title: Control Flow and Loops
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/control-flow.md
+      - slug: python-basics-quiz
+        title: Quiz - Python Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/python-basics-quiz.md
+
+  - title: Data Structures
+    summary: Lists, tuples, dicts, sets, comprehensions.
+    order_index: 2
+    lessons:
+      - slug: lists-tuples
+        title: Lists and Tuples
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/lists-tuples.md
+      - slug: dicts-and-sets
+        title: Dicts and Sets
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/dicts-and-sets.md
+      - slug: comprehensions
+        title: Comprehensions
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/comprehensions.md
+      - slug: anagrams-exercise
+        title: Group Anagrams
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/anagrams-exercise.md
+        exercises:
+          - slug: py-group-anagrams
+            title: Group Anagrams
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/py-group-anagrams.prompt.md
+            supported_languages: [python]
+            tags: [hashing, strings]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    words = [w for w in sys.stdin.read().split() if w]
+                    groups = {}
+                    order = []
+                    for w in words:
+                        key = "".join(sorted(w))
+                        if key not in groups:
+                            groups[key] = []
+                            order.append(key)
+                        groups[key].append(w)
+                    out = []
+                    for k in order:
+                        out.append(" ".join(sorted(groups[k])))
+                    print("\n".join(out))
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "eat tea tan ate nat bat\n"
+                expected_stdout: "ate eat tea\nant tan\nbat"
+                is_hidden: false
+                weight: 1
+              - name: no-anagrams
+                stdin: "a b c\n"
+                expected_stdout: "a\nb\nc"
+                is_hidden: false
+                weight: 1
+              - name: single-word
+                stdin: "hello\n"
+                expected_stdout: "hello"
+                is_hidden: true
+                weight: 1
+              - name: longer
+                stdin: "listen silent enlist hello world\n"
+                expected_stdout: "enlist listen silent\nhello\ndlorw"
+                is_hidden: true
+                weight: 1
+
+  - title: Functions and OOP
+    summary: Definitions, closures, classes, dataclasses.
+    order_index: 3
+    lessons:
+      - slug: functions-and-closures
+        title: Functions, Defaults, Closures
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/functions-and-closures.md
+      - slug: oop-and-dataclasses
+        title: Classes and Dataclasses
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/oop-and-dataclasses.md
+
+  - title: Iterators, Generators, Decorators
+    summary: Pythonic patterns for lazy evaluation and metaprogramming.
+    order_index: 4
+    lessons:
+      - slug: iterators-and-generators
+        title: Iterators and Generators
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/iterators-and-generators.md
+      - slug: decorators
+        title: Decorators
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/decorators.md
+
+  - title: Modern Python
+    summary: Typing, async, packaging, and testing.
+    order_index: 5
+    lessons:
+      - slug: type-hints
+        title: Type Hints
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/type-hints.md
+      - slug: async-await
+        title: async/await
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/async-await.md
+      - slug: packaging-and-venv
+        title: venv, pip, and Packaging
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/packaging-and-venv.md

@@ -1,0 +1,134 @@
+subject:
+  slug: devops-cloud
+  name: DevOps and Cloud
+  description: Ship and operate software at scale — containers, orchestration, cloud platforms, and CI/CD.
+  icon: cloud
+  color: "#8b5cf6"
+  order_index: 8
+
+course:
+  slug: aws-cloud
+  title: AWS Cloud Computing
+  summary: IAM, EC2, S3, VPC, RDS, Lambda - the AWS services you'll meet first.
+  description: |
+    AWS is the most-used cloud provider. This course covers the foundational
+    services - IAM for permissions, EC2 and Fargate for compute, S3 for
+    storage, VPC for networking, RDS and DynamoDB for databases, Lambda for
+    serverless - and the patterns that connect them in real applications.
+  difficulty: intermediate
+  estimated_hours: 12
+  is_published: true
+  order_index: 28
+
+modules:
+  - title: AWS Fundamentals
+    summary: Accounts, regions, IAM, the CLI.
+    order_index: 1
+    lessons:
+      - slug: aws-overview
+        title: AWS Overview - Regions, Accounts, Console, CLI
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/aws-overview.md
+      - slug: iam
+        title: IAM - Users, Roles, Policies
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/iam.md
+      - slug: aws-quiz
+        title: Quiz - AWS Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/aws-quiz.md
+
+  - title: Compute and Storage
+    summary: EC2, S3, EBS, Lambda.
+    order_index: 2
+    lessons:
+      - slug: ec2-and-storage
+        title: EC2, EBS, and S3
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/ec2-and-storage.md
+      - slug: lambda-and-serverless
+        title: Lambda and Serverless
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/lambda-and-serverless.md
+
+  - title: Networking and Databases
+    summary: VPC, RDS, DynamoDB.
+    order_index: 3
+    lessons:
+      - slug: vpc-basics
+        title: VPC Basics
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/vpc-basics.md
+      - slug: cidr-overlap-exercise
+        title: CIDR Overlap Check
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/cidr-overlap-exercise.md
+        exercises:
+          - slug: aws-cidr-overlap
+            title: VPC CIDR Overlap Check
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/aws-cidr-overlap.prompt.md
+            supported_languages: [python]
+            tags: [networking, cidr]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def cidr_to_range(c):
+                    ip_str, prefix = c.split("/")
+                    prefix = int(prefix)
+                    octets = [int(x) for x in ip_str.split(".")]
+                    addr = (octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8) | octets[3]
+                    mask = ((1 << prefix) - 1) << (32 - prefix) if prefix > 0 else 0
+                    network = addr & mask
+                    broadcast = network | ((1 << (32 - prefix)) - 1)
+                    return network, broadcast
+
+                def solve():
+                    parts = sys.stdin.read().split()
+                    a, b = parts[0], parts[1]
+                    a1, a2 = cidr_to_range(a)
+                    b1, b2 = cidr_to_range(b)
+                    if a2 < b1 or b2 < a1:
+                        print("NO")
+                    else:
+                        print("YES")
+
+                solve()
+            test_cases:
+              - name: overlap
+                stdin: "10.0.0.0/16 10.0.1.0/24\n"
+                expected_stdout: "YES"
+                is_hidden: false
+                weight: 1
+              - name: no-overlap
+                stdin: "10.0.0.0/16 10.1.0.0/16\n"
+                expected_stdout: "NO"
+                is_hidden: false
+                weight: 1
+              - name: same
+                stdin: "192.168.0.0/24 192.168.0.0/24\n"
+                expected_stdout: "YES"
+                is_hidden: true
+                weight: 1
+              - name: adjacent
+                stdin: "10.0.0.0/24 10.0.1.0/24\n"
+                expected_stdout: "NO"
+                is_hidden: true
+                weight: 1

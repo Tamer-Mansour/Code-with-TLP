@@ -1,0 +1,133 @@
+subject:
+  slug: programming-languages
+  name: Programming Languages
+  description: Master modern programming languages — from Python and JavaScript to Rust and Go.
+  icon: code
+  color: "#3b82f6"
+  order_index: 6
+
+course:
+  slug: go-programming
+  title: Go Programming
+  summary: Go fundamentals, goroutines, channels, and idiomatic Go.
+  description: |
+    Go is a small, opinionated language designed for clear concurrent code and
+    fast compile times. This course covers the syntax, slices and maps,
+    interfaces, error handling, and the goroutine + channel concurrency model
+    that makes Go shine for backend services and CLIs.
+  difficulty: intermediate
+  estimated_hours: 12
+  is_published: true
+  order_index: 21
+
+modules:
+  - title: Go Basics
+    summary: Tooling, syntax, types.
+    order_index: 1
+    lessons:
+      - slug: hello-go
+        title: Hello, Go
+        type: reading
+        duration_minutes: 8
+        content_file: lessons/hello-go.md
+      - slug: go-types
+        title: Types, Slices, Maps
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/go-types.md
+      - slug: go-basics-quiz
+        title: Quiz - Go Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/go-basics-quiz.md
+
+  - title: Functions, Structs, Interfaces
+    summary: Methods, embedding, interface satisfaction.
+    order_index: 2
+    lessons:
+      - slug: structs-and-methods
+        title: Structs and Methods
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/structs-and-methods.md
+      - slug: interfaces
+        title: Interfaces
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/interfaces.md
+
+  - title: Error Handling
+    summary: Errors as values; wrapping; sentinel vs custom.
+    order_index: 3
+    lessons:
+      - slug: error-handling
+        title: Errors as Values
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/error-handling.md
+
+  - title: Concurrency
+    summary: Goroutines and channels.
+    order_index: 4
+    lessons:
+      - slug: goroutines-and-channels
+        title: Goroutines and Channels
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/goroutines-and-channels.md
+      - slug: worker-pool-exercise
+        title: Worker Pool Sum
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/worker-pool-exercise.md
+        exercises:
+          - slug: go-worker-pool-sum
+            title: Worker Pool Sum (Concurrency Simulation)
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/go-worker-pool-sum.prompt.md
+            supported_languages: [python]
+            tags: [concurrency, sum]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    if not data:
+                        print(0)
+                        return
+                    n = int(data[0])
+                    nums = [int(x) for x in data[1:1+n]]
+                    print(sum(nums))
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "5\n1 2 3 4 5\n"
+                expected_stdout: "15"
+                is_hidden: false
+                weight: 1
+              - name: with-negatives
+                stdin: "4\n-10 5 -3 8\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: single
+                stdin: "1\n42\n"
+                expected_stdout: "42"
+                is_hidden: true
+                weight: 1
+              - name: zero
+                stdin: "0\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1

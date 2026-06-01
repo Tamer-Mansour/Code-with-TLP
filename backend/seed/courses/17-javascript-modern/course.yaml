@@ -1,0 +1,159 @@
+subject:
+  slug: programming-languages
+  name: Programming Languages
+  description: Master modern programming languages — from Python and JavaScript to Rust and Go.
+  icon: code
+  color: "#3b82f6"
+  order_index: 6
+
+course:
+  slug: javascript-modern
+  title: Modern JavaScript
+  summary: ES2015+ JavaScript - types, closures, async/await, modules, and the event loop.
+  description: |
+    A modern JavaScript course that skips the relics and teaches the language
+    you'll actually write today. Covers types and quirks, closures, prototypes,
+    classes, modules, the event loop, promises and async/await, and idiomatic
+    patterns for both browsers and Node.
+  difficulty: beginner
+  estimated_hours: 18
+  is_published: true
+  order_index: 17
+
+modules:
+  - title: JavaScript Foundations
+    summary: Types, scoping, and equality.
+    order_index: 1
+    lessons:
+      - slug: js-types
+        title: Types and Coercion
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/js-types.md
+      - slug: var-let-const
+        title: var, let, const, and Scope
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/var-let-const.md
+      - slug: equality-and-coercion
+        title: == vs === and Truthiness
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/equality-and-coercion.md
+      - slug: js-basics-quiz
+        title: Quiz - JS Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/js-basics-quiz.md
+
+  - title: Functions and Closures
+    summary: First-class functions, arrows, closures, this.
+    order_index: 2
+    lessons:
+      - slug: functions-and-arrows
+        title: Functions and Arrow Functions
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/functions-and-arrows.md
+      - slug: closures-and-this
+        title: Closures and this
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/closures-and-this.md
+
+  - title: Objects, Arrays, and Iteration
+    summary: Prototypes, classes, array methods, destructuring.
+    order_index: 3
+    lessons:
+      - slug: objects-and-prototypes
+        title: Objects, Prototypes, and Classes
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/objects-and-prototypes.md
+      - slug: array-methods
+        title: Array Methods - map, filter, reduce
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/array-methods.md
+      - slug: array-pipeline-exercise
+        title: Sum Squares of Evens
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/array-pipeline-exercise.md
+        exercises:
+          - slug: js-sum-squares-evens
+            title: Sum Squares of Evens (Array Pipeline Simulation)
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/js-sum-squares-evens.prompt.md
+            supported_languages: [python]
+            tags: [arrays, pipelines]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    nums = [int(x) for x in sys.stdin.read().split()]
+                    total = sum(x * x for x in nums if x % 2 == 0)
+                    print(total)
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "1 2 3 4 5 6\n"
+                expected_stdout: "56"
+                is_hidden: false
+                weight: 1
+              - name: no-evens
+                stdin: "1 3 5 7\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: with-negatives
+                stdin: "-2 -1 0 1 2\n"
+                expected_stdout: "8"
+                is_hidden: true
+                weight: 1
+              - name: empty
+                stdin: "\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+
+  - title: Async JavaScript
+    summary: The event loop, promises, async/await.
+    order_index: 4
+    lessons:
+      - slug: event-loop
+        title: The Event Loop
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/event-loop.md
+      - slug: promises-and-async
+        title: Promises and async/await
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/promises-and-async.md
+
+  - title: Modules and Tooling
+    summary: ESM, CommonJS, bundlers, npm.
+    order_index: 5
+    lessons:
+      - slug: modules-esm-cjs
+        title: ES Modules and CommonJS
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/modules-esm-cjs.md
+      - slug: npm-and-tooling
+        title: npm, package.json, and Tooling
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/npm-and-tooling.md

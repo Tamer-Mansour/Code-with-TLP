@@ -1,0 +1,188 @@
+subject:
+  slug: databases
+  name: Databases
+  description: Relational, document, and in-memory data stores — design, query, and operate them in production.
+  icon: database
+  color: "#10b981"
+  order_index: 5
+
+course:
+  slug: postgresql-mastery
+  title: PostgreSQL Mastery
+  summary: Advanced SQL, JSONB, indexes, MVCC, and operating Postgres in production.
+  description: |
+    PostgreSQL is the most feature-complete open-source relational database — and
+    a strong default for most new projects. This course covers the SQL you'll
+    actually write (CTEs, window functions, JSONB), the engine internals that
+    explain query behavior (MVCC, indexes, vacuum), and the operational concepts
+    that keep Postgres healthy.
+  difficulty: intermediate
+  estimated_hours: 20
+  is_published: true
+  order_index: 14
+
+modules:
+  - title: Getting Started with Postgres
+    summary: Install, connect, and the psql client.
+    order_index: 1
+    lessons:
+      - slug: why-postgres
+        title: Why PostgreSQL?
+        type: reading
+        duration_minutes: 8
+        content_file: lessons/why-postgres.md
+      - slug: psql-tour
+        title: A Tour of psql
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/psql-tour.md
+      - slug: pg-basics-quiz
+        title: Quiz - Postgres Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/pg-basics-quiz.md
+
+  - title: Advanced SQL Features
+    summary: CTEs, window functions, lateral joins.
+    order_index: 2
+    lessons:
+      - slug: ctes-and-recursion
+        title: CTEs and Recursive Queries
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/ctes-and-recursion.md
+      - slug: window-functions
+        title: Window Functions in Postgres
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/window-functions.md
+      - slug: lateral-joins
+        title: LATERAL Joins
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/lateral-joins.md
+
+  - title: JSON, Arrays, and Full-Text Search
+    summary: JSONB indexing, array types, and tsvector search.
+    order_index: 3
+    lessons:
+      - slug: jsonb-and-gin
+        title: JSONB and GIN Indexes
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/jsonb-and-gin.md
+      - slug: jsonb-exercise
+        title: Filter JSONB Records
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/jsonb-exercise.md
+        exercises:
+          - slug: pg-jsonb-filter
+            title: JSONB-style Path Filter
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/pg-jsonb-filter.prompt.md
+            supported_languages: [python]
+            tags: [postgres, jsonb]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys, json
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys, json
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    path, value = data[1].split("=", 1)
+                    path_parts = path.split(".")
+                    out = []
+                    for i in range(2, 2 + n):
+                        try:
+                            d = json.loads(data[i])
+                        except Exception:
+                            continue
+                        cur = d
+                        ok = True
+                        for p in path_parts:
+                            if isinstance(cur, dict) and p in cur:
+                                cur = cur[p]
+                            else:
+                                ok = False
+                                break
+                        if ok and str(cur) == value:
+                            out.append(data[i])
+                    print("\n".join(out))
+
+                solve()
+            test_cases:
+              - name: simple
+                stdin: '3\naddress.country=DE\n{"name":"Alice","address":{"country":"DE"}}\n{"name":"Bob","address":{"country":"US"}}\n{"name":"Carol","address":{"country":"DE"}}\n'
+                expected_stdout: '{"name":"Alice","address":{"country":"DE"}}\n{"name":"Carol","address":{"country":"DE"}}'
+                is_hidden: false
+                weight: 1
+              - name: top-level
+                stdin: '2\nrole=admin\n{"role":"admin","id":1}\n{"role":"user","id":2}\n'
+                expected_stdout: '{"role":"admin","id":1}'
+                is_hidden: false
+                weight: 1
+              - name: deep-path
+                stdin: '2\na.b.c=1\n{"a":{"b":{"c":1}}}\n{"a":{"b":{"c":2}}}\n'
+                expected_stdout: '{"a":{"b":{"c":1}}}'
+                is_hidden: true
+                weight: 1
+              - name: missing-path
+                stdin: '2\nx.y=z\n{"a":1}\n{"x":{"y":"z"}}\n'
+                expected_stdout: '{"x":{"y":"z"}}'
+                is_hidden: true
+                weight: 1
+
+  - title: Indexes and Performance
+    summary: B-tree, GIN, GiST, BRIN, and reading EXPLAIN ANALYZE.
+    order_index: 4
+    lessons:
+      - slug: postgres-index-types
+        title: B-tree, GIN, GiST, BRIN
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/postgres-index-types.md
+      - slug: explain-analyze
+        title: Reading EXPLAIN ANALYZE
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/explain-analyze.md
+
+  - title: MVCC, Transactions, and Vacuum
+    summary: Why Postgres needs VACUUM, isolation levels, and dead tuples.
+    order_index: 5
+    lessons:
+      - slug: mvcc-and-vacuum
+        title: MVCC and VACUUM
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/mvcc-and-vacuum.md
+      - slug: transactions-and-isolation
+        title: Transactions and Isolation Levels
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/transactions-and-isolation.md
+
+  - title: Operations
+    summary: Backups, WAL, replication, and pooling.
+    order_index: 6
+    lessons:
+      - slug: wal-and-pitr
+        title: WAL, Backups, and Point-in-Time Recovery
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/wal-and-pitr.md
+      - slug: replication-and-pooling
+        title: Streaming Replication and pgBouncer
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/replication-and-pooling.md

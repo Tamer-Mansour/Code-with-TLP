@@ -1,0 +1,135 @@
+subject:
+  slug: web-development
+  name: Web Development
+  description: Build modern web applications — from frontend frameworks to backend services and APIs.
+  icon: globe
+  color: "#f59e0b"
+  order_index: 7
+
+course:
+  slug: react-frontend
+  title: React Frontend Development
+  summary: Components, hooks, state, routing, and modern React patterns.
+  description: |
+    React is the dominant frontend library. This course covers components,
+    JSX, the core hooks (useState, useEffect, useReducer, useMemo,
+    useCallback, useContext), data fetching, forms, routing, and the
+    patterns you'll use daily in production codebases.
+  difficulty: intermediate
+  estimated_hours: 14
+  is_published: true
+  order_index: 24
+
+modules:
+  - title: React Basics
+    summary: JSX, components, props.
+    order_index: 1
+    lessons:
+      - slug: jsx-and-components
+        title: JSX and Components
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/jsx-and-components.md
+      - slug: props-and-children
+        title: Props and Children
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/props-and-children.md
+      - slug: react-quiz
+        title: Quiz - React Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/react-quiz.md
+
+  - title: State and Effects
+    summary: useState, useEffect, custom hooks.
+    order_index: 2
+    lessons:
+      - slug: usestate-and-events
+        title: useState and Events
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/usestate-and-events.md
+      - slug: useeffect-and-fetching
+        title: useEffect and Data Fetching
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/useeffect-and-fetching.md
+      - slug: custom-hooks
+        title: Custom Hooks
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/custom-hooks.md
+
+  - title: Performance and Patterns
+    summary: memo, useMemo, useCallback, context.
+    order_index: 3
+    lessons:
+      - slug: memo-and-performance
+        title: memo, useMemo, useCallback
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/memo-and-performance.md
+      - slug: virtual-dom-exercise
+        title: Counting Renders
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/virtual-dom-exercise.md
+        exercises:
+          - slug: react-render-count
+            title: Render Count Simulation
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/react-render-count.prompt.md
+            supported_languages: [python]
+            tags: [react, simulation]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    state = {}
+                    renders = 0
+                    for ln in lines:
+                        if not ln.strip():
+                            continue
+                        parts = ln.split()
+                        cmd = parts[0]
+                        if cmd == "SET":
+                            key, value = parts[1], parts[2]
+                            if state.get(key) != value:
+                                state[key] = value
+                                renders += 1
+                    print(renders)
+
+                solve()
+            test_cases:
+              - name: all-distinct
+                stdin: "SET a 1\nSET b 2\nSET c 3\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: no-op-same-value
+                stdin: "SET a 1\nSET a 1\nSET a 1\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: mixed
+                stdin: "SET a 1\nSET a 2\nSET b 1\nSET b 1\n"
+                expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+              - name: empty
+                stdin: "\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1

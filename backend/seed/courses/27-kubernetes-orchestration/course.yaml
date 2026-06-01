@@ -1,0 +1,137 @@
+subject:
+  slug: devops-cloud
+  name: DevOps and Cloud
+  description: Ship and operate software at scale — containers, orchestration, cloud platforms, and CI/CD.
+  icon: cloud
+  color: "#8b5cf6"
+  order_index: 8
+
+course:
+  slug: kubernetes-orchestration
+  title: Kubernetes Orchestration
+  summary: Pods, Deployments, Services, ConfigMaps, and operating a cluster.
+  description: |
+    Kubernetes orchestrates containers at scale. This course covers the
+    control plane, the core workload objects (Pods, Deployments, Services),
+    configuration management (ConfigMaps, Secrets), networking, and the
+    operational practices for running applications on K8s.
+  difficulty: advanced
+  estimated_hours: 14
+  is_published: true
+  order_index: 27
+
+modules:
+  - title: K8s Core Concepts
+    summary: Architecture, kubectl, pods.
+    order_index: 1
+    lessons:
+      - slug: k8s-architecture
+        title: Kubernetes Architecture
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/k8s-architecture.md
+      - slug: kubectl-essentials
+        title: kubectl Essentials
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/kubectl-essentials.md
+      - slug: k8s-quiz
+        title: Quiz - K8s Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/k8s-quiz.md
+
+  - title: Workloads
+    summary: Pods, Deployments, ReplicaSets.
+    order_index: 2
+    lessons:
+      - slug: pods-and-deployments
+        title: Pods and Deployments
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/pods-and-deployments.md
+      - slug: services-and-ingress
+        title: Services and Ingress
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/services-and-ingress.md
+
+  - title: Config and Operations
+    summary: ConfigMaps, Secrets, probes.
+    order_index: 3
+    lessons:
+      - slug: configmaps-and-secrets
+        title: ConfigMaps and Secrets
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/configmaps-and-secrets.md
+      - slug: selector-match-exercise
+        title: Selector Matching
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/selector-match-exercise.md
+        exercises:
+          - slug: k8s-selector-match
+            title: Label Selector Matcher
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/k8s-selector-match.prompt.md
+            supported_languages: [python]
+            tags: [kubernetes, selectors]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    sel = {}
+                    for kv in lines[0].split(","):
+                        k, v = kv.split("=")
+                        sel[k.strip()] = v.strip()
+                    n = int(lines[1])
+                    out = []
+                    for i in range(2, 2+n):
+                        parts = lines[i].split(" ", 1)
+                        name = parts[0]
+                        labels = {}
+                        if len(parts) > 1 and parts[1]:
+                            for kv in parts[1].split(","):
+                                k, v = kv.split("=")
+                                labels[k.strip()] = v.strip()
+                        if all(labels.get(k) == v for k, v in sel.items()):
+                            out.append(name)
+                    if out:
+                        print("\n".join(out))
+                    else:
+                        print("NONE")
+
+                solve()
+            test_cases:
+              - name: simple
+                stdin: "app=web\n3\npod-1 app=web,env=prod\npod-2 app=api\npod-3 app=web,env=dev\n"
+                expected_stdout: "pod-1\npod-3"
+                is_hidden: false
+                weight: 1
+              - name: multi-label
+                stdin: "app=web,env=prod\n3\npod-1 app=web,env=prod\npod-2 app=web,env=dev\npod-3 app=web,env=prod,version=v2\n"
+                expected_stdout: "pod-1\npod-3"
+                is_hidden: false
+                weight: 1
+              - name: none
+                stdin: "app=nope\n2\npod-1 app=web\npod-2 app=api\n"
+                expected_stdout: "NONE"
+                is_hidden: true
+                weight: 1
+              - name: no-labels
+                stdin: "app=web\n2\npod-1 \npod-2 app=web\n"
+                expected_stdout: "pod-2"
+                is_hidden: true
+                weight: 1

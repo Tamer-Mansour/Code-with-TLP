@@ -1,0 +1,171 @@
+subject:
+  slug: databases
+  name: Databases
+  description: Relational, document, and in-memory data stores — design, query, and operate them in production.
+  icon: database
+  color: "#10b981"
+  order_index: 5
+
+course:
+  slug: sql-server-ssms
+  title: SQL Server and SSMS
+  summary: Microsoft SQL Server administration and T-SQL using SQL Server Management Studio.
+  description: |
+    A working tour of SQL Server through SSMS — the everyday GUI for DBAs and
+    application developers in the Microsoft stack. You'll learn the T-SQL
+    dialect, how the engine plans queries, and the operational tooling that
+    keeps SQL Server humming in production.
+  difficulty: intermediate
+  estimated_hours: 18
+  is_published: true
+  order_index: 12
+
+modules:
+  - title: SQL Server and SSMS Orientation
+    summary: What SQL Server is, how editions differ, and the SSMS workspace.
+    order_index: 1
+    lessons:
+      - slug: sql-server-overview
+        title: SQL Server Editions and Architecture
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/sql-server-overview.md
+      - slug: ssms-tour
+        title: A Tour of SSMS
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/ssms-tour.md
+      - slug: ssms-basics-quiz
+        title: Quiz - SQL Server Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/ssms-basics-quiz.md
+
+  - title: T-SQL Essentials
+    summary: SELECT, JOIN, and the Microsoft-specific bits of T-SQL.
+    order_index: 2
+    lessons:
+      - slug: tsql-select-basics
+        title: T-SQL SELECT and Filters
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/tsql-select-basics.md
+      - slug: top-vs-limit
+        title: TOP, OFFSET, and Pagination in T-SQL
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/top-vs-limit.md
+
+  - title: Advanced T-SQL
+    summary: CTEs, window functions, MERGE, and the OUTPUT clause.
+    order_index: 3
+    lessons:
+      - slug: ctes-and-windows
+        title: CTEs and Window Functions
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/ctes-and-windows.md
+      - slug: merge-statement
+        title: The MERGE Statement
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/merge-statement.md
+      - slug: window-rank-exercise
+        title: Top-N Per Group
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/window-rank-exercise.md
+        exercises:
+          - slug: mssql-top-n-per-group
+            title: Top-N Per Group (Window Function Simulation)
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/mssql-top-n-per-group.prompt.md
+            supported_languages: [python]
+            tags: [t-sql, window-functions]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = [ln for ln in sys.stdin.read().splitlines() if ln != ""]
+                    n, k = map(int, lines[0].split())
+                    rows = []
+                    for ln in lines[1:1+n]:
+                        cat, score = ln.split(",")
+                        rows.append((cat, int(score)))
+                    # group, sort each group desc by score, then by category-stable order
+                    groups = {}
+                    order = []
+                    for cat, sc in rows:
+                        if cat not in groups:
+                            groups[cat] = []
+                            order.append(cat)
+                        groups[cat].append(sc)
+                    out = []
+                    for cat in order:
+                        topk = sorted(groups[cat], reverse=True)[:k]
+                        for s in topk:
+                            out.append(f"{cat},{s}")
+                    print("\n".join(out))
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "5 2\nA,10\nA,20\nA,30\nB,5\nB,15\n"
+                expected_stdout: "A,30\nA,20\nB,15\nB,5"
+                is_hidden: false
+                weight: 1
+              - name: single-group
+                stdin: "3 1\nX,1\nX,2\nX,3\n"
+                expected_stdout: "X,3"
+                is_hidden: false
+                weight: 1
+              - name: k-larger-than-group
+                stdin: "2 5\nQ,7\nQ,3\n"
+                expected_stdout: "Q,7\nQ,3"
+                is_hidden: true
+                weight: 1
+              - name: stable-input-order
+                stdin: "4 2\nB,1\nA,5\nB,2\nA,9\n"
+                expected_stdout: "B,2\nB,1\nA,9\nA,5"
+                is_hidden: true
+                weight: 1
+
+  - title: Indexes and Execution Plans
+    summary: Clustered vs nonclustered, included columns, and reading actual plans.
+    order_index: 4
+    lessons:
+      - slug: clustered-vs-nonclustered
+        title: Clustered vs Nonclustered Indexes
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/clustered-vs-nonclustered.md
+      - slug: execution-plans
+        title: Reading Execution Plans in SSMS
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/execution-plans.md
+
+  - title: Operations - Security, Backup, Agent
+    summary: Logins vs users, backup strategies, and SQL Server Agent jobs.
+    order_index: 5
+    lessons:
+      - slug: logins-users-roles
+        title: Logins, Users, and Roles
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/logins-users-roles.md
+      - slug: backup-restore
+        title: Backup, Restore, and Recovery Models
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/backup-restore.md

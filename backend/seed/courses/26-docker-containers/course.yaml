@@ -1,0 +1,127 @@
+subject:
+  slug: devops-cloud
+  name: DevOps and Cloud
+  description: Ship and operate software at scale — containers, orchestration, cloud platforms, and CI/CD.
+  icon: cloud
+  color: "#8b5cf6"
+  order_index: 8
+
+course:
+  slug: docker-containers
+  title: Docker and Containerization
+  summary: Images, Dockerfile, networking, volumes, and Compose.
+  description: |
+    Docker packages applications into portable containers. This course covers
+    the container model, writing efficient Dockerfiles, networking, volumes,
+    multi-stage builds, Docker Compose, and security basics.
+  difficulty: intermediate
+  estimated_hours: 10
+  is_published: true
+  order_index: 26
+
+modules:
+  - title: Container Fundamentals
+    summary: What containers are and how to use them.
+    order_index: 1
+    lessons:
+      - slug: containers-vs-vms
+        title: Containers vs VMs
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/containers-vs-vms.md
+      - slug: docker-cli
+        title: Docker CLI Essentials
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/docker-cli.md
+      - slug: docker-quiz
+        title: Quiz - Docker Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/docker-quiz.md
+
+  - title: Writing Dockerfiles
+    summary: Layers, caching, and multi-stage builds.
+    order_index: 2
+    lessons:
+      - slug: dockerfile-basics
+        title: Dockerfile Layers and Caching
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/dockerfile-basics.md
+      - slug: multistage-builds
+        title: Multi-Stage Builds
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/multistage-builds.md
+      - slug: layer-cache-exercise
+        title: Layer Cache Simulation
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/layer-cache-exercise.md
+        exercises:
+          - slug: docker-layer-cache
+            title: Layer Cache Hit Count
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/docker-layer-cache.prompt.md
+            supported_languages: [python]
+            tags: [docker, cache]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0])
+                    prev = lines[1:1+n]
+                    m = int(lines[1+n])
+                    curr = lines[2+n:2+n+m]
+                    hits = 0
+                    for i in range(min(len(prev), len(curr))):
+                        if prev[i] == curr[i]:
+                            hits += 1
+                        else:
+                            break
+                    print(hits)
+
+                solve()
+            test_cases:
+              - name: all-hit
+                stdin: "3\nFROM node:20\nCOPY package.json .\nRUN npm install\n3\nFROM node:20\nCOPY package.json .\nRUN npm install\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: partial-hit
+                stdin: "3\nFROM node:20\nCOPY package.json .\nRUN npm install\n3\nFROM node:20\nCOPY package.json .\nRUN npm ci\n"
+                expected_stdout: "2"
+                is_hidden: false
+                weight: 1
+              - name: first-line-diff
+                stdin: "2\nFROM node:18\nRUN apt update\n2\nFROM node:20\nRUN apt update\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: shorter-current
+                stdin: "3\nFROM x\nCOPY .\nRUN .\n2\nFROM x\nCOPY .\n"
+                expected_stdout: "2"
+                is_hidden: true
+                weight: 1
+
+  - title: Compose and Networking
+    summary: Multi-container apps and networking basics.
+    order_index: 3
+    lessons:
+      - slug: compose
+        title: Docker Compose
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/compose.md

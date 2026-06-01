@@ -1,0 +1,130 @@
+subject:
+  slug: programming-languages
+  name: Programming Languages
+  description: Master modern programming languages — from Python and JavaScript to Rust and Go.
+  icon: code
+  color: "#3b82f6"
+  order_index: 6
+
+course:
+  slug: rust-systems
+  title: Rust Systems Programming
+  summary: Ownership, borrowing, lifetimes, traits, and idiomatic Rust.
+  description: |
+    Rust gives you C++-level performance with memory safety enforced at compile
+    time. This course covers ownership and borrowing (the unique mental model),
+    lifetimes, traits, generics, error handling with Result, and the cargo
+    ecosystem you'll work with daily.
+  difficulty: advanced
+  estimated_hours: 16
+  is_published: true
+  order_index: 22
+
+modules:
+  - title: Rust Basics
+    summary: Cargo, types, ownership.
+    order_index: 1
+    lessons:
+      - slug: hello-rust
+        title: Hello, Rust
+        type: reading
+        duration_minutes: 8
+        content_file: lessons/hello-rust.md
+      - slug: ownership-and-borrowing
+        title: Ownership and Borrowing
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/ownership-and-borrowing.md
+      - slug: rust-quiz
+        title: Quiz - Rust Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/rust-quiz.md
+
+  - title: Types and Traits
+    summary: Structs, enums, traits, generics.
+    order_index: 2
+    lessons:
+      - slug: structs-enums
+        title: Structs and Enums
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/structs-enums.md
+      - slug: traits-and-generics
+        title: Traits and Generics
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/traits-and-generics.md
+
+  - title: Error Handling and Lifetimes
+    summary: Result, Option, lifetimes.
+    order_index: 3
+    lessons:
+      - slug: result-and-option
+        title: Result, Option, and ?
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/result-and-option.md
+      - slug: lifetimes
+        title: Lifetimes
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/lifetimes.md
+      - slug: parse-numbers-exercise
+        title: Parse Sum
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/parse-numbers-exercise.md
+        exercises:
+          - slug: rust-parse-sum
+            title: Parse and Sum (Result-style Error Handling)
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/rust-parse-sum.prompt.md
+            supported_languages: [python]
+            tags: [parsing, errors]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    tokens = sys.stdin.read().split()
+                    total = 0
+                    for t in tokens:
+                        try:
+                            total += int(t)
+                        except ValueError:
+                            print(f"ERROR {t}")
+                            return
+                    print(total)
+
+                solve()
+            test_cases:
+              - name: all-ints
+                stdin: "1 2 3 4\n"
+                expected_stdout: "10"
+                is_hidden: false
+                weight: 1
+              - name: with-error
+                stdin: "1 2 abc 4\n"
+                expected_stdout: "ERROR abc"
+                is_hidden: false
+                weight: 1
+              - name: negatives
+                stdin: "-5 5 -10 10\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: empty
+                stdin: "\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1

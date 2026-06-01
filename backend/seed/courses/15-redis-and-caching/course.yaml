@@ -1,0 +1,168 @@
+subject:
+  slug: databases
+  name: Databases
+  description: Relational, document, and in-memory data stores — design, query, and operate them in production.
+  icon: database
+  color: "#10b981"
+  order_index: 5
+
+course:
+  slug: redis-and-caching
+  title: Redis and Caching
+  summary: In-memory data structures, caching patterns, pub/sub, streams, and clustering.
+  description: |
+    Redis is the in-memory data store you reach for when SQL is too slow.
+    It's a Swiss-army knife — caches, queues, rate limiters, leaderboards,
+    pub/sub, and primary store for the right workloads. This course covers the
+    data structures, the canonical caching patterns, persistence trade-offs,
+    and how Redis Cluster scales out.
+  difficulty: intermediate
+  estimated_hours: 14
+  is_published: true
+  order_index: 15
+
+modules:
+  - title: Redis Fundamentals
+    summary: Install, the redis-cli, and the key/value mental model.
+    order_index: 1
+    lessons:
+      - slug: what-is-redis
+        title: What is Redis?
+        type: reading
+        duration_minutes: 8
+        content_file: lessons/what-is-redis.md
+      - slug: redis-cli-tour
+        title: A Tour of redis-cli
+        type: reading
+        duration_minutes: 8
+        content_file: lessons/redis-cli-tour.md
+      - slug: redis-quiz
+        title: Quiz - Redis Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/redis-quiz.md
+
+  - title: Data Structures
+    summary: Strings, hashes, lists, sets, sorted sets - and when to use each.
+    order_index: 2
+    lessons:
+      - slug: strings-and-hashes
+        title: Strings and Hashes
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/strings-and-hashes.md
+      - slug: lists-sets-zsets
+        title: Lists, Sets, and Sorted Sets
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/lists-sets-zsets.md
+      - slug: zset-exercise
+        title: Build a Leaderboard
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/zset-exercise.md
+        exercises:
+          - slug: redis-zset-leaderboard
+            title: Sorted-Set Leaderboard (ZADD/ZRANGE Simulation)
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/redis-zset-leaderboard.prompt.md
+            supported_languages: [python]
+            tags: [redis, sorted-set]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = [ln for ln in sys.stdin.read().splitlines() if ln != ""]
+                    n = int(lines[0])
+                    scores = {}
+                    for ln in lines[1:1+n]:
+                        parts = ln.split()
+                        if parts[0] == "ZADD":
+                            _, member, score = parts
+                            scores[member] = int(score)
+                        elif parts[0] == "ZINCRBY":
+                            _, member, delta = parts
+                            scores[member] = scores.get(member, 0) + int(delta)
+                        elif parts[0] == "ZTOP":
+                            k = int(parts[1])
+                            top = sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))[:k]
+                            for m, s in top:
+                                print(f"{m} {s}")
+
+                solve()
+            test_cases:
+              - name: simple-add-and-top
+                stdin: "4\nZADD alice 10\nZADD bob 20\nZADD carol 15\nZTOP 3\n"
+                expected_stdout: "bob 20\ncarol 15\nalice 10"
+                is_hidden: false
+                weight: 1
+              - name: incr-and-top2
+                stdin: "5\nZADD a 5\nZADD b 5\nZINCRBY a 10\nZADD c 7\nZTOP 2\n"
+                expected_stdout: "a 15\nc 7"
+                is_hidden: false
+                weight: 1
+              - name: alpha-tiebreak
+                stdin: "4\nZADD x 1\nZADD y 1\nZADD z 1\nZTOP 2\n"
+                expected_stdout: "x 1\ny 1"
+                is_hidden: true
+                weight: 1
+              - name: top-larger-than-members
+                stdin: "3\nZADD a 1\nZADD b 2\nZTOP 5\n"
+                expected_stdout: "b 2\na 1"
+                is_hidden: true
+                weight: 1
+
+  - title: Caching Patterns
+    summary: Cache-aside, write-through, TTLs, and stampede protection.
+    order_index: 3
+    lessons:
+      - slug: caching-patterns
+        title: Cache-aside, Write-through, and TTLs
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/caching-patterns.md
+      - slug: stampede-and-locks
+        title: Stampedes and Distributed Locks
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/stampede-and-locks.md
+
+  - title: Persistence and Replication
+    summary: RDB, AOF, replication, and Sentinel.
+    order_index: 4
+    lessons:
+      - slug: rdb-vs-aof
+        title: RDB vs AOF Persistence
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/rdb-vs-aof.md
+      - slug: replication-and-sentinel
+        title: Replication and Sentinel
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/replication-and-sentinel.md
+
+  - title: Pub/Sub, Streams, and Cluster
+    summary: Messaging primitives and horizontal scale.
+    order_index: 5
+    lessons:
+      - slug: pubsub-and-streams
+        title: Pub/Sub and Streams
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/pubsub-and-streams.md
+      - slug: redis-cluster
+        title: Redis Cluster Sharding
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/redis-cluster.md

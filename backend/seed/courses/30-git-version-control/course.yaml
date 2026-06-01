@@ -1,0 +1,140 @@
+subject:
+  slug: devops-cloud
+  name: DevOps and Cloud
+  description: Ship and operate software at scale — containers, orchestration, cloud platforms, and CI/CD.
+  icon: cloud
+  color: "#8b5cf6"
+  order_index: 8
+
+course:
+  slug: git-version-control
+  title: Git and Version Control
+  summary: Git from fundamentals through rebase, branches, remotes, and team workflows.
+  description: |
+    Git is the universal version control system. This course covers the object
+    model, the everyday workflow (commit, branch, merge), remotes, rebasing
+    and history rewriting, conflict resolution, and team collaboration
+    patterns like trunk-based development and GitHub flow.
+  difficulty: beginner
+  estimated_hours: 10
+  is_published: true
+  order_index: 30
+
+modules:
+  - title: Git Fundamentals
+    summary: Object model and daily workflow.
+    order_index: 1
+    lessons:
+      - slug: git-object-model
+        title: The Git Object Model
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/git-object-model.md
+      - slug: daily-workflow
+        title: The Daily Workflow
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/daily-workflow.md
+      - slug: git-quiz
+        title: Quiz - Git Basics
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/git-quiz.md
+
+  - title: Branching, Merging, Rebasing
+    summary: How to use branches effectively.
+    order_index: 2
+    lessons:
+      - slug: branches-and-merges
+        title: Branches, Merges, and Conflicts
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/branches-and-merges.md
+      - slug: rebase-and-history
+        title: Rebase and Rewriting History
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/rebase-and-history.md
+
+  - title: Remotes and Collaboration
+    summary: Working with GitHub, PRs, workflows.
+    order_index: 3
+    lessons:
+      - slug: remotes-and-prs
+        title: Remotes, push, pull, PRs
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/remotes-and-prs.md
+      - slug: ff-merge-exercise
+        title: Fast-Forward Check
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ff-merge-exercise.md
+        exercises:
+          - slug: git-ff-check
+            title: Fast-Forward Merge Decider
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/git-ff-check.prompt.md
+            supported_languages: [python]
+            tags: [git, graph]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0])
+                    parent = {}
+                    for i in range(1, n+1):
+                        parts = lines[i].split()
+                        child = parts[0]
+                        parents = parts[1:] if len(parts) > 1 else []
+                        parent[child] = parents
+                    base, target = lines[n+1].split()
+
+                    # is base an ancestor of target?
+                    seen = set()
+                    stack = [target]
+                    while stack:
+                        cur = stack.pop()
+                        if cur == base:
+                            print("FAST-FORWARD")
+                            return
+                        if cur in seen:
+                            continue
+                        seen.add(cur)
+                        for p in parent.get(cur, []):
+                            stack.append(p)
+                    print("MERGE")
+
+                solve()
+            test_cases:
+              - name: ff
+                stdin: "3\nA\nB A\nC B\nA C\n"
+                expected_stdout: "FAST-FORWARD"
+                is_hidden: false
+                weight: 1
+              - name: diverged
+                stdin: "4\nA\nB A\nC A\nD C\nB D\n"
+                expected_stdout: "MERGE"
+                is_hidden: false
+                weight: 1
+              - name: same
+                stdin: "1\nA\nA A\n"
+                expected_stdout: "FAST-FORWARD"
+                is_hidden: true
+                weight: 1
+              - name: deeper-ff
+                stdin: "5\nA\nB A\nC B\nD C\nE D\nA E\n"
+                expected_stdout: "FAST-FORWARD"
+                is_hidden: true
+                weight: 1
