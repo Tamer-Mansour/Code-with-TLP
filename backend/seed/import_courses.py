@@ -2,15 +2,12 @@
 
 Reads every `backend/seed/courses/<dir>/course.yaml` (plus the markdown files it
 references) and loads it into the database. Reuses the idempotent `ensure_*`
-helpers from `app.seed`, so it is safe to re-run.
+helpers from `app.seed`, so it is safe to re-run. The script will automatically
+update existing courses, lessons, and exercises with the changes made in the files.
 
 Run from the backend/ directory:
 
     python seed/import_courses.py            # create tables (if needed) + import
-    python seed/import_courses.py --reset    # DROP all tables, recreate, then import
-
-`--reset` wipes EVERYTHING (users, submissions, progress). Use it for a clean
-rebuild of the catalog. The admin user is always re-created from settings.
 """
 
 from __future__ import annotations
@@ -166,12 +163,14 @@ def import_course(db, course_dir: Path) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Import courses from seed/courses/.")
-    parser.add_argument("--reset", action="store_true", help="Drop and recreate all tables first.")
+    parser.add_argument("--reset", action="store_true", help="Deprecated. Used to drop and recreate all tables.")
     args = parser.parse_args()
 
     if args.reset:
-        print(">>> --reset: dropping all tables")
-        Base.metadata.drop_all(bind=engine)
+        print(">>> WARNING: --reset flag is deprecated.")
+        print(">>> The script now automatically updates existing courses, lessons, and exercises without needing to delete tables!")
+        print(">>> Continuing with safe in-place update...")
+    
     Base.metadata.create_all(bind=engine)
 
     course_dirs = sorted(d for d in COURSES_DIR.iterdir() if (d / "course.yaml").exists())

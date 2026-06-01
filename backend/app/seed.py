@@ -92,6 +92,9 @@ def ensure_admin(db: Session) -> User:
 def ensure_subject(db: Session, slug: str, **kwargs) -> Subject:
     subj = db.scalar(select(Subject).where(Subject.slug == slug))
     if subj:
+        for k, v in kwargs.items():
+            setattr(subj, k, v)
+        db.flush()
         return subj
     subj = Subject(slug=slug, **kwargs)
     db.add(subj)
@@ -102,6 +105,10 @@ def ensure_subject(db: Session, slug: str, **kwargs) -> Subject:
 def ensure_course(db: Session, subject: Subject, slug: str, **kwargs) -> Course:
     course = db.scalar(select(Course).where(Course.slug == slug))
     if course:
+        course.subject_id = subject.id
+        for k, v in kwargs.items():
+            setattr(course, k, v)
+        db.flush()
         return course
     course = Course(subject_id=subject.id, slug=slug, **kwargs)
     db.add(course)
@@ -114,6 +121,8 @@ def ensure_module(db: Session, course: Course, title: str, order_index: int) -> 
         select(Module).where(Module.course_id == course.id, Module.title == title)
     )
     if module:
+        module.order_index = order_index
+        db.flush()
         return module
     module = Module(course_id=course.id, title=title, order_index=order_index)
     db.add(module)
@@ -126,6 +135,9 @@ def ensure_lesson(db: Session, module: Module, slug: str, **kwargs) -> Lesson:
         select(Lesson).where(Lesson.module_id == module.id, Lesson.slug == slug)
     )
     if lesson:
+        for k, v in kwargs.items():
+            setattr(lesson, k, v)
+        db.flush()
         return lesson
     lesson = Lesson(module_id=module.id, slug=slug, **kwargs)
     db.add(lesson)
@@ -136,6 +148,10 @@ def ensure_lesson(db: Session, module: Module, slug: str, **kwargs) -> Lesson:
 def ensure_exercise(db: Session, lesson: Lesson, slug: str, **kwargs) -> Exercise:
     exercise = db.scalar(select(Exercise).where(Exercise.slug == slug))
     if exercise:
+        exercise.lesson_id = lesson.id
+        for k, v in kwargs.items():
+            setattr(exercise, k, v)
+        db.flush()
         return exercise
     exercise = Exercise(lesson_id=lesson.id, slug=slug, **kwargs)
     db.add(exercise)

@@ -214,13 +214,12 @@ all: bootstrap runners ## Full setup including Docker sandbox images
 
 # ---------- Cleanup ----------
 .PHONY: clean
-clean: ## Remove venv, caches, and the SQLite database
+clean: ## Remove venv and caches
 ifeq ($(OS),Windows_NT)
 	-@if exist backend\.venv $(RMRF) backend\.venv
 	-@if exist backend\.pytest_cache $(RMRF) backend\.pytest_cache
 	-@if exist backend\htmlcov $(RMRF) backend\htmlcov
-	-@if exist backend\studying_app.db del backend\studying_app.db
 else
-	-$(RMRF) backend/.venv backend/.pytest_cache backend/htmlcov backend/studying_app.db
+	-$(RMRF) backend/.venv backend/.pytest_cache backend/htmlcov
 endif
 	@echo === Clean complete ===
