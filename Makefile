@@ -102,6 +102,8 @@ ABS_PYTEST := $(abspath $(firstword $(PYTEST)))
 .PHONY: seed
 seed: ## Populate the DB with admin + sample course/exercise
 	cd backend && "$(ABS_PY)" -m app.seed
+	cd backend && "$(ABS_PY)" seed/seed_all.py
+	cd backend && "$(ABS_PY)" seed/import_courses.py
 
 .PHONY: run
 run: ## Start the FastAPI server with --reload
