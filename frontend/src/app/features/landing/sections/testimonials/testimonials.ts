@@ -1,8 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Star } from 'lucide-angular';
 import { RevealDirective } from '../../shared/reveal.directive';
-
-interface Testimonial { quote: string; name: string; role: string; initials: string; }
+import type { Testimonial } from '../../models/testimonials.model';
 
 @Component({
   selector: 'app-landing-testimonials',

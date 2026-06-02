@@ -23,23 +23,9 @@ import {
   UserUpdate,
 } from '../../core/models/types';
 import { fileToBase64, validateImageFile } from '../../shared/utils/image.utils';
+import type { RankInfo } from './models/profile.model';
 
 // ── Rank system ────────────────────────────────────────────
-export interface RankInfo {
-  tier: number;
-  name: string;
-  label: string;
-  minScore: number;
-  nextScore: number | null;
-  gradientFrom: string;
-  gradientTo: string;
-  accentColor: string;
-  glowColor: string;
-  textColor: string;
-  animated: boolean;
-  icon: string;
-}
-
 export const RANKS: RankInfo[] = [
   {
     tier: 0, name: 'Newcomer', label: 'Just Getting Started',

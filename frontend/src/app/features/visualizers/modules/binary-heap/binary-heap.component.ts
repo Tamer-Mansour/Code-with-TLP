@@ -5,46 +5,15 @@ import { LucideAngularModule, Plus, Trash2, Shuffle, RotateCcw } from 'lucide-an
 import { VizPlayerService } from '../../core/viz-player.service';
 import { VizFrame } from '../../core/viz-frame';
 import { Visualizer, VizMeta } from '../../core/visualizer.base';
+import type {
+  HeapSlotState, HeapFrameData, RenderedNode, RenderedEdge, ArrayCell,
+} from './models/binary-heap.model';
 
 // ── constants ────────────────────────────────────────────────────────────────
 
 const NODE_R  = 24;   // circle radius in px
 const GAP_Y   = 88;   // vertical gap between levels
 const PAD     = 20;   // canvas padding
-
-// ── types ────────────────────────────────────────────────────────────────────
-
-/** State token for a single heap slot across one frame. */
-type HeapSlotState = 'default' | 'active' | 'compare' | 'swap' | 'done' | 'removed';
-
-/** Payload carried in every VizFrame.data for this module. */
-interface HeapFrameData {
-  /** Current heap array at this step (length is the live heap size). */
-  heap: number[];
-}
-
-/** View-model for one SVG node. */
-interface RenderedNode {
-  /** 0-based heap index. */
-  idx: number;
-  value: number;
-  cx: number;
-  cy: number;
-  state: HeapSlotState;
-}
-
-/** View-model for one SVG edge (parent → child). */
-interface RenderedEdge {
-  x1: number; y1: number;
-  x2: number; y2: number;
-}
-
-/** View-model for one cell in the backing-array row. */
-interface ArrayCell {
-  idx: number;
-  value: number;
-  state: HeapSlotState;
-}
 
 // ── layout helpers ───────────────────────────────────────────────────────────
 

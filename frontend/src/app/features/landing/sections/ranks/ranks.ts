@@ -1,8 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Trophy } from 'lucide-angular';
 import { RevealDirective } from '../../shared/reveal.directive';
-
-interface Tier { name: string; color: string; xp: string; here?: boolean; }
+import type { Tier } from '../../models/ranks.model';
 
 @Component({
   selector: 'app-landing-ranks',

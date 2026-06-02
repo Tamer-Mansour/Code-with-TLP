@@ -45,6 +45,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'paths',
+    loadComponent: () =>
+      import('./features/catalog/learning-path-catalog/learning-path-catalog').then(
+        (m) => m.LearningPathCatalogComponent
+      ),
+  },
+  {
+    path: 'paths/:slug',
+    loadComponent: () =>
+      import('./features/catalog/learning-path-detail/learning-path-detail').then(
+        (m) => m.LearningPathDetailComponent
+      ),
+  },
+  {
     path: 'exercises',
     loadComponent: () =>
       import('./features/catalog/exercise-list/exercise-list').then(

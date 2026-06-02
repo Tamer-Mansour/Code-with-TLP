@@ -1,0 +1,1677 @@
+subject:
+  slug: systems
+  name: Systems
+  description: How computers run software, from the CPU up to the network.
+  icon: server
+  color: '#ef4444'
+  order_index: 4
+course:
+  slug: cpp-for-systems
+  title: C++ for Systems Programming
+  summary: Modern C++ from the ground up for systems work — memory, OOP, RAII, templates, the STL, bit-level
+    tricks, and concurrency.
+  description: A deep, systems-oriented C++ course. Build a precise mental model of memory, pointers,
+    object lifetime, and the rules that govern undefined behaviour, then layer on OOP, RAII, smart pointers,
+    templates, the STL, and concurrency — all with the low-level detail systems engineers need.
+  difficulty: advanced
+  estimated_hours: 40
+  order_index: 31
+  is_published: true
+modules:
+- title: C++ Foundations & Toolchain
+  order_index: 1
+  lessons:
+  - slug: c-vs-cpp-key-differences
+    title: 'C vs C++: What Are the Differences?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/c-vs-cpp-key-differences.md
+  - slug: compile-time-vs-runtime-error
+    title: 'Compile-Time vs Runtime Error: How to Tell Them Apart'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/compile-time-vs-runtime-error.md
+  - slug: declaration-vs-definition
+    title: 'Declaration vs Definition: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/declaration-vs-definition.md
+  - slug: extern-linkage-internal-external
+    title: Internal vs External Linkage and extern
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/extern-linkage-internal-external.md
+  - slug: compilation-pipeline-preprocess-compile-link
+    title: 'Preprocess, Compile, Assemble, Link: The Build Pipeline'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/compilation-pipeline-preprocess-compile-link.md
+  - slug: hello-systems-toolchain-setup
+    title: Setting Up g++/clang++, -std, and Your First Build
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/hello-systems-toolchain-setup.md
+  - slug: one-definition-rule
+    title: The One Definition Rule and Why Linkers Complain
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/one-definition-rule.md
+  - slug: translation-units-and-headers
+    title: Translation Units, Headers, and Include Guards
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/translation-units-and-headers.md
+  - slug: what-is-cpp-and-where-it-runs
+    title: What Is C++ and Why It Dominates Systems Programming
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-cpp-and-where-it-runs.md
+  - slug: quiz-cpp-foundations
+    title: 'Quiz: C++ Foundations and the Compilation Model'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-cpp-foundations.md
+- title: Types & Operators
+  order_index: 2
+  lessons:
+  - slug: logical-and-vs-and-and-or
+    title: '& vs && and | vs ||: Bitwise vs Logical Operators'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/logical-and-vs-and-and-or.md
+  - slug: arithmetic-and-comparison-operators
+    title: Arithmetic, Comparison, and Assignment Operators
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/arithmetic-and-comparison-operators.md
+  - slug: auto-type-deduction
+    title: auto and Type Deduction Rules
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/auto-type-deduction.md
+  - slug: casts-static-reinterpret-const
+    title: 'C++ Casts: static_cast, reinterpret_cast, const_cast'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/casts-static-reinterpret-const.md
+  - slug: comparison-operators
+    title: Comparison Operators and the Spaceship Operator
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/comparison-operators.md
+  - slug: decltype
+    title: decltype and decltype(auto)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/decltype.md
+  - slug: fundamental-types-and-sizes
+    title: Fundamental Types and Their Sizes (sizeof, fixed-width ints)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fundamental-types-and-sizes.md
+  - slug: integer-promotion-and-conversion
+    title: Integer Promotion and Implicit Conversions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/integer-promotion-and-conversion.md
+  - slug: operator-precedence-associativity
+    title: Operator Precedence and Associativity
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/operator-precedence-associativity.md
+  - slug: arithmetic-operators
+    title: Overloading Arithmetic and Compound Assignment
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/arithmetic-operators.md
+  - slug: increment-decrement-operators
+    title: Pre vs Post Increment Overloads
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/increment-decrement-operators.md
+  - slug: short-circuit-evaluation
+    title: Short-Circuit Evaluation and Its Side Effects
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/short-circuit-evaluation.md
+  - slug: structured-bindings
+    title: Structured Bindings
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/structured-bindings.md
+  - slug: uniform-initialization
+    title: Uniform Initialization and Narrowing
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/uniform-initialization.md
+  - slug: quiz-types-and-operators
+    title: 'Quiz: Fundamental Types, Variables, and Operators'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-types-and-operators.md
+- title: Control Flow & Functions
+  order_index: 3
+  lessons:
+  - slug: break-continue-goto
+    title: break, continue, and the goto Debate
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/break-continue-goto.md
+  - slug: default-arguments
+    title: Default Arguments and Their Pitfalls
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/default-arguments.md
+  - slug: fizzbuzz-control-flow-drill
+    title: 'Exercise: Branching and Loop Logic from stdin'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fizzbuzz-control-flow-drill.md
+  - slug: function-overloading
+    title: Function Overloading and Overload Resolution
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/function-overloading.md
+  - slug: functions-parameters-return
+    title: 'Functions: Parameters, Return Values, and Scope'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/functions-parameters-return.md
+  - slug: if-switch-and-conditions
+    title: if, switch, and Conditional Expressions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/if-switch-and-conditions.md
+  - slug: inline-functions
+    title: 'inline Functions: Hint, Linkage, and the Truth'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/inline-functions.md
+  - slug: lambda-expressions
+    title: Lambda Expressions and Captures
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/lambda-expressions.md
+  - slug: recursion-and-the-stack
+    title: Recursion and How It Uses the Call Stack
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/recursion-and-the-stack.md
+  - slug: loops-while-for-do
+    title: 'while, for, do-while: Choosing the Right Loop'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/loops-while-for-do.md
+  - slug: cpp-fizzbuzz-control-flow-drill
+    title: 'Problem: Parameterized FizzBuzz'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-fizzbuzz-control-flow-drill.prompt.md
+  - slug: quiz-control-flow-functions
+    title: 'Quiz: Control Flow and Functions'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-control-flow-functions.md
+- title: Pointers & References
+  order_index: 4
+  lessons:
+  - slug: arrays-and-pointer-decay
+    title: Arrays, Pointer Decay, and Array Indexing
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/arrays-and-pointer-decay.md
+  - slug: choosing-a-parameter-passing-style
+    title: Choosing Value vs Pointer vs Reference
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/choosing-a-parameter-passing-style.md
+  - slug: reference-lifetime-extension
+    title: Const Reference Lifetime Extension of Temporaries
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/reference-lifetime-extension.md
+  - slug: dereferencing-and-address-of
+    title: Dereference (*) and Address-of (&) Operators
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/dereferencing-and-address-of.md
+  - slug: pointer-arithmetic-stride-exercise
+    title: 'Exercise: Compute Pointer Offsets and Array Strides'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pointer-arithmetic-stride-exercise.md
+  - slug: swap-and-out-params
+    title: Implementing swap and Output Parameters
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/swap-and-out-params.md
+  - slug: nullptr-vs-null
+    title: 'nullptr vs NULL vs 0: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/nullptr-vs-null.md
+  - slug: pass-by-pointer
+    title: 'Pass by Pointer: When and Why'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pass-by-pointer.md
+  - slug: pass-by-reference
+    title: Pass by Reference and const Reference
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pass-by-reference.md
+  - slug: pass-by-value
+    title: 'Pass by Value: Copies and Costs'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pass-by-value.md
+  - slug: pointer-arithmetic
+    title: Pointer Arithmetic and Why Type Size Matters
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pointer-arithmetic.md
+  - slug: pointer-vs-reference
+    title: 'Pointer vs Reference: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pointer-vs-reference.md
+  - slug: pointers-to-pointers
+    title: Pointers to Pointers and Double Indirection
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pointers-to-pointers.md
+  - slug: returning-references-safely
+    title: 'Returning References: Safe and Dangerous Cases'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/returning-references-safely.md
+  - slug: void-pointers-and-function-pointers
+    title: void Pointers and Function Pointers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/void-pointers-and-function-pointers.md
+  - slug: what-is-a-pointer
+    title: What Is a Pointer and How Does It Work?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-pointer.md
+  - slug: what-is-a-reference
+    title: What Is a Reference in C++?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-reference.md
+  - slug: cpp-pointer-arithmetic-stride-exercise
+    title: 'Exercise Prompt: Compute Pointer Offsets and Array Strides'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-pointer-arithmetic-stride-exercise.prompt.md
+  - slug: quiz-pointers
+    title: 'Quiz: Pointers Deep Dive'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-pointers.md
+  - slug: quiz-references-and-passing
+    title: 'Quiz: References and Parameter Passing'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-references-and-passing.md
+- title: Dynamic Memory
+  order_index: 5
+  lessons:
+  - slug: nothrow-and-bad-alloc
+    title: 'Allocation Failure: bad_alloc and nothrow new'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/nothrow-and-bad-alloc.md
+  - slug: automatic-vs-dynamic-storage
+    title: Automatic, Static, and Dynamic Storage Duration
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/automatic-vs-dynamic-storage.md
+  - slug: dangling-pointer
+    title: Dangling Pointers and Use-After-Free
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/dangling-pointer.md
+  - slug: double-free-and-corruption
+    title: Double Free and Heap Corruption
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/double-free-and-corruption.md
+  - slug: alloc-tracker-simulation
+    title: 'Exercise: Simulate an Alloc/Free Tracker for Leaks'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/alloc-tracker-simulation.md
+  - slug: memory-mapping-mmap
+    title: mmap, Shared Memory, and File Mapping
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-mapping-mmap.md
+  - slug: new-and-delete
+    title: 'new and delete: Allocation with Construction'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/new-and-delete.md
+  - slug: new-delete-vs-malloc-free
+    title: 'new/delete vs malloc/free: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/new-delete-vs-malloc-free.md
+  - slug: array-new-delete
+    title: 'new[] and delete[]: Why Mismatch Is UB'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/array-new-delete.md
+  - slug: object-lifetime-and-scope
+    title: Object Lifetime, Scope, and Destruction Order
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/object-lifetime-and-scope.md
+  - slug: ownership-and-lifetime
+    title: Ownership, Lifetime, and Who Frees What
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/ownership-and-lifetime.md
+  - slug: placement-new
+    title: Placement new and Manual Object Construction
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/placement-new.md
+  - slug: stack-vs-heap
+    title: 'Stack vs Heap: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-vs-heap.md
+  - slug: uninitialized-memory
+    title: Uninitialized Memory and Indeterminate Values
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/uninitialized-memory.md
+  - slug: memory-leak
+    title: What Is a Memory Leak and How to Find One
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-leak.md
+  - slug: stack-vs-heap-decision-guide
+    title: When to Allocate on the Stack vs the Heap
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-vs-heap-decision-guide.md
+  - slug: heap-allocation-cost
+    title: Why Heap Allocation Is Expensive
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/heap-allocation-cost.md
+  - slug: cpp-alloc-tracker-simulation
+    title: 'Prompt: cpp-alloc-tracker-simulation'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-alloc-tracker-simulation.prompt.md
+  - slug: quiz-dynamic-memory
+    title: 'Quiz: Dynamic Memory Management'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-dynamic-memory.md
+- title: Classes & Objects
+  order_index: 6
+  lessons:
+  - slug: access-specifiers
+    title: 'Access Specifiers: public, private, protected'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/access-specifiers.md
+  - slug: class-and-object
+    title: 'Class vs Object: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/class-and-object.md
+  - slug: data-members-and-methods
+    title: Data Members and Member Functions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/data-members-and-methods.md
+  - slug: designing-a-class-api
+    title: Designing a Minimal, Hard-to-Misuse Class API
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/designing-a-class-api.md
+  - slug: member-initializer-list
+    title: Member Initializer Lists and Initialization Order
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/member-initializer-list.md
+  - slug: nested-and-local-classes
+    title: Nested Classes and Member Layout
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/nested-and-local-classes.md
+  - slug: static-at-file-scope
+    title: static at File Scope and Internal Linkage
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/static-at-file-scope.md
+  - slug: static-members
+    title: static Data Members and static Methods
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/static-members.md
+  - slug: static-in-classes-recap
+    title: 'static in Classes: Shared State and Init Order'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/static-in-classes-recap.md
+  - slug: static-local-variables
+    title: static Local Variables and Their Lifetime
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/static-local-variables.md
+  - slug: struct-vs-class
+    title: 'struct vs class: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/struct-vs-class.md
+  - slug: this-pointer
+    title: The this Pointer and Member Resolution
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/this-pointer.md
+  - slug: quiz-classes-and-objects
+    title: 'Quiz: Classes and Objects'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-classes-and-objects.md
+- title: Encapsulation & Abstraction
+  order_index: 7
+  lessons:
+  - slug: encapsulation-tradeoffs
+    title: Encapsulation Tradeoffs in Performance-Critical Code
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/encapsulation-tradeoffs.md
+  - slug: friend-functions-and-classes
+    title: friend Functions and Classes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/friend-functions-and-classes.md
+  - slug: getters-setters-invariants
+    title: Getters, Setters, and Class Invariants
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/getters-setters-invariants.md
+  - slug: information-hiding-in-systems
+    title: Information Hiding in Systems and Driver Code
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/information-hiding-in-systems.md
+  - slug: interface-vs-implementation
+    title: Separating Interface from Implementation
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interface-vs-implementation.md
+  - slug: four-pillars-overview
+    title: 'The Four Pillars of OOP: How They Fit Together'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/four-pillars-overview.md
+  - slug: abstraction-defined
+    title: What Is Abstraction and How It Differs from Encapsulation
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/abstraction-defined.md
+  - slug: encapsulation-defined
+    title: What Is Encapsulation?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/encapsulation-defined.md
+  - slug: quiz-encapsulation-abstraction
+    title: 'Quiz: Encapsulation and Abstraction'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-encapsulation-abstraction.md
+- title: Constructors & Destructors
+  order_index: 8
+  lessons:
+  - slug: default-and-delete
+    title: = default and = delete on Special Members
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/default-and-delete.md
+  - slug: base-class-initialization
+    title: Calling Base Constructors and Member Access
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/base-class-initialization.md
+  - slug: implicit-special-members
+    title: Compiler-Generated Special Member Functions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/implicit-special-members.md
+  - slug: construction-order-with-inheritance
+    title: Construction and Destruction Order in Hierarchies
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/construction-order-with-inheritance.md
+  - slug: constructor-basics
+    title: 'Constructors: Default, Parameterized, and Implicit'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/constructor-basics.md
+  - slug: delegating-constructors
+    title: Delegating and Inheriting Constructors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/delegating-constructors.md
+  - slug: destructor-basics
+    title: Destructors and When They Run
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/destructor-basics.md
+  - slug: explicit-and-conversion-constructors
+    title: explicit and Converting Constructors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/explicit-and-conversion-constructors.md
+  - slug: conversion-operators
+    title: User-Defined Conversion Operators and explicit
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/conversion-operators.md
+  - slug: why-constructors-cannot-be-virtual
+    title: Why Constructors Cannot Be Virtual
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-constructors-cannot-be-virtual.md
+  - slug: quiz-constructors-destructors
+    title: 'Quiz: Constructors and Destructors'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-constructors-destructors.md
+- title: Copy Semantics
+  order_index: 9
+  lessons:
+  - slug: copy-elision-rvo
+    title: Copy Elision and Return Value Optimization
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/copy-elision-rvo.md
+  - slug: double-free-from-shallow-copy
+    title: How Shallow Copy Causes Double Free
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/double-free-from-shallow-copy.md
+  - slug: deep-copy-implementation
+    title: Implementing a Deep-Copying Resource Class
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/deep-copy-implementation.md
+  - slug: self-assignment-safety
+    title: Self-Assignment and the Copy-and-Swap Idiom
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/self-assignment-safety.md
+  - slug: shallow-vs-deep-copy
+    title: 'Shallow Copy vs Deep Copy: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/shallow-vs-deep-copy.md
+  - slug: copy-assignment-operator
+    title: The Copy Assignment Operator
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/copy-assignment-operator.md
+  - slug: copy-constructor
+    title: 'The Copy Constructor: When It Is Called'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/copy-constructor.md
+  - slug: rule-of-three
+    title: The Rule of Three
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/rule-of-three.md
+  - slug: rule-of-zero
+    title: The Rule of Zero and Why It Is Preferred
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/rule-of-zero.md
+  - slug: quiz-copy-semantics
+    title: 'Quiz: Copy Semantics and the Rule of Three'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-copy-semantics.md
+- title: Move Semantics
+  order_index: 10
+  lessons:
+  - slug: perfect-forwarding-intro
+    title: Forwarding References and std::forward (Intro)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/perfect-forwarding-intro.md
+  - slug: lvalues-and-rvalues
+    title: lvalues, rvalues, and Value Categories
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/lvalues-and-rvalues.md
+  - slug: rvalue-references
+    title: Rvalue References and &&
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/rvalue-references.md
+  - slug: move-assignment-operator
+    title: The Move Assignment Operator
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/move-assignment-operator.md
+  - slug: move-constructor
+    title: 'The Move Constructor: Stealing Resources'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/move-constructor.md
+  - slug: rule-of-five
+    title: The Rule of Five
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/rule-of-five.md
+  - slug: std-move-explained
+    title: What std::move Actually Does
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/std-move-explained.md
+  - slug: noexcept-move-and-containers
+    title: Why Move Operations Should Be noexcept
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/noexcept-move-and-containers.md
+  - slug: quiz-move-semantics
+    title: 'Quiz: Move Semantics and the Rule of Five/Zero'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-move-semantics.md
+- title: Inheritance
+  order_index: 11
+  lessons:
+  - slug: is-a-vs-has-a
+    title: 'is-a vs has-a: Inheritance vs Composition'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/is-a-vs-has-a.md
+  - slug: multiple-inheritance
+    title: Multiple Inheritance and Ambiguity
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/multiple-inheritance.md
+  - slug: name-hiding-and-using
+    title: Name Hiding and the using Declaration
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/name-hiding-and-using.md
+  - slug: object-slicing
+    title: 'Object Slicing: What It Is and How to Avoid It'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/object-slicing.md
+  - slug: public-protected-private-inheritance
+    title: public, protected, and private Inheritance
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/public-protected-private-inheritance.md
+  - slug: diamond-problem-virtual-inheritance
+    title: The Diamond Problem and Virtual Inheritance
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/diamond-problem-virtual-inheritance.md
+  - slug: upcasting-and-downcasting
+    title: Upcasting, Downcasting, and dynamic_cast
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/upcasting-and-downcasting.md
+  - slug: inheritance-basics
+    title: What Is Inheritance and When to Use It
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/inheritance-basics.md
+  - slug: favor-composition
+    title: Why Favor Composition Over Inheritance
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/favor-composition.md
+  - slug: quiz-inheritance
+    title: 'Quiz: Inheritance'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-inheritance.md
+- title: Polymorphism & Virtual Functions
+  order_index: 12
+  lessons:
+  - slug: inline-virtual-functions
+    title: Can a Virtual Function Be inline?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/inline-virtual-functions.md
+  - slug: final-and-virtual-override-rules
+    title: final, override, and Covariant Return Types
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/final-and-virtual-override-rules.md
+  - slug: vtable-and-vptr
+    title: How vtable and vptr Implement Virtual Dispatch
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/vtable-and-vptr.md
+  - slug: overloading-vs-overriding
+    title: 'Overloading vs Overriding: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/overloading-vs-overriding.md
+  - slug: pure-virtual-functions
+    title: Pure Virtual Functions and = 0
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pure-virtual-functions.md
+  - slug: runtime-polymorphism-cost-vs-templates
+    title: 'Runtime Polymorphism vs Templates: Tradeoffs'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/runtime-polymorphism-cost-vs-templates.md
+  - slug: static-vs-dynamic-binding
+    title: Static Binding vs Dynamic Binding
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/static-vs-dynamic-binding.md
+  - slug: cost-of-virtual-calls
+    title: The Cost of Virtual Calls and Devirtualization
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cost-of-virtual-calls.md
+  - slug: virtual-functions
+    title: Virtual Functions and the override Keyword
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-functions.md
+  - slug: what-is-polymorphism
+    title: What Is Polymorphism? Compile-Time vs Runtime
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-polymorphism.md
+  - slug: virtual-destructor
+    title: Why You Need a Virtual Destructor
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-destructor.md
+  - slug: quiz-polymorphism-virtual
+    title: 'Quiz: Polymorphism and Virtual Functions'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-polymorphism-virtual.md
+- title: Abstract Classes & Interfaces
+  order_index: 13
+  lessons:
+  - slug: plugin-architecture-with-interfaces
+    title: A Plugin Architecture Using Abstract Interfaces
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/plugin-architecture-with-interfaces.md
+  - slug: abstract-base-design
+    title: Designing Abstract Base Classes for Drivers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/abstract-base-design.md
+  - slug: interface-like-class
+    title: Interface-Like Classes in C++
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interface-like-class.md
+  - slug: pure-virtual-with-body
+    title: Pure Virtual Functions That Still Have a Body
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pure-virtual-with-body.md
+  - slug: nvi-idiom
+    title: The Non-Virtual Interface (NVI) Idiom
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/nvi-idiom.md
+  - slug: abstract-class
+    title: What Is an Abstract Class?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/abstract-class.md
+  - slug: quiz-abstract-classes-interfaces
+    title: 'Quiz: Abstract Classes and Interfaces'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-abstract-classes-interfaces.md
+- title: Operator Overloading
+  order_index: 14
+  lessons:
+  - slug: member-vs-nonmember-operators
+    title: Member vs Non-Member Operator Overloads
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/member-vs-nonmember-operators.md
+  - slug: operators-you-should-not-overload
+    title: Operators You Should Not Overload
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/operators-you-should-not-overload.md
+  - slug: stream-insertion-operator
+    title: Overloading << and >> for Streams
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stream-insertion-operator.md
+  - slug: subscript-and-call-operators
+    title: Overloading [], (), and Function Objects
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/subscript-and-call-operators.md
+  - slug: operator-overloading-basics
+    title: What Is Operator Overloading and When to Use It
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/operator-overloading-basics.md
+  - slug: quiz-operator-overloading
+    title: 'Quiz: Operator Overloading'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-operator-overloading.md
+- title: RAII & Resource Management
+  order_index: 15
+  lessons:
+  - slug: raii-preview
+    title: Constructors and Destructors as Resource Bookends
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/raii-preview.md
+  - slug: exception-safety-and-raii
+    title: Exception Safety Guarantees Through RAII
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/exception-safety-and-raii.md
+  - slug: raii-for-files-and-handles
+    title: RAII for Files, Sockets, and OS Handles
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/raii-for-files-and-handles.md
+  - slug: raii-for-locks
+    title: RAII for Locks and Critical Sections
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/raii-for-locks.md
+  - slug: raii-pitfalls
+    title: 'RAII Pitfalls: Order, Copies, and Early Release'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/raii-pitfalls.md
+  - slug: raii-vs-manual-cleanup
+    title: RAII vs goto-Cleanup in C
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/raii-vs-manual-cleanup.md
+  - slug: scope-guard-pattern
+    title: The Scope Guard Pattern
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/scope-guard-pattern.md
+  - slug: what-is-raii
+    title: What Is RAII and Why It Matters in System Code
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-raii.md
+  - slug: writing-a-raii-wrapper
+    title: Writing Your Own RAII Wrapper Class
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/writing-a-raii-wrapper.md
+  - slug: quiz-raii
+    title: 'Quiz: RAII and Resource Management'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-raii.md
+- title: Smart Pointers
+  order_index: 16
+  lessons:
+  - slug: refcount-cycle-simulation
+    title: 'Exercise: Simulate Reference Counting and Cycle Leaks'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/refcount-cycle-simulation.md
+  - slug: shared-ptr-control-block
+    title: 'Inside shared_ptr: The Control Block'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/shared-ptr-control-block.md
+  - slug: make-unique-and-custom-deleters
+    title: make_unique and Custom Deleters
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/make-unique-and-custom-deleters.md
+  - slug: shared-ptr
+    title: shared_ptr and Reference Counting
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/shared-ptr.md
+  - slug: smart-pointers-and-arrays
+    title: Smart Pointers with Arrays and Incomplete Types
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/smart-pointers-and-arrays.md
+  - slug: unique-ptr
+    title: 'unique_ptr: Exclusive Ownership'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/unique-ptr.md
+  - slug: weak-ptr-and-cycles
+    title: weak_ptr and Breaking Reference Cycles
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/weak-ptr-and-cycles.md
+  - slug: smart-pointer-vs-raw-pointer
+    title: When to Use Smart vs Raw (Non-Owning) Pointers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/smart-pointer-vs-raw-pointer.md
+  - slug: why-smart-pointers
+    title: Why Smart Pointers Replace Raw Owning Pointers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-smart-pointers.md
+  - slug: cpp-refcount-cycle-simulation
+    title: 'Prompt: Simulate Reference Counting and Cycle Leaks'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-refcount-cycle-simulation.prompt.md
+  - slug: quiz-smart-pointers
+    title: 'Quiz: Smart Pointers'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-smart-pointers.md
+- title: const, constexpr & Qualifiers
+  order_index: 17
+  lessons:
+  - slug: const-pointer-combinations
+    title: const int*, int* const, const int* const Explained
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/const-pointer-combinations.md
+  - slug: const-member-functions
+    title: const Member Functions and const Correctness
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/const-member-functions.md
+  - slug: const-deep-dive
+    title: 'const: Variables, Pointers, and Methods Revisited'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/const-deep-dive.md
+  - slug: constexpr-vs-const
+    title: 'constexpr vs const: Compile-Time vs Read-Only'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/constexpr-vs-const.md
+  - slug: nullptr-constexpr-and-enum-class
+    title: constexpr, enum class, and Strongly Typed Constants
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/nullptr-constexpr-and-enum-class.md
+  - slug: mutable-and-thread-local
+    title: mutable and thread_local
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mutable-and-thread-local.md
+  - slug: volatile-vs-atomic
+    title: 'volatile vs atomic: A Common Confusion'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/volatile-vs-atomic.md
+  - slug: volatile-explained
+    title: 'volatile: What It Means in Embedded and OS Code'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/volatile-explained.md
+  - slug: quiz-qualifiers
+    title: 'Quiz: const, static, volatile, and Storage Qualifiers'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-qualifiers.md
+- title: Templates & Generics
+  order_index: 18
+  lessons:
+  - slug: class-templates
+    title: Class Templates and Instantiation
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/class-templates.md
+  - slug: concepts-and-constraints
+    title: Concepts and Constraining Templates (Intro)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/concepts-and-constraints.md
+  - slug: function-templates
+    title: Function Templates and Argument Deduction
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/function-templates.md
+  - slug: templates-vs-virtual
+    title: 'Static Polymorphism: Templates vs Virtual Dispatch'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/templates-vs-virtual.md
+  - slug: template-specialization
+    title: Template Specialization and Partial Specialization
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/template-specialization.md
+- title: STL Containers
+  order_index: 19
+  lessons:
+  - slug: container-complexity-cheatsheet
+    title: Container Complexity and Cache Behavior
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/container-complexity-cheatsheet.md
+  - slug: list-deque-set
+    title: list, deque, set, and When to Use Them
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/list-deque-set.md
+  - slug: map-vs-unordered-map
+    title: 'map vs unordered_map: Which to Choose'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/map-vs-unordered-map.md
+  - slug: std-function-and-callables
+    title: std::function and Callable Objects
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/std-function-and-callables.md
+  - slug: std-map-ordered
+    title: 'std::map: Ordered, Tree-Based Lookup'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/std-map-ordered.md
+  - slug: optional-and-variant
+    title: std::optional, std::variant, and std::any
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/optional-and-variant.md
+  - slug: unordered-map
+    title: std::unordered_map and Hashing
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/unordered-map.md
+  - slug: vector-vs-array
+    title: std::vector vs C Array vs std::array
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/vector-vs-array.md
+  - slug: std-vector
+    title: 'std::vector: Growth, Capacity, and Reallocation'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/std-vector.md
+  - slug: stl-overview
+    title: 'STL Overview: Containers, Iterators, Algorithms'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stl-overview.md
+  - slug: quiz-stl-containers
+    title: 'Quiz: The Standard Template Library: Containers'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-stl-containers.md
+- title: Iterators & Algorithms
+  order_index: 20
+  lessons:
+  - slug: ranges-pipeline-exercise
+    title: 'Exercise: Transform and Reduce a Numeric Stream'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/ranges-pipeline-exercise.md
+  - slug: iterator-invalidation
+    title: Iterator Invalidation Rules
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/iterator-invalidation.md
+  - slug: iterators-and-categories
+    title: Iterators and Their Categories
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/iterators-and-categories.md
+  - slug: range-based-for
+    title: Range-Based for Loops
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/range-based-for.md
+  - slug: std-algorithms
+    title: 'Standard Algorithms: find, sort, transform, accumulate'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/std-algorithms.md
+  - slug: cpp-ranges-pipeline-exercise
+    title: 'Prompt: Transform and Reduce a Numeric Stream'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-ranges-pipeline-exercise.prompt.md
+  - slug: quiz-iterators-algorithms-templates
+    title: 'Quiz: Iterators, Algorithms, and Templates'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-iterators-algorithms-templates.md
+- title: Modern C++ Essentials
+  order_index: 21
+  lessons:
+  - slug: quiz-modern-cpp-essentials
+    title: 'Quiz: Modern C++ Essentials'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-modern-cpp-essentials.md
+- title: Memory Model, Layout & Alignment
+  order_index: 22
+  lessons:
+  - slug: alignof-and-alignas
+    title: alignof, alignas, and Over-Alignment
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/alignof-and-alignas.md
+  - slug: memory-mapped-device-model
+    title: Designing a Memory-Mapped Device Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-mapped-device-model.md
+  - slug: struct-size-calculation-exercise
+    title: 'Exercise: Compute Struct Size with Alignment Rules'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/struct-size-calculation-exercise.md
+  - slug: register-mapped-io
+    title: Modeling Memory-Mapped I/O with volatile
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/register-mapped-io.md
+  - slug: modeling-registers-and-memory
+    title: Modeling Registers, Memory, and Buses in C++
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/modeling-registers-and-memory.md
+  - slug: offsetof-and-layout
+    title: offsetof and Standard-Layout Types
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/offsetof-and-layout.md
+  - slug: packed-structs
+    title: Packed Structs and the Cost of Misalignment
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/packed-structs.md
+  - slug: process-memory-layout
+    title: 'Process Memory Layout: Text, Data, BSS, Heap, Stack'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/process-memory-layout.md
+  - slug: stack-frames-and-calling-convention
+    title: Stack Frames and the Calling Convention
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-frames-and-calling-convention.md
+  - slug: struct-padding
+    title: Struct Padding and Member Reordering
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/struct-padding.md
+  - slug: type-punning-and-strict-aliasing
+    title: Type Punning, Strict Aliasing, and memcpy
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/type-punning-and-strict-aliasing.md
+  - slug: unions-and-bitfields
+    title: Unions and Bit-Fields for Register Maps
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/unions-and-bitfields.md
+  - slug: memory-alignment-basics
+    title: What Is Memory Alignment and Why It Exists
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-alignment-basics.md
+  - slug: where-do-globals-and-statics-live
+    title: Where Do Globals, Statics, and Literals Live?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/where-do-globals-and-statics-live.md
+  - slug: cpp-struct-size-calculation-exercise
+    title: 'Exercise Prompt: Compute Struct Size with Alignment Rules'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-struct-size-calculation-exercise.prompt.md
+  - slug: quiz-alignment-padding
+    title: 'Quiz: Memory Layout, Alignment, and Padding'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-alignment-padding.md
+  - slug: quiz-memory-model
+    title: 'Quiz: Memory Model: Stack vs Heap'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-memory-model.md
+- title: Bit Manipulation
+  order_index: 23
+  lessons:
+  - slug: bit-masks-and-flags
+    title: Bit Masks and Flag Fields in Hardware Registers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bit-masks-and-flags.md
+  - slug: bitwise-operators-review
+    title: 'Bitwise Operators: AND, OR, XOR, NOT, Shifts'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bitwise-operators-review.md
+  - slug: check-a-bit
+    title: Check Whether a Bit Is Set
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/check-a-bit.md
+  - slug: clear-a-bit
+    title: Clear a Bit with a Mask
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/clear-a-bit.md
+  - slug: bit-ops-exercise
+    title: 'Exercise: Set, Clear, Toggle, and Query Bits from Commands'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bit-ops-exercise.md
+  - slug: set-a-bit
+    title: Set a Bit with a Mask
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/set-a-bit.md
+  - slug: shift-pitfalls-and-ub
+    title: 'Shift Pitfalls: Signedness and Undefined Behavior'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/shift-pitfalls-and-ub.md
+  - slug: toggle-a-bit
+    title: Toggle a Bit with XOR
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/toggle-a-bit.md
+  - slug: bit-tricks
+    title: 'Useful Bit Tricks: popcount, lowest set bit, power of two'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bit-tricks.md
+  - slug: cpp-bit-ops-exercise
+    title: 'Prompt: Set, Clear, Toggle, and Query Bits from Commands'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-bit-ops-exercise.prompt.md
+  - slug: quiz-bit-manipulation
+    title: 'Quiz: Bit Manipulation'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-bit-manipulation.md
+- title: Endianness & Data Representation
+  order_index: 24
+  lessons:
+  - slug: endianness-explained
+    title: 'Big-Endian vs Little-Endian: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/endianness-explained.md
+  - slug: byte-swapping
+    title: Byte Swapping and htonl/ntohl
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/byte-swapping.md
+  - slug: char-encoding-and-bytes
+    title: Bytes, char, and Reading Raw Buffers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/char-encoding-and-bytes.md
+  - slug: detecting-endianness
+    title: Detecting and Reasoning About Host Endianness
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/detecting-endianness.md
+  - slug: endianness-conversion-exercise
+    title: 'Exercise: Convert Integers Between Endianness'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/endianness-conversion-exercise.md
+  - slug: hex-dump-parse-exercise
+    title: 'Exercise: Parse a Hex Byte Stream into Integers'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/hex-dump-parse-exercise.md
+  - slug: floating-point-representation
+    title: 'Floating Point: IEEE 754 and Precision Surprises'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/floating-point-representation.md
+  - slug: network-byte-order
+    title: Network Byte Order in Protocols
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/network-byte-order.md
+  - slug: serialization-and-wire-format
+    title: Serializing Structs to a Portable Wire Format
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/serialization-and-wire-format.md
+  - slug: signed-vs-unsigned-pitfalls
+    title: 'Signed vs Unsigned: Overflow and Comparison Pitfalls'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/signed-vs-unsigned-pitfalls.md
+  - slug: twos-complement
+    title: Two's Complement and Negative Number Encoding
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/twos-complement.md
+  - slug: cpp-endianness-conversion-exercise
+    title: 'Prompt: Convert Integers Between Endianness'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-endianness-conversion-exercise.prompt.md
+  - slug: cpp-hex-dump-parse-exercise
+    title: 'Prompt: Parse a Hex Byte Stream into Integers'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-hex-dump-parse-exercise.prompt.md
+  - slug: quiz-endianness
+    title: 'Quiz: Endianness and Data Representation'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-endianness.md
+- title: Undefined Behavior
+  order_index: 25
+  lessons:
+  - slug: buffer-overflow
+    title: 'Buffer Overflow: Heap and Stack'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/buffer-overflow.md
+  - slug: common-ub-examples
+    title: Common Sources of UB in Real Code
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/common-ub-examples.md
+  - slug: ub-and-the-optimizer
+    title: How the Optimizer Exploits UB
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/ub-and-the-optimizer.md
+  - slug: integer-overflow-ub
+    title: Signed Integer Overflow and Optimizer Assumptions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/integer-overflow-ub.md
+  - slug: stack-overflow-vs-buffer-overflow
+    title: Stack Overflow vs Stack Buffer Overflow
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-overflow-vs-buffer-overflow.md
+  - slug: stack-overflow-explained
+    title: What Causes a Stack Overflow?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-overflow-explained.md
+  - slug: segfault-explained
+    title: What Is a Segfault and What Causes One?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/segfault-explained.md
+  - slug: what-is-undefined-behavior
+    title: What Is Undefined Behavior?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-undefined-behavior.md
+  - slug: quiz-undefined-behavior
+    title: 'Quiz: Undefined Behavior, Crashes, and Memory Errors'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-undefined-behavior.md
+- title: Debugging & Tooling
+  order_index: 26
+  lessons:
+  - slug: debug-symbols-and-g
+    title: -g, Optimization Levels, and Debug vs Release
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/debug-symbols-and-g.md
+  - slug: compiler-warnings
+    title: -Wall, -Wextra, and Treating Warnings as Errors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/compiler-warnings.md
+  - slug: asan-ubsan-tsan
+    title: AddressSanitizer, UBSan, and ThreadSanitizer
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/asan-ubsan-tsan.md
+  - slug: core-dump
+    title: 'Core Dumps: Capturing and Analyzing Crashes'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/core-dump.md
+  - slug: defensive-coding
+    title: Defensive Coding and Bounds Checking
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/defensive-coding.md
+  - slug: gdb-backtrace-and-core
+    title: gdb Backtraces and Examining Memory
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/gdb-backtrace-and-core.md
+  - slug: gdb-basics
+    title: 'gdb: Breakpoints, Stepping, and Inspecting State'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/gdb-basics.md
+  - slug: reading-crash-reports
+    title: 'Reading a Crash: From Symptom to Root Cause'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/reading-crash-reports.md
+  - slug: static-analysis
+    title: Static Analysis with clang-tidy and cppcheck
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/static-analysis.md
+  - slug: valgrind
+    title: 'valgrind: Detecting Leaks and Invalid Access'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/valgrind.md
+  - slug: quiz-debugging-tooling
+    title: 'Quiz: Debugging, Tooling, and Diagnostics'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-debugging-tooling.md
+- title: Concurrency
+  order_index: 27
+  lessons:
+  - slug: avoiding-deadlock
+    title: 'Avoiding Deadlock: Lock Ordering and std::scoped_lock'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/avoiding-deadlock.md
+  - slug: cache-lines-and-false-sharing
+    title: Cache Lines, Padding, and False Sharing
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cache-lines-and-false-sharing.md
+  - slug: condition-variables
+    title: Condition Variables and Producer-Consumer
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/condition-variables.md
+  - slug: deadlock
+    title: 'Deadlock: Causes and the Four Coffman Conditions'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/deadlock.md
+  - slug: memory-order-intro
+    title: Memory Ordering and Happens-Before (Intro)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-order-intro.md
+  - slug: atomics
+    title: std::atomic and Lock-Free Counters
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/atomics.md
+  - slug: mutex-and-lock-guard
+    title: std::mutex, lock_guard, and unique_lock
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mutex-and-lock-guard.md
+  - slug: std-thread-basics
+    title: 'std::thread: Launching, Joining, and Detaching'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/std-thread-basics.md
+  - slug: threads-and-processes
+    title: 'Threads vs Processes: Shared State and Cost'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/threads-and-processes.md
+  - slug: race-condition
+    title: What Is a Race Condition?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/race-condition.md
+  - slug: quiz-concurrency
+    title: 'Quiz: Concurrency: Threads and Synchronization'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-concurrency.md
+- title: Operating-System Concepts
+  order_index: 28
+  lessons:
+  - slug: context-switching
+    title: Context Switching and Its Cost
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/context-switching.md
+  - slug: scheduling-policies
+    title: 'CPU Scheduling: FCFS, Round Robin, Priority'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/scheduling-policies.md
+  - slug: round-robin-scheduler-exercise
+    title: 'Exercise: Simulate a Round-Robin Scheduler'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/round-robin-scheduler-exercise.md
+  - slug: process-lifecycle
+    title: 'Process Lifecycle: fork, exec, and exit'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/process-lifecycle.md
+  - slug: system-calls-and-user-kernel
+    title: System Calls and the User/Kernel Boundary
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/system-calls-and-user-kernel.md
+  - slug: virtual-memory-and-paging
+    title: Virtual Memory, Pages, and the MMU
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-memory-and-paging.md
+  - slug: cpp-round-robin-scheduler-exercise
+    title: 'Prompt: Simulate a Round-Robin Scheduler'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-round-robin-scheduler-exercise.prompt.md
+  - slug: quiz-os-concepts
+    title: 'Quiz: OS Concepts for the Interview'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-os-concepts.md
+- title: Systems Capstone & Interview
+  order_index: 29
+  lessons:
+  - slug: address-translation-math
+    title: 'Address Translation: Page Number and Offset'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-translation-math.md
+  - slug: riscv-decode-exercise
+    title: 'Exercise: Decode RISC-V R-Type Instructions'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-decode-exercise.md
+  - slug: register-file-simulation-exercise
+    title: 'Exercise: Simulate a Register File and Load/Store'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/register-file-simulation-exercise.md
+  - slug: address-translation-exercise
+    title: 'Exercise: Virtual-to-Physical Address Translation Math'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-translation-exercise.md
+  - slug: word-frequency-counter-exercise
+    title: 'Exercise: Word Frequency Counter (Map Semantics)'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/word-frequency-counter-exercise.md
+  - slug: instruction-decode-pipeline
+    title: 'Fetch, Decode, Execute: A Simple Interpreter Loop'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-decode-pipeline.md
+  - slug: instruction-set-basics
+    title: Instruction Encoding Basics (RISC-V Overview)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-set-basics.md
+  - slug: interview-strategy-and-questions
+    title: 'Interview Strategy: Whiteboarding Systems Questions'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-strategy-and-questions.md
+  - slug: performance-in-simulators
+    title: Performance Techniques in Instruction Simulators
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/performance-in-simulators.md
+  - slug: pimpl-idiom
+    title: The Pimpl Idiom and Compilation Firewalls
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pimpl-idiom.md
+  - slug: what-is-a-virtual-prototype
+    title: What Is a Virtual Prototype and Why It Matters
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-virtual-prototype.md
+  - slug: cpp-riscv-decode-exercise
+    title: 'Prompt: Decode RISC-V R-Type Instructions'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-riscv-decode-exercise.prompt.md
+  - slug: cpp-register-file-simulation-exercise
+    title: 'Prompt: Simulate a Register File and Load/Store'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-register-file-simulation-exercise.prompt.md
+  - slug: cpp-address-translation-exercise
+    title: 'Prompt: Virtual-to-Physical Address Translation'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-address-translation-exercise.prompt.md
+  - slug: cpp-word-frequency-counter-exercise
+    title: 'Prompt: Word Frequency Counter'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/cpp-word-frequency-counter-exercise.prompt.md
+  - slug: quiz-vp-systems-capstone
+    title: 'Quiz: Virtual Prototyping and the Systems Interview Capstone'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-vp-systems-capstone.md

@@ -1,0 +1,151 @@
+:host {
+  display: block;
+}
+
+// ── Vertical roadmap / timeline ──────────────────────────────────────────
+.roadmap {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.roadmap-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1rem;
+  // No bottom margin: connector fill bridges the gap so the rail is continuous.
+  padding-bottom: 1.5rem;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+// ── Left rail (node + connectors) ────────────────────────────────────────
+.roadmap-rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 2.5rem;
+}
+
+.roadmap-node {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+// Unlocked, not yet completed: brand-gradient ringed, open book
+.node-unlocked {
+  background: rgb(var(--color-app-surface));
+  color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+// Completed: filled brand gradient, white check
+.node-completed {
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+  color: #ffffff;
+  box-shadow:
+    0 0 0 2px rgba(139, 92, 246, 0.25),
+    0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+// Locked: muted surface, dimmed lock
+.node-locked {
+  background: rgb(var(--color-app-surface-2));
+  color: rgb(var(--color-app-text-muted));
+  box-shadow: 0 0 0 1px rgb(var(--color-app-border));
+}
+
+// ── Connectors ───────────────────────────────────────────────────────────
+.roadmap-connector {
+  width: 2px;
+  background: rgb(var(--color-app-border));
+  flex-shrink: 0;
+  transition: background 0.3s ease;
+
+  // The short stub above a node (between the previous node region and this one
+  // is handled by the fill connector). This top stub keeps the node centered.
+  height: 0;
+}
+
+// The connector segment that fills the vertical space down to the next item.
+.roadmap-connector-fill {
+  flex: 1 1 auto;
+  // Reach across the item's bottom padding into the next node.
+  margin-bottom: -1.5rem;
+  min-height: 1.5rem;
+}
+
+// Brand-colored when the segment links out of a completed node.
+.roadmap-connector.is-active {
+  background: linear-gradient(180deg, #8b5cf6, #3b82f6);
+}
+
+// ── Card ─────────────────────────────────────────────────────────────────
+.roadmap-card {
+  display: block;
+  padding: 1.25rem;
+  border-radius: 1rem; // rounded-2xl
+  border: 1px solid rgb(var(--color-app-border));
+  background: rgb(var(--color-app-surface));
+  box-shadow: var(--shadow-card, 0 1px 2px rgba(0, 0, 0, 0.06));
+}
+
+.roadmap-card-link {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgb(var(--color-app-border-2));
+    box-shadow: var(--shadow-popover, 0 8px 24px rgba(0, 0, 0, 0.12));
+    box-shadow:
+      0 0 0 1px rgba(59, 130, 246, 0.2),
+      var(--shadow-popover, 0 8px 24px rgba(0, 0, 0, 0.12));
+  }
+}
+
+// Locked item: whole row dimmed (also enforced via opacity-60 / pointer-events-none in template)
+.roadmap-item.is-locked .roadmap-card {
+  filter: grayscale(0.2);
+}
+
+@media (max-width: 640px) {
+  .roadmap-item {
+    grid-template-columns: 2rem 1fr;
+    gap: 0.75rem;
+  }
+  .roadmap-rail,
+  .roadmap-node {
+    width: 2rem;
+  }
+  .roadmap-node {
+    height: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roadmap-node,
+  .roadmap-card-link,
+  .roadmap-connector {
+    transition: none;
+  }
+  .roadmap-card-link:hover {
+    transform: none;
+  }
+}

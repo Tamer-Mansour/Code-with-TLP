@@ -2,6 +2,7 @@ import {
   Component,
   inject,
   signal,
+  computed,
   OnInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -27,6 +28,13 @@ import {
   ListChecks,
   BarChart2,
   Unlock,
+  Layers,
+  Trophy,
+  Sparkles,
+  ArrowRight,
+  Check,
+  Route,
+  GraduationCap,
 } from 'lucide-angular';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { ProgressService } from '../../../core/services/progress.service';
@@ -39,6 +47,7 @@ import { CourseTree, Enrollment, LessonType } from '../../../core/models/types';
   standalone: true,
   imports: [RouterLink, NgClass, SlicePipe, LucideAngularModule],
   templateUrl: './course-detail.html',
+  styleUrl: './course-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseDetailComponent implements OnInit {
@@ -64,6 +73,13 @@ export class CourseDetailComponent implements OnInit {
   readonly ListChecks = ListChecks;
   readonly BarChart2 = BarChart2;
   readonly Unlock = Unlock;
+  readonly Layers = Layers;
+  readonly Trophy = Trophy;
+  readonly Sparkles = Sparkles;
+  readonly ArrowRight = ArrowRight;
+  readonly Check = Check;
+  readonly Route = Route;
+  readonly GraduationCap = GraduationCap;
 
   readonly courseTree = signal<CourseTree | null>(null);
   readonly enrollment = signal<Enrollment | null>(null);
@@ -72,6 +88,45 @@ export class CourseDetailComponent implements OnInit {
   readonly error = signal('');
   readonly expandedModules = signal<Set<number>>(new Set());
   readonly completedLessonIds = signal<Set<number>>(new Set());
+
+  /** Total lessons across all modules. */
+  readonly totalLessonCount = computed(() =>
+    this.courseTree()?.modules?.reduce((acc, m) => acc + m.lessons.length, 0) ?? 0,
+  );
+
+  /** Number of completed lessons (intersection of tree lessons + completed ids). */
+  readonly completedLessonCount = computed(() => {
+    const done = this.completedLessonIds();
+    const tree = this.courseTree();
+    if (!tree) return 0;
+    let n = 0;
+    for (const m of tree.modules) {
+      for (const l of m.lessons) {
+        if (done.has(l.id)) n++;
+      }
+    }
+    return n;
+  });
+
+  /**
+   * "What you'll learn" highlights — module titles for the first ~6 modules.
+   * Best-effort: derived purely from existing tree data.
+   */
+  readonly highlights = computed(() => {
+    const tree = this.courseTree();
+    if (!tree) return [] as string[];
+    return tree.modules
+      .filter((m) => m.lessons.length > 0)
+      .slice(0, 6)
+      .map((m) => m.title);
+  });
+
+  /**
+   * Best-effort learning-path hint. We have no explicit course→path linkage in
+   * CourseTree, so we surface a soft pointer to /paths only for multi-module
+   * courses (where a structured track is most likely). Skipped silently otherwise.
+   */
+  readonly showPathHint = computed(() => (this.courseTree()?.modules.length ?? 0) >= 3);
 
   ngOnInit(): void {
     const slug = this.route.snapshot.paramMap.get('slug') ?? '';
@@ -142,6 +197,28 @@ export class CourseDetailComponent implements OnInit {
 
   isModuleExpanded(id: number): boolean {
     return this.expandedModules().has(id);
+  }
+
+  /** Completed lesson count for a single module. */
+  moduleCompletedCount(module: { lessons: { id: number }[] }): number {
+    const done = this.completedLessonIds();
+    let n = 0;
+    for (const l of module.lessons) {
+      if (done.has(l.id)) n++;
+    }
+    return n;
+  }
+
+  /** Whole-module completion percent (0–100). */
+  modulePercent(module: { lessons: { id: number }[] }): number {
+    const total = module.lessons.length;
+    if (total === 0) return 0;
+    return Math.round((this.moduleCompletedCount(module) / total) * 100);
+  }
+
+  /** True when every lesson in the module is complete (and there is at least one). */
+  isModuleComplete(module: { lessons: { id: number }[] }): boolean {
+    return module.lessons.length > 0 && this.moduleCompletedCount(module) === module.lessons.length;
   }
 
   enroll(): void {

@@ -2,8 +2,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, BookOpen, GraduationCap, Code2, Layers, Terminal, Trophy } from 'lucide-angular';
 import { RevealDirective } from '../../shared/reveal.directive';
 import { CountUpDirective } from '../../shared/count-up.directive';
-
-interface Stat { icon: any; value: number; suffix: string; label: string; }
+import type { Stat } from '../../models/landing-stats.model';
 
 @Component({
   selector: 'app-landing-stats',

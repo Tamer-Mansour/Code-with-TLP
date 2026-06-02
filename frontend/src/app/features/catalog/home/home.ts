@@ -30,6 +30,8 @@ import {
   BarChart2,
   Layers,
   ArrowRight,
+  Trophy,
+  Sparkles,
 } from 'lucide-angular';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { Subject, Course } from '../../../core/models/types';
@@ -55,6 +57,8 @@ export class HomeComponent implements OnInit {
   readonly BarChart2 = BarChart2;
   readonly Layers = Layers;
   readonly ArrowRight = ArrowRight;
+  readonly Trophy = Trophy;
+  readonly Sparkles = Sparkles;
 
   private readonly iconMap: Record<string, LucideIconData> = {
     'lightbulb':  Lightbulb,

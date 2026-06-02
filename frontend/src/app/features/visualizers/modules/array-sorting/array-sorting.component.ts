@@ -7,20 +7,7 @@ import { LucideAngularModule, Shuffle } from 'lucide-angular';
 import { VizPlayerService } from '../../core/viz-player.service';
 import { VizFrame } from '../../core/viz-frame';
 import { Visualizer, VizMeta } from '../../core/visualizer.base';
-
-// ── types ────────────────────────────────────────────────────────────────
-
-/** Payload stored in VizFrame.data for each array frame. */
-interface ArrayFrameData {
-  /** Display order: array of original IDs in the current visual positions. */
-  order: number[];
-}
-
-/** A tracked bar item. */
-interface BarItem {
-  id: number;
-  value: number;
-}
+import type { ArrayFrameData, BarItem } from './models/array-sorting.model';
 
 // ── frame builders (pure, no side-effects) ───────────────────────────────
 

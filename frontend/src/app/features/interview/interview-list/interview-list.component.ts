@@ -32,11 +32,8 @@ import {
   ClipboardList,
   X,
 } from 'lucide-angular';
-import {
-  InterviewService,
-  InterviewCategory,
-  InterviewQuestion,
-} from '../../../core/services/interview.service';
+import { InterviewService } from '../../../core/services/interview.service';
+import type { InterviewCategory, InterviewQuestion } from '../../../core/models/interview.model';
 
 @Component({
   selector: 'app-interview-list',

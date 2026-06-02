@@ -1,0 +1,20 @@
+:host { display: block; height: 100%; }
+
+/* Clean composer input — subtle border, no harsh focus ring (matches TLP Chat) */
+.composer-glow {
+  border: 1px solid rgb(var(--color-app-border)) !important;
+  background: rgb(var(--color-app-surface));
+  border-radius: 1rem;
+  transition: background 0.2s ease;
+}
+.composer-glow:focus-within {
+  border-color: rgb(var(--color-app-border)) !important;
+  box-shadow: none !important;
+  background: rgb(var(--color-app-surface-2));
+}
+.composer-glow textarea:focus-visible {
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}

@@ -7,12 +7,7 @@ import {
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
-
-interface NavItem {
-  label: string;
-  icon: string;
-  route: string;
-}
+import type { NavItem } from '../models/admin-layout.model';
 
 @Component({
   selector: 'app-admin-layout',

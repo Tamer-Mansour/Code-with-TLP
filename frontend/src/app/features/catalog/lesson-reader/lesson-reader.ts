@@ -7,9 +7,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   DestroyRef,
-  HostListener,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { combineLatest, forkJoin, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -31,19 +33,28 @@ import {
   ExternalLink,
   Timer,
   BookOpen,
+  Lock,
+  MessageSquare,
+  X,
+  List,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-angular';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { ProgressService } from '../../../core/services/progress.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
-import { QuizService, QuizQuestion, QuizMyAnswer, QuizQuestionResult } from '../../../core/services/quiz.service';
+import { QuizService } from '../../../core/services/quiz.service';
+import type { QuizQuestion, QuizMyAnswer, QuizQuestionResult } from '../../../core/models/quiz.model';
 import { Lesson, LessonProgress, LessonType, CourseTree, LessonInTree } from '../../../core/models/types';
+import { LessonChatComponent } from './lesson-chat/lesson-chat.component';
 
 @Component({
   selector: 'app-lesson-reader',
   standalone: true,
-  imports: [RouterLink, MarkdownModule, LucideAngularModule],
+  imports: [RouterLink, NgTemplateOutlet, MarkdownModule, LucideAngularModule, LessonChatComponent],
   templateUrl: './lesson-reader.html',
+  styleUrl: './lesson-reader.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LessonReaderComponent implements OnInit {
@@ -72,6 +83,12 @@ export class LessonReaderComponent implements OnInit {
   readonly ExternalLink = ExternalLink;
   readonly Timer = Timer;
   readonly BookOpen = BookOpen;
+  readonly Lock = Lock;
+  readonly MessageSquare = MessageSquare;
+  readonly X = X;
+  readonly List = List;
+  readonly PanelLeftClose = PanelLeftClose;
+  readonly PanelLeftOpen = PanelLeftOpen;
 
   readonly lesson = signal<Lesson | null>(null);
   readonly lessonProgress = signal<LessonProgress | null>(null);
@@ -82,6 +99,17 @@ export class LessonReaderComponent implements OnInit {
   readonly courseTree = signal<CourseTree | null>(null);
   readonly timeSpent = signal(0); // seconds since page loaded
   readonly readingProgressPct = signal(0); // 0–100 scroll progress
+
+  /** Completed lesson ids across the whole course — drives sequential unlock. */
+  readonly completedLessonIds = signal<Set<number>>(new Set());
+  /** Mobile overlay toggles. */
+  readonly chatOpen = signal(false);
+  readonly navOpen = signal(false);
+  /** Desktop lesson-navigator collapse — starts collapsed for a focused reading view. */
+  readonly navCollapsed = signal(true);
+
+  /** The center content scroll container — the only vertically-scrolling region. */
+  @ViewChild('contentScroll') private contentScroll?: ElementRef<HTMLElement>;
 
   // ── Quiz state ───────────────────────────────────────────────────────────
   readonly quizQuestions = signal<QuizQuestion[]>([]);
@@ -109,11 +137,11 @@ export class LessonReaderComponent implements OnInit {
 
   private timerHandle: ReturnType<typeof setInterval> | null = null;
 
-  @HostListener('window:scroll')
-  onWindowScroll(): void {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const pct = docHeight > 0 ? Math.min(100, Math.round((scrollTop / docHeight) * 100)) : 0;
+  /** Reading-progress is driven by the center content scroll container (the page itself never scrolls). */
+  onContentScroll(event: Event): void {
+    const el = event.target as HTMLElement;
+    const docHeight = el.scrollHeight - el.clientHeight;
+    const pct = docHeight > 0 ? Math.min(100, Math.round((el.scrollTop / docHeight) * 100)) : 0;
     this.readingProgressPct.set(pct);
     this.cdr.markForCheck();
   }
@@ -143,6 +171,70 @@ export class LessonReaderComponent implements OnInit {
     const idx = this.currentIndex;
     const flat = this.flatLessons;
     return idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : null;
+  }
+
+  // ── Sequential locking ─────────────────────────────────────────────────────
+  /** Locking only applies to signed-in learners with tracked progress. */
+  get lockingActive(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  /** Index of the furthest lesson the learner may open (first incomplete one). */
+  get unlockedThroughIndex(): number {
+    const flat = this.flatLessons;
+    const completed = this.completedLessonIds();
+    for (let i = 0; i < flat.length; i++) {
+      if (!completed.has(flat[i].id)) return i;
+    }
+    return Math.max(0, flat.length - 1);
+  }
+
+  /** A lesson is reachable if it's completed, the next-up lesson, or the current one. */
+  isUnlocked(lessonId: number): boolean {
+    if (!this.lockingActive) return true;
+    if (lessonId === this.lesson()?.id) return true;
+    const idx = this.flatLessons.findIndex(l => l.id === lessonId);
+    if (idx < 0) return true;
+    return idx <= this.unlockedThroughIndex;
+  }
+
+  /** Whether the current lesson is "done" enough to advance to the next one. */
+  get isLessonDone(): boolean {
+    if (!this.lockingActive) return true;
+    if (this.isCompleted) return true;
+    // Quiz lessons count as done once submitted (gate open).
+    return this.lesson()?.lesson_type === 'quiz' && this.quizGateOpen();
+  }
+
+  /** Next button is enabled only when the current lesson is done. */
+  get canProceed(): boolean {
+    return !!this.nextLesson && this.isLessonDone;
+  }
+
+  private markLessonCompletedLocally(id: number): void {
+    this.completedLessonIds.update(set => {
+      const next = new Set(set);
+      next.add(id);
+      return next;
+    });
+  }
+
+  toggleChat(): void { this.chatOpen.update(v => !v); }
+  toggleNav(): void { this.navOpen.update(v => !v); }
+  toggleNavCollapsed(): void { this.navCollapsed.update(v => !v); }
+
+  get completedCount(): number {
+    const completed = this.completedLessonIds();
+    return this.flatLessons.filter(l => completed.has(l.id)).length;
+  }
+
+  get totalCount(): number {
+    return this.flatLessons.length;
+  }
+
+  get courseProgressPct(): number {
+    const total = this.totalCount;
+    return total > 0 ? Math.round((this.completedCount / total) * 100) : 0;
   }
 
   get timeSpentLabel(): string {
@@ -217,6 +309,10 @@ export class LessonReaderComponent implements OnInit {
           this.marking.set(false);
           this.resetQuizState();
           this.stopTimer();
+          this.navOpen.set(false);
+          this.chatOpen.set(false);
+          this.readingProgressPct.set(0);
+          this.contentScroll?.nativeElement.scrollTo({ top: 0 });
           this.cdr.markForCheck();
 
           const progressReq$ = this.auth.isAuthenticated()
@@ -241,6 +337,20 @@ export class LessonReaderComponent implements OnInit {
           if (tree) this.courseTree.set(tree);
           this.loading.set(false);
           this.startTimer();
+
+          // Load whole-course completion to drive sequential unlocking.
+          if (tree && this.auth.isAuthenticated()) {
+            this.progress.getCourseProgress(tree.id)
+              .pipe(takeUntilDestroyed(this.destroyRef), catchError(() => of<LessonProgress[]>([])))
+              .subscribe(records => {
+                this.completedLessonIds.set(
+                  new Set(records.filter(r => r.status === 'completed').map(r => r.lesson_id))
+                );
+                this.cdr.markForCheck();
+              });
+          } else {
+            this.completedLessonIds.set(new Set());
+          }
 
           // Open gate immediately for non-quiz lessons
           if (lesson.lesson_type !== 'quiz') {
@@ -325,6 +435,19 @@ export class LessonReaderComponent implements OnInit {
           this.quizScore.set({ total: resp.total, correct: resp.correct, passed: resp.passed });
           this.quizGateOpen.set(true);
           this.quizSubmitting.set(false);
+          // Submitting a quiz counts as completing the lesson — persist it so the
+          // next lesson unlocks (and survives a reload).
+          if (this.auth.isAuthenticated()) {
+            this.progress.setLessonProgress(lessonId, 'completed')
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe({
+                next: (prog: LessonProgress) => {
+                  this.lessonProgress.set(prog);
+                  this.markLessonCompletedLocally(lessonId);
+                  this.cdr.markForCheck();
+                },
+              });
+          }
           this.cdr.markForCheck();
         },
         error: () => {
@@ -353,6 +476,7 @@ export class LessonReaderComponent implements OnInit {
       .subscribe({
         next: (prog: LessonProgress) => {
           this.lessonProgress.set(prog);
+          this.markLessonCompletedLocally(lesson.id);
           this.marking.set(false);
           this.cdr.markForCheck();
         },

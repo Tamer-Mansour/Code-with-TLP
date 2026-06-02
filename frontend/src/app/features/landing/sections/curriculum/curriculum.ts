@@ -1,8 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Lightbulb, Cpu, Code, Terminal, Globe, Database, Server, Sigma, GitBranch, Brain } from 'lucide-angular';
 import { RevealDirective } from '../../shared/reveal.directive';
-
-interface SubjectCard { name: string; tagline: string; color: string; icon: any; }
+import type { SubjectCard } from '../../models/curriculum.model';
 
 @Component({
   selector: 'app-landing-curriculum',

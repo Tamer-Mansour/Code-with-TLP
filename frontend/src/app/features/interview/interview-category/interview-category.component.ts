@@ -35,11 +35,8 @@ import {
   X,
   Filter,
 } from 'lucide-angular';
-import {
-  InterviewService,
-  InterviewCategoryDetail,
-  InterviewQuestion,
-} from '../../../core/services/interview.service';
+import { InterviewService } from '../../../core/services/interview.service';
+import type { InterviewCategoryDetail, InterviewQuestion } from '../../../core/models/interview.model';
 
 @Component({
   selector: 'app-interview-category',

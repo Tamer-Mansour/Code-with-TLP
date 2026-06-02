@@ -100,10 +100,17 @@ ABS_UVICORN:= $(abspath $(UVICORN))
 ABS_PYTEST := $(abspath $(firstword $(PYTEST)))
 
 .PHONY: seed
-seed: ## Populate the DB with admin + sample course/exercise
-	cd backend && "$(ABS_PY)" -m app.seed
+seed: ## Seed scripted courses (seed_all.py) then import all directory courses
 	cd backend && "$(ABS_PY)" seed/seed_all.py
 	cd backend && "$(ABS_PY)" seed/import_courses.py
+
+.PHONY: import-courses
+import-courses: ## Import all courses from the seed/courses/ yaml and markdown files
+	cd backend && "$(ABS_PY)" seed/import_courses.py
+
+.PHONY: gen-course-yaml
+gen-course-yaml: ## (Re)generate course.yaml for directory courses that ship only markdown
+	cd backend && "$(ABS_PY)" seed/generate_course_yaml.py
 
 .PHONY: run
 run: ## Start the FastAPI server with --reload

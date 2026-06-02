@@ -5,6 +5,7 @@ import { LucideAngularModule, RefreshCw, GitMerge, Search } from 'lucide-angular
 import { VizPlayerService } from '../../core/viz-player.service';
 import { VizFrame } from '../../core/viz-frame';
 import { Visualizer, VizMeta } from '../../core/visualizer.base';
+import type { UfFrameData, RenderedUfNode, RenderedUfEdge } from './models/union-find.model';
 
 // ── constants ─────────────────────────────────────────────────────────────
 
@@ -12,18 +13,6 @@ const N = 10; // elements 0..9
 const NODE_R = 24;
 const SVG_W  = 680;
 const SVG_H  = 300;
-
-// ── data model ────────────────────────────────────────────────────────────
-
-/**
- * Payload stored in VizFrame.data for every union-find frame.
- * parent[i] = parent of node i (parent[i] === i means root).
- * rank[i]   = rank (upper-bound on height) of the subtree rooted at i.
- */
-export interface UfFrameData {
-  parent: number[];
-  rank:   number[];
-}
 
 // node state tokens used in VizFrame.states
 // 'default' | 'current' | 'root' | 'path' | 'merged' | 'dim'
@@ -291,27 +280,6 @@ function buildUnion(uf: UfFrameData, a: number, b: number): { frames: VizFrame[]
   });
 
   return { frames, uf: work };
-}
-
-// ── view model ────────────────────────────────────────────────────────────
-
-export interface RenderedUfNode {
-  id:    number;
-  x:     number;
-  y:     number;
-  state: string;
-  rank:  number;
-}
-
-export interface RenderedUfEdge {
-  x1: number; y1: number;
-  x2: number; y2: number;
-  /** child node — used as track key */
-  childId: number;
-  /** pre-computed CSS class string */
-  cls: string;
-  /** pre-computed marker-end URL fragment */
-  markerEnd: string;
 }
 
 // ── pseudocode lines ──────────────────────────────────────────────────────

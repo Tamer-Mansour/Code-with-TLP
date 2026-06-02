@@ -5,30 +5,10 @@ import { LucideAngularModule, Play, RotateCcw, ChevronRight } from 'lucide-angul
 import { VizPlayerService } from '../../core/viz-player.service';
 import { VizFrame } from '../../core/viz-frame';
 import { Visualizer, VizMeta } from '../../core/visualizer.base';
-
-// ── Graph definition ──────────────────────────────────────────────────────
-
-/** A fixed undirected graph node with pre-computed layout position. */
-interface GraphNode {
-  id: string;
-  label: string;
-  x: number;
-  y: number;
-}
-
-/** An undirected edge between two node IDs. */
-interface GraphEdge {
-  a: string;
-  b: string;
-}
-
-/** Payload stored inside VizFrame.data for each traversal frame. */
-interface GraphFrameData {
-  /** Ordered queue (BFS) or stack (DFS) contents at this moment. */
-  buffer: string[];
-  /** Set of node IDs already fully visited. */
-  visited: string[];
-}
+import type {
+  GraphNode, GraphEdge, GraphFrameData,
+  RenderedGraphNode, RenderedGraphEdge,
+} from './models/graph-traversal.model';
 
 // ── Fixed sample graph (~8 nodes) ─────────────────────────────────────────
 // Positions are absolute SVG coordinates within a 560 × 340 canvas.
@@ -268,27 +248,6 @@ function buildDfsFrames(startId: string): VizFrame[] {
   );
 
   return frames;
-}
-
-// ── Rendered view-model types ──────────────────────────────────────────────
-
-/** A node as seen by the template. */
-export interface RenderedGraphNode {
-  id: string;
-  label: string;
-  x: number;
-  y: number;
-  /** State token: 'idle' | 'current' | 'visited' | 'frontier' */
-  state: string;
-}
-
-/** An edge as seen by the template. */
-export interface RenderedGraphEdge {
-  key: string;
-  x1: number; y1: number;
-  x2: number; y2: number;
-  /** Whether this edge is part of the spanning tree. */
-  treeEdge: boolean;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────

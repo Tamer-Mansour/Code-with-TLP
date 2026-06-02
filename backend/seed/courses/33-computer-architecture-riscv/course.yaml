@@ -1,0 +1,1728 @@
+subject:
+  slug: systems
+  name: Systems
+  description: How computers run software, from the CPU up to the network.
+  icon: server
+  color: '#ef4444'
+  order_index: 4
+course:
+  slug: computer-architecture-riscv
+  title: Computer Architecture with RISC-V
+  summary: From transistors and digital logic to pipelines, caches, virtual memory, traps, and multicore
+    — taught on the open RISC-V ISA.
+  description: A ground-up tour of how a modern processor works, using RISC-V as the running example.
+    Covers number systems, digital logic, the datapath, instruction encoding, pipelining and hazards,
+    branch prediction, the memory hierarchy, virtual memory, traps and CSRs, privilege modes, multicore
+    coherence, and the boot process.
+  difficulty: advanced
+  estimated_hours: 50
+  order_index: 33
+  is_published: true
+modules:
+- title: Foundations of Computer Architecture
+  order_index: 1
+  lessons:
+  - slug: abstraction-layers-transistors-to-software
+    title: 'Abstraction Layers: From Transistors to Software'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/abstraction-layers-transistors-to-software.md
+  - slug: architecture-vs-organization
+    title: 'Architecture vs Organization: What Is the Difference?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/architecture-vs-organization.md
+  - slug: moores-law-dennard-scaling
+    title: Moore's Law, Dennard Scaling, and the Power Wall
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/moores-law-dennard-scaling.md
+  - slug: stored-program-concept
+    title: The Stored-Program Concept Explained
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stored-program-concept.md
+  - slug: von-neumann-vs-harvard
+    title: Von Neumann vs Harvard Architecture
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/von-neumann-vs-harvard.md
+  - slug: what-is-computer-architecture
+    title: What Is Computer Architecture and Why It Matters
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-computer-architecture.md
+  - slug: quiz-foundations
+    title: 'Quiz: Foundations of Computer Architecture'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-foundations.md
+- title: Number Systems & Data
+  order_index: 2
+  lessons:
+  - slug: binary-and-hexadecimal
+    title: Binary, Octal, and Hexadecimal Number Systems
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/binary-and-hexadecimal.md
+  - slug: bit-manipulation-tricks
+    title: Bit Manipulation Tricks for Interviews
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bit-manipulation-tricks.md
+  - slug: bitwise-and-shift-operations
+    title: Bitwise and Shift Operations
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bitwise-and-shift-operations.md
+  - slug: hex-binary-conversion
+    title: 'Exercise: Hex to Binary and Back'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/hex-binary-conversion.md
+  - slug: twos-complement-converter
+    title: 'Exercise: Two''s Complement Encode/Decode'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/twos-complement-converter.md
+  - slug: fixed-point-vs-floating-point
+    title: Fixed-Point vs Floating-Point Numbers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fixed-point-vs-floating-point.md
+  - slug: ieee-754
+    title: IEEE 754 Floating-Point Format
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/ieee-754.md
+  - slug: overflow-and-carry
+    title: Overflow, Carry, and Saturation
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/overflow-and-carry.md
+  - slug: sign-extension-zero-extension
+    title: Sign Extension vs Zero Extension
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sign-extension-zero-extension.md
+  - slug: twos-complement
+    title: 'Two''s Complement: How Negative Numbers Work'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/twos-complement.md
+  - slug: unsigned-vs-signed-integers
+    title: Unsigned vs Signed Integer Representation
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/unsigned-vs-signed-integers.md
+  - slug: arch-hex-binary-conversion
+    title: 'Prompt: Hex to Binary and Back'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-hex-binary-conversion.prompt.md
+  - slug: arch-twos-complement-converter
+    title: 'Prompt: Two''s Complement Encode/Decode'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-twos-complement-converter.prompt.md
+  - slug: quiz-number-systems
+    title: 'Quiz: Number Systems and Binary Representation'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-number-systems.md
+- title: Endianness
+  order_index: 3
+  lessons:
+  - slug: byte-swapping
+    title: Byte Swapping and Conversion Routines
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/byte-swapping.md
+  - slug: detecting-endianness
+    title: Detecting Endianness at Runtime
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/detecting-endianness.md
+  - slug: endianness-in-riscv
+    title: Endianness in RISC-V
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/endianness-in-riscv.md
+  - slug: endianness-converter
+    title: 'Exercise: Convert Between Little- and Big-Endian'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/endianness-converter.md
+  - slug: little-vs-big-endian
+    title: Little-Endian vs Big-Endian
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/little-vs-big-endian.md
+  - slug: what-is-endianness
+    title: What Is Endianness?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-endianness.md
+  - slug: why-endianness-matters
+    title: Why Endianness Matters in Networking and Files
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-endianness-matters.md
+  - slug: arch-endianness-converter
+    title: 'Exercise Prompt: Endianness Converter'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-endianness-converter.prompt.md
+  - slug: quiz-endianness
+    title: 'Quiz: Endianness and Data Layout'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-endianness.md
+- title: Digital Logic
+  order_index: 4
+  lessons:
+  - slug: boolean-algebra-laws
+    title: Boolean Algebra Laws and Identities
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/boolean-algebra-laws.md
+  - slug: combinational-vs-sequential
+    title: Combinational vs Sequential Logic
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/combinational-vs-sequential.md
+  - slug: boolean-expression-evaluator
+    title: 'Exercise: Evaluate a Boolean Expression'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/boolean-expression-evaluator.md
+  - slug: finite-state-machines
+    title: Finite State Machines in Hardware
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/finite-state-machines.md
+  - slug: half-adder-full-adder
+    title: Half Adders and Full Adders
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/half-adder-full-adder.md
+  - slug: flip-flops-latches
+    title: Latches and Flip-Flops
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/flip-flops-latches.md
+  - slug: logic-gates
+    title: 'Logic Gates: AND, OR, NOT, XOR, NAND, NOR'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/logic-gates.md
+  - slug: multiplexers-decoders
+    title: Multiplexers, Decoders, and Encoders
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/multiplexers-decoders.md
+  - slug: registers-and-counters
+    title: Registers and Counters from Flip-Flops
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/registers-and-counters.md
+  - slug: ripple-carry-vs-carry-lookahead
+    title: Ripple-Carry vs Carry-Lookahead Adders
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/ripple-carry-vs-carry-lookahead.md
+  - slug: karnaugh-maps
+    title: Simplifying Logic with Karnaugh Maps
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/karnaugh-maps.md
+  - slug: arch-boolean-expression-evaluator
+    title: Boolean Expression Evaluator
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-boolean-expression-evaluator.prompt.md
+  - slug: quiz-digital-logic
+    title: 'Quiz: Digital Logic and Boolean Algebra'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-digital-logic.md
+- title: The ALU
+  order_index: 5
+  lessons:
+  - slug: alu-flags-zero-carry-overflow
+    title: 'ALU Status Flags: Zero, Carry, Sign, Overflow'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/alu-flags-zero-carry-overflow.md
+  - slug: alu-flag-simulator
+    title: 'Exercise: Simulate ALU Add and Set Flags'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/alu-flag-simulator.md
+  - slug: multiplication-division-hardware
+    title: Hardware Multiplication and Division
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/multiplication-division-hardware.md
+  - slug: subtraction-in-the-alu
+    title: How Subtraction Works in the ALU
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/subtraction-in-the-alu.md
+  - slug: what-is-the-alu
+    title: What Is the ALU and What Does It Do?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-the-alu.md
+  - slug: arch-alu-flag-simulator
+    title: 'Exercise Prompt: Simulate ALU Add and Set Flags'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-alu-flag-simulator.prompt.md
+  - slug: quiz-alu
+    title: 'Quiz: The Arithmetic Logic Unit'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-alu.md
+- title: CPU Components
+  order_index: 6
+  lessons:
+  - slug: clock-and-cpu-timing
+    title: Clocking and CPU Timing
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/clock-and-cpu-timing.md
+  - slug: general-purpose-vs-special-registers
+    title: General-Purpose vs Special-Purpose Registers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/general-purpose-vs-special-registers.md
+  - slug: hardwired-vs-microprogrammed-control
+    title: Hardwired vs Microprogrammed Control
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/hardwired-vs-microprogrammed-control.md
+  - slug: instruction-register-and-mar-mdr
+    title: Instruction Register, MAR, and MDR
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-register-and-mar-mdr.md
+  - slug: micro-operations
+    title: Micro-Operations Behind Each Step
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/micro-operations.md
+  - slug: register-vs-memory-vs-stack
+    title: Register, Memory, and Stack Machines
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/register-vs-memory-vs-stack.md
+  - slug: control-unit
+    title: 'The Control Unit: Orchestrating the CPU'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/control-unit.md
+  - slug: cpu-datapath-overview
+    title: 'The CPU Datapath: A Guided Tour'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cpu-datapath-overview.md
+  - slug: riscv-program-counter
+    title: The Program Counter in RISC-V
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-program-counter.md
+  - slug: program-counter
+    title: 'The Program Counter: Tracking the Next Instruction'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/program-counter.md
+  - slug: registers-overview
+    title: What Are Registers and Why So Fast?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/registers-overview.md
+  - slug: what-is-a-cpu
+    title: What Is a CPU? Core Responsibilities
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-cpu.md
+  - slug: quiz-cpu-components
+    title: 'Quiz: The CPU and Its Components'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-cpu-components.md
+- title: The Instruction Cycle
+  order_index: 7
+  lessons:
+  - slug: instruction-cycle-tracer
+    title: 'Exercise: Trace a Simple Instruction Cycle'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-cycle-tracer.md
+  - slug: micro-ops-in-modern-x86
+    title: How Modern x86 Decodes CISC to Micro-Ops
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/micro-ops-in-modern-x86.md
+  - slug: memory-access-writeback
+    title: Memory Access and Write-Back Stages
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-access-writeback.md
+  - slug: single-cycle-vs-multi-cycle
+    title: Single-Cycle vs Multi-Cycle Execution
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/single-cycle-vs-multi-cycle.md
+  - slug: decode-stage
+    title: The Decode Stage in Detail
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/decode-stage.md
+  - slug: execute-stage
+    title: The Execute Stage in Detail
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/execute-stage.md
+  - slug: fetch-stage
+    title: The Fetch Stage in Detail
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fetch-stage.md
+  - slug: what-is-the-instruction-cycle
+    title: What Is the Instruction Cycle?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-the-instruction-cycle.md
+  - slug: arch-instruction-cycle-tracer
+    title: arch-instruction-cycle-tracer
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-instruction-cycle-tracer.prompt.md
+  - slug: quiz-instruction-cycle
+    title: 'Quiz: The Instruction Cycle'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-instruction-cycle.md
+- title: Instruction Set Architecture
+  order_index: 8
+  lessons:
+  - slug: addressing-modes
+    title: Addressing Modes Explained
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/addressing-modes.md
+  - slug: base-plus-offset-addressing
+    title: Base-Plus-Offset Addressing
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/base-plus-offset-addressing.md
+  - slug: famous-isas-compared
+    title: 'Case Studies: x86, ARM, MIPS, RISC-V'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/famous-isas-compared.md
+  - slug: code-density-tradeoffs
+    title: Code Density and Compiler Trade-offs
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/code-density-tradeoffs.md
+  - slug: fixed-vs-variable-length-instructions
+    title: Fixed- vs Variable-Length Instructions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fixed-vs-variable-length-instructions.md
+  - slug: isa-compatibility-evolution
+    title: ISA Compatibility and Evolution
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/isa-compatibility-evolution.md
+  - slug: isa-simulators-emulators
+    title: ISA Simulators vs Cycle-Accurate Models
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/isa-simulators-emulators.md
+  - slug: isa-as-hardware-software-contract
+    title: The ISA as the Hardware-Software Contract
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/isa-as-hardware-software-contract.md
+  - slug: what-is-an-isa
+    title: What Is an Instruction Set Architecture?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-an-isa.md
+  - slug: operand-count-architectures
+    title: Zero-, One-, Two-, and Three-Operand Architectures
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/operand-count-architectures.md
+  - slug: quiz-isa
+    title: 'Quiz: Instruction Set Architecture'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-isa.md
+- title: RISC vs CISC
+  order_index: 9
+  lessons:
+  - slug: load-store-architecture-intro
+    title: Load-Store Architecture as a RISC Hallmark
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/load-store-architecture-intro.md
+  - slug: risc-vs-cisc-comparison
+    title: 'RISC vs CISC: A Direct Comparison'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/risc-vs-cisc-comparison.md
+  - slug: cisc-philosophy
+    title: The CISC Philosophy
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cisc-philosophy.md
+  - slug: risc-philosophy
+    title: The RISC Philosophy
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/risc-philosophy.md
+  - slug: when-risc-wins
+    title: 'When RISC Wins: Power and Verification'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/when-risc-wins.md
+  - slug: quiz-risc-vs-cisc
+    title: 'Quiz: RISC vs CISC'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-risc-vs-cisc.md
+- title: Introducing RISC-V
+  order_index: 10
+  lessons:
+  - slug: riscv-base-and-extensions
+    title: Base Integer ISA and Standard Extensions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-base-and-extensions.md
+  - slug: riscv-naming-convention
+    title: Decoding RISC-V Names like RV64GC
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-naming-convention.md
+  - slug: riscv-isa-not-processor
+    title: Is RISC-V a Processor or an ISA?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-isa-not-processor.md
+  - slug: riscv-history-governance
+    title: RISC-V History and Governance
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-history-governance.md
+  - slug: riscv-vs-arm
+    title: 'RISC-V vs ARM: Licensing and Design'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-vs-arm.md
+  - slug: rv32-vs-rv64
+    title: RV32, RV64, and RV128
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/rv32-vs-rv64.md
+  - slug: atomic-extension
+    title: 'The A Extension: Atomics and LR/SC'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/atomic-extension.md
+  - slug: riscv-ecosystem
+    title: The RISC-V Toolchain and Ecosystem
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-ecosystem.md
+  - slug: qemu-spike-tools
+    title: 'Tools of the Trade: QEMU, Spike, gem5'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/qemu-spike-tools.md
+  - slug: open-isa-meaning
+    title: What "Open ISA" Really Means
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/open-isa-meaning.md
+  - slug: why-riscv-important
+    title: Why RISC-V Is Important
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-riscv-important.md
+  - slug: quiz-intro-riscv
+    title: 'Quiz: Introduction to RISC-V'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-intro-riscv.md
+- title: Instruction Formats & Encoding
+  order_index: 11
+  lessons:
+  - slug: b-type-format
+    title: 'B-Type Format: Conditional Branches'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/b-type-format.md
+  - slug: riscv-instruction-decoder
+    title: 'Exercise: Decode a 32-Bit RISC-V Instruction'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-instruction-decoder.md
+  - slug: rv32i-instruction-simulator
+    title: 'Exercise: Execute RV32I Instructions on a Register File'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/rv32i-instruction-simulator.md
+  - slug: opcode-field-extractor
+    title: 'Exercise: Extract Opcode Fields from an Instruction Word'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/opcode-field-extractor.md
+  - slug: riscv-immediate-builder
+    title: 'Exercise: Reconstruct a B-Type Immediate'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-immediate-builder.md
+  - slug: i-type-format
+    title: 'I-Type Format: Immediates and Loads'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/i-type-format.md
+  - slug: instruction-types
+    title: 'Instruction Types: Data, Arithmetic, Control'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-types.md
+  - slug: opcode-funct3-funct7
+    title: Opcode, funct3, and funct7 Fields
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/opcode-funct3-funct7.md
+  - slug: opcode-and-encoding
+    title: Opcodes and Instruction Encoding
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/opcode-and-encoding.md
+  - slug: instruction-format-overview
+    title: Overview of RISC-V Instruction Formats
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-format-overview.md
+  - slug: r-type-format
+    title: 'R-Type Format: Register-Register Operations'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/r-type-format.md
+  - slug: s-type-format
+    title: 'S-Type Format: Stores'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/s-type-format.md
+  - slug: u-and-j-type-formats
+    title: U-Type and J-Type Formats
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/u-and-j-type-formats.md
+  - slug: immediate-encoding-quirks
+    title: Why Immediates Are Scrambled Across Fields
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/immediate-encoding-quirks.md
+  - slug: arch-rv32i-instruction-simulator
+    title: 'Prompt: arch-rv32i-instruction-simulator'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-rv32i-instruction-simulator.prompt.md
+  - slug: arch-riscv-instruction-decoder
+    title: 'Prompt: Decode a 32-Bit RISC-V Instruction'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-riscv-instruction-decoder.prompt.md
+  - slug: arch-opcode-field-extractor
+    title: 'Prompt: Extract Opcode Fields from an Instruction Word'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-opcode-field-extractor.prompt.md
+  - slug: arch-riscv-immediate-builder
+    title: 'Prompt: Reconstruct a B-Type Immediate'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-riscv-immediate-builder.prompt.md
+  - slug: quiz-instruction-formats
+    title: 'Quiz: RISC-V Instruction Formats'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-instruction-formats.md
+- title: Load/Store & Registers
+  order_index: 12
+  lessons:
+  - slug: abi-register-names
+    title: 'ABI Register Names: ra, sp, gp, tp, a0-a7'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/abi-register-names.md
+  - slug: alignment-requirements
+    title: Alignment Requirements and Misaligned Access
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/alignment-requirements.md
+  - slug: caller-vs-callee-saved
+    title: Caller-Saved vs Callee-Saved Registers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/caller-vs-callee-saved.md
+  - slug: effective-address-calculator
+    title: 'Exercise: Compute Effective Address for a Load'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/effective-address-calculator.md
+  - slug: register-usage-analyzer
+    title: 'Exercise: Map Register Numbers to ABI Names'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/register-usage-analyzer.md
+  - slug: floating-point-registers
+    title: Floating-Point Registers and the F/D Extensions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/floating-point-registers.md
+  - slug: memory-alignment
+    title: Memory Alignment and Padding
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-alignment.md
+  - slug: riscv-load-instructions
+    title: 'RISC-V Load Instructions: LB, LH, LW, LD'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-load-instructions.md
+  - slug: riscv-store-instructions
+    title: 'RISC-V Store Instructions: SB, SH, SW, SD'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-store-instructions.md
+  - slug: signed-vs-unsigned-loads
+    title: Signed vs Unsigned Loads (LBU, LHU)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/signed-vs-unsigned-loads.md
+  - slug: function-call-convention
+    title: The RISC-V Function Call Convention
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/function-call-convention.md
+  - slug: riscv-register-file
+    title: 'The RISC-V Register File: 32 GP Registers'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-register-file.md
+  - slug: stack-pointer-and-frame
+    title: The Stack Pointer and Stack Frames
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-pointer-and-frame.md
+  - slug: x0-zero-register
+    title: 'The x0 Register: Why Hardwired to Zero'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/x0-zero-register.md
+  - slug: what-is-load-store
+    title: What Is a Load-Store Architecture?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-load-store.md
+  - slug: arch-register-usage-analyzer
+    title: 'Exercise Prompt: Map Register Numbers to ABI Names'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-register-usage-analyzer.prompt.md
+  - slug: arch-effective-address-calculator
+    title: 'Prompt: Compute Effective Address for a RISC-V Load'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-effective-address-calculator.prompt.md
+  - slug: quiz-load-store
+    title: 'Quiz: RISC-V Load-Store Architecture'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-load-store.md
+  - slug: quiz-riscv-registers
+    title: 'Quiz: RISC-V Registers and Programming Model'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-riscv-registers.md
+- title: Buses & Interconnect
+  order_index: 13
+  lessons:
+  - slug: address-space-and-decoding
+    title: Address Space and Address Decoding
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-space-and-decoding.md
+  - slug: address-data-control-buses
+    title: Address, Data, and Control Buses
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-data-control-buses.md
+  - slug: bus-arbitration
+    title: Bus Arbitration and Mastering
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bus-arbitration.md
+  - slug: bus-width-and-throughput
+    title: Bus Width and Throughput
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bus-width-and-throughput.md
+  - slug: address-range-decoder
+    title: 'Exercise: Map Addresses to Devices via Decoding'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-range-decoder.md
+  - slug: modern-interconnects
+    title: 'Modern Interconnects: PCIe, AXI, TileLink'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/modern-interconnects.md
+  - slug: synchronous-vs-asynchronous-buses
+    title: Synchronous vs Asynchronous Buses
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/synchronous-vs-asynchronous-buses.md
+  - slug: system-bus-vs-on-chip-interconnect
+    title: System Bus vs On-Chip Interconnect
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/system-bus-vs-on-chip-interconnect.md
+  - slug: what-is-a-bus
+    title: What Is a Bus in Computer Architecture?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-bus.md
+  - slug: arch-address-range-decoder
+    title: 'Exercise: Map Addresses to Devices via Decoding'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-address-range-decoder.prompt.md
+  - slug: quiz-buses
+    title: 'Quiz: Buses and System Interconnect'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-buses.md
+- title: I/O, MMIO & DMA
+  order_index: 14
+  lessons:
+  - slug: accessing-uart
+    title: Accessing a UART via MMIO
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/accessing-uart.md
+  - slug: device-registers
+    title: Device Registers and Status/Control Bits
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/device-registers.md
+  - slug: mmio-register-simulator
+    title: 'Exercise: Simulate Reads/Writes to an MMIO Register Map'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mmio-register-simulator.md
+  - slug: io-overview
+    title: How the CPU Communicates with Devices
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/io-overview.md
+  - slug: memory-mapped-io
+    title: Memory-Mapped I/O Explained
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-mapped-io.md
+  - slug: mmio-in-riscv
+    title: Memory-Mapped I/O in RISC-V
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mmio-in-riscv.md
+  - slug: mmio-vs-pmio
+    title: Memory-Mapped vs Port-Mapped I/O
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mmio-vs-pmio.md
+  - slug: polling-vs-interrupts
+    title: Polling vs Interrupt-Driven I/O
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/polling-vs-interrupts.md
+  - slug: port-mapped-io
+    title: Port-Mapped (Isolated) I/O
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/port-mapped-io.md
+  - slug: riscv-memory-map
+    title: The RISC-V Physical Memory Map
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-memory-map.md
+  - slug: what-is-dma
+    title: What Is Direct Memory Access (DMA)?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-dma.md
+  - slug: arch-mmio-register-simulator
+    title: 'Exercise Prompt: Simulate Reads/Writes to an MMIO Register Map'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-mmio-register-simulator.prompt.md
+  - slug: quiz-mmio-dma
+    title: 'Quiz: Memory-Mapped I/O and DMA'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-mmio-dma.md
+  - slug: quiz-riscv-memory-io
+    title: 'Quiz: RISC-V Memory System and I/O'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-riscv-memory-io.md
+- title: Memory Hierarchy & Caches
+  order_index: 15
+  lessons:
+  - slug: cache-lines-and-blocks
+    title: Cache Lines, Blocks, and Tags
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cache-lines-and-blocks.md
+  - slug: cache-vs-ram
+    title: 'Cache vs RAM: Key Differences'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cache-vs-ram.md
+  - slug: direct-mapped-cache
+    title: Direct-Mapped Cache
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/direct-mapped-cache.md
+  - slug: amat-calculator
+    title: 'Exercise: Compute Average Memory Access Time'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/amat-calculator.md
+  - slug: cache-address-decoder
+    title: 'Exercise: Decode an Address into Tag/Index/Offset'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cache-address-decoder.md
+  - slug: hit-rate-miss-penalty
+    title: Hit Rate, Miss Rate, and the Three Cs
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/hit-rate-miss-penalty.md
+  - slug: levels-of-the-hierarchy
+    title: 'Levels: Registers, Cache, RAM, Disk'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/levels-of-the-hierarchy.md
+  - slug: memory-access-time-modeling
+    title: Modeling Average Memory Access Time
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-access-time-modeling.md
+  - slug: replacement-policies
+    title: 'Replacement Policies: LRU, FIFO, Random'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/replacement-policies.md
+  - slug: set-associative-and-fully-associative
+    title: Set-Associative and Fully Associative Caches
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/set-associative-and-fully-associative.md
+  - slug: sram-vs-dram
+    title: 'SRAM vs DRAM: How They Differ'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sram-vs-dram.md
+  - slug: locality-of-reference
+    title: Temporal and Spatial Locality
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/locality-of-reference.md
+  - slug: the-memory-wall
+    title: The Memory Wall Problem
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/the-memory-wall.md
+  - slug: volatile-vs-nonvolatile
+    title: Volatile vs Non-Volatile Memory
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/volatile-vs-nonvolatile.md
+  - slug: what-is-cache-memory
+    title: What Is Cache Memory?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-cache-memory.md
+  - slug: why-memory-hierarchy
+    title: Why a Memory Hierarchy Exists
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-memory-hierarchy.md
+  - slug: write-policies
+    title: Write-Through vs Write-Back, Write Allocate
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/write-policies.md
+  - slug: arch-cache-address-decoder
+    title: 'Prompt: Cache Address Decoder'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-cache-address-decoder.prompt.md
+  - slug: arch-amat-calculator
+    title: 'Prompt: Compute Average Memory Access Time (AMAT)'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-amat-calculator.prompt.md
+  - slug: quiz-cache-memory
+    title: 'Quiz: Cache Memory'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-cache-memory.md
+  - slug: quiz-memory-hierarchy
+    title: 'Quiz: Memory Fundamentals and Hierarchy'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-memory-hierarchy.md
+- title: Pipelining & Hazards
+  order_index: 16
+  lessons:
+  - slug: compiler-scheduling-nops
+    title: Compiler Scheduling and NOP Insertion
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/compiler-scheduling-nops.md
+  - slug: pipeline-speedup
+    title: Computing Pipeline Speedup
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pipeline-speedup.md
+  - slug: control-hazards
+    title: Control Hazards from Branches
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/control-hazards.md
+  - slug: data-hazards
+    title: 'Data Hazards: RAW, WAR, WAW'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/data-hazards.md
+  - slug: pipeline-throughput-calculator
+    title: 'Exercise: Compute Cycles for N Instructions in a Pipeline'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pipeline-throughput-calculator.md
+  - slug: hazard-detector
+    title: 'Exercise: Detect Data Hazards in an Instruction Stream'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/hazard-detector.md
+  - slug: forwarding-bypassing
+    title: Forwarding and Bypassing
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/forwarding-bypassing.md
+  - slug: pipeline-registers
+    title: Pipeline Registers and Stage Balancing
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pipeline-registers.md
+  - slug: stalls-and-bubbles
+    title: Stalls, Bubbles, and Pipeline Interlocks
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stalls-and-bubbles.md
+  - slug: structural-hazards
+    title: Structural Hazards
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/structural-hazards.md
+  - slug: classic-five-stage-pipeline
+    title: The Classic Five-Stage RISC Pipeline
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/classic-five-stage-pipeline.md
+  - slug: laundry-analogy
+    title: The Laundry Analogy for Pipelines
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/laundry-analogy.md
+  - slug: load-use-hazard
+    title: The Load-Use Hazard
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/load-use-hazard.md
+  - slug: what-are-pipeline-hazards
+    title: What Are Pipeline Hazards?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-are-pipeline-hazards.md
+  - slug: what-is-pipelining
+    title: What Is Pipelining?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-pipelining.md
+  - slug: arch-hazard-detector
+    title: 'Prompt: Detect Data Hazards in an Instruction Stream'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-hazard-detector.prompt.md
+  - slug: arch-pipeline-throughput-calculator
+    title: 'Prompt: Pipeline Cycle Calculator'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-pipeline-throughput-calculator.prompt.md
+  - slug: quiz-pipeline-hazards
+    title: 'Quiz: Pipeline Hazards and Mitigation'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-pipeline-hazards.md
+  - slug: quiz-pipelining
+    title: 'Quiz: Pipelining and ILP'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-pipelining.md
+- title: Branch Prediction & ILP
+  order_index: 17
+  lessons:
+  - slug: branch-target-buffer
+    title: Branch Target Buffer and Return Address Stack
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/branch-target-buffer.md
+  - slug: correlating-and-tournament-predictors
+    title: Correlating and Tournament Predictors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/correlating-and-tournament-predictors.md
+  - slug: dynamic-branch-prediction
+    title: Dynamic Branch Prediction Basics
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/dynamic-branch-prediction.md
+  - slug: two-bit-predictor-simulator
+    title: 'Exercise: Simulate a Two-Bit Branch Predictor'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/two-bit-predictor-simulator.md
+  - slug: in-order-vs-out-of-order
+    title: In-Order vs Out-of-Order Execution
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/in-order-vs-out-of-order.md
+  - slug: ilp-and-superscalar
+    title: Instruction-Level Parallelism and Superscalar Execution
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/ilp-and-superscalar.md
+  - slug: one-and-two-bit-predictors
+    title: One-Bit and Two-Bit Saturating Predictors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/one-and-two-bit-predictors.md
+  - slug: branch-prediction-security
+    title: Spectre and Branch-Prediction Side Channels
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/branch-prediction-security.md
+  - slug: speculative-execution
+    title: Speculative Execution and Misprediction Recovery
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/speculative-execution.md
+  - slug: static-branch-prediction
+    title: Static Branch Prediction
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/static-branch-prediction.md
+  - slug: why-branches-are-expensive
+    title: Why Branches Are Expensive
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-branches-are-expensive.md
+  - slug: arch-two-bit-predictor-simulator
+    title: arch-two-bit-predictor-simulator
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-two-bit-predictor-simulator.prompt.md
+  - slug: quiz-branch-prediction
+    title: 'Quiz: Branch Prediction and Speculation'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-branch-prediction.md
+- title: Virtual Memory
+  order_index: 18
+  lessons:
+  - slug: enabling-paging-at-boot
+    title: Enabling Paging and Switching to S-Mode
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/enabling-paging-at-boot.md
+  - slug: address-translation-calculator
+    title: 'Exercise: Translate a Virtual Address via a Page Table'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-translation-calculator.md
+  - slug: sv39-translation-exercise
+    title: 'Exercise: Translate an Sv39 Virtual Address'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sv39-translation-exercise.md
+  - slug: multi-level-page-tables
+    title: Multi-Level and Hierarchical Page Tables
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/multi-level-page-tables.md
+  - slug: page-faults-and-replacement
+    title: Page Faults and Page Replacement
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/page-faults-and-replacement.md
+  - slug: paging-fundamentals
+    title: 'Paging: Pages, Frames, and Page Tables'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/paging-fundamentals.md
+  - slug: physical-memory-protection
+    title: Physical Memory Protection (PMP)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/physical-memory-protection.md
+  - slug: sv39-sv48-paging
+    title: Sv39 and Sv48 Virtual Memory Schemes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sv39-sv48-paging.md
+  - slug: what-is-the-mmu
+    title: The Memory Management Unit (MMU)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-the-mmu.md
+  - slug: riscv-page-table-walk
+    title: The RISC-V Page Table Walk
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-page-table-walk.md
+  - slug: satp-register
+    title: The satp Register and Address Space Switching
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/satp-register.md
+  - slug: the-tlb
+    title: The Translation Lookaside Buffer (TLB)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/the-tlb.md
+  - slug: sfence-vma
+    title: TLB Management with SFENCE.VMA
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sfence-vma.md
+  - slug: address-translation
+    title: Virtual-to-Physical Address Translation
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-translation.md
+  - slug: what-is-virtual-memory
+    title: What Is Virtual Memory?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-virtual-memory.md
+  - slug: why-virtual-memory
+    title: 'Why Virtual Memory: Isolation and Abstraction'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-virtual-memory.md
+  - slug: arch-address-translation-calculator
+    title: 'Prompt: Translate a Virtual Address via a Page Table'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-address-translation-calculator.prompt.md
+  - slug: arch-sv39-translation-exercise
+    title: 'Prompt: Translate an Sv39 Virtual Address'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-sv39-translation-exercise.prompt.md
+  - slug: quiz-virtual-memory
+    title: 'Quiz: Virtual Memory and the MMU'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-virtual-memory.md
+- title: Exceptions & Interrupts
+  order_index: 19
+  lessons:
+  - slug: direct-vs-vectored-mtvec
+    title: Direct vs Vectored Mode in mtvec
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/direct-vs-vectored-mtvec.md
+  - slug: interrupt-handling-riscv
+    title: Interrupt Handling in RISC-V
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interrupt-handling-riscv.md
+  - slug: interrupt-latency-analysis
+    title: Interrupt Latency Analysis
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interrupt-latency-analysis.md
+  - slug: interrupt-priorities-masking
+    title: Interrupt Priorities and Masking
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interrupt-priorities-masking.md
+  - slug: interrupt-vectoring
+    title: Interrupt Vectoring and Vector Tables
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interrupt-vectoring.md
+  - slug: interrupts-vs-exceptions-vs-traps
+    title: Interrupts vs Exceptions vs Traps
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interrupts-vs-exceptions-vs-traps.md
+  - slug: nested-interrupts
+    title: Nested and Reentrant Interrupt Handling
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/nested-interrupts.md
+  - slug: precise-vs-imprecise-exceptions
+    title: Precise vs Imprecise Exceptions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/precise-vs-imprecise-exceptions.md
+  - slug: software-interrupts-syscalls
+    title: Software Interrupts and System Calls
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/software-interrupts-syscalls.md
+  - slug: synchronous-vs-asynchronous-events
+    title: Synchronous vs Asynchronous Events
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/synchronous-vs-asynchronous-events.md
+  - slug: timer-interrupts-scheduling
+    title: Timer Interrupts and Preemptive Scheduling
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/timer-interrupts-scheduling.md
+  - slug: interrupt-check-in-the-cycle
+    title: Where Interrupts Fit in the Cycle
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interrupt-check-in-the-cycle.md
+  - slug: quiz-exceptions-interrupts
+    title: 'Quiz: Exceptions, Interrupts, and Traps'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-exceptions-interrupts.md
+- title: CSRs & Trap Handling
+  order_index: 20
+  lessons:
+  - slug: csr-instructions
+    title: 'CSR Instructions: CSRRW, CSRRS, CSRRC'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/csr-instructions.md
+  - slug: ecall-and-ebreak
+    title: ECALL and EBREAK Across Modes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/ecall-and-ebreak.md
+  - slug: trap-cause-classifier
+    title: 'Exercise: Classify Traps from mcause Codes'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/trap-cause-classifier.md
+  - slug: mcause-decoder
+    title: 'Exercise: Decode an mcause Value'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mcause-decoder.md
+  - slug: mcause-register
+    title: 'mcause: Identifying the Trap Cause'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mcause-register.md
+  - slug: mepc-register
+    title: 'mepc: The Machine Exception Program Counter'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mepc-register.md
+  - slug: mie-mip-registers
+    title: 'mie and mip: Interrupt Enable and Pending'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mie-mip-registers.md
+  - slug: mtval-and-misa
+    title: mtval, misa, and Other Key CSRs
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mtval-and-misa.md
+  - slug: mtvec-register
+    title: 'mtvec: The Trap Vector Base Register'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mtvec-register.md
+  - slug: mret-sret
+    title: 'Returning from Traps: MRET and SRET'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mret-sret.md
+  - slug: context-save-restore
+    title: Saving and Restoring Context
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/context-save-restore.md
+  - slug: mstatus-register
+    title: The mstatus Register
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mstatus-register.md
+  - slug: riscv-trap-model
+    title: The RISC-V Trap Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-trap-model.md
+  - slug: syscall-path-riscv
+    title: The System Call Path via ECALL
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/syscall-path-riscv.md
+  - slug: trap-entry-sequence
+    title: The Trap Entry Sequence Step by Step
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/trap-entry-sequence.md
+  - slug: trap-delegation
+    title: 'Trap Delegation: medeleg and mideleg'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/trap-delegation.md
+  - slug: trap-vs-interrupt-riscv
+    title: Traps vs Interrupts in RISC-V
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/trap-vs-interrupt-riscv.md
+  - slug: what-are-csrs
+    title: What Are Control and Status Registers?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-are-csrs.md
+  - slug: writing-a-trap-handler
+    title: Writing a Minimal Trap Handler
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/writing-a-trap-handler.md
+  - slug: arch-trap-cause-classifier
+    title: 'Prompt: Classify Traps from mcause Codes'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-trap-cause-classifier.prompt.md
+  - slug: arch-mcause-decoder
+    title: 'Prompt: Decode an mcause Value'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-mcause-decoder.prompt.md
+  - slug: quiz-csrs
+    title: 'Quiz: Control and Status Registers'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-csrs.md
+  - slug: quiz-trap-handling
+    title: 'Quiz: RISC-V Trap and Interrupt Handling'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-trap-handling.md
+- title: Privilege Modes & OS Interface
+  order_index: 21
+  lessons:
+  - slug: context-switch-mechanics
+    title: Context Switch Mechanics on RISC-V
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/context-switch-mechanics.md
+  - slug: scheduling-algorithms
+    title: CPU Scheduling Algorithms Overview
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/scheduling-algorithms.md
+  - slug: scheduler-metrics
+    title: 'Exercise: Compute Turnaround and Waiting Times'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/scheduler-metrics.md
+  - slug: round-robin-scheduler
+    title: 'Exercise: Simulate a Round-Robin Scheduler'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/round-robin-scheduler.md
+  - slug: privilege-and-virtual-memory
+    title: How Privilege Interacts with Virtual Memory
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/privilege-and-virtual-memory.md
+  - slug: kernel-user-isolation
+    title: Kernel/User Isolation and Page Permissions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/kernel-user-isolation.md
+  - slug: machine-mode
+    title: Machine Mode (M-Mode)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/machine-mode.md
+  - slug: process-vs-thread-state
+    title: Process and Thread State on the Hardware
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/process-vs-thread-state.md
+  - slug: supervisor-mode
+    title: Supervisor Mode (S-Mode)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/supervisor-mode.md
+  - slug: os-hardware-contract
+    title: The OS-Hardware Contract
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/os-hardware-contract.md
+  - slug: privilege-transitions
+    title: Transitions Between Privilege Modes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/privilege-transitions.md
+  - slug: user-mode
+    title: User Mode (U-Mode)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/user-mode.md
+  - slug: why-privilege-modes
+    title: Why Privilege Modes Exist
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-privilege-modes.md
+  - slug: arch-scheduler-metrics
+    title: 'Prompt: Compute Turnaround and Waiting Times'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-scheduler-metrics.prompt.md
+  - slug: arch-round-robin-scheduler
+    title: 'Prompt: Simulate a Round-Robin Scheduler'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-round-robin-scheduler.prompt.md
+  - slug: quiz-os-hardware-interface
+    title: 'Quiz: OS-Hardware Interface and Scheduling'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-os-hardware-interface.md
+  - slug: quiz-privilege-modes
+    title: 'Quiz: RISC-V Privilege Modes'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-privilege-modes.md
+- title: Multicore & Cache Coherence
+  order_index: 22
+  lessons:
+  - slug: atomics-and-synchronization
+    title: Atomics, Barriers, and Synchronization
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/atomics-and-synchronization.md
+  - slug: dma-modes-and-cache-coherence
+    title: DMA Modes and Cache Coherence Concerns
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/dma-modes-and-cache-coherence.md
+  - slug: false-sharing
+    title: False Sharing and Its Performance Impact
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/false-sharing.md
+  - slug: memory-consistency-models
+    title: Memory Consistency Models
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-consistency-models.md
+  - slug: memory-ordering-fence
+    title: Memory Ordering and the FENCE Instruction
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-ordering-fence.md
+  - slug: smp-vs-numa
+    title: SMP vs NUMA Architectures
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/smp-vs-numa.md
+  - slug: snooping-vs-directory
+    title: Snooping vs Directory-Based Coherence
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/snooping-vs-directory.md
+  - slug: cache-coherence-problem
+    title: The Cache Coherence Problem
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cache-coherence-problem.md
+  - slug: mesi-protocol
+    title: The MESI Coherence Protocol
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mesi-protocol.md
+  - slug: riscv-memory-model-rvwmo
+    title: The RISC-V Weak Memory Ordering (RVWMO) Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/riscv-memory-model-rvwmo.md
+  - slug: why-multicore
+    title: Why Multicore? The End of Frequency Scaling
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-multicore.md
+  - slug: quiz-multicore-coherence
+    title: 'Quiz: Multicore, Coherence, and Consistency'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-multicore-coherence.md
+- title: Boot Process & Firmware
+  order_index: 23
+  lessons:
+  - slug: bare-metal-hello-world
+    title: A Bare-Metal Boot Walkthrough
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bare-metal-hello-world.md
+  - slug: bootloader-handoff
+    title: Bootloader to Kernel Handoff
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bootloader-handoff.md
+  - slug: multi-hart-boot
+    title: Multi-Hart Boot and Hart 0 Coordination
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/multi-hart-boot.md
+  - slug: opensbi
+    title: OpenSBI and the M-Mode Firmware Role
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/opensbi.md
+  - slug: plic-and-clint
+    title: 'PLIC and CLINT: Interrupt Controllers'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/plic-and-clint.md
+  - slug: power-on-reset
+    title: Power-On Reset and the Reset Vector
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/power-on-reset.md
+  - slug: boot-stages-overview
+    title: 'RISC-V Boot Stages: ZSBL, FSBL, BBL'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/boot-stages-overview.md
+  - slug: setting-up-stack-bss
+    title: Setting Up the Stack and Clearing BSS
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/setting-up-stack-bss.md
+  - slug: device-tree
+    title: The Device Tree and Hardware Discovery
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/device-tree.md
+  - slug: sbi-and-firmware
+    title: The Supervisor Binary Interface (SBI)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sbi-and-firmware.md
+  - slug: quiz-boot-process
+    title: 'Quiz: RISC-V Boot Process and Firmware'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-boot-process.md
+- title: Performance & Capstone
+  order_index: 24
+  lessons:
+  - slug: amdahls-law
+    title: Amdahl's Law and Speedup Limits
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/amdahls-law.md
+  - slug: debugging-virtual-prototypes
+    title: Debugging and Tracing Virtual Prototypes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/debugging-virtual-prototypes.md
+  - slug: building-a-mini-riscv-simulator
+    title: Designing a Minimal RV32I Simulator
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/building-a-mini-riscv-simulator.md
+  - slug: amdahls-law-calculator
+    title: 'Exercise: Compute Speedup with Amdahl''s Law'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/amdahls-law-calculator.md
+  - slug: interview-architecture-review
+    title: 'Interview Review: Core Architecture Concepts'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-architecture-review.md
+  - slug: interview-riscv-review
+    title: 'Interview Review: RISC-V Deep Dive'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-riscv-review.md
+  - slug: latency-bandwidth-tradeoffs
+    title: Latency vs Bandwidth Trade-offs
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/latency-bandwidth-tradeoffs.md
+  - slug: performance-metrics-cpi-ipc
+    title: 'Performance Metrics: CPI, IPC, and Clock Speed'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/performance-metrics-cpi-ipc.md
+  - slug: struct-packing
+    title: Struct Packing and Layout
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/struct-packing.md
+  - slug: systemc-tlm
+    title: SystemC and Transaction-Level Modeling
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/systemc-tlm.md
+  - slug: throughput-vs-latency
+    title: Throughput vs Latency in Pipelines
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/throughput-vs-latency.md
+  - slug: what-is-virtual-prototyping
+    title: What Is a Virtual Prototype?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-virtual-prototyping.md
+  - slug: arch-amdahls-law-calculator
+    title: Amdahl's Law Calculator
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/arch-amdahls-law-calculator.prompt.md
+  - slug: quiz-capstone
+    title: 'Quiz: Virtual Prototyping and Interview Capstone'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-capstone.md

@@ -27,8 +27,7 @@ import {
   LANGUAGE_LABELS,
   SubmissionStatus,
 } from '../../../core/models/types';
-
-type ActiveTab = 'description' | 'testcases' | 'submissions';
+import type { ActiveTab } from '../models/exercise-page.model';
 
 @Component({
   selector: 'app-exercise-page',

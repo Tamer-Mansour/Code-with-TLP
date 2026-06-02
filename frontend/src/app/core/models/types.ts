@@ -122,6 +122,18 @@ export interface LearningPath {
   courses: Course[];
 }
 
+export interface PathCourseProgress {
+  course_id: number;
+  slug: string;
+  title: string;
+  summary?: string;
+  difficulty: string;
+  order_index: number;
+  progress_percent: number;
+  completed: boolean;
+  locked: boolean;
+}
+
 // ── Exercises ─────────────────────────────────────────────
 export type ExerciseDifficulty = 'easy' | 'medium' | 'hard';
 

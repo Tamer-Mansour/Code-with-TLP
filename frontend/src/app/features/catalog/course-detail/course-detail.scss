@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+/* Smooth accordion reveal for the lessons list */
+.lesson-reveal {
+  animation: lesson-reveal 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top;
+  overflow: hidden;
+}
+
+@keyframes lesson-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scaleY(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+/* Slightly lift module cards on hover (paired with Tailwind ring/border/shadow) */
+.module-card {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-reveal {
+    animation: none;
+  }
+
+  .module-card,
+  .module-card:hover {
+    transform: none;
+  }
+}

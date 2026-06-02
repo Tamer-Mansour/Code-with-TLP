@@ -20,20 +20,9 @@ import {
   Bot, Plus, Trash2, Send, Loader2, MessageSquare, Settings, ChevronDown,
   Paperclip, X, Square,
 } from 'lucide-angular';
-import { ChatService, ChatSession, ChatMessage, AiKey, AiProvider } from '../../../core/services/chat.service';
-
-interface Attachment {
-  name: string;
-  content: string;
-}
-
-interface LocalMessage {
-  role: 'user' | 'assistant';
-  content: string;
-  model?: string;
-  streaming?: boolean;
-  attachments?: { name: string }[];
-}
+import { ChatService } from '../../../core/services/chat.service';
+import type { ChatSession, ChatMessage, AiKey, AiProvider } from '../../../core/models/chat.model';
+import type { Attachment, LocalMessage } from '../models/chat-page.model';
 
 @Component({
   selector: 'app-chat-page',

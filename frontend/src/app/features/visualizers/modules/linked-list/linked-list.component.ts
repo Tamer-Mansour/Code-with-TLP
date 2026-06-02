@@ -5,21 +5,7 @@ import { LucideAngularModule, Plus, Search, RotateCcw, Trash2, RefreshCw } from 
 import { VizPlayerService } from '../../core/viz-player.service';
 import { VizFrame } from '../../core/viz-frame';
 import { Visualizer, VizMeta } from '../../core/visualizer.base';
-
-// ── data model ────────────────────────────────────────────────────────────────
-
-interface LLNode {
-  id: number;
-  value: number;
-}
-
-/** Payload stored in every VizFrame.data for linked-list frames. */
-interface LLFrameData {
-  /** Ordered list of node ids representing the current list state. */
-  order: number[];
-  /** Node ids that have been visually removed (for fade-out on last frame). */
-  removed?: number[];
-}
+import type { LLNode, LLFrameData } from './models/linked-list.model';
 
 // ── id counter ────────────────────────────────────────────────────────────────
 

@@ -82,6 +82,11 @@ class ChatSend(BaseModel):
     provider: str | None = None
     model: str | None = None
     attachments: list[ChatAttachment] = []
+    # Optional lesson content the assistant should treat as primary context
+    # (injected into the system prompt, not stored in the message history).
+    context: str | None = None
+    # When true and the provider supports it (Gemini), enable web-search grounding.
+    web_search: bool = False
 
 
 class ChatSendResponse(BaseModel):

@@ -1,0 +1,1756 @@
+subject:
+  slug: systems
+  name: Systems
+  description: How computers run software, from the CPU up to the network.
+  icon: server
+  color: '#ef4444'
+  order_index: 4
+course:
+  slug: virtual-prototyping-systemc
+  title: Virtual Prototyping with SystemC & TLM-2.0
+  summary: Build SystemC/TLM-2.0 virtual platforms — modules, processes, the simulation kernel, buses,
+    peripherals, CPU models, and boot.
+  description: Learn to build virtual prototypes of embedded SoCs with SystemC and TLM-2.0. Starts with
+    embedded foundations and the modelling C++ you need, then covers the simulation kernel, modules and
+    processes, TLM-2.0 sockets and coding styles, buses, peripherals, interrupts, a virtual UART, CPU
+    models, boot flow, co-simulation, and debugging.
+  difficulty: advanced
+  estimated_hours: 50
+  order_index: 34
+  is_published: true
+modules:
+- title: Embedded Systems Foundations
+  order_index: 1
+  lessons:
+  - slug: bare-metal-vs-rtos
+    title: 'Bare-Metal vs RTOS: When Do You Need an OS?'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bare-metal-vs-rtos.md
+  - slug: microcontroller-vs-microprocessor
+    title: 'Microcontroller vs Microprocessor: Key Differences'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/microcontroller-vs-microprocessor.md
+  - slug: embedded-development-workflow
+    title: The Embedded Development Workflow End to End
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/embedded-development-workflow.md
+  - slug: what-is-an-embedded-system
+    title: What Is an Embedded System?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-an-embedded-system.md
+  - slug: what-is-an-rtos
+    title: What Is an RTOS and What Makes It Real-Time?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-an-rtos.md
+  - slug: what-is-firmware
+    title: What Is Firmware and Where Does It Live?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-firmware.md
+  - slug: why-vp-matters-for-embedded
+    title: Why Virtual Prototypes Matter for Embedded Software
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-vp-matters-for-embedded.md
+  - slug: quiz-embedded-systems-foundations
+    title: 'Quiz: Embedded Systems Foundations'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-embedded-systems-foundations.md
+- title: Introduction to Virtual Prototypes
+  order_index: 2
+  lessons:
+  - slug: vp-advantages
+    title: Advantages of Virtual Prototypes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/vp-advantages.md
+  - slug: components-of-a-vp
+    title: Components of a Virtual Platform
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/components-of-a-vp.md
+  - slug: vp-limitations
+    title: Limitations of Virtual Prototypes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/vp-limitations.md
+  - slug: pre-silicon-software-development
+    title: Pre-Silicon Software Development
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pre-silicon-software-development.md
+  - slug: vp-use-cases-industry
+    title: Real Industry Use Cases for Virtual Prototypes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/vp-use-cases-industry.md
+  - slug: shift-left-with-vps
+    title: Shifting Software Left with Virtual Prototypes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/shift-left-with-vps.md
+  - slug: vp-limitations-revisited
+    title: VP Limitations and Honest Tradeoffs
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/vp-limitations-revisited.md
+  - slug: what-is-a-virtual-prototype
+    title: What Is a Virtual Prototype?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-virtual-prototype.md
+  - slug: what-is-simulation
+    title: What Is Simulation in This Context?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-simulation.md
+  - slug: vp-in-the-soc-flow
+    title: Where VPs Fit in the SoC Development Flow
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/vp-in-the-soc-flow.md
+  - slug: why-companies-use-vps
+    title: Why Companies Use Virtual Prototypes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-companies-use-vps.md
+  - slug: quiz-intro-virtual-prototypes
+    title: 'Quiz: Introduction to Virtual Prototypes'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-intro-virtual-prototypes.md
+- title: VP vs RTL vs Hardware
+  order_index: 3
+  lessons:
+  - slug: abstraction-levels
+    title: 'Abstraction Levels: Functional to Cycle-Accurate'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/abstraction-levels.md
+  - slug: can-vp-replace-dv
+    title: Can a VP Replace Design Verification?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/can-vp-replace-dv.md
+  - slug: can-vp-replace-hardware
+    title: Can a VP Replace Real Hardware?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/can-vp-replace-hardware.md
+  - slug: can-vp-replace-rtl
+    title: Can a VP Replace RTL?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/can-vp-replace-rtl.md
+  - slug: modeling-spectrum
+    title: The Modeling Abstraction Spectrum
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/modeling-spectrum.md
+  - slug: speed-vs-accuracy-tradeoff
+    title: The Speed vs Accuracy Tradeoff
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/speed-vs-accuracy-tradeoff.md
+  - slug: vp-vs-real-hardware
+    title: Virtual Prototype vs Real Hardware
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/vp-vs-real-hardware.md
+  - slug: abstraction-and-detail-loss
+    title: What Detail TLM Abstracts Away
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/abstraction-and-detail-loss.md
+  - slug: high-level-model-defined
+    title: What Is a High-Level Model?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/high-level-model-defined.md
+  - slug: what-is-rtl
+    title: What Is RTL?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-rtl.md
+  - slug: which-is-faster-which-accurate
+    title: Which Is Faster, Which Is More Accurate?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/which-is-faster-which-accurate.md
+  - slug: quiz-vp-vs-rtl-vs-hardware
+    title: 'Quiz: VP vs RTL vs Hardware Synthesis'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-vp-vs-rtl-vs-hardware.md
+- title: VP Architecture
+  order_index: 4
+  lessons:
+  - slug: configurability
+    title: Configurable and Parameterized Platforms
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/configurability.md
+  - slug: cpu-memory-bus-peripherals
+    title: CPU, Memory, Bus, and Peripherals at a Glance
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cpu-memory-bus-peripherals.md
+  - slug: platform-vs-soc
+    title: Mapping a Virtual Platform to a Real SoC
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/platform-vs-soc.md
+  - slug: platform-topology
+    title: Platform Topology and Wiring
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/platform-topology.md
+  - slug: reusable-ip-models
+    title: Reusable IP Model Libraries
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/reusable-ip-models.md
+  - slug: system-design-for-a-vp
+    title: 'System Design: Architect a VP in an Interview'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/system-design-for-a-vp.md
+  - slug: quiz-vp-architecture
+    title: 'Quiz: Virtual Platform Architecture'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-vp-architecture.md
+- title: C++ for Modeling
+  order_index: 5
+  lessons:
+  - slug: classes-and-objects
+    title: Classes, Objects, and Constructors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/classes-and-objects.md
+  - slug: data-types-and-widths
+    title: Fixed-Width Integer Types and Their Sizes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/data-types-and-widths.md
+  - slug: function-pointers-and-callbacks
+    title: Function Pointers, Functors, and Callbacks
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/function-pointers-and-callbacks.md
+  - slug: headers-and-translation-units
+    title: Headers and Translation Units in C++
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/headers-and-translation-units.md
+  - slug: inheritance-and-virtual
+    title: Inheritance and Virtual Functions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/inheritance-and-virtual.md
+  - slug: namespaces-and-headers
+    title: Namespaces and Organizing Model Code
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/namespaces-and-headers.md
+  - slug: operator-overloading
+    title: Operator Overloading for Data Types
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/operator-overloading.md
+  - slug: pointers-and-references
+    title: Pointers, References, and Memory
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pointers-and-references.md
+  - slug: compile-link-stages
+    title: Preprocess, Compile, Assemble, Link
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/compile-link-stages.md
+  - slug: raii-and-lifetime
+    title: RAII and Object Lifetime
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/raii-and-lifetime.md
+  - slug: templates-basics
+    title: 'Templates: Generic Modeling'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/templates-basics.md
+  - slug: why-cpp-based-modeling
+    title: Why a C++-Based Modeling Language?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-cpp-based-modeling.md
+  - slug: why-cpp-for-modeling
+    title: Why SystemC Is Built on C++
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-cpp-for-modeling.md
+  - slug: quiz-cpp-essentials
+    title: 'Quiz: C++ Essentials for SystemC'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-cpp-essentials.md
+- title: Build Systems & Toolchain
+  order_index: 6
+  lessons:
+  - slug: dependency-ordering
+    title: Build Dependency Ordering
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/dependency-ordering.md
+  - slug: gcc-and-make
+    title: Building Code with gcc and make
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/gcc-and-make.md
+  - slug: topological-build-order-exercise
+    title: Compute a Topological Build Order from Dependencies
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/topological-build-order-exercise.md
+  - slug: cross-compilation
+    title: Cross-Compilation for Embedded Targets
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cross-compilation.md
+  - slug: debug-vs-release-builds
+    title: Debug vs Release Builds and Flags
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/debug-vs-release-builds.md
+  - slug: linking-against-systemc
+    title: Linking a Model Against the SystemC Library
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/linking-against-systemc.md
+  - slug: makefile-fundamentals
+    title: 'Makefile Fundamentals: Targets and Rules'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/makefile-fundamentals.md
+  - slug: static-vs-shared-libs
+    title: Static vs Shared Libraries
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/static-vs-shared-libs.md
+  - slug: systemc-as-a-library
+    title: SystemC as a Class Library, Not a New Language
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/systemc-as-a-library.md
+  - slug: embedded-toolchain-overview
+    title: 'The Embedded Toolchain: Compiler, Linker, Loader'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/embedded-toolchain-overview.md
+  - slug: vp-topological-build-order-exercise
+    title: 'Exercise: Compute a Topological Build Order from Dependencies'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-topological-build-order-exercise.prompt.md
+  - slug: quiz-build-systems
+    title: 'Quiz: Build Systems, Compilers, and Make'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-build-systems.md
+- title: Linux Command Line
+  order_index: 7
+  lessons:
+  - slug: find-files
+    title: Finding Files with find
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/find-files.md
+  - slug: files-mkdir-cp-mv-rm
+    title: 'Managing Files: mkdir, cp, mv, rm'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/files-mkdir-cp-mv-rm.md
+  - slug: navigation-pwd-ls-cd
+    title: 'Navigating the Filesystem: pwd, ls, cd'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/navigation-pwd-ls-cd.md
+  - slug: path-env-and-man
+    title: PATH, Environment Variables, and man
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/path-env-and-man.md
+  - slug: permissions-chmod
+    title: Permissions and chmod
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/permissions-chmod.md
+  - slug: processes-ps-top-kill
+    title: 'Processes: ps, top, kill'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/processes-ps-top-kill.md
+  - slug: sudo-and-ssh
+    title: 'sudo and ssh: Privilege and Remote Access'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sudo-and-ssh.md
+  - slug: viewing-cat-grep
+    title: 'Viewing and Searching: cat, grep'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/viewing-cat-grep.md
+  - slug: quiz-linux-commands
+    title: 'Quiz: Linux Command Line for VP Engineers'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-linux-commands.md
+- title: Assembly & Machine Code
+  order_index: 8
+  lessons:
+  - slug: branch-and-control-flow
+    title: Branches and Control Flow
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/branch-and-control-flow.md
+  - slug: load-store-encoding
+    title: Encoding of Load and Store Instructions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/load-store-encoding.md
+  - slug: machine-code-vs-assembly
+    title: Machine Code vs Assembly Language
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/machine-code-vs-assembly.md
+  - slug: opcode-and-operand
+    title: Opcodes and Operands
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/opcode-and-operand.md
+  - slug: fetch-decode-execute
+    title: The Fetch-Decode-Execute Cycle
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fetch-decode-execute.md
+  - slug: quiz-assembly-basics
+    title: 'Quiz: Assembly and Machine Code Basics'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-assembly-basics.md
+- title: The Stack & ABI
+  order_index: 9
+  lessons:
+  - slug: calling-conventions
+    title: 'Calling Conventions: Args, Return Values, Saved Regs'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/calling-conventions.md
+  - slug: call-stack-depth-exercise
+    title: Compute Maximum Call-Stack Depth from a Trace
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/call-stack-depth-exercise.md
+  - slug: cpu-registers
+    title: 'CPU Registers: General-Purpose and Special'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cpu-registers.md
+  - slug: program-counter-and-flags
+    title: Program Counter and Status Flags
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/program-counter-and-flags.md
+  - slug: push-and-pop
+    title: Push and Pop Operations
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/push-and-pop.md
+  - slug: risc-v-registers-and-abi
+    title: RISC-V Registers and ABI Names
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/risc-v-registers-and-abi.md
+  - slug: stack-simulation-exercise
+    title: 'Simulate a Stack: Push/Pop and Report Top'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-simulation-exercise.md
+  - slug: stack-frames
+    title: Stack Frames and Function Prologue/Epilogue
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-frames.md
+  - slug: stack-overflow-and-corruption
+    title: Stack Overflow and Corruption Bugs
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-overflow-and-corruption.md
+  - slug: stack-pointer-register
+    title: The Stack Pointer Register
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/stack-pointer-register.md
+  - slug: abi-overview
+    title: What an ABI Specifies
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/abi-overview.md
+  - slug: what-is-the-stack
+    title: What Is the Stack and Why It Grows Down
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-the-stack.md
+  - slug: vp-call-stack-depth-exercise
+    title: 'Prompt: Compute Maximum Call-Stack Depth from a Trace'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-call-stack-depth-exercise.prompt.md
+  - slug: vp-stack-simulation-exercise
+    title: 'Prompt: Simulate a Stack — Push/Pop and Report Top'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-stack-simulation-exercise.prompt.md
+  - slug: quiz-stack-and-abi
+    title: 'Quiz: The Stack, Calling Conventions, and ABI'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-stack-and-abi.md
+- title: RISC-V Decode
+  order_index: 10
+  lessons:
+  - slug: addressing-modes
+    title: Addressing Modes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/addressing-modes.md
+  - slug: register-decode-exercise
+    title: Decode a Register Write into Bit-Field Effects
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/register-decode-exercise.md
+  - slug: decode-i-type-immediate-exercise
+    title: Decode an I-Type Instruction and Its Immediate
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/decode-i-type-immediate-exercise.md
+  - slug: decode-r-type-exercise
+    title: Decode an R-Type Instruction
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/decode-r-type-exercise.md
+  - slug: instruction-field-decode-exercise
+    title: Decode Opcode and Operand Fields from an Instruction Word
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-field-decode-exercise.md
+  - slug: building-a-tiny-iss
+    title: From Decode to a Tiny Instruction-Set Simulator
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/building-a-tiny-iss.md
+  - slug: load-store-architecture
+    title: Load/Store Architecture
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/load-store-architecture.md
+  - slug: fetch-execute-loop-model
+    title: Modeling the Fetch-Execute Loop
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fetch-execute-loop-model.md
+  - slug: decode-branch-immediate-exercise
+    title: Reconstruct a B-Type Branch Immediate
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/decode-branch-immediate-exercise.md
+  - slug: risc-v-instruction-formats
+    title: 'RISC-V Instruction Formats: R, I, S, B, U, J'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/risc-v-instruction-formats.md
+  - slug: sign-extension
+    title: Sign Extension of Immediates
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sign-extension.md
+  - slug: why-risc-v-for-vp
+    title: Why RISC-V Is Popular for Virtual Prototypes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-risc-v-for-vp.md
+  - slug: vp-instruction-field-decode-exercise
+    title: 'Exercise Prompt: Decode Opcode and Operand Fields from an Instruction Word'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-instruction-field-decode-exercise.prompt.md
+  - slug: vp-register-decode-exercise
+    title: 'Exercise: Decode a Register Write into Bit-Field Effects'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-register-decode-exercise.prompt.md
+  - slug: vp-decode-i-type-immediate-exercise
+    title: 'Prompt: Decode an I-Type RISC-V Instruction and Its Immediate'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-decode-i-type-immediate-exercise.prompt.md
+  - slug: vp-decode-r-type-exercise
+    title: 'Prompt: Decode an R-Type RISC-V Instruction'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-decode-r-type-exercise.prompt.md
+  - slug: vp-decode-branch-immediate-exercise
+    title: 'Prompt: Reconstruct a B-Type Branch Immediate'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-decode-branch-immediate-exercise.prompt.md
+  - slug: quiz-risc-v-decode
+    title: 'Quiz: RISC-V Instruction Decode'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-risc-v-decode.md
+- title: Bit Manipulation for Hardware
+  order_index: 11
+  lessons:
+  - slug: bit-masking-and-fields
+    title: Bit Masks and Extracting Bit Fields
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bit-masking-and-fields.md
+  - slug: bitwise-operators
+    title: Bitwise AND, OR, XOR, NOT, Shifts
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bitwise-operators.md
+  - slug: bit-tricks-for-hardware
+    title: Common Bit Tricks in Hardware Modeling
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bit-tricks-for-hardware.md
+  - slug: count-set-bits
+    title: Count Set Bits (Population Count)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/count-set-bits.md
+  - slug: extract-bitfield-exercise
+    title: Extract a Bit Field from a Register Word
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/extract-bitfield-exercise.md
+  - slug: bit-field-modeling
+    title: Modeling Register Bit Fields
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bit-field-modeling.md
+  - slug: register-access-types
+    title: 'Register Access Types: RO, RW, W1C, RC'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/register-access-types.md
+  - slug: set-clear-toggle-bits
+    title: Set, Clear, and Toggle Bits in a Register
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/set-clear-toggle-bits.md
+  - slug: vp-count-set-bits
+    title: 'Exercise Prompt: Count Set Bits (Population Count)'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-count-set-bits.prompt.md
+  - slug: vp-extract-bitfield-exercise
+    title: 'Exercise Prompt: Extract a Bit Field from a Register Word'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-extract-bitfield-exercise.prompt.md
+  - slug: vp-set-clear-toggle-bits
+    title: 'Exercise Prompt: Set, Clear, and Toggle Bits in a Register'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-set-clear-toggle-bits.prompt.md
+  - slug: quiz-bit-manipulation
+    title: 'Quiz: Number Systems and Bit Manipulation'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-bit-manipulation.md
+- title: Endianness & Byte Layout
+  order_index: 12
+  lessons:
+  - slug: alignment-and-rounding
+    title: Alignment, Rounding Up, and Masks
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/alignment-and-rounding.md
+  - slug: big-vs-little-endian
+    title: Big-Endian vs Little-Endian
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/big-vs-little-endian.md
+  - slug: binary-hex-decimal
+    title: Binary, Hex, and Decimal Conversions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/binary-hex-decimal.md
+  - slug: byte-halfword-word-access
+    title: Byte, Halfword, and Word Accesses
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/byte-halfword-word-access.md
+  - slug: endianness-in-buses
+    title: Endianness Across Buses and Peripherals
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/endianness-in-buses.md
+  - slug: pack-unpack-bytes
+    title: Pack and Unpack Bytes into Words
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pack-unpack-bytes.md
+  - slug: parse-hexdump-exercise
+    title: Parse a Hexdump and Reconstruct Values
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/parse-hexdump-exercise.md
+  - slug: hexdump-reading
+    title: Reading a Hexdump of Memory
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/hexdump-reading.md
+  - slug: structure-padding
+    title: Struct Padding and Alignment in Memory
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/structure-padding.md
+  - slug: endianness-swap-exercise
+    title: Swap Endianness of a 32-bit Word
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/endianness-swap-exercise.md
+  - slug: twos-complement
+    title: Two's Complement and Signed Integers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/twos-complement.md
+  - slug: vp-pack-unpack-bytes
+    title: 'Prompt: Pack and Unpack Bytes into Words'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-pack-unpack-bytes.prompt.md
+  - slug: vp-parse-hexdump-exercise
+    title: 'Prompt: Parse a Hexdump and Reconstruct Values'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-parse-hexdump-exercise.prompt.md
+  - slug: vp-endianness-swap-exercise
+    title: 'Prompt: Swap Endianness of a 32-bit Word'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-endianness-swap-exercise.prompt.md
+  - slug: quiz-endianness
+    title: 'Quiz: Endianness and Data Representation'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-endianness.md
+- title: Memory & Address Maps
+  order_index: 13
+  lessons:
+  - slug: address-decoding
+    title: Address Decoding to the Right Target
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-decoding.md
+  - slug: memory-aliasing-and-mirrors
+    title: Aliasing and Memory Mirrors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-aliasing-and-mirrors.md
+  - slug: address-translation-math
+    title: Base + Offset Address Translation
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-translation-math.md
+  - slug: address-decode-exercise
+    title: Decode an Address to a Target and Offset
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-decode-exercise.md
+  - slug: address-map-overlap-exercise
+    title: Detect Overlapping Regions in an Address Map
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/address-map-overlap-exercise.md
+  - slug: loading-images-into-memory
+    title: Loading Boot Images into Model Memory
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/loading-images-into-memory.md
+  - slug: memory-mapped-registers
+    title: Memory-Mapped Registers Explained
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/memory-mapped-registers.md
+  - slug: ram-rom-mmio
+    title: RAM, ROM, and MMIO Regions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/ram-rom-mmio.md
+  - slug: sparse-memory
+    title: Sparse and Backed Memory Models
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sparse-memory.md
+  - slug: the-address-map
+    title: The System Address Map
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/the-address-map.md
+  - slug: what-is-a-memory-model
+    title: What Is a Memory Model?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-memory-model.md
+  - slug: vp-address-decode-exercise
+    title: 'Prompt: Decode an Address to a Target and Offset'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-address-decode-exercise.prompt.md
+  - slug: vp-address-map-overlap-exercise
+    title: 'Prompt: Detect Overlapping Regions in an Address Map'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-address-map-overlap-exercise.prompt.md
+  - slug: quiz-memory-and-address-maps
+    title: 'Quiz: Modeling Memory and Address Maps'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-memory-and-address-maps.md
+- title: The Simulation Kernel
+  order_index: 14
+  lessons:
+  - slug: elaboration-vs-simulation
+    title: Elaboration vs Simulation Phases
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/elaboration-vs-simulation.md
+  - slug: event-driven-simulation
+    title: Event-Driven Simulation Explained
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/event-driven-simulation.md
+  - slug: scheduler-phases
+    title: Kernel Scheduler Phases
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/scheduler-phases.md
+  - slug: delta-cycle-ordering-exercise
+    title: Resolve Delta-Cycle Update Ordering
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/delta-cycle-ordering-exercise.md
+  - slug: event-queue-simulation-exercise
+    title: Simulate an Event Queue and Report Fire Order
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/event-queue-simulation-exercise.md
+  - slug: simulation-time
+    title: Simulation Time vs Wall-Clock Time
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/simulation-time.md
+  - slug: synchronization-points
+    title: Synchronization Between HW and SW Domains
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/synchronization-points.md
+  - slug: evaluate-update-phases
+    title: The Evaluate-Update Cycle
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/evaluate-update-phases.md
+  - slug: what-is-a-delta-cycle
+    title: What Is a Delta Cycle?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-delta-cycle.md
+  - slug: signal-update-semantics
+    title: Why Signal Writes Take Effect Next Delta
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/signal-update-semantics.md
+  - slug: vp-delta-cycle-ordering-exercise
+    title: 'Exercise: Resolve Delta-Cycle Update Ordering'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-delta-cycle-ordering-exercise.prompt.md
+  - slug: vp-event-queue-simulation-exercise
+    title: 'Exercise: Simulate an Event Queue and Report Fire Order'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-event-queue-simulation-exercise.prompt.md
+  - slug: quiz-simulation-kernel
+    title: 'Quiz: The SystemC Simulation Kernel'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-simulation-kernel.md
+- title: SystemC Fundamentals
+  order_index: 15
+  lessons:
+  - slug: first-systemc-model
+    title: Anatomy of Your First SystemC Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/first-systemc-model.md
+  - slug: interfaces-and-channels
+    title: Interfaces, Channels, and Ports
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interfaces-and-channels.md
+  - slug: primitive-channels
+    title: Primitive vs Hierarchical Channels
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/primitive-channels.md
+  - slug: sc-main-entry
+    title: sc_main and the Simulation Entry Point
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sc-main-entry.md
+  - slug: sc-time-and-units
+    title: sc_time and Time Resolution
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sc-time-and-units.md
+  - slug: systemc-data-types
+    title: 'SystemC Data Types: sc_int, sc_uint, sc_bv'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/systemc-data-types.md
+  - slug: systemc-standard-history
+    title: SystemC, IEEE 1666, and TLM-2.0
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/systemc-standard-history.md
+  - slug: what-is-systemc
+    title: What Is SystemC?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-systemc.md
+  - slug: quiz-systemc-fundamentals
+    title: 'Quiz: SystemC Fundamentals'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-systemc-fundamentals.md
+- title: SystemC Modules
+  order_index: 16
+  lessons:
+  - slug: module-init-and-end-elab
+    title: before_end_of_elaboration and end_of_elaboration
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/module-init-and-end-elab.md
+  - slug: module-hierarchy
+    title: Building a Module Hierarchy
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/module-hierarchy.md
+  - slug: module-composition-patterns
+    title: Composition Patterns for Platforms
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/module-composition-patterns.md
+  - slug: designing-a-module-interface
+    title: Designing a Clean Module Interface
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/designing-a-module-interface.md
+  - slug: submodule-instantiation
+    title: Instantiating and Connecting Submodules
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/submodule-instantiation.md
+  - slug: member-data-and-state
+    title: Module Member Data and State
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/member-data-and-state.md
+  - slug: module-naming
+    title: Module Names and the Object Hierarchy
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/module-naming.md
+  - slug: sc-ctor-macro
+    title: SC_CTOR and Module Constructors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sc-ctor-macro.md
+  - slug: signal-vs-event
+    title: 'sc_signal vs sc_event: Value vs Notification'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/signal-vs-event.md
+  - slug: what-is-sc-event
+    title: What Is sc_event?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-sc-event.md
+  - slug: what-is-sc-module
+    title: What Is sc_module?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-sc-module.md
+  - slug: what-is-sc-port
+    title: What Is sc_port?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-sc-port.md
+  - slug: what-is-sc-signal
+    title: What Is sc_signal?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-sc-signal.md
+  - slug: quiz-systemc-modules
+    title: 'Quiz: SystemC Modules and Structure'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-systemc-modules.md
+- title: SystemC Processes
+  order_index: 17
+  lessons:
+  - slug: common-process-pitfalls
+    title: Common Process Pitfalls in Interviews
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/common-process-pitfalls.md
+  - slug: process-state-machines
+    title: Modeling State Machines with Processes
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/process-state-machines.md
+  - slug: next-trigger
+    title: next_trigger() for Dynamic Sensitivity
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/next-trigger.md
+  - slug: sc-cthread
+    title: SC_CTHREAD and Clocked Threads
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sc-cthread.md
+  - slug: method-vs-thread
+    title: 'SC_METHOD vs SC_THREAD: When to Use Which'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/method-vs-thread.md
+  - slug: sc-method-explained
+    title: 'SC_METHOD: Run-to-Completion Processes'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sc-method-explained.md
+  - slug: sc-thread-explained
+    title: 'SC_THREAD: Suspendable Processes'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/sc-thread-explained.md
+  - slug: wait-statement
+    title: The wait() Statement and Suspension
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/wait-statement.md
+  - slug: what-are-systemc-processes
+    title: What Are SystemC Processes?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-are-systemc-processes.md
+  - slug: quiz-systemc-processes
+    title: 'Quiz: SystemC Processes'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-systemc-processes.md
+- title: Sensitivity & Events
+  order_index: 18
+  lessons:
+  - slug: dynamic-sensitivity
+    title: Dynamic Sensitivity with Events
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/dynamic-sensitivity.md
+  - slug: event-notification
+    title: Immediate, Delta, and Timed Notification
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/event-notification.md
+  - slug: signal-vs-transaction
+    title: 'Signal vs Transaction: Two Communication Styles'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/signal-vs-transaction.md
+  - slug: static-sensitivity
+    title: Static Sensitivity Lists
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/static-sensitivity.md
+  - slug: quiz-sensitivity-events
+    title: 'Quiz: Sensitivity, Events, and Channels'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-sensitivity-events.md
+- title: RTL vs TLM
+  order_index: 19
+  lessons:
+  - slug: cycle-accurate-recap
+    title: Cycle-Accurate Models Revisited
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cycle-accurate-recap.md
+  - slug: cycle-accurate-vs-at
+    title: Cycle-Accurate vs Approximately-Timed
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cycle-accurate-vs-at.md
+  - slug: rtl-vs-tlm
+    title: 'RTL vs TLM: The Core Differences'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/rtl-vs-tlm.md
+  - slug: structural-vs-behavioral
+    title: Structural vs Behavioral Description
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/structural-vs-behavioral.md
+  - slug: which-is-faster-which-accurate-recap
+    title: Which Is Faster, Which Is More Accurate, and Why
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/which-is-faster-which-accurate-recap.md
+  - slug: quiz-rtl-vs-tlm
+    title: 'Quiz: RTL vs Transaction-Level Modeling'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-rtl-vs-tlm.md
+- title: TLM-2.0 Fundamentals
+  order_index: 20
+  lessons:
+  - slug: b-transport
+    title: 'Blocking Transport: b_transport'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/b-transport.md
+  - slug: dmi
+    title: Direct Memory Interface (DMI)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/dmi.md
+  - slug: payload-extensions
+    title: Generic Payload Extensions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/payload-extensions.md
+  - slug: initiator-and-target-sockets
+    title: Initiator and Target Sockets
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/initiator-and-target-sockets.md
+  - slug: interoperability-layer
+    title: Interoperability and the Convenience Sockets
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interoperability-layer.md
+  - slug: nb-transport
+    title: 'Non-Blocking Transport: nb_transport'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/nb-transport.md
+  - slug: transaction-routing-exercise
+    title: Route Transactions Through an Address-Mapped Bus
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/transaction-routing-exercise.md
+  - slug: routing-transactions
+    title: Routing Transactions by Address
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/routing-transactions.md
+  - slug: debug-transport
+    title: The Debug Transport Interface
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/debug-transport.md
+  - slug: generic-payload
+    title: The Generic Payload
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/generic-payload.md
+  - slug: tlm2-overview
+    title: TLM-2.0 Overview and Goals
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/tlm2-overview.md
+  - slug: what-is-tlm
+    title: What Is Transaction-Level Modeling?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-tlm.md
+  - slug: why-tlm-is-faster
+    title: Why TLM Is Faster than RTL
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/why-tlm-is-faster.md
+  - slug: vp-transaction-routing-exercise
+    title: 'Exercise Prompt: Route Transactions Through an Address-Mapped Bus'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-transaction-routing-exercise.prompt.md
+  - slug: quiz-tlm2-fundamentals
+    title: 'Quiz: TLM-2.0 Fundamentals'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-tlm2-fundamentals.md
+- title: TLM Coding Styles
+  order_index: 21
+  lessons:
+  - slug: approximately-timed-style
+    title: Approximately-Timed (AT) Coding Style
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/approximately-timed-style.md
+  - slug: choosing-a-coding-style
+    title: Choosing a Coding Style for a Use Case
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/choosing-a-coding-style.md
+  - slug: quantum-budget-exercise
+    title: Compute Sync Points from a Time Quantum
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/quantum-budget-exercise.md
+  - slug: loosely-timed-style
+    title: Loosely-Timed (LT) Coding Style
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/loosely-timed-style.md
+  - slug: lt-vs-at
+    title: 'LT vs AT: Speed and Accuracy Tradeoffs'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/lt-vs-at.md
+  - slug: modeling-latency
+    title: Modeling Latency and Bandwidth
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/modeling-latency.md
+  - slug: phases-in-at
+    title: 'Phases in AT: BEGIN_REQ to END_RESP'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/phases-in-at.md
+  - slug: temporal-decoupling
+    title: Temporal Decoupling
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/temporal-decoupling.md
+  - slug: quantum-keeper
+    title: The Quantum Keeper and Local Time
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/quantum-keeper.md
+  - slug: vp-quantum-budget-exercise
+    title: Compute Sync Points from a Time Quantum
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-quantum-budget-exercise.prompt.md
+  - slug: quiz-tlm-coding-styles
+    title: 'Quiz: TLM Coding Styles and Timing'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-tlm-coding-styles.md
+- title: Buses & Interconnect
+  order_index: 22
+  lessons:
+  - slug: arbitration
+    title: Arbitration Among Multiple Initiators
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/arbitration.md
+  - slug: bus-bridges
+    title: Bus Bridges and Protocol Conversion
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bus-bridges.md
+  - slug: interconnect-topologies
+    title: Crossbars and NoC Topologies
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interconnect-topologies.md
+  - slug: amba-axi-ahb-overview
+    title: 'Real Protocols: AMBA AXI, AHB, APB'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/amba-axi-ahb-overview.md
+  - slug: arbitration-sim-exercise
+    title: Simulate Round-Robin Bus Arbitration
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/arbitration-sim-exercise.md
+  - slug: cpu-bus-interface
+    title: The CPU's Bus Interface
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cpu-bus-interface.md
+  - slug: what-is-a-bus-model
+    title: What Is a Bus/Interconnect Model?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-bus-model.md
+  - slug: vp-arbitration-sim-exercise
+    title: 'Exercise Prompt: Simulate Round-Robin Bus Arbitration'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-arbitration-sim-exercise.prompt.md
+  - slug: quiz-buses-and-interconnect
+    title: 'Quiz: Modeling Buses and Interconnect'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-buses-and-interconnect.md
+- title: Peripherals & Registers
+  order_index: 23
+  lessons:
+  - slug: w1c-register-exercise
+    title: Apply Write-1-to-Clear Register Semantics
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/w1c-register-exercise.md
+  - slug: register-spec-to-model
+    title: From a Register Spec to a Working Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/register-spec-to-model.md
+  - slug: peripheral-state-machines
+    title: Peripheral Internal State Machines
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/peripheral-state-machines.md
+  - slug: peripheral-register-programming
+    title: Programming a Peripheral via Its Registers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/peripheral-register-programming.md
+  - slug: register-callbacks
+    title: Read/Write Callbacks and Side Effects
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/register-callbacks.md
+  - slug: register-dump
+    title: Register Dumps and Interpreting Them
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/register-dump.md
+  - slug: what-is-a-peripheral-model
+    title: What Is a Peripheral Model?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-peripheral-model.md
+  - slug: what-is-a-register-model
+    title: What Is a Register Model?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-register-model.md
+  - slug: vp-w1c-register-exercise
+    title: 'Exercise: Apply Write-1-to-Clear Register Semantics'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-w1c-register-exercise.prompt.md
+  - slug: quiz-peripherals-and-registers
+    title: 'Quiz: Modeling Peripherals and Register Models'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-peripherals-and-registers.md
+- title: Embedded Peripherals
+  order_index: 24
+  lessons:
+  - slug: adc-and-pwm
+    title: 'ADC and PWM: Analog at the Edges'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/adc-and-pwm.md
+  - slug: gpio-fundamentals
+    title: 'GPIO: Reading and Driving Pins'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/gpio-fundamentals.md
+  - slug: hardware-timers-and-counters
+    title: Hardware Timers and Counters
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/hardware-timers-and-counters.md
+  - slug: i2c-protocol-basics
+    title: 'I2C: Two-Wire Addressed Bus'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/i2c-protocol-basics.md
+  - slug: other-io-models
+    title: Modeling Other I/O Devices
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/other-io-models.md
+  - slug: spi-protocol-basics
+    title: 'SPI: Master/Slave Synchronous Bus'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/spi-protocol-basics.md
+  - slug: watchdog-timers
+    title: Watchdog Timers and System Recovery
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/watchdog-timers.md
+  - slug: quiz-embedded-peripherals
+    title: 'Quiz: Embedded Peripherals and Interfaces'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-embedded-peripherals.md
+- title: Interrupts, Timers & DMA
+  order_index: 25
+  lessons:
+  - slug: clock-and-reset
+    title: Clock and Reset Distribution
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/clock-and-reset.md
+  - slug: irq-delivery-to-cpu
+    title: Delivering an IRQ to the CPU Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/irq-delivery-to-cpu.md
+  - slug: cpu-exceptions-and-traps
+    title: Exceptions and Traps in a CPU Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/cpu-exceptions-and-traps.md
+  - slug: interrupts-in-a-vp
+    title: How Interrupts Are Modeled in a VP
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interrupts-in-a-vp.md
+  - slug: interrupt-priorities
+    title: Interrupt Priorities and Nesting
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interrupt-priorities.md
+  - slug: level-vs-edge-interrupts
+    title: Level vs Edge-Triggered Interrupts
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/level-vs-edge-interrupts.md
+  - slug: virtual-dma
+    title: Modeling a Virtual DMA Engine
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-dma.md
+  - slug: virtual-timer
+    title: Modeling a Virtual Timer
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-timer.md
+  - slug: interrupt-controller-model
+    title: Modeling an Interrupt Controller (PLIC/GIC)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interrupt-controller-model.md
+  - slug: dma-transfer-exercise
+    title: Simulate a DMA Block Transfer
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/dma-transfer-exercise.md
+  - slug: fifo-simulation-exercise
+    title: Simulate a UART FIFO with Overflow Detection
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fifo-simulation-exercise.md
+  - slug: timer-tick-exercise
+    title: Simulate Timer Ticks and Interrupt Firing
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/timer-tick-exercise.md
+  - slug: vp-fifo-simulation-exercise
+    title: 'Exercise: Simulate a UART FIFO with Overflow Detection'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-fifo-simulation-exercise.prompt.md
+  - slug: vp-dma-transfer-exercise
+    title: 'Prompt: Simulate a DMA Block Transfer'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-dma-transfer-exercise.prompt.md
+  - slug: vp-timer-tick-exercise
+    title: 'Prompt: Simulate Timer Ticks and Interrupt Firing'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-timer-tick-exercise.prompt.md
+  - slug: quiz-interrupts-timers-dma
+    title: 'Quiz: Interrupts, Timers, and DMA'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-interrupts-timers-dma.md
+- title: The Virtual UART
+  order_index: 26
+  lessons:
+  - slug: uart-driver-bringup
+    title: Bringing Up a UART Driver Against the Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/uart-driver-bringup.md
+  - slug: char-device-backends
+    title: 'Character Device Backends: PTY, Socket, File'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/char-device-backends.md
+  - slug: uart-baud-divisor-calc
+    title: Computing a UART Baud-Rate Divisor
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/uart-baud-divisor-calc.md
+  - slug: connecting-to-host-console
+    title: Connecting a Virtual UART to the Host Console
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/connecting-to-host-console.md
+  - slug: tx-rx-fifos
+    title: Modeling TX/RX FIFOs
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/tx-rx-fifos.md
+  - slug: uart-register-interface
+    title: The UART Register Interface
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/uart-register-interface.md
+  - slug: uart-interrupts
+    title: UART Interrupts and Status Flags
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/uart-interrupts.md
+  - slug: uart-serial-communication
+    title: 'UART: Asynchronous Serial Communication'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/uart-serial-communication.md
+  - slug: virtual-uart-overview
+    title: What a Virtual UART Must Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-uart-overview.md
+  - slug: vp-uart-baud-divisor-calc
+    title: 'Exercise Prompt: Computing a UART Baud-Rate Divisor'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-uart-baud-divisor-calc.prompt.md
+  - slug: quiz-virtual-uart
+    title: 'Quiz: Modeling a Virtual UART and I/O'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-virtual-uart.md
+- title: CPU Modeling
+  order_index: 27
+  lessons:
+  - slug: host-vs-target-execution
+    title: Host vs Target Execution
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/host-vs-target-execution.md
+  - slug: integrating-external-iss
+    title: Integrating an External ISS (e.g. QEMU)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/integrating-external-iss.md
+  - slug: interpreted-vs-jit
+    title: Interpreted vs JIT-Based ISS
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interpreted-vs-jit.md
+  - slug: iss-vs-cycle-accurate-cpu
+    title: ISS vs Cycle-Accurate CPU Models
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/iss-vs-cycle-accurate-cpu.md
+  - slug: instruction-trace-parse-exercise
+    title: Parse an Instruction Trace to Find a Hang Loop
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-trace-parse-exercise.md
+  - slug: instruction-trace-from-cpu
+    title: Producing an Instruction Trace
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-trace-from-cpu.md
+  - slug: instruction-trace-analysis
+    title: Reading and Analyzing an Instruction Trace
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/instruction-trace-analysis.md
+  - slug: software-on-a-model
+    title: Running Real Software on a Hardware Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/software-on-a-model.md
+  - slug: iss-step-simulation-exercise
+    title: Step a Tiny ISS and Report Final Register State
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/iss-step-simulation-exercise.md
+  - slug: what-is-a-cpu-model
+    title: What Is a CPU Model?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-cpu-model.md
+  - slug: vp-iss-step-simulation-exercise
+    title: 'Exercise Prompt: Step a Tiny ISS and Report Final Register State'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-iss-step-simulation-exercise.prompt.md
+  - slug: vp-instruction-trace-parse-exercise
+    title: 'Prompt: Parse an Instruction Trace to Find a Hang Loop'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/vp-instruction-trace-parse-exercise.prompt.md
+  - slug: quiz-cpu-modeling
+    title: 'Quiz: Modeling the CPU'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-cpu-modeling.md
+- title: Boot Flow
+  order_index: 28
+  lessons:
+  - slug: platform-assembly
+    title: Assembling a Platform in sc_main
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/platform-assembly.md
+  - slug: boot-checkpointing
+    title: Boot Checkpointing and Snapshots
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/boot-checkpointing.md
+  - slug: boot-flow-overview
+    title: Boot Flow in a Virtual Platform
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/boot-flow-overview.md
+  - slug: boot-rom-and-stages
+    title: Boot ROM and Multi-Stage Boot
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/boot-rom-and-stages.md
+  - slug: device-tree
+    title: Device Tree and Hardware Description
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/device-tree.md
+  - slug: kernel-handoff
+    title: Handoff to the Linux Kernel
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/kernel-handoff.md
+  - slug: minimum-hardware-to-boot-linux
+    title: Minimum Modeled Hardware to Boot Linux
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/minimum-hardware-to-boot-linux.md
+  - slug: platform-bring-up-order
+    title: Platform Bring-Up Order
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/platform-bring-up-order.md
+  - slug: bootloader-role
+    title: The Bootloader's Role (U-Boot)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/bootloader-role.md
+  - slug: reset-vector
+    title: The Reset Vector and First Instruction
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/reset-vector.md
+  - slug: quiz-boot-flow
+    title: 'Quiz: Boot Flow and Bring-Up in a VP'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-boot-flow.md
+- title: Co-Simulation
+  order_index: 29
+  lessons:
+  - slug: co-sim-with-rtl
+    title: Co-Simulating with RTL Blocks
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/co-sim-with-rtl.md
+  - slug: iss-in-co-sim
+    title: Instruction-Set Simulators in Co-Simulation
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/iss-in-co-sim.md
+  - slug: co-sim-tooling-landscape
+    title: The Co-Simulation Tooling Landscape
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/co-sim-tooling-landscape.md
+  - slug: what-is-co-simulation
+    title: What Is HW/SW Co-Simulation?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-co-simulation.md
+  - slug: quiz-co-simulation
+    title: 'Quiz: HW/SW Co-Simulation Concepts'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-co-simulation.md
+- title: Debugging Virtual Prototypes
+  order_index: 30
+  lessons:
+  - slug: debugging-strategy
+    title: A Debugging Strategy for Virtual Platforms
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/debugging-strategy.md
+  - slug: gdb-with-a-vp
+    title: Attaching gdb to a Virtual Prototype
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/gdb-with-a-vp.md
+  - slug: debugging-memory-access-bugs
+    title: Debugging Memory-Access Bugs
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/debugging-memory-access-bugs.md
+  - slug: debugging-software-hangs
+    title: Debugging Software Hangs and Deadlocks
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/debugging-software-hangs.md
+  - slug: gdb-remote-stub
+    title: The gdb Remote Serial Protocol Stub
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/gdb-remote-stub.md
+  - slug: interview-question-bank
+    title: The VP/OS Interview Question Bank
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-question-bank.md
+  - slug: trace-logging
+    title: Trace Logging and Verbosity Levels
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/trace-logging.md
+  - slug: linux-not-booting
+    title: 'When Linux Won''t Boot: A Triage Checklist'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/linux-not-booting.md
+  - slug: quiz-debugging-vps
+    title: 'Quiz: Debugging Virtual Prototypes'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-debugging-vps.md

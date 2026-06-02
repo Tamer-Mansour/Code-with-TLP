@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   Subject,
@@ -10,6 +11,7 @@ import {
   ExerciseSummary,
   Exercise,
   LearningPath,
+  PathCourseProgress,
 } from '../models/types';
 
 @Injectable({ providedIn: 'root' })
@@ -67,5 +69,17 @@ export class CatalogService {
 
   getLearningPaths(): Observable<LearningPath[]> {
     return this.http.get<LearningPath[]>(`${this.base}/learning-paths`);
+  }
+
+  getLearningPath(slug: string): Observable<LearningPath> {
+    return this.http.get<LearningPath>(`${this.base}/learning-paths/${slug}`);
+  }
+
+  getLearningPathProgress(slug: string): Observable<PathCourseProgress[]> {
+    return this.http
+      .get<PathCourseProgress[] | { courses?: PathCourseProgress[] }>(
+        `${this.base}/learning-paths/${slug}/progress`
+      )
+      .pipe(map((r) => (Array.isArray(r) ? r : (r?.courses ?? []))));
   }
 }

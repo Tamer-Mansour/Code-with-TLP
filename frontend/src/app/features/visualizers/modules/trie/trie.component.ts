@@ -5,33 +5,10 @@ import { LucideAngularModule, Plus, Search, RotateCcw, GitBranch } from 'lucide-
 import { VizPlayerService } from '../../core/viz-player.service';
 import { VizFrame } from '../../core/viz-frame';
 import { Visualizer, VizMeta } from '../../core/visualizer.base';
-
-// ── Trie data model ───────────────────────────────────────────────────────────
-
-export interface TrieNode {
-  /** Unique stable ID (used as key in states map). */
-  id: string;
-  /** The character this node represents (empty string for root). */
-  char: string;
-  /** Whether this node marks the end of a complete word. */
-  isEnd: boolean;
-  /** Child nodes keyed by character. */
-  children: Map<string, TrieNode>;
-}
-
-/** Payload stored in every VizFrame.data for trie frames. */
-export interface TrieFrameData {
-  /** A serialisable snapshot of the trie for layout / rendering. */
-  root: TrieNodeSnapshot;
-}
-
-/** JSON-safe snapshot (Maps are not JSON-serialisable, so we use arrays). */
-export interface TrieNodeSnapshot {
-  id: string;
-  char: string;
-  isEnd: boolean;
-  children: TrieNodeSnapshot[];
-}
+import type {
+  TrieNode, TrieFrameData, TrieNodeSnapshot,
+  RenderedTrieNode, RenderedTrieEdge, LayoutNode,
+} from './models/trie.model';
 
 // ── Trie state tokens (used in VizFrame.states) ───────────────────────────────
 // 'current'  — node currently being examined
@@ -290,31 +267,6 @@ const NODE_R   = 18;
 const GAP_Y    = 72;
 const PAD      = 24;
 const MIN_H_GAP = 44;
-
-export interface RenderedTrieNode {
-  id: string;
-  char: string;
-  isEnd: boolean;
-  cx: number;
-  cy: number;
-  state: string;
-}
-
-export interface RenderedTrieEdge {
-  x1: number; y1: number;
-  x2: number; y2: number;
-  label: string;
-  labelX: number;
-  labelY: number;
-  state: string;
-}
-
-interface LayoutNode {
-  snap: TrieNodeSnapshot;
-  cx: number;
-  cy: number;
-  depth: number;
-}
 
 /**
  * Computes (x, y) for every node using a simple left-to-right leaf-counting

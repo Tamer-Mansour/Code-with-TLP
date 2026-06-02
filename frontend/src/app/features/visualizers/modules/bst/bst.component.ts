@@ -5,23 +5,9 @@ import { LucideAngularModule, Shuffle, Plus, Search } from 'lucide-angular';
 import { VizPlayerService } from '../../core/viz-player.service';
 import { VizFrame } from '../../core/viz-frame';
 import { Visualizer, VizMeta } from '../../core/visualizer.base';
-
-// ── BST data model ────────────────────────────────────────────────────────
-
-interface BstNode {
-  id: number;
-  value: number;
-  left: BstNode | null;
-  right: BstNode | null;
-}
-
-/** Payload inside VizFrame.data for BST frames. */
-interface BstFrameData {
-  /** IDs of nodes that should be visible in this frame. */
-  revealed: number[];
-  /** ID of the "born" node (gets pop animation), or -1. */
-  born: number;
-}
+import type {
+  BstNode, BstFrameData, NodePos, RenderedNode, RenderedEdge,
+} from './models/bst.model';
 
 // ── layout ────────────────────────────────────────────────────────────────
 
@@ -29,8 +15,6 @@ const NODE_R   = 22;
 const GAP_X    = 58;
 const GAP_Y    = 80;
 const PAD      = 12;
-
-interface NodePos { x: number; y: number; }
 
 function layoutTree(
   root: BstNode | null,
@@ -272,22 +256,6 @@ function buildDefaultTree(): BstNode {
 }
 
 // ── component ────────────────────────────────────────────────────────────
-
-/** View-model for one rendered node. */
-interface RenderedNode {
-  id: number;
-  value: number;
-  x: number;
-  y: number;
-  state: string;
-  born: boolean;
-  visible: boolean;
-}
-
-interface RenderedEdge {
-  x1: number; y1: number;
-  x2: number; y2: number;
-}
 
 @Component({
   selector: 'app-bst',

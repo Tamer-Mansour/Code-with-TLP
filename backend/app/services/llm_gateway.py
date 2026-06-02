@@ -66,6 +66,21 @@ PROVIDERS: list[ProviderInfo] = [
         models=["openai/gpt-4o-mini"],
         openai_compatible=True,
     ),
+    ProviderInfo(
+        id="gemini",
+        name="Google Gemini",
+        # Native Generative Language API (not OpenAI-compatible) — required for
+        # google_search grounding. Routed through the dedicated gemini_* helpers.
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        models=[
+            "gemini-2.5-flash",
+            "gemini-2.5-pro",
+            "gemini-2.0-flash",
+            "gemini-1.5-flash",
+            "gemini-1.5-pro",
+        ],
+        openai_compatible=False,
+    ),
 ]
 
 _PROVIDER_MAP: dict[str, ProviderInfo] = {p.id: p for p in PROVIDERS}
@@ -73,6 +88,101 @@ _PROVIDER_MAP: dict[str, ProviderInfo] = {p.id: p for p in PROVIDERS}
 
 def get_provider(provider_id: str) -> ProviderInfo | None:
     return _PROVIDER_MAP.get(provider_id)
+
+
+_GEMINI_DEFAULT_BASE = "https://generativelanguage.googleapis.com/v1beta"
+
+
+def _gemini_payload(messages: list[dict], web_search: bool, model: str) -> dict:
+    """Translate OpenAI-style messages into a Gemini generateContent payload."""
+    system_parts: list[dict] = []
+    contents: list[dict] = []
+    for m in messages:
+        text = m.get("content") or ""
+        role = m.get("role")
+        if role == "system":
+            if text:
+                system_parts.append({"text": text})
+            continue
+        gemini_role = "model" if role == "assistant" else "user"
+        contents.append({"role": gemini_role, "parts": [{"text": text}]})
+
+    payload: dict = {"contents": contents}
+    if system_parts:
+        payload["system_instruction"] = {"parts": system_parts}
+    if web_search:
+        # gemini-1.5 uses the legacy retrieval tool; 2.0+ uses google_search.
+        if model.startswith("gemini-1.5"):
+            payload["tools"] = [{"google_search_retrieval": {}}]
+        else:
+            payload["tools"] = [{"google_search": {}}]
+    return payload
+
+
+def gemini_complete(
+    api_key: str,
+    base_url: str,
+    model: str,
+    messages: list[dict],
+    web_search: bool = False,
+) -> str:
+    """Call Gemini's native generateContent endpoint and return the reply text."""
+    base = (base_url or _GEMINI_DEFAULT_BASE).rstrip("/")
+    url = f"{base}/models/{model}:generateContent"
+    payload = _gemini_payload(messages, web_search, model)
+    try:
+        response = httpx.post(url, params={"key": api_key}, json=payload, timeout=60)
+        response.raise_for_status()
+        data = response.json()
+        parts = data["candidates"][0]["content"]["parts"]
+        return "".join(p.get("text", "") for p in parts)
+    except (httpx.HTTPError, KeyError, IndexError, ValueError) as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Gemini error: {exc}",
+        ) from exc
+
+
+def gemini_complete_stream(
+    api_key: str,
+    base_url: str,
+    model: str,
+    messages: list[dict],
+    web_search: bool = False,
+) -> Iterator[str]:
+    """Stream Gemini's native streamGenerateContent reply token-by-token (SSE)."""
+    base = (base_url or _GEMINI_DEFAULT_BASE).rstrip("/")
+    url = f"{base}/models/{model}:streamGenerateContent"
+    payload = _gemini_payload(messages, web_search, model)
+    try:
+        with httpx.stream(
+            "POST",
+            url,
+            params={"alt": "sse", "key": api_key},
+            json=payload,
+            timeout=httpx.Timeout(120.0, connect=15.0),
+        ) as response:
+            response.raise_for_status()
+            for line in response.iter_lines():
+                if not line or not line.startswith("data:"):
+                    continue
+                raw = line[5:].strip()
+                if not raw or raw == "[DONE]":
+                    continue
+                try:
+                    obj = json.loads(raw)
+                    parts = obj["candidates"][0]["content"]["parts"]
+                except (json.JSONDecodeError, KeyError, IndexError):
+                    continue
+                for p in parts:
+                    text = p.get("text")
+                    if text:
+                        yield text
+    except httpx.HTTPError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Gemini stream error: {exc}",
+        ) from exc
 
 
 # ── Chat completion ─────────────────────────────────────────────────────────

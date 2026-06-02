@@ -35,14 +35,37 @@ from app.services.llm_gateway import (
     PROVIDERS,
     chat_complete,
     chat_complete_stream,
+    gemini_complete,
+    gemini_complete_stream,
     get_provider,
 )
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
 _SYSTEM_PROMPT = (
-    "You are TLP Chat, a helpful CS tutor for the Code with TLP learning platform."
+    "You are TLP Tutor, an expert and friendly computer-science tutor for the "
+    "Code with TLP learning platform. Help the student deeply understand what "
+    "they are studying: explain concepts simply with examples and analogies, "
+    "answer follow-up questions, translate the material into any language they "
+    "ask for, quiz them, and connect ideas to the broader subject. When web "
+    "search is enabled you may look things up and cite sources. Reply in clean "
+    "Markdown with short paragraphs, code blocks, and lists — concise but thorough."
 )
+
+_LESSON_CONTEXT_TEMPLATE = (
+    "\n\nThe student is currently reading the lesson below. Treat it as the "
+    "primary context: when they say \"this\", \"the lesson\", or ask to "
+    "explain / translate / summarise, they mean this content.\n\n"
+    "--- BEGIN LESSON CONTENT ---\n{context}\n--- END LESSON CONTENT ---"
+)
+
+
+def _build_system_prompt(context: str | None) -> str:
+    """Base tutor prompt, optionally augmented with the current lesson content."""
+    prompt = _SYSTEM_PROMPT
+    if context:
+        prompt += _LESSON_CONTEXT_TEMPLATE.format(context=context[:16000])
+    return prompt
 
 
 def _augment(message: str, attachments: list[ChatAttachment]) -> str:
@@ -313,19 +336,28 @@ def send_message(
             .order_by(ChatMessage.id)
         ).all()
     )
-    messages = [{"role": "system", "content": _SYSTEM_PROMPT}]
+    messages = [{"role": "system", "content": _build_system_prompt(payload.context)}]
     messages += [{"role": m.role, "content": m.content} for m in prior]
     messages.append({"role": "user", "content": augmented})
 
     # Call the LLM (may raise HTTPException 502).
     raw_key = decrypt(user_key.encrypted_key)
-    reply_text = chat_complete(
-        provider=provider_id,
-        api_key=raw_key,
-        base_url=base_url,
-        model=model,
-        messages=messages,
-    )
+    if provider_id == "gemini":
+        reply_text = gemini_complete(
+            api_key=raw_key,
+            base_url=base_url,
+            model=model,
+            messages=messages,
+            web_search=payload.web_search,
+        )
+    else:
+        reply_text = chat_complete(
+            provider=provider_id,
+            api_key=raw_key,
+            base_url=base_url,
+            model=model,
+            messages=messages,
+        )
 
     # Persist the assistant reply.
     assistant_msg = ChatMessage(
@@ -394,7 +426,7 @@ def stream_message(
             .order_by(ChatMessage.id)
         ).all()
     )
-    messages = [{"role": "system", "content": _SYSTEM_PROMPT}]
+    messages = [{"role": "system", "content": _build_system_prompt(payload.context)}]
     messages += [{"role": m.role, "content": m.content} for m in prior]
     messages.append({"role": "user", "content": augmented})
 
@@ -408,11 +440,16 @@ def stream_message(
 
     # Capture plain values for the generator (request-scoped db will be closed).
     sid, mdl, pid, burl = session_id, model, provider_id, base_url
+    web_search = payload.web_search
 
     def event_stream():
         collected: list[str] = []
         try:
-            for token in chat_complete_stream(pid, raw_key, burl, mdl, messages):
+            if pid == "gemini":
+                stream = gemini_complete_stream(raw_key, burl, mdl, messages, web_search)
+            else:
+                stream = chat_complete_stream(pid, raw_key, burl, mdl, messages)
+            for token in stream:
                 collected.append(token)
                 yield f"data: {json.dumps({'token': token})}\n\n"
         except HTTPException as exc:

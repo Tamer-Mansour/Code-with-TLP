@@ -32,12 +32,7 @@ import { CatalogService } from '../../../core/services/catalog.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { SubmissionService } from '../../../core/services/submission.service';
 import { ExerciseSummary, ExerciseDifficulty, LANGUAGE_LABELS } from '../../../core/models/types';
-
-interface FilterState {
-  q: string;
-  difficulty: string;
-  language: string;
-}
+import type { FilterState } from '../models/exercise-list.model';
 
 const PAGE_SIZE = 12;
 

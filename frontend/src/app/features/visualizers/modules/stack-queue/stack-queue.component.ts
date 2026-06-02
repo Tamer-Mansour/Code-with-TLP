@@ -5,25 +5,7 @@ import { LucideAngularModule, RotateCcw, Plus, Minus, ArrowRight, ArrowLeft } fr
 import { VizPlayerService } from '../../core/viz-player.service';
 import { VizFrame } from '../../core/viz-frame';
 import { Visualizer, VizMeta } from '../../core/visualizer.base';
-
-// ── types ────────────────────────────────────────────────────────────────────
-
-/** A single element held in the stack or queue. */
-interface SQElement {
-  /** Unique ID so @for tracking + states map works correctly. */
-  id: number;
-  value: number;
-}
-
-/** Payload stored in every VizFrame.data for this visualiser. */
-interface SQFrameData {
-  /** Ordered list of element IDs (top-of-stack = last, front-of-queue = first). */
-  order: number[];
-  /** The element ID that was just pushed/popped/enqueued/dequeued (may be undefined). */
-  activeId?: number;
-  /** Current structure type being shown. */
-  mode: 'stack' | 'queue';
-}
+import type { SQElement, SQFrameData } from './models/stack-queue.model';
 
 // ── pure frame builders ───────────────────────────────────────────────────────
 

@@ -12,7 +12,8 @@ import {
   LucideAngularModule,
   Key, Plus, Trash2, Eye, EyeOff, Loader2, Bot, ChevronDown, AlertCircle,
 } from 'lucide-angular';
-import { ChatService, AiProvider, AiKey, AiKeyCreate } from '../../../core/services/chat.service';
+import { ChatService } from '../../../core/services/chat.service';
+import type { AiProvider, AiKey, AiKeyCreate } from '../../../core/models/chat.model';
 
 @Component({
   selector: 'app-ai-keys',

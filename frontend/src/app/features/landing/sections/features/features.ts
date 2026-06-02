@@ -12,18 +12,7 @@ import {
   Moon,
 } from 'lucide-angular';
 import { RevealDirective } from '../../shared/reveal.directive';
-
-export interface FeatureCard {
-  icon: any;
-  title: string;
-  description: string;
-  /** Tailwind col-span class at lg breakpoint */
-  colSpan: string;
-  /** Tailwind row-span class at lg breakpoint */
-  rowSpan: string;
-  /** Whether to apply the accent gradient ring */
-  accent: boolean;
-}
+import type { FeatureCard } from '../../models/features.model';
 
 @Component({
   selector: 'app-landing-features',

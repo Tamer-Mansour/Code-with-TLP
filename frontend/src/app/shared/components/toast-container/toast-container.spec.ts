@@ -3,7 +3,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { ToastContainerComponent } from './toast-container';
-import { ToastService, Toast } from '../../../core/services/toast.service';
+import { ToastService } from '../../../core/services/toast.service';
+import type { Toast } from '../../../core/models/toast.model';
 
 function makeToast(overrides: Partial<Toast> = {}): Toast {
   return {

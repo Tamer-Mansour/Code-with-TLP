@@ -8,41 +8,10 @@ import {
 import { VizPlayerService } from '../../core/viz-player.service';
 import { VizFrame } from '../../core/viz-frame';
 import { Visualizer, VizMeta } from '../../core/visualizer.base';
-
-// ── AVL data model ────────────────────────────────────────────────────────────
-
-interface AvlNode {
-  id: number;
-  value: number;
-  height: number;   // height of subtree rooted here
-  left: AvlNode | null;
-  right: AvlNode | null;
-}
-
-/**
- * Payload inside VizFrame.data for AVL frames.
- * The full serialised tree is cloned into every frame so the renderer
- * can lay it out independently.
- */
-interface AvlFrameData {
-  /** Serialised tree root (null when the tree is empty). */
-  root: SerialNode | null;
-  /** Node ID that was just born (gets pop animation), or -1. */
-  born: number;
-}
-
-/**
- * A plain-object mirror of AvlNode used inside VizFrame.data.
- * We serialise to this so frames remain pure JSON (no circular refs).
- */
-interface SerialNode {
-  id: number;
-  value: number;
-  height: number;
-  bf: number;           // balance factor at snapshot time
-  left: SerialNode | null;
-  right: SerialNode | null;
-}
+import type {
+  AvlNode, AvlFrameData, SerialNode, NodePos, Recorder,
+  RenderedNode, RenderedEdge,
+} from './models/avl-tree.model';
 
 // ── layout ────────────────────────────────────────────────────────────────────
 
@@ -50,8 +19,6 @@ const NODE_R = 24;   // circle radius px
 const GAP_X  = 62;   // horizontal gap between in-order positions
 const GAP_Y  = 84;   // vertical gap between levels
 const PAD    = 16;   // canvas padding
-
-interface NodePos { x: number; y: number; }
 
 function layoutTree(
   root: SerialNode | null,
@@ -161,18 +128,6 @@ function rotateLeft(x: AvlNode): AvlNode {
 }
 
 // ── frame-recording insert ────────────────────────────────────────────────────
-
-/**
- * Stateful recorder passed through the recursive insert so we can
- * push frames at each significant step without returning giant tuples.
- */
-interface Recorder {
-  frames: VizFrame[];
-  /** The id of the newly created node (set once, never changes). */
-  createdId: number;
-  /** All node IDs visible at the point of the last pushed frame. */
-  rootAtFrame: () => SerialNode | null;
-}
 
 /**
  * Insert `value` into the subtree `n`, pushing annotated frames
@@ -399,25 +354,6 @@ function buildRandomTree(count = 8): { root: AvlNode; allFrames: VizFrame[] } {
   }
 
   return { root: root!, allFrames };
-}
-
-// ── view-model types ──────────────────────────────────────────────────────────
-
-interface RenderedNode {
-  id: number;
-  value: number;
-  bf: number;
-  height: number;
-  x: number;
-  y: number;
-  state: string;
-  born: boolean;
-  visible: boolean;
-}
-
-interface RenderedEdge {
-  x1: number; y1: number;
-  x2: number; y2: number;
 }
 
 // ── component ────────────────────────────────────────────────────────────────

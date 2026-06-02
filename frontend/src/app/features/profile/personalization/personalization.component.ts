@@ -12,18 +12,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { UserSettingsService } from '../../../core/services/user-settings.service';
 import { ToastService } from '../../../core/services/toast.service';
 import type { ColorScheme, FontFamily, ThemeMode, UserSettingsUpdate } from '../../../core/models/types';
-
-interface ColorOption {
-  value: ColorScheme;
-  label: string;
-  hex: string;
-}
-
-interface FontOption {
-  value: FontFamily;
-  label: string;
-  preview: string;
-}
+import type { ColorOption, FontOption } from '../models/personalization.model';
 
 const COLOR_OPTIONS: ColorOption[] = [
   { value: 'red',     label: 'Red',     hex: '#ef4444' },

@@ -13,17 +13,9 @@ import { MonacoEditorComponent } from '../../../shared/components/monaco-editor/
 import { AdminService } from '../../../core/services/admin.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { LANGUAGE_LABELS, MONACO_LANGUAGE_MAP, SupportedLanguage } from '../../../core/models/types';
+import type { ExerciseRow } from '../models/admin-exercises.model';
 
 const ALL_LANGUAGES: SupportedLanguage[] = ['python', 'javascript', 'typescript', 'java', 'csharp'];
-
-interface ExerciseRow {
-  id: number;
-  title: string;
-  slug: string;
-  difficulty: string;
-  supported_languages: SupportedLanguage[];
-  is_published: boolean;
-}
 
 @Component({
   selector: 'app-admin-exercises',
