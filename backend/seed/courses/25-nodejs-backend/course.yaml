@@ -16,20 +16,34 @@ course:
     validation, authentication, error handling, and the operational
     practices for shipping Node services to production.
   difficulty: intermediate
-  estimated_hours: 12
+  estimated_hours: 20
   is_published: true
   order_index: 25
 
 modules:
   - title: Node Fundamentals
-    summary: Runtime, event loop, modules.
+    summary: Runtime, event loop, modules, and the npm ecosystem.
     order_index: 1
     lessons:
+      - slug: node-video-intro
+        title: "Node.js and Express Crash Course (Video)"
+        type: video
+        duration_minutes: 90
+        video_url: "https://www.youtube.com/results?search_query=node.js+express+crash+course+freeCodeCamp"
+        content_file: lessons/node-video-intro.md
+
       - slug: node-runtime
         title: The Node Runtime and Event Loop
         type: reading
         duration_minutes: 12
         content_file: lessons/node-runtime.md
+
+      - slug: node-modules-npm
+        title: Node Modules and the npm Ecosystem
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/node-modules-npm.md
+
       - slug: node-quiz
         title: Quiz - Node Basics
         type: quiz
@@ -37,7 +51,7 @@ modules:
         content_file: lessons/node-quiz.md
 
   - title: HTTP and Express
-    summary: Building APIs.
+    summary: Building REST APIs with native http and Express.
     order_index: 2
     lessons:
       - slug: native-http
@@ -45,26 +59,65 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/native-http.md
+
       - slug: express-basics
-        title: Express - Routing and Middleware
+        title: "Express: Routing and Middleware"
         type: reading
         duration_minutes: 12
         content_file: lessons/express-basics.md
+
       - slug: rest-design
         title: REST API Design
         type: reading
         duration_minutes: 12
         content_file: lessons/rest-design.md
 
+      - slug: fastify-intro
+        title: Introduction to Fastify
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/fastify-intro.md
+
   - title: Production Concerns
-    summary: Validation, auth, errors.
+    summary: Validation, auth, error handling, security, and logging.
     order_index: 3
     lessons:
+      - slug: input-validation
+        title: Input Validation with Zod
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/input-validation.md
+
       - slug: auth-and-jwt
         title: Authentication with JWT
         type: reading
         duration_minutes: 12
         content_file: lessons/auth-and-jwt.md
+
+      - slug: error-handling
+        title: Error Handling in Express
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/error-handling.md
+
+      - slug: rate-limiting-security
+        title: Rate Limiting and API Security
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/rate-limiting-security.md
+
+      - slug: structured-logging
+        title: Structured Logging with Pino
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/structured-logging.md
+
+      - slug: production-quiz
+        title: Quiz - Production Concerns
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/production-quiz.md
+
       - slug: route-match-exercise
         title: Route Matcher
         type: exercise
@@ -141,3 +194,127 @@ modules:
                 expected_stdout: "NO MATCH"
                 is_hidden: true
                 weight: 1
+
+  - title: Database Integration
+    summary: Connecting Node APIs to PostgreSQL — raw queries, pools, and Prisma ORM.
+    order_index: 4
+    lessons:
+      - slug: database-video
+        title: "Node.js with PostgreSQL (Video)"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=node.js+postgresql+pg+driver+tutorial"
+        content_file: lessons/database-video.md
+
+      - slug: database-integration
+        title: "Database Integration — PostgreSQL with node-postgres"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/database-integration.md
+
+      - slug: http-status-exercise
+        title: HTTP Status Code Classifier
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/http-status-exercise.md
+        exercises:
+          - slug: http-status-classifier
+            title: HTTP Status Code Classifier
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/http-status-classifier.prompt.md
+            supported_languages: [python]
+            tags: [http, classification]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    # TODO: classify each status code
+                    for i in range(1, n + 1):
+                        code = int(data[i])
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def classify(code):
+                    if 100 <= code <= 199:
+                        return "Informational"
+                    elif 200 <= code <= 299:
+                        return "Success"
+                    elif 300 <= code <= 399:
+                        return "Redirection"
+                    elif 400 <= code <= 499:
+                        return "Client Error"
+                    else:
+                        return "Server Error"
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    for i in range(1, n + 1):
+                        code = int(data[i])
+                        print(f"{code} {classify(code)}")
+
+                solve()
+            test_cases:
+              - name: mixed-codes
+                stdin: "4\n200\n404\n301\n500\n"
+                expected_stdout: "200 Success\n404 Client Error\n301 Redirection\n500 Server Error"
+                is_hidden: false
+                weight: 1
+              - name: informational
+                stdin: "2\n100\n101\n"
+                expected_stdout: "100 Informational\n101 Informational"
+                is_hidden: false
+                weight: 1
+              - name: all-2xx
+                stdin: "3\n201\n204\n200\n"
+                expected_stdout: "201 Success\n204 Success\n200 Success"
+                is_hidden: true
+                weight: 1
+              - name: client-and-server
+                stdin: "3\n401\n403\n503\n"
+                expected_stdout: "401 Client Error\n403 Client Error\n503 Server Error"
+                is_hidden: true
+                weight: 1
+
+  - title: Testing
+    summary: Unit tests, integration tests, and the Node built-in test runner.
+    order_index: 5
+    lessons:
+      - slug: testing-node
+        title: Testing Node.js APIs
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/testing-node.md
+
+  - title: Deployment and Operations
+    summary: Process management, Docker, health checks, and graceful shutdown.
+    order_index: 6
+    lessons:
+      - slug: deployment-video
+        title: "Dockerising a Node.js App (Video)"
+        type: video
+        duration_minutes: 40
+        video_url: "https://www.youtube.com/results?search_query=dockerize+node.js+express+app+tutorial+dockerfile"
+        content_file: lessons/deployment-video.md
+
+      - slug: deployment-node
+        title: Deploying Node.js APIs
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/deployment-node.md
+
+      - slug: env-config-quiz
+        title: "Quiz: Database, Testing, and Deployment"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/env-config-quiz.md

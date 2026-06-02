@@ -17,7 +17,7 @@ course:
     data structures, the canonical caching patterns, persistence trade-offs,
     and how Redis Cluster scales out.
   difficulty: intermediate
-  estimated_hours: 14
+  estimated_hours: 18
   is_published: true
   order_index: 15
 
@@ -37,13 +37,13 @@ modules:
         duration_minutes: 8
         content_file: lessons/redis-cli-tour.md
       - slug: redis-quiz
-        title: Quiz - Redis Basics
+        title: "Quiz: Redis Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/redis-quiz.md
 
   - title: Data Structures
-    summary: Strings, hashes, lists, sets, sorted sets - and when to use each.
+    summary: "Strings, hashes, lists, sets, sorted sets — and when to use each."
     order_index: 2
     lessons:
       - slug: strings-and-hashes
@@ -63,7 +63,7 @@ modules:
         content_file: lessons/zset-exercise.md
         exercises:
           - slug: redis-zset-leaderboard
-            title: Sorted-Set Leaderboard (ZADD/ZRANGE Simulation)
+            title: "Sorted-Set Leaderboard (ZADD/ZRANGE Simulation)"
             difficulty: medium
             points: 25
             prompt_file: lessons/redis-zset-leaderboard.prompt.md
@@ -122,12 +122,27 @@ modules:
                 is_hidden: true
                 weight: 1
 
-  - title: Caching Patterns
-    summary: Cache-aside, write-through, TTLs, and stampede protection.
+  - title: Advanced Data Structures
+    summary: "HyperLogLog, Bitmaps, and Geospatial — compact structures for analytics and location."
     order_index: 3
     lessons:
+      - slug: hyperloglog-bitmaps
+        title: HyperLogLog and Bitmaps
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/hyperloglog-bitmaps.md
+      - slug: geospatial-indexes
+        title: Geospatial Indexes
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/geospatial-indexes.md
+
+  - title: Caching Patterns
+    summary: "Cache-aside, write-through, TTLs, and stampede protection."
+    order_index: 4
+    lessons:
       - slug: caching-patterns
-        title: Cache-aside, Write-through, and TTLs
+        title: "Cache-aside, Write-through, and TTLs"
         type: reading
         duration_minutes: 12
         content_file: lessons/caching-patterns.md
@@ -138,8 +153,8 @@ modules:
         content_file: lessons/stampede-and-locks.md
 
   - title: Persistence and Replication
-    summary: RDB, AOF, replication, and Sentinel.
-    order_index: 4
+    summary: "RDB, AOF, replication, and Sentinel."
+    order_index: 5
     lessons:
       - slug: rdb-vs-aof
         title: RDB vs AOF Persistence
@@ -152,9 +167,9 @@ modules:
         duration_minutes: 10
         content_file: lessons/replication-and-sentinel.md
 
-  - title: Pub/Sub, Streams, and Cluster
+  - title: "Pub/Sub, Streams, and Cluster"
     summary: Messaging primitives and horizontal scale.
-    order_index: 5
+    order_index: 6
     lessons:
       - slug: pubsub-and-streams
         title: Pub/Sub and Streams
@@ -166,3 +181,114 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/redis-cluster.md
+
+  - title: Production Operations
+    summary: "Monitoring, key design, memory optimization, and a video overview."
+    order_index: 7
+    lessons:
+      - slug: redis-production-video
+        title: Redis in Production — Full Course Video
+        type: video
+        duration_minutes: 90
+        content_file: lessons/redis-production-video.md
+        video_url: "https://www.youtube.com/results?search_query=redis+crash+course+production+freeCodeCamp"
+      - slug: monitoring-redis
+        title: Monitoring Redis in Production
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/monitoring-redis.md
+      - slug: key-naming-memory
+        title: Key Naming Conventions and Memory Optimization
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/key-naming-memory.md
+      - slug: redis-ops-quiz
+        title: "Quiz: Persistence and Operations"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/redis-ops-quiz.md
+
+  - title: Real-World Patterns
+    summary: "Sessions, rate limiting — the two most common Redis use cases in web backends."
+    order_index: 8
+    lessons:
+      - slug: redis-session-store
+        title: Redis as a Session Store
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/redis-session-store.md
+      - slug: rate-limiting-redis
+        title: Rate Limiting with Redis
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/rate-limiting-redis.md
+      - slug: redis-rate-limiter-exercise
+        title: Build a Fixed-Window Rate Limiter
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/redis-rate-limiter-exercise.md
+        exercises:
+          - slug: redis-rate-limiter
+            title: Fixed-Window Rate Limiter Simulation
+            difficulty: easy
+            points: 20
+            prompt_file: lessons/redis-rate-limiter.prompt.md
+            supported_languages: [python]
+            tags: [redis, rate-limiting, simulation]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    # TODO
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = [l for l in sys.stdin.read().splitlines() if l.strip()]
+                    w, l = map(int, lines[0].split())
+                    n = int(lines[1])
+                    counts = {}
+                    for i in range(2, 2 + n):
+                        parts = lines[i].split()
+                        t = int(parts[0])
+                        user = parts[1]
+                        bucket = (user, t // w)
+                        counts[bucket] = counts.get(bucket, 0) + 1
+                        if counts[bucket] <= l:
+                            print("ALLOW")
+                        else:
+                            print("DENY")
+
+                solve()
+            test_cases:
+              - name: basic-deny
+                stdin: "10 2\n4\n0 alice\n3 alice\n7 alice\n9 alice\n"
+                expected_stdout: "ALLOW\nALLOW\nDENY\nDENY"
+                is_hidden: false
+                weight: 1
+              - name: window-reset
+                stdin: "60 3\n5\n0 alice\n10 alice\n20 alice\n30 alice\n60 alice\n"
+                expected_stdout: "ALLOW\nALLOW\nALLOW\nDENY\nALLOW"
+                is_hidden: false
+                weight: 1
+              - name: multi-user
+                stdin: "10 1\n4\n0 alice\n0 bob\n5 alice\n5 bob\n"
+                expected_stdout: "ALLOW\nALLOW\nDENY\nDENY"
+                is_hidden: false
+                weight: 1
+              - name: limit-one-per-second
+                stdin: "1 1\n4\n0 a\n0 a\n1 a\n1 a\n"
+                expected_stdout: "ALLOW\nDENY\nALLOW\nDENY"
+                is_hidden: true
+                weight: 1
+              - name: large-limit-no-deny
+                stdin: "100 1000\n3\n0 x\n50 x\n99 x\n"
+                expected_stdout: "ALLOW\nALLOW\nALLOW"
+                is_hidden: true
+                weight: 1

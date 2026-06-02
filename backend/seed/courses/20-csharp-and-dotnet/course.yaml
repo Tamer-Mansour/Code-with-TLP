@@ -16,14 +16,25 @@ course:
     LINQ, async/await, and the ASP.NET Core web framework you'll reach for
     in production.
   difficulty: intermediate
-  estimated_hours: 14
+  estimated_hours: 22
   is_published: true
   order_index: 20
 
 modules:
-  - title: C# Basics
-    summary: dotnet CLI, types, and the language flavor.
+  - title: Getting Started
+    summary: A video overview of C# and .NET before diving into the language.
     order_index: 1
+    lessons:
+      - slug: csharp-intro-video
+        title: "C# Full Course for Beginners (freeCodeCamp)"
+        type: video
+        duration_minutes: 60
+        video_url: "https://www.youtube.com/results?search_query=csharp+full+course+freeCodeCamp+beginners"
+        content_file: lessons/csharp-intro-video.md
+
+  - title: C# Basics
+    summary: dotnet CLI, types, control flow, and the language flavor.
+    order_index: 2
     lessons:
       - slug: dotnet-and-hello
         title: dotnet CLI and Hello, C#
@@ -35,25 +46,55 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/csharp-types.md
+      - slug: csharp-control-flow
+        title: Control Flow and Pattern Matching
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/csharp-control-flow.md
+      - slug: arrays-and-collections
+        title: Arrays and Collections
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/arrays-and-collections.md
+      - slug: strings-in-csharp
+        title: Strings in C#
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/strings-in-csharp.md
       - slug: csharp-quiz
-        title: Quiz - C# Basics
+        title: "Quiz: C# Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/csharp-quiz.md
 
   - title: OOP and Records
-    summary: Classes, records, structs, interfaces.
-    order_index: 2
+    summary: Classes, records, structs, interfaces, generics, and polymorphism.
+    order_index: 3
     lessons:
       - slug: classes-records-structs
         title: Classes, Records, Structs
         type: reading
         duration_minutes: 12
         content_file: lessons/classes-records-structs.md
+      - slug: inheritance-and-polymorphism
+        title: Inheritance and Polymorphism
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/inheritance-and-polymorphism.md
+      - slug: interfaces-and-generics
+        title: Interfaces and Generics
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/interfaces-and-generics.md
+      - slug: oop-quiz
+        title: "Quiz: OOP in C#"
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/oop-quiz.md
 
   - title: LINQ and Async
     summary: Querying collections and async/await.
-    order_index: 3
+    order_index: 4
     lessons:
       - slug: linq
         title: LINQ
@@ -61,10 +102,16 @@ modules:
         duration_minutes: 14
         content_file: lessons/linq.md
       - slug: async-await-csharp
-        title: async / await
+        title: "async / await"
         type: reading
         duration_minutes: 12
         content_file: lessons/async-await-csharp.md
+      - slug: async-await-video
+        title: "Video: async/await Deep Dive"
+        type: video
+        duration_minutes: 30
+        video_url: "https://www.youtube.com/results?search_query=csharp+async+await+deep+dive+dotnet"
+        content_file: lessons/async-await-video.md
       - slug: linq-exercise
         title: LINQ-style Aggregation
         type: exercise
@@ -133,11 +180,103 @@ modules:
                 weight: 1
 
   - title: ASP.NET Core
-    summary: Minimal APIs and dependency injection.
-    order_index: 4
+    summary: Minimal APIs, dependency injection, middleware, and controllers.
+    order_index: 5
     lessons:
       - slug: aspnet-core-minimal
         title: ASP.NET Core Minimal APIs
         type: reading
         duration_minutes: 12
         content_file: lessons/aspnet-core-minimal.md
+      - slug: dependency-injection
+        title: Dependency Injection
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/dependency-injection.md
+      - slug: middleware-and-pipeline
+        title: Middleware and the Request Pipeline
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/middleware-and-pipeline.md
+      - slug: routing-and-controllers
+        title: Routing and Controllers
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/routing-and-controllers.md
+      - slug: aspnet-quiz
+        title: "Quiz: ASP.NET Core"
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/aspnet-quiz.md
+
+  - title: Testing and Quality
+    summary: Unit testing with xUnit and Moq, plus a string-processing exercise.
+    order_index: 6
+    lessons:
+      - slug: unit-testing-csharp
+        title: Unit Testing with xUnit and Moq
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/unit-testing-csharp.md
+      - slug: string-exercise
+        title: Word Frequency Counter
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/string-exercise.md
+        exercises:
+          - slug: cs-net-word-freq
+            title: Word Frequency Counter
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/cs-net-word-freq.prompt.md
+            supported_languages: [python]
+            tags: [strings, collections, sorting]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    words = line.split()
+                    counts = {}
+                    for w in words:
+                        counts[w] = counts.get(w, 0) + 1
+                    sorted_words = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
+                    for word, cnt in sorted_words:
+                        print(f"{word} {cnt}")
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "the cat sat on the mat the cat\n"
+                expected_stdout: "the 3\ncat 2\nmat 1\non 1\nsat 1"
+                is_hidden: false
+                weight: 1
+              - name: two-words
+                stdin: "hello world hello\n"
+                expected_stdout: "hello 2\nworld 1"
+                is_hidden: false
+                weight: 1
+              - name: single-word
+                stdin: "a\n"
+                expected_stdout: "a 1"
+                is_hidden: false
+                weight: 1
+              - name: tie-alphabetical
+                stdin: "b a b a c\n"
+                expected_stdout: "a 2\nb 2\nc 1"
+                is_hidden: true
+                weight: 1
+              - name: all-same
+                stdin: "go go go go\n"
+                expected_stdout: "go 4"
+                is_hidden: true
+                weight: 1

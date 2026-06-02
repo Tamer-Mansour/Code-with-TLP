@@ -17,7 +17,7 @@ course:
     indexes, schema design (embed vs reference), transactions, replication, and
     sharding.
   difficulty: intermediate
-  estimated_hours: 16
+  estimated_hours: 20
   is_published: true
   order_index: 13
 
@@ -27,7 +27,7 @@ modules:
     order_index: 1
     lessons:
       - slug: nosql-vs-sql
-        title: NoSQL vs SQL - When to Use What
+        title: "NoSQL vs SQL - When to Use What"
         type: reading
         duration_minutes: 10
         content_file: lessons/nosql-vs-sql.md
@@ -37,33 +37,125 @@ modules:
         duration_minutes: 10
         content_file: lessons/install-and-mongosh.md
       - slug: documents-and-bson
-        title: Documents, BSON, and the _id Field
+        title: "Documents, BSON, and the _id Field"
         type: reading
         duration_minutes: 10
         content_file: lessons/documents-and-bson.md
       - slug: mongo-basics-quiz
-        title: Quiz - Mongo Basics
+        title: "Quiz - Mongo Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/mongo-basics-quiz.md
+      - slug: mongodb-full-course-video
+        title: MongoDB Full Course (freeCodeCamp)
+        type: video
+        duration_minutes: 120
+        video_url: "https://www.youtube.com/results?search_query=mongodb+full+course+freeCodeCamp"
+        content_file: lessons/mongodb-full-course-video.md
 
   - title: CRUD Operations
-    summary: insert, find, update, delete with operators.
+    summary: "insert, find, update, delete with operators."
     order_index: 2
     lessons:
       - slug: crud-find-and-projection
-        title: find, Filters, and Projection
+        title: "find, Filters, and Projection"
         type: reading
         duration_minutes: 12
         content_file: lessons/crud-find-and-projection.md
       - slug: crud-update-delete
-        title: updateOne, updateMany, deleteMany
+        title: "updateOne, updateMany, deleteMany"
         type: reading
         duration_minutes: 12
         content_file: lessons/crud-update-delete.md
+      - slug: crud-filter-exercise
+        title: Simulate MongoDB Query Filtering
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/crud-filter-exercise.md
+        exercises:
+          - slug: mongo-crud-filter
+            title: Simulate MongoDB Query Filtering
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/mongo-crud-filter.prompt.md
+            supported_languages: [python]
+            tags: [mongodb, crud, filtering]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    # TODO
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    if not data:
+                        return
+                    n = int(data[0])
+                    field, op, value = data[1].split()
+                    value = int(value)
+                    docs = []
+                    for line in data[2:2 + n]:
+                        pairs = line.split()
+                        doc = {}
+                        for pair in pairs:
+                            k, v = pair.split(":")
+                            doc[k] = int(v)
+                        docs.append((line, doc))
+
+                    ops = {
+                        "eq":  lambda a, b: a == b,
+                        "gt":  lambda a, b: a > b,
+                        "lt":  lambda a, b: a < b,
+                        "gte": lambda a, b: a >= b,
+                        "lte": lambda a, b: a <= b,
+                    }
+                    cmp = ops[op]
+                    results = [raw for raw, doc in docs if field in doc and cmp(doc[field], value)]
+                    if results:
+                        print("\n".join(results))
+                    else:
+                        print("none")
+
+                solve()
+            test_cases:
+              - name: basic-gt
+                stdin: "3\nage gt 25\nname:Alice age:30\nname:Bob age:20\nname:Carol age:35\n"
+                expected_stdout: "name:Alice age:30\nname:Carol age:35"
+                is_hidden: false
+                weight: 1
+              - name: eq-match
+                stdin: "3\nscore eq 100\nid:1 score:100\nid:2 score:90\nid:3 score:100\n"
+                expected_stdout: "id:1 score:100\nid:3 score:100"
+                is_hidden: false
+                weight: 1
+              - name: no-match
+                stdin: "2\nage lt 10\nname:Alice age:30\nname:Bob age:20\n"
+                expected_stdout: "none"
+                is_hidden: false
+                weight: 1
+              - name: lte-hidden
+                stdin: "4\nval lte 5\nx:5 y:1\nx:6 y:2\nx:3 y:3\nx:5 y:4\n"
+                expected_stdout: "x:5 y:1\nx:3 y:3\nx:5 y:4"
+                is_hidden: true
+                weight: 1
+              - name: gte-hidden
+                stdin: "3\ncount gte 50\ncount:50\ncount:49\ncount:100\n"
+                expected_stdout: "count:50\ncount:100"
+                is_hidden: true
+                weight: 1
 
   - title: The Aggregation Framework
-    summary: Pipeline stages - $match, $group, $project, $sort, $lookup.
+    summary: "Pipeline stages - $match, $group, $project, $sort, $lookup."
     order_index: 3
     lessons:
       - slug: aggregation-pipeline
@@ -72,7 +164,7 @@ modules:
         duration_minutes: 14
         content_file: lessons/aggregation-pipeline.md
       - slug: aggregation-exercise
-        title: Simulate a $group + $sort Pipeline
+        title: "Simulate a $group + $sort Pipeline"
         type: exercise
         duration_minutes: 25
         content_file: lessons/aggregation-exercise.md
@@ -137,17 +229,22 @@ modules:
     order_index: 4
     lessons:
       - slug: indexes-and-esr
-        title: Indexes, Compound Indexes, and ESR
+        title: "Indexes, Compound Indexes, and ESR"
         type: reading
         duration_minutes: 14
         content_file: lessons/indexes-and-esr.md
       - slug: explain-mongo
-        title: explain() and Query Plans
+        title: "explain() and Query Plans"
         type: reading
         duration_minutes: 10
         content_file: lessons/explain-mongo.md
+      - slug: query-optimization
+        title: Query Optimization and Performance Tuning
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/query-optimization.md
 
-  - title: Schema Design - Embed vs Reference
+  - title: "Schema Design - Embed vs Reference"
     summary: When to nest documents and when to use references.
     order_index: 5
     lessons:
@@ -157,9 +254,54 @@ modules:
         duration_minutes: 12
         content_file: lessons/embed-vs-reference.md
 
-  - title: Operations - Replication and Sharding
-    summary: Replica sets for HA and sharding for horizontal scale.
+  - title: Transactions and Atomicity
+    summary: Multi-document ACID transactions and retry patterns.
     order_index: 6
+    lessons:
+      - slug: multi-document-transactions
+        title: Multi-Document Transactions
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/multi-document-transactions.md
+      - slug: transactions-quiz
+        title: "Quiz - Transactions and Atomicity"
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/transactions-quiz.md
+
+  - title: "Search and Geospatial Queries"
+    summary: Full-text search indexes and geographic queries.
+    order_index: 7
+    lessons:
+      - slug: text-search-mongodb
+        title: Full-Text Search in MongoDB
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/text-search-mongodb.md
+      - slug: geospatial-queries
+        title: Geospatial Queries
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/geospatial-queries.md
+
+  - title: Real-Time and Cloud Operations
+    summary: "Change streams, Atlas, and managing a production deployment."
+    order_index: 8
+    lessons:
+      - slug: change-streams
+        title: Change Streams
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/change-streams.md
+      - slug: mongo-atlas-intro
+        title: "MongoDB Atlas - Managed Cloud Deployment"
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/mongo-atlas-intro.md
+
+  - title: "Operations - Replication and Sharding"
+    summary: Replica sets for HA and sharding for horizontal scale.
+    order_index: 9
     lessons:
       - slug: replica-sets
         title: Replica Sets and Failover

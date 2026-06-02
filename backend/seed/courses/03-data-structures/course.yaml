@@ -25,6 +25,19 @@ modules:
     summary: Memory layout, indexing, amortised growth, and key array patterns.
     order_index: 1
     lessons:
+      - slug: big-o-complexity
+        title: Big-O Notation & Complexity Analysis
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/big-o-complexity.md
+
+      - slug: video-arrays-intro
+        title: "Video: Arrays & Dynamic Arrays — Full Walkthrough"
+        type: video
+        duration_minutes: 30
+        video_url: "https://www.youtube.com/results?search_query=arrays+dynamic+arrays+data+structures+freeCodeCamp"
+        content_file: lessons/video-arrays-intro.md
+
       - slug: arrays-memory-layout
         title: Arrays and Memory Layout
         type: reading
@@ -113,6 +126,13 @@ modules:
     summary: Singly and doubly linked lists, insertion, deletion, and reversal.
     order_index: 2
     lessons:
+      - slug: video-linked-lists
+        title: "Video: Linked Lists — Singly, Doubly, and Circular"
+        type: video
+        duration_minutes: 50
+        video_url: "https://www.youtube.com/results?search_query=linked+lists+singly+doubly+data+structures+freeCodeCamp"
+        content_file: lessons/video-linked-lists.md
+
       - slug: linked-lists-intro
         title: Linked Lists
         type: reading
@@ -226,6 +246,13 @@ modules:
     summary: LIFO and FIFO structures, deque, circular buffer, and queue-from-two-stacks.
     order_index: 3
     lessons:
+      - slug: video-stacks-queues
+        title: "Video: Stacks & Queues — LIFO, FIFO, and Deque"
+        type: video
+        duration_minutes: 35
+        video_url: "https://www.youtube.com/results?search_query=stacks+queues+LIFO+FIFO+data+structures+freeCodeCamp"
+        content_file: lessons/video-stacks-queues.md
+
       - slug: stacks-and-queues
         title: Stacks & Queues
         type: reading
@@ -495,6 +522,13 @@ modules:
     summary: Hashing, collision resolution, load factor, and Python dicts and sets.
     order_index: 4
     lessons:
+      - slug: video-hash-tables
+        title: "Video: Hash Tables — Hashing, Collisions, and Python Dicts"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=hash+tables+collision+resolution+data+structures+freeCodeCamp"
+        content_file: lessons/video-hash-tables.md
+
       - slug: hash-tables
         title: Hash Tables
         type: reading
@@ -667,6 +701,13 @@ modules:
     summary: Tree terminology, traversals, BST insert/search/delete, AVL balancing intro.
     order_index: 5
     lessons:
+      - slug: video-trees-bst
+        title: "Video: Binary Trees & Binary Search Trees"
+        type: video
+        duration_minutes: 55
+        video_url: "https://www.youtube.com/results?search_query=binary+trees+BST+traversals+insert+delete+freeCodeCamp"
+        content_file: lessons/video-trees-bst.md
+
       - slug: trees-and-bst
         title: Trees & Binary Search Trees
         type: reading
@@ -912,6 +953,13 @@ modules:
     summary: Binary heap structure, heapify, push/pop, k-th largest, and priority queue patterns.
     order_index: 6
     lessons:
+      - slug: video-heaps
+        title: "Video: Heaps & Priority Queues"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=binary+heap+priority+queue+heapify+data+structures+freeCodeCamp"
+        content_file: lessons/video-heaps.md
+
       - slug: heaps-priority-queues
         title: Heaps & Priority Queues
         type: reading
@@ -1085,6 +1133,13 @@ modules:
     summary: Adjacency list and matrix, BFS, DFS, topological sort, cycle detection.
     order_index: 7
     lessons:
+      - slug: video-graphs
+        title: "Video: Graph Algorithms — BFS, DFS, and Shortest Paths"
+        type: video
+        duration_minutes: 50
+        video_url: "https://www.youtube.com/results?search_query=graph+algorithms+BFS+DFS+shortest+path+data+structures+freeCodeCamp"
+        content_file: lessons/video-graphs.md
+
       - slug: graphs-representations
         title: "Graphs — Representations & Traversals"
         type: reading

@@ -25,6 +25,13 @@ modules:
     summary: "Propositional logic, truth tables, quantifiers, and core proof techniques including induction."
     order_index: 1
     lessons:
+      - slug: video-logic-and-proofs
+        title: "Video: Logic and Proofs — A Visual Introduction"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=discrete+mathematics+logic+proofs+propositional+logic+tutorial"
+        content_file: lessons/video-logic-and-proofs.md
+
       - slug: propositions-and-connectives
         title: "Propositions and Connectives"
         type: reading
@@ -59,6 +66,13 @@ modules:
     summary: "Set algebra, Venn diagrams, relations, equivalence classes, functions, and cardinality."
     order_index: 2
     lessons:
+      - slug: video-sets-relations-functions
+        title: "Video: Sets, Relations, and Functions Explained"
+        type: video
+        duration_minutes: 40
+        video_url: "https://www.youtube.com/results?search_query=discrete+mathematics+sets+relations+functions+cardinality+tutorial"
+        content_file: lessons/video-sets-relations-functions.md
+
       - slug: set-operations
         title: "Set Operations"
         type: reading
@@ -87,6 +101,13 @@ modules:
     summary: "Sum and product rules, permutations, combinations, pigeonhole principle, and the binomial theorem."
     order_index: 3
     lessons:
+      - slug: video-combinatorics
+        title: "Video: Combinatorics and Counting Techniques"
+        type: video
+        duration_minutes: 50
+        video_url: "https://www.youtube.com/results?search_query=discrete+mathematics+combinatorics+permutations+combinations+pigeonhole+binomial+theorem"
+        content_file: lessons/video-combinatorics.md
+
       - slug: counting-rules
         title: "Counting Rules: Sum and Product"
         type: reading
@@ -202,6 +223,13 @@ modules:
     summary: "Sample spaces, conditional probability, Bayes' theorem, and expected value."
     order_index: 4
     lessons:
+      - slug: video-discrete-probability
+        title: "Video: Discrete Probability — From Sample Spaces to Bayes' Theorem"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=discrete+probability+sample+spaces+bayes+theorem+expected+value+tutorial"
+        content_file: lessons/video-discrete-probability.md
+
       - slug: probability-basics
         title: "Probability Basics: Sample Spaces and Events"
         type: reading
@@ -224,6 +252,13 @@ modules:
     summary: "Graphs, paths, trees, connectivity, traversal, Euler and Hamiltonian circuits, and coloring."
     order_index: 5
     lessons:
+      - slug: video-graph-theory
+        title: "Video: Graph Theory — From Definitions to Traversal Algorithms"
+        type: video
+        duration_minutes: 55
+        video_url: "https://www.youtube.com/results?search_query=discrete+mathematics+graph+theory+BFS+DFS+trees+Euler+circuit+tutorial"
+        content_file: lessons/video-graph-theory.md
+
       - slug: graph-basics
         title: "Graph Basics: Definitions and Terminology"
         type: reading
@@ -235,6 +270,12 @@ modules:
         type: reading
         duration_minutes: 22
         content_file: lessons/trees-and-traversal.md
+
+      - slug: graph-coloring
+        title: "Graph Coloring"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/graph-coloring.md
 
       - slug: dm-graph-paths-exercise-lesson
         title: "Exercise: Count Paths in a DAG"
@@ -447,6 +488,13 @@ modules:
     summary: "Divisibility, modular arithmetic, GCD, Euclid's algorithm, primes, the Chinese Remainder Theorem, and links to cryptography."
     order_index: 6
     lessons:
+      - slug: video-number-theory
+        title: "Video: Number Theory — Foundations of Cryptography"
+        type: video
+        duration_minutes: 50
+        video_url: "https://www.youtube.com/results?search_query=discrete+mathematics+number+theory+modular+arithmetic+GCD+primes+Chinese+remainder+theorem"
+        content_file: lessons/video-number-theory.md
+
       - slug: divisibility-and-modular
         title: "Divisibility and Modular Arithmetic"
         type: reading
@@ -725,6 +773,13 @@ modules:
     summary: "Recurrence relations, solving them with characteristic roots and the Master Theorem, and Big-O asymptotics."
     order_index: 7
     lessons:
+      - slug: video-recurrences-and-growth
+        title: "Video: Recurrences and Asymptotic Growth"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=discrete+mathematics+recurrence+relations+master+theorem+Big-O+asymptotic+analysis"
+        content_file: lessons/video-recurrences-and-growth.md
+
       - slug: recurrence-relations
         title: "Recurrence Relations"
         type: reading

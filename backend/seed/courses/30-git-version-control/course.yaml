@@ -22,49 +22,103 @@ course:
 
 modules:
   - title: Git Fundamentals
-    summary: Object model and daily workflow.
+    summary: Object model, setup, and daily workflow.
     order_index: 1
     lessons:
+      - slug: git-intro-video
+        title: "Git Introduction — Full Course Overview"
+        type: video
+        duration_minutes: 60
+        video_url: "https://www.youtube.com/results?search_query=git+and+github+full+course+for+beginners+freecodecamp"
+        content_file: lessons/git-intro-video.md
+
+      - slug: git-setup-config
+        title: Setting Up Git — Installation and Configuration
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/git-setup-config.md
+
       - slug: git-object-model
         title: The Git Object Model
         type: reading
         duration_minutes: 12
         content_file: lessons/git-object-model.md
+
       - slug: daily-workflow
         title: The Daily Workflow
         type: reading
         duration_minutes: 12
         content_file: lessons/daily-workflow.md
+
+      - slug: git-stash
+        title: Git Stash — Shelving Work in Progress
+        type: reading
+        duration_minutes: 8
+        content_file: lessons/git-stash.md
+
       - slug: git-quiz
-        title: Quiz - Git Basics
+        title: "Quiz: Git Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/git-quiz.md
 
   - title: Branching, Merging, Rebasing
-    summary: How to use branches effectively.
+    summary: How to use branches effectively and keep a clean history.
     order_index: 2
     lessons:
+      - slug: branching-video
+        title: Git Branching and Merging — Video
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=git+branching+merging+rebasing+tutorial"
+        content_file: lessons/branching-video.md
+
       - slug: branches-and-merges
-        title: Branches, Merges, and Conflicts
+        title: "Branches, Merges, and Conflicts"
         type: reading
         duration_minutes: 14
         content_file: lessons/branches-and-merges.md
+
       - slug: rebase-and-history
         title: Rebase and Rewriting History
         type: reading
         duration_minutes: 14
         content_file: lessons/rebase-and-history.md
 
+      - slug: cherry-pick
+        title: "Cherry-Pick — Replaying Individual Commits"
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/cherry-pick.md
+
+      - slug: git-tags
+        title: "Git Tags — Marking Releases"
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/git-tags.md
+
+      - slug: branching-quiz
+        title: "Quiz: Branching, Merging, and Rebasing"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/branching-quiz.md
+
   - title: Remotes and Collaboration
-    summary: Working with GitHub, PRs, workflows.
+    summary: Working with GitHub, PRs, fetch, and push.
     order_index: 3
     lessons:
       - slug: remotes-and-prs
-        title: Remotes, push, pull, PRs
+        title: "Remotes, push, pull, PRs"
         type: reading
         duration_minutes: 12
         content_file: lessons/remotes-and-prs.md
+
+      - slug: fetch-vs-pull
+        title: "Fetch vs. Pull — Understanding Remote Synchronization"
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/fetch-vs-pull.md
+
       - slug: ff-merge-exercise
         title: Fast-Forward Check
         type: exercise
@@ -138,3 +192,143 @@ modules:
                 expected_stdout: "FAST-FORWARD"
                 is_hidden: true
                 weight: 1
+
+      - slug: git-workflow-video
+        title: Git Team Workflows — Video
+        type: video
+        duration_minutes: 40
+        video_url: "https://www.youtube.com/results?search_query=git+team+workflows+github+flow+trunk+based+development"
+        content_file: lessons/git-workflow-video.md
+
+  - title: Advanced Git Techniques
+    summary: Power-user commands for debugging, recovery, and automation.
+    order_index: 4
+    lessons:
+      - slug: git-bisect
+        title: "Git Bisect — Finding the Commit That Broke Things"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/git-bisect.md
+
+      - slug: git-reflog
+        title: "Git Reflog — The Safety Net"
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/git-reflog.md
+
+      - slug: git-hooks
+        title: "Git Hooks — Automating Quality Gates"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/git-hooks.md
+
+      - slug: git-submodules
+        title: "Git Submodules — Embedding One Repo Inside Another"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/git-submodules.md
+
+      - slug: git-ancestor-exercise
+        title: Commit Ancestry Distance
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/git-ancestor-exercise.md
+        exercises:
+          - slug: git-ancestry-distance
+            title: Commit Ancestry Distance
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/git-ancestor-distance.prompt.md
+            supported_languages: [python]
+            tags: [git, graph, bfs]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    # TODO: parse and solve
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0])
+                    parent = {}
+                    for i in range(1, n + 1):
+                        parts = lines[i].split()
+                        node = parts[0]
+                        parents = parts[1:] if len(parts) > 1 else []
+                        parent[node] = parents
+                    a, b = lines[n + 1].split()
+
+                    if a == b:
+                        print(0)
+                        return
+
+                    # BFS from b towards a (following parent links)
+                    visited = {b: 0}
+                    queue = deque([b])
+                    while queue:
+                        cur = queue.popleft()
+                        dist = visited[cur]
+                        for p in parent.get(cur, []):
+                            if p not in visited:
+                                visited[p] = dist + 1
+                                if p == a:
+                                    print(visited[p])
+                                    return
+                                queue.append(p)
+
+                solve()
+            test_cases:
+              - name: linear-3-hops
+                stdin: "4\nA\nB A\nC B\nD C\nA D\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: same-node
+                stdin: "1\nA\nA A\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: one-hop
+                stdin: "3\nA\nB A\nC A\nA C\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: diamond-shortest
+                stdin: "5\nA\nB A\nC B\nD B\nE C\nA E\n"
+                expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+
+  - title: Team Workflows and Best Practices
+    summary: Branching strategies for real-world teams.
+    order_index: 5
+    lessons:
+      - slug: github-flow
+        title: "GitHub Flow — A Lightweight Team Workflow"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/github-flow.md
+
+      - slug: trunk-based-dev
+        title: Trunk-Based Development
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/trunk-based-dev.md
+
+      - slug: git-advanced-quiz
+        title: "Quiz: Advanced Git and Team Workflows"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/git-advanced-quiz.md

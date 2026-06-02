@@ -25,6 +25,13 @@ modules:
     summary: What an OS does, how kernel and user mode differ, and how system calls work.
     order_index: 1
     lessons:
+      - slug: video-os-overview
+        title: "Video: Operating System Fundamentals"
+        type: video
+        duration_minutes: 70
+        video_url: "https://www.youtube.com/results?search_query=operating+system+concepts+full+course+freeCodeCamp"
+        content_file: lessons/video-os-overview.md
+
       - slug: what-an-os-does
         title: What an Operating System Does
         type: reading
@@ -50,9 +57,16 @@ modules:
         content_file: lessons/quiz-os-overview.md
 
   - title: Processes
-    summary: The process model, PCB, state transitions, fork/exec, and context switching.
+    summary: The process model, PCB, state transitions, fork/exec, context switching, and IPC.
     order_index: 2
     lessons:
+      - slug: video-processes
+        title: "Video: Processes, fork(), and exec()"
+        type: video
+        duration_minutes: 65
+        video_url: "https://www.youtube.com/results?search_query=operating+system+processes+fork+exec+context+switch+lecture"
+        content_file: lessons/video-processes.md
+
       - slug: process-model
         title: The Process Model
         type: reading
@@ -71,6 +85,12 @@ modules:
         duration_minutes: 14
         content_file: lessons/context-switching.md
 
+      - slug: inter-process-communication
+        title: Inter-Process Communication (IPC)
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/inter-process-communication.md
+
       - slug: quiz-processes
         title: "Quiz: Processes"
         type: quiz
@@ -81,6 +101,13 @@ modules:
     summary: Threads vs processes, race conditions, and the critical section problem.
     order_index: 3
     lessons:
+      - slug: video-threads-concurrency
+        title: "Video: Threads, Concurrency, and Race Conditions"
+        type: video
+        duration_minutes: 65
+        video_url: "https://www.youtube.com/results?search_query=threads+concurrency+race+conditions+critical+section+OS+lecture"
+        content_file: lessons/video-threads-concurrency.md
+
       - slug: threads-vs-processes
         title: Threads vs Processes
         type: reading
@@ -103,6 +130,13 @@ modules:
     summary: FCFS, SJF, Round-Robin, priority scheduling, and key performance metrics.
     order_index: 4
     lessons:
+      - slug: video-cpu-scheduling
+        title: "Video: CPU Scheduling Algorithms"
+        type: video
+        duration_minutes: 90
+        video_url: "https://www.youtube.com/results?search_query=CPU+scheduling+algorithms+FCFS+SJF+round+robin+priority+OS+course"
+        content_file: lessons/video-cpu-scheduling.md
+
       - slug: scheduling-algorithms
         title: CPU Scheduling Algorithms
         type: reading
@@ -283,6 +317,13 @@ modules:
     summary: Locks, semaphores, monitors, deadlock conditions and prevention.
     order_index: 5
     lessons:
+      - slug: video-synchronization
+        title: "Video: Synchronization — Locks, Semaphores, Deadlock, and the Banker's Algorithm"
+        type: video
+        duration_minutes: 100
+        video_url: "https://www.youtube.com/results?search_query=OS+synchronization+locks+semaphores+deadlock+bankers+algorithm+lecture"
+        content_file: lessons/video-synchronization.md
+
       - slug: locks-and-semaphores
         title: Locks, Semaphores, and Monitors
         type: reading
@@ -616,6 +657,13 @@ modules:
     summary: Paging, segmentation, virtual memory, TLB, and page replacement algorithms.
     order_index: 6
     lessons:
+      - slug: video-memory-management
+        title: "Video: Virtual Memory, Paging, and Page Replacement"
+        type: video
+        duration_minutes: 100
+        video_url: "https://www.youtube.com/results?search_query=virtual+memory+paging+page+replacement+TLB+operating+systems+lecture"
+        content_file: lessons/video-memory-management.md
+
       - slug: memory-allocation
         title: "Memory Management: Allocation, Paging, and Segmentation"
         type: reading
@@ -811,6 +859,13 @@ modules:
     summary: Files, directories, inodes, VFS, disk scheduling, and I/O buffering.
     order_index: 7
     lessons:
+      - slug: video-file-systems
+        title: "Video: File Systems, Inodes, and Disk Scheduling"
+        type: video
+        duration_minutes: 95
+        video_url: "https://www.youtube.com/results?search_query=file+systems+inodes+disk+scheduling+VFS+operating+systems+lecture"
+        content_file: lessons/video-file-systems.md
+
       - slug: file-systems
         title: "File Systems: Files, Directories, and Inodes"
         type: reading

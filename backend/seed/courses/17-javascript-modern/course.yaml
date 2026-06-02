@@ -16,13 +16,13 @@ course:
     classes, modules, the event loop, promises and async/await, and idiomatic
     patterns for both browsers and Node.
   difficulty: beginner
-  estimated_hours: 18
+  estimated_hours: 22
   is_published: true
   order_index: 17
 
 modules:
   - title: JavaScript Foundations
-    summary: Types, scoping, and equality.
+    summary: Types, scoping, equality, template literals, and destructuring.
     order_index: 1
     lessons:
       - slug: js-types
@@ -31,23 +31,33 @@ modules:
         duration_minutes: 10
         content_file: lessons/js-types.md
       - slug: var-let-const
-        title: var, let, const, and Scope
+        title: "var, let, const, and Scope"
         type: reading
         duration_minutes: 10
         content_file: lessons/var-let-const.md
       - slug: equality-and-coercion
-        title: == vs === and Truthiness
+        title: "== vs === and Truthiness"
         type: reading
         duration_minutes: 10
         content_file: lessons/equality-and-coercion.md
+      - slug: template-literals
+        title: Template Literals
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/template-literals.md
+      - slug: destructuring-and-spread
+        title: Destructuring and Spread / Rest
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/destructuring-and-spread.md
       - slug: js-basics-quiz
-        title: Quiz - JS Basics
+        title: "Quiz - JS Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/js-basics-quiz.md
 
   - title: Functions and Closures
-    summary: First-class functions, arrows, closures, this.
+    summary: First-class functions, arrows, closures, higher-order functions, this.
     order_index: 2
     lessons:
       - slug: functions-and-arrows
@@ -60,21 +70,31 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/closures-and-this.md
+      - slug: higher-order-functions
+        title: Higher-Order Functions
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/higher-order-functions.md
 
   - title: Objects, Arrays, and Iteration
-    summary: Prototypes, classes, array methods, destructuring.
+    summary: Prototypes, classes, array methods, destructuring, iterators, and generators.
     order_index: 3
     lessons:
       - slug: objects-and-prototypes
-        title: Objects, Prototypes, and Classes
+        title: "Objects, Prototypes, and Classes"
         type: reading
         duration_minutes: 14
         content_file: lessons/objects-and-prototypes.md
       - slug: array-methods
-        title: Array Methods - map, filter, reduce
+        title: "Array Methods - map, filter, reduce"
         type: reading
         duration_minutes: 12
         content_file: lessons/array-methods.md
+      - slug: iterators-and-generators
+        title: Iterators and Generators
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/iterators-and-generators.md
       - slug: array-pipeline-exercise
         title: Sum Squares of Evens
         type: exercise
@@ -153,7 +173,110 @@ modules:
         duration_minutes: 10
         content_file: lessons/modules-esm-cjs.md
       - slug: npm-and-tooling
-        title: npm, package.json, and Tooling
+        title: "npm, package.json, and Tooling"
         type: reading
         duration_minutes: 10
         content_file: lessons/npm-and-tooling.md
+
+  - title: Error Handling and Debugging
+    summary: throw, try/catch/finally, custom errors, async error handling.
+    order_index: 6
+    lessons:
+      - slug: error-handling-js
+        title: Error Handling in JavaScript
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/error-handling-js.md
+      - slug: js-debugging-quiz
+        title: "Quiz - Error Handling and Debugging"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/js-debugging-quiz.md
+
+  - title: Modern JavaScript Patterns
+    summary: Symbols, WeakMap, WeakSet, and real-world ES6+ patterns.
+    order_index: 7
+    lessons:
+      - slug: symbols-and-weakrefs
+        title: "Symbols, WeakMap, and WeakSet"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/symbols-and-weakrefs.md
+      - slug: js-modern-patterns-video
+        title: Modern JavaScript Patterns in Practice
+        type: video
+        duration_minutes: 20
+        content_file: lessons/js-modern-patterns-video.md
+        video_url: "https://www.youtube.com/results?search_query=modern+javascript+ES6+patterns+freecodecamp"
+
+  - title: Putting It All Together
+    summary: Apply closures, iteration, and functional patterns in a coding exercise.
+    order_index: 8
+    lessons:
+      - slug: word-frequency-exercise
+        title: Word Frequency Counter
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/word-frequency-exercise.md
+        exercises:
+          - slug: js-word-frequency
+            title: Word Frequency Counter
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/js-word-frequency.prompt.md
+            supported_languages: [python]
+            tags: [strings, maps, sorting]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    # TODO
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    if not line:
+                        return
+                    words = line.split()
+                    freq = {}
+                    for w in words:
+                        freq[w] = freq.get(w, 0) + 1
+                    for word in sorted(freq):
+                        print(f"{word} {freq[word]}")
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "the cat sat on the mat the cat\n"
+                expected_stdout: "cat 2\nmat 1\non 1\nsat 1\nthe 3"
+                is_hidden: false
+                weight: 1
+              - name: single-word
+                stdin: "hello\n"
+                expected_stdout: "hello 1"
+                is_hidden: false
+                weight: 1
+              - name: all-same
+                stdin: "z z z\n"
+                expected_stdout: "z 3"
+                is_hidden: false
+                weight: 1
+              - name: two-words
+                stdin: "a b a b a\n"
+                expected_stdout: "a 3\nb 2"
+                is_hidden: true
+                weight: 1
+              - name: longer
+                stdin: "one two three one two one\n"
+                expected_stdout: "one 3\nthree 1\ntwo 2"
+                is_hidden: true
+                weight: 1

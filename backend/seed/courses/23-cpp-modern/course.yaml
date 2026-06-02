@@ -9,13 +9,13 @@ subject:
 course:
   slug: cpp-modern
   title: Modern C++
-  summary: C++17/20 - RAII, smart pointers, STL containers, templates, and concepts.
+  summary: "C++17/20 - RAII, smart pointers, STL containers, templates, and concepts."
   description: |
     A modern take on C++ that avoids the cruft and focuses on the language you
     actually want to write today. Covers RAII, smart pointers, the STL, move
     semantics, templates, and the modern features added in C++17 and C++20.
   difficulty: advanced
-  estimated_hours: 16
+  estimated_hours: 28
   is_published: true
   order_index: 23
 
@@ -24,18 +24,29 @@ modules:
     summary: Compile model, types, references.
     order_index: 1
     lessons:
+      - slug: cpp-intro-video
+        title: "Video: C++ Full Course Introduction"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=freeCodeCamp+C%2B%2B+full+course+beginners"
+        content_file: lessons/cpp-intro-video.md
       - slug: hello-cpp
         title: Hello, Modern C++
         type: reading
         duration_minutes: 10
         content_file: lessons/hello-cpp.md
       - slug: cpp-types-and-refs
-        title: Types, References, auto
+        title: "Types, References, auto"
         type: reading
         duration_minutes: 12
         content_file: lessons/cpp-types-and-refs.md
+      - slug: cpp-compilation-model
+        title: The C++ Compilation Model
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/cpp-compilation-model.md
       - slug: cpp-quiz
-        title: Quiz - C++ Basics
+        title: "Quiz: C++ Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/cpp-quiz.md
@@ -49,6 +60,79 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/raii-and-smart-ptrs.md
+      - slug: move-semantics
+        title: Move Semantics and Rvalue References
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/move-semantics.md
+      - slug: cpp-move-exercise
+        title: "Exercise: String Pool Move/Copy Simulator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/cpp-move-exercise.md
+        exercises:
+          - slug: cpp-move-sim
+            title: String Pool Move/Copy Simulator
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/cpp-move-sim.prompt.md
+            supported_languages: [python]
+            tags: [move-semantics, strings]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    moves = 0
+                    copies = 0
+                    pool = []
+                    for i in range(1, n + 1):
+                        line = data[i]
+                        if line.startswith("MOVE:"):
+                            moves += 1
+                            pool.append(line[5:])
+                        elif line.startswith("COPY:"):
+                            copies += 1
+                            pool.append(line[5:])
+                    print(f"moves={moves} copies={copies} pool={' '.join(pool)}")
+
+                solve()
+            test_cases:
+              - name: basic-mixed
+                stdin: "3\nMOVE:alpha\nCOPY:beta\nMOVE:gamma\n"
+                expected_stdout: "moves=2 copies=1 pool=alpha beta gamma"
+                is_hidden: false
+                weight: 1
+              - name: all-copies
+                stdin: "2\nCOPY:hello\nCOPY:world\n"
+                expected_stdout: "moves=0 copies=2 pool=hello world"
+                is_hidden: false
+                weight: 1
+              - name: all-moves
+                stdin: "4\nMOVE:a\nMOVE:b\nMOVE:c\nMOVE:d\n"
+                expected_stdout: "moves=4 copies=0 pool=a b c d"
+                is_hidden: true
+                weight: 1
+              - name: single-copy
+                stdin: "1\nCOPY:only\n"
+                expected_stdout: "moves=0 copies=1 pool=only"
+                is_hidden: true
+                weight: 1
+      - slug: raii-quiz
+        title: "Quiz: RAII, Smart Pointers, and Move Semantics"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/raii-quiz.md
 
   - title: STL
     summary: Containers, iterators, algorithms.
@@ -59,6 +143,11 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/stl-containers.md
+      - slug: stl-iterators
+        title: STL Iterators and Iterator Categories
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/stl-iterators.md
       - slug: stl-algorithms
         title: STL Algorithms and Lambdas
         type: reading
@@ -128,6 +217,11 @@ modules:
                 expected_stdout: "0 0"
                 is_hidden: true
                 weight: 1
+      - slug: stl-quiz
+        title: "Quiz: STL Containers, Algorithms, and Iterators"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/stl-quiz.md
 
   - title: Templates and Concepts
     summary: Generic programming with concepts (C++20).
@@ -138,3 +232,65 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/templates-and-concepts.md
+      - slug: cpp-templates-video
+        title: "Video: C++ Templates and Generic Programming"
+        type: video
+        duration_minutes: 40
+        video_url: "https://www.youtube.com/results?search_query=C%2B%2B+templates+generic+programming+tutorial"
+        content_file: lessons/cpp-templates-video.md
+
+  - title: Error Handling
+    summary: Exceptions, error codes, optional, and variant.
+    order_index: 5
+    lessons:
+      - slug: cpp-exceptions
+        title: "Error Handling: Exceptions and Error Codes"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/cpp-exceptions.md
+      - slug: cpp-optional-variant
+        title: "std::optional, std::variant, and std::any"
+        type: reading
+        duration_minutes: 13
+        content_file: lessons/cpp-optional-variant.md
+
+  - title: Concurrency
+    summary: Threads, mutexes, futures, and atomics.
+    order_index: 6
+    lessons:
+      - slug: cpp-threads
+        title: "Concurrency: Threads, Mutexes, and Futures"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/cpp-threads.md
+      - slug: cpp-concurrency-video
+        title: "Video: C++ Multithreading and Concurrency"
+        type: video
+        duration_minutes: 35
+        video_url: "https://www.youtube.com/results?search_query=C%2B%2B+multithreading+concurrency+std+thread+tutorial"
+        content_file: lessons/cpp-concurrency-video.md
+      - slug: cpp-concurrency-quiz
+        title: "Quiz: C++ Concurrency"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/cpp-concurrency-quiz.md
+
+  - title: "C++20 Modern Features"
+    summary: "Ranges, coroutines, modules, and the spaceship operator."
+    order_index: 7
+    lessons:
+      - slug: cpp20-ranges
+        title: "C++20 Ranges and Views"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/cpp20-ranges.md
+      - slug: cpp20-coroutines
+        title: C++20 Coroutines
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/cpp20-coroutines.md
+      - slug: cpp20-quiz
+        title: "Quiz: C++20 Features"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/cpp20-quiz.md

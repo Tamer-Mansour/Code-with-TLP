@@ -49,6 +49,13 @@ modules:
         duration_minutes: 12
         content_file: lessons/quiz-languages-foundations.md
 
+      - slug: video-intro-languages-foundations
+        title: "Video: Introduction to Theory of Computation"
+        type: video
+        duration_minutes: 55
+        video_url: "https://www.youtube.com/results?search_query=theory+of+computation+introduction+automata+formal+languages"
+        content_file: lessons/video-intro-languages-foundations.md
+
   - title: "Finite Automata"
     summary: "DFAs, NFAs, their equivalence via the subset construction, and closure properties."
     order_index: 2
@@ -289,6 +296,13 @@ modules:
         duration_minutes: 12
         content_file: lessons/quiz-finite-automata.md
 
+      - slug: video-finite-automata
+        title: "Video: Finite Automata — DFAs, NFAs, and the Subset Construction"
+        type: video
+        duration_minutes: 75
+        video_url: "https://www.youtube.com/results?search_query=DFA+NFA+subset+construction+finite+automata+theory+of+computation"
+        content_file: lessons/video-finite-automata.md
+
   - title: "Regular Expressions & Regular Languages"
     summary: "Regular expressions, their equivalence to finite automata, and the pumping lemma."
     order_index: 3
@@ -317,6 +331,13 @@ modules:
         duration_minutes: 12
         content_file: lessons/quiz-regular-languages.md
 
+      - slug: video-regular-expressions
+        title: "Video: Regular Expressions, the Pumping Lemma, and Limits of Regular Languages"
+        type: video
+        duration_minutes: 75
+        video_url: "https://www.youtube.com/results?search_query=regular+expressions+pumping+lemma+regular+languages+theory+computation"
+        content_file: lessons/video-regular-expressions.md
+
   - title: "Context-Free Grammars"
     summary: "CFGs, derivations, parse trees, ambiguity, CNF, and the CFL pumping lemma."
     order_index: 4
@@ -338,6 +359,12 @@ modules:
         type: reading
         duration_minutes: 22
         content_file: lessons/cfg-closure-and-cfl-pumping.md
+
+      - slug: chomsky-normal-form
+        title: "Chomsky Normal Form"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/chomsky-normal-form.md
 
       - slug: cyk-parsing
         title: "CYK Parsing Algorithm"
@@ -475,6 +502,13 @@ modules:
         duration_minutes: 12
         content_file: lessons/quiz-context-free-grammars.md
 
+      - slug: video-context-free-grammars
+        title: "Video: Context-Free Grammars, Parse Trees, and Chomsky Normal Form"
+        type: video
+        duration_minutes: 65
+        video_url: "https://www.youtube.com/results?search_query=context+free+grammars+parse+trees+chomsky+normal+form+theory+computation"
+        content_file: lessons/video-context-free-grammars.md
+
   - title: "Pushdown Automata"
     summary: "PDAs, their relation to CFGs, and the role of the stack in computation."
     order_index: 5
@@ -496,6 +530,13 @@ modules:
         type: quiz
         duration_minutes: 12
         content_file: lessons/quiz-pushdown-automata.md
+
+      - slug: video-pushdown-automata
+        title: "Video: Pushdown Automata and Their Equivalence to Context-Free Grammars"
+        type: video
+        duration_minutes: 70
+        video_url: "https://www.youtube.com/results?search_query=pushdown+automata+PDA+context+free+grammar+equivalence+theory+computation"
+        content_file: lessons/video-pushdown-automata.md
 
   - title: "Turing Machines"
     summary: "The Turing machine model, variants, the Church-Turing thesis, and TM simulation."
@@ -641,6 +682,13 @@ modules:
         duration_minutes: 12
         content_file: lessons/quiz-turing-machines.md
 
+      - slug: video-turing-machines
+        title: "Video: Turing Machines and the Church-Turing Thesis"
+        type: video
+        duration_minutes: 65
+        video_url: "https://www.youtube.com/results?search_query=Turing+machine+Church+Turing+thesis+computability+theory+computation"
+        content_file: lessons/video-turing-machines.md
+
   - title: "Decidability & Complexity"
     summary: "The halting problem, undecidability, reductions, and the P vs NP question."
     order_index: 7
@@ -769,3 +817,10 @@ modules:
         type: quiz
         duration_minutes: 12
         content_file: lessons/quiz-decidability-complexity.md
+
+      - slug: video-decidability-complexity
+        title: "Video: Decidability, Undecidability, and P vs NP"
+        type: video
+        duration_minutes: 75
+        video_url: "https://www.youtube.com/results?search_query=decidability+halting+problem+P+vs+NP+NP+completeness+theory+computation"
+        content_file: lessons/video-decidability-complexity.md

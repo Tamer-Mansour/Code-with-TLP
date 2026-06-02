@@ -40,6 +40,12 @@ modules:
         type: reading
         duration_minutes: 8
         content_file: lessons/mysql-shell-tour.md
+      - slug: mysql-full-course-video
+        title: "MySQL Full Course (Video)"
+        type: video
+        duration_minutes: 180
+        video_url: "https://www.youtube.com/results?search_query=mysql+full+course+freeCodeCamp"
+        content_file: lessons/mysql-full-course-video.md
       - slug: mysql-basics-quiz
         title: Quiz - MySQL Basics
         type: quiz
@@ -218,6 +224,11 @@ modules:
                 expected_stdout: "user_id,name,amount"
                 is_hidden: true
                 weight: 1
+      - slug: joins-subqueries-quiz
+        title: "Quiz: Joins and Subqueries"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/joins-subqueries-quiz.md
 
   - title: Schema Design and Data Types
     summary: Choosing types, NULL, constraints, normalization, and primary/foreign keys.
@@ -233,6 +244,11 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/keys-constraints-normalization.md
+      - slug: alter-table-migrations
+        title: ALTER TABLE and Schema Migrations
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/alter-table-migrations.md
 
   - title: Indexes and Query Optimization
     summary: How B-tree indexes work in InnoDB and how to read EXPLAIN.
@@ -248,6 +264,11 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/reading-explain.md
+      - slug: slow-query-log
+        title: Slow Query Log and Performance Schema
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/slow-query-log.md
 
   - title: Transactions and Concurrency
     summary: ACID, isolation levels, locks, and deadlocks in InnoDB.
@@ -258,8 +279,13 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/acid-and-isolation.md
+      - slug: transactions-quiz
+        title: "Quiz: Transactions and Concurrency"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/transactions-quiz.md
 
-  - title: Operations - Users, Backups, Replication
+  - title: "Operations: Users, Backups, Replication"
     summary: Securing access, backing up, and scaling MySQL.
     order_index: 7
     lessons:
@@ -273,3 +299,18 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/backups-and-replication.md
+
+  - title: Stored Procedures and Views
+    summary: Encapsulate logic server-side with stored procedures and simplify access with views.
+    order_index: 8
+    lessons:
+      - slug: stored-procedures
+        title: Stored Procedures
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/stored-procedures.md
+      - slug: views
+        title: Views
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/views.md

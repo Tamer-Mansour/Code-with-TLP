@@ -16,7 +16,7 @@ course:
     configuration management (ConfigMaps, Secrets), networking, and the
     operational practices for running applications on K8s.
   difficulty: advanced
-  estimated_hours: 14
+  estimated_hours: 22
   is_published: true
   order_index: 27
 
@@ -35,14 +35,20 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/kubectl-essentials.md
+      - slug: k8s-full-course-video
+        title: "Kubernetes Full Course (freeCodeCamp)"
+        type: video
+        duration_minutes: 180
+        video_url: https://www.youtube.com/results?search_query=kubernetes+full+course+freeCodeCamp
+        content_file: lessons/k8s-full-course-video.md
       - slug: k8s-quiz
-        title: Quiz - K8s Basics
+        title: "Quiz: K8s Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/k8s-quiz.md
 
   - title: Workloads
-    summary: Pods, Deployments, ReplicaSets.
+    summary: Pods, Deployments, ReplicaSets, health probes, and resource management.
     order_index: 2
     lessons:
       - slug: pods-and-deployments
@@ -50,6 +56,16 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/pods-and-deployments.md
+      - slug: health-probes
+        title: Health Probes
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/health-probes.md
+      - slug: resource-management
+        title: Resource Management
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/resource-management.md
       - slug: services-and-ingress
         title: Services and Ingress
         type: reading
@@ -57,7 +73,7 @@ modules:
         content_file: lessons/services-and-ingress.md
 
   - title: Config and Operations
-    summary: ConfigMaps, Secrets, probes.
+    summary: ConfigMaps, Secrets, label selectors.
     order_index: 3
     lessons:
       - slug: configmaps-and-secrets
@@ -135,3 +151,173 @@ modules:
                 expected_stdout: "pod-2"
                 is_hidden: true
                 weight: 1
+
+  - title: Storage
+    summary: Persistent Volumes, PVCs, StorageClasses, and dynamic provisioning.
+    order_index: 4
+    lessons:
+      - slug: persistent-volumes
+        title: Persistent Volumes and Claims
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/persistent-volumes.md
+      - slug: storage-quiz
+        title: "Quiz: Kubernetes Storage"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/storage-quiz.md
+
+  - title: Networking
+    summary: Pod networking, DNS, NetworkPolicies, and Service types.
+    order_index: 5
+    lessons:
+      - slug: k8s-networking-video
+        title: Kubernetes Networking Explained (Video)
+        type: video
+        duration_minutes: 30
+        video_url: https://www.youtube.com/results?search_query=kubernetes+networking+explained+services+dns
+        content_file: lessons/k8s-networking-video.md
+      - slug: k8s-networking
+        title: Kubernetes Networking
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/k8s-networking.md
+      - slug: network-policies
+        title: Network Policies
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/network-policies.md
+
+  - title: Advanced Workloads
+    summary: StatefulSets, DaemonSets, Jobs, and CronJobs.
+    order_index: 6
+    lessons:
+      - slug: statefulsets
+        title: StatefulSets
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/statefulsets.md
+      - slug: daemonsets-jobs
+        title: DaemonSets and Jobs
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/daemonsets-jobs.md
+
+  - title: Security and Access Control
+    summary: RBAC, ServiceAccounts, and security hardening.
+    order_index: 7
+    lessons:
+      - slug: k8s-rbac
+        title: RBAC in Kubernetes
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/k8s-rbac.md
+
+  - title: Observability and Scaling
+    summary: Logs, metrics, HPA, and production operations.
+    order_index: 8
+    lessons:
+      - slug: observability
+        title: Observability in Kubernetes
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/observability.md
+      - slug: hpa-autoscaling
+        title: Horizontal Pod Autoscaler
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/hpa-autoscaling.md
+      - slug: resource-quota-exercise
+        title: ResourceQuota Admission Check
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/resource-quota-exercise.md
+        exercises:
+          - slug: k8s-resource-quota-check
+            title: ResourceQuota Admission Check
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/k8s-resource-quota-check.prompt.md
+            supported_languages: [python]
+            tags: [kubernetes, resources, quota]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read()
+                    # TODO: parse quota and pod list, print ADMITTED/REJECTED
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().strip().splitlines()
+                    first = lines[0].split()
+                    cpu_limit, mem_limit = int(first[0]), int(first[1])
+                    n = int(lines[1])
+                    used_cpu, used_mem = 0, 0
+                    out = []
+                    for i in range(2, 2 + n):
+                        parts = lines[i].split()
+                        name, cpu_req, mem_req = parts[0], int(parts[1]), int(parts[2])
+                        if used_cpu + cpu_req <= cpu_limit and used_mem + mem_req <= mem_limit:
+                            used_cpu += cpu_req
+                            used_mem += mem_req
+                            out.append(name + " ADMITTED")
+                        else:
+                            out.append(name + " REJECTED")
+                    print("\n".join(out))
+
+                solve()
+            test_cases:
+              - name: mixed
+                stdin: "1000 512\n4\nweb 300 128\napi 400 200\nworker 400 250\nbatch 100 50\n"
+                expected_stdout: "web ADMITTED\napi ADMITTED\nworker REJECTED\nbatch ADMITTED"
+                is_hidden: false
+                weight: 1
+              - name: all-admitted
+                stdin: "2000 1024\n3\npod-a 500 200\npod-b 600 300\npod-c 700 400\n"
+                expected_stdout: "pod-a ADMITTED\npod-b ADMITTED\npod-c ADMITTED"
+                is_hidden: false
+                weight: 1
+              - name: first-rejected-cpu
+                stdin: "200 512\n3\nbig 300 100\nsmall 100 100\ntiny 50 50\n"
+                expected_stdout: "big REJECTED\nsmall ADMITTED\ntiny ADMITTED"
+                is_hidden: true
+                weight: 1
+              - name: mem-limit-hit
+                stdin: "1000 300\n3\na 100 200\nb 200 150\nc 100 100\n"
+                expected_stdout: "a ADMITTED\nb REJECTED\nc ADMITTED"
+                is_hidden: true
+                weight: 1
+              - name: single-pod
+                stdin: "500 500\n1\nonly 500 500\n"
+                expected_stdout: "only ADMITTED"
+                is_hidden: true
+                weight: 1
+
+  - title: Helm and Production Practices
+    summary: Helm package management, production hardening, and cluster operations.
+    order_index: 9
+    lessons:
+      - slug: helm-package-manager
+        title: Helm Package Manager
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/helm-package-manager.md
+      - slug: k8s-production-best-practices
+        title: Production Best Practices
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/k8s-production-best-practices.md
+      - slug: k8s-advanced-quiz
+        title: "Quiz: Advanced Kubernetes"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/k8s-advanced-quiz.md

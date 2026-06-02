@@ -16,7 +16,7 @@ course:
     interfaces, error handling, and the goroutine + channel concurrency model
     that makes Go shine for backend services and CLIs.
   difficulty: intermediate
-  estimated_hours: 12
+  estimated_hours: 20
   is_published: true
   order_index: 21
 
@@ -25,6 +25,12 @@ modules:
     summary: Tooling, syntax, types.
     order_index: 1
     lessons:
+      - slug: go-full-course-video
+        title: "Video: Go Full Course (freeCodeCamp)"
+        type: video
+        duration_minutes: 240
+        video_url: "https://www.youtube.com/results?search_query=golang+full+course+freeCodeCamp"
+        content_file: lessons/go-full-course-video.md
       - slug: hello-go
         title: Hello, Go
         type: reading
@@ -35,6 +41,11 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/go-types.md
+      - slug: go-pointers-memory
+        title: Pointers and Memory
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/go-pointers-memory.md
       - slug: go-basics-quiz
         title: Quiz - Go Basics
         type: quiz
@@ -129,5 +140,229 @@ modules:
               - name: zero
                 stdin: "0\n"
                 expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+
+  - title: Packages and Standard Library
+    summary: Package organisation, common stdlib packages, and JSON.
+    order_index: 5
+    lessons:
+      - slug: go-packages-stdlib
+        title: Packages and the Standard Library
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/go-packages-stdlib.md
+      - slug: go-stdlib-video
+        title: "Video: Go Standard Library Tour"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=go+golang+standard+library+tour"
+        content_file: lessons/go-stdlib-video.md
+
+  - title: Testing in Go
+    summary: Unit tests, table-driven tests, benchmarks, and the race detector.
+    order_index: 6
+    lessons:
+      - slug: go-testing
+        title: Testing in Go
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/go-testing.md
+      - slug: go-testing-exercise
+        title: Word Frequency Counter
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/go-testing-exercise.md
+        exercises:
+          - slug: go-word-freq
+            title: Word Frequency Counter
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/go-word-freq.prompt.md
+            supported_languages: [python]
+            tags: [strings, sorting, frequency]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n', 1)
+                    n = int(data[0].strip())
+                    text = data[1] if len(data) > 1 else ""
+                    punct = set('.,!?;:')
+                    freq = {}
+                    for token in text.split():
+                        word = token.lower().strip('.,!?;:')
+                        if word:
+                            freq[word] = freq.get(word, 0) + 1
+                    ranked = sorted(freq.items(), key=lambda x: (-x[1], x[0]))
+                    for word, count in ranked[:n]:
+                        print(word, count)
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "3\nGo is great. Go is fast. Go goroutines!\n"
+                expected_stdout: "go 3\nis 2\nfast 1"
+                is_hidden: false
+                weight: 1
+              - name: single-word
+                stdin: "1\nhello hello hello\n"
+                expected_stdout: "hello 3"
+                is_hidden: false
+                weight: 1
+              - name: alpha-tiebreak
+                stdin: "2\ncat bat cat bat\n"
+                expected_stdout: "bat 2\ncat 2"
+                is_hidden: false
+                weight: 1
+              - name: case-insensitive
+                stdin: "2\nGo GO go rust RUST\n"
+                expected_stdout: "go 3\nrust 2"
+                is_hidden: true
+                weight: 1
+              - name: fewer-words-than-n
+                stdin: "10\none two\n"
+                expected_stdout: "one 1\ntwo 1"
+                is_hidden: true
+                weight: 1
+
+  - title: File I/O and CLI Tools
+    summary: Reading files, parsing arguments, and building command-line programs.
+    order_index: 7
+    lessons:
+      - slug: go-file-io-cli
+        title: File I/O and Building CLI Tools
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/go-file-io-cli.md
+
+  - title: HTTP and REST APIs
+    summary: Building HTTP servers and consuming APIs with net/http.
+    order_index: 8
+    lessons:
+      - slug: go-http-server
+        title: "Building HTTP Servers with net/http"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/go-http-server.md
+      - slug: go-http-video
+        title: "Video: Building REST APIs in Go"
+        type: video
+        duration_minutes: 60
+        video_url: "https://www.youtube.com/results?search_query=golang+REST+API+net+http+tutorial"
+        content_file: lessons/go-http-video.md
+
+  - title: Generics and Advanced Patterns
+    summary: Type parameters, constraints, and the slices/maps packages.
+    order_index: 9
+    lessons:
+      - slug: go-generics
+        title: Generics in Go
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/go-generics.md
+      - slug: go-advanced-quiz
+        title: Quiz - Generics and Advanced Patterns
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/go-advanced-quiz.md
+
+  - title: Capstone
+    summary: Integrate your Go knowledge in a standalone coding challenge.
+    order_index: 10
+    lessons:
+      - slug: go-capstone-exercise
+        title: Run-Length Encoding
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/go-capstone-exercise.md
+        exercises:
+          - slug: go-rle-codec
+            title: Run-Length Encoding / Decoding
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/go-rle.prompt.md
+            supported_languages: [python]
+            tags: [strings, encoding, parsing]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def encode(s):
+                    if not s:
+                        return ""
+                    result = []
+                    count = 1
+                    for i in range(1, len(s)):
+                        if s[i] == s[i-1]:
+                            count += 1
+                        else:
+                            result.append(str(count) + s[i-1])
+                            count = 1
+                    result.append(str(count) + s[-1])
+                    return "".join(result)
+
+                def decode(s):
+                    result = []
+                    i = 0
+                    while i < len(s):
+                        num_str = []
+                        while i < len(s) and s[i].isdigit():
+                            num_str.append(s[i])
+                            i += 1
+                        if i < len(s) and num_str:
+                            result.append(s[i] * int("".join(num_str)))
+                            i += 1
+                    return "".join(result)
+
+                def solve():
+                    line = sys.stdin.read().strip()
+                    if line and line[0].isdigit():
+                        print(decode(line))
+                    else:
+                        print(encode(line))
+
+                solve()
+            test_cases:
+              - name: encode-basic
+                stdin: "aaabccddddee\n"
+                expected_stdout: "3a1b2c4d2e"
+                is_hidden: false
+                weight: 1
+              - name: decode-basic
+                stdin: "3a1b2c4d2e\n"
+                expected_stdout: "aaabccddddee"
+                is_hidden: false
+                weight: 1
+              - name: encode-single-chars
+                stdin: "abcde\n"
+                expected_stdout: "1a1b1c1d1e"
+                is_hidden: false
+                weight: 1
+              - name: decode-large-count
+                stdin: "5x3y\n"
+                expected_stdout: "xxxxxyyy"
+                is_hidden: true
+                weight: 1
+              - name: encode-all-same
+                stdin: "aaaaaaa\n"
+                expected_stdout: "7a"
                 is_hidden: true
                 weight: 1

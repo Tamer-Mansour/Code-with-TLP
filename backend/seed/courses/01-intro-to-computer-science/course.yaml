@@ -43,6 +43,13 @@ modules:
         duration_minutes: 20
         content_file: lessons/abstraction-and-history.md
 
+      - slug: video-intro-to-cs
+        title: "Video: Introduction to Computer Science"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=introduction+to+computer+science+freeCodeCamp"
+        content_file: lessons/video-intro-to-cs.md
+
       - slug: quiz-what-is-computing
         title: "Quiz: What Is Computing?"
         type: quiz
@@ -251,6 +258,13 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: video-binary-and-number-systems
+        title: "Video: Binary and Number Systems"
+        type: video
+        duration_minutes: 30
+        video_url: "https://www.youtube.com/results?search_query=binary+number+system+hexadecimal+computer+science+beginner"
+        content_file: lessons/video-binary-and-number-systems.md
+
       - slug: quiz-number-systems
         title: "Quiz: Number Systems & Binary"
         type: quiz
@@ -355,6 +369,13 @@ modules:
         type: reading
         duration_minutes: 18
         content_file: lessons/images-sound-compression.md
+
+      - slug: video-data-representation
+        title: "Video: How Computers Represent Data"
+        type: video
+        duration_minutes: 40
+        video_url: "https://www.youtube.com/results?search_query=cs50+data+representation+ascii+unicode+images+audio"
+        content_file: lessons/video-data-representation.md
 
       - slug: quiz-data-representation
         title: "Quiz: Data Representation"
@@ -474,6 +495,13 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: video-boolean-logic-and-gates
+        title: "Video: Boolean Logic and Logic Gates"
+        type: video
+        duration_minutes: 35
+        video_url: "https://www.youtube.com/results?search_query=boolean+logic+gates+AND+OR+NOT+adder+circuit+computer+science"
+        content_file: lessons/video-boolean-logic-and-gates.md
+
       - slug: quiz-boolean-logic
         title: "Quiz: Boolean Logic & Gates"
         type: quiz
@@ -495,6 +523,13 @@ modules:
         type: reading
         duration_minutes: 18
         content_file: lessons/compilers-vs-interpreters.md
+
+      - slug: video-how-programs-run
+        title: "Video: How Programs Run — CPUs, Machine Code, and Compilers"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=fetch+decode+execute+cycle+CPU+compilers+interpreters+computer+science"
+        content_file: lessons/video-how-programs-run.md
 
       - slug: quiz-how-programs-run
         title: "Quiz: How Programs Run"
@@ -782,6 +817,13 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: video-algorithms-and-sorting
+        title: "Video: Algorithms — Searching, Sorting, and Big-O"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=cs50+algorithms+searching+sorting+big+O+notation"
+        content_file: lessons/video-algorithms-and-sorting.md
+
       - slug: quiz-algorithms
         title: "Quiz: Algorithms & Problem Solving"
         type: quiz
@@ -803,6 +845,13 @@ modules:
         type: reading
         duration_minutes: 18
         content_file: lessons/client-server-and-http.md
+
+      - slug: video-internet-fundamentals
+        title: "Video: How the Internet Works"
+        type: video
+        duration_minutes: 40
+        video_url: "https://www.youtube.com/results?search_query=how+the+internet+works+IP+DNS+TCP+HTTP+freeCodeCamp"
+        content_file: lessons/video-internet-fundamentals.md
 
       - slug: quiz-internet-and-web
         title: "Quiz: The Internet & The Web"

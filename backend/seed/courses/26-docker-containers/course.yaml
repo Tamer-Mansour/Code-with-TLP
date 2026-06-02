@@ -9,13 +9,14 @@ subject:
 course:
   slug: docker-containers
   title: Docker and Containerization
-  summary: Images, Dockerfile, networking, volumes, and Compose.
+  summary: Images, Dockerfile, networking, volumes, Compose, security, CI/CD, and production best practices.
   description: |
     Docker packages applications into portable containers. This course covers
     the container model, writing efficient Dockerfiles, networking, volumes,
-    multi-stage builds, Docker Compose, and security basics.
+    multi-stage builds, Docker Compose, security hardening, image registries,
+    CI/CD integration, health checks, and resource management.
   difficulty: intermediate
-  estimated_hours: 10
+  estimated_hours: 16
   is_published: true
   order_index: 26
 
@@ -24,18 +25,27 @@ modules:
     summary: What containers are and how to use them.
     order_index: 1
     lessons:
+      - slug: docker-intro-video
+        title: "Docker Full Course: Introduction Video"
+        type: video
+        duration_minutes: 150
+        video_url: "https://www.youtube.com/results?search_query=docker+full+course+beginners+freeCodeCamp"
+        content_file: lessons/docker-intro-video.md
+
       - slug: containers-vs-vms
         title: Containers vs VMs
         type: reading
         duration_minutes: 10
         content_file: lessons/containers-vs-vms.md
+
       - slug: docker-cli
         title: Docker CLI Essentials
         type: reading
         duration_minutes: 10
         content_file: lessons/docker-cli.md
+
       - slug: docker-quiz
-        title: Quiz - Docker Basics
+        title: "Quiz: Docker Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/docker-quiz.md
@@ -49,11 +59,13 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/dockerfile-basics.md
+
       - slug: multistage-builds
         title: Multi-Stage Builds
         type: reading
         duration_minutes: 10
         content_file: lessons/multistage-builds.md
+
       - slug: layer-cache-exercise
         title: Layer Cache Simulation
         type: exercise
@@ -117,7 +129,7 @@ modules:
                 weight: 1
 
   - title: Compose and Networking
-    summary: Multi-container apps and networking basics.
+    summary: Multi-container apps, networking, and volumes in Compose.
     order_index: 3
     lessons:
       - slug: compose
@@ -125,3 +137,175 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/compose.md
+
+      - slug: docker-networking
+        title: Docker Networking
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/docker-networking.md
+
+      - slug: compose-networks-volumes
+        title: "Compose: Networks and Volumes"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/compose-networks-volumes.md
+
+      - slug: compose-quiz
+        title: "Quiz: Docker Compose and Networking"
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/compose-quiz.md
+
+  - title: Volumes and Persistent Storage
+    summary: Named volumes, bind mounts, and data lifecycle management.
+    order_index: 4
+    lessons:
+      - slug: volumes-intro
+        title: "Docker Volumes: Persistent Storage"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/volumes-intro.md
+
+      - slug: bind-mounts-vs-volumes
+        title: Bind Mounts vs Named Volumes
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/bind-mounts-vs-volumes.md
+
+      - slug: volume-mount-exercise
+        title: Parse Docker Volume Mounts
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/volume-mount-exercise.md
+        exercises:
+          - slug: docker-volume-mount
+            title: Classify Volume Mount Strings
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/docker-volume-mount.prompt.md
+            supported_languages: [python]
+            tags: [docker, volumes]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    # TODO
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0])
+                    mounts = lines[1:1+n]
+                    named = 0
+                    bind = 0
+                    anonymous = 0
+                    for m in mounts:
+                        if m.startswith('/') or m.startswith('./') or m.startswith('../'):
+                            # bind or anonymous
+                            if ':' in m:
+                                bind += 1
+                            else:
+                                anonymous += 1
+                        else:
+                            named += 1
+                    print(f"named={named}")
+                    print(f"bind={bind}")
+                    print(f"anonymous={anonymous}")
+
+                solve()
+            test_cases:
+              - name: mixed
+                stdin: "4\npgdata:/var/lib/postgresql/data\n./src:/app/src\n/app/node_modules\nmyconfig:/etc/myapp\n"
+                expected_stdout: "named=2\nbind=1\nanonymous=1"
+                is_hidden: false
+                weight: 1
+              - name: all-named
+                stdin: "3\nredisdata:/data\npgdata:/var/lib/postgresql/data\nlogvol:/var/log\n"
+                expected_stdout: "named=3\nbind=0\nanonymous=0"
+                is_hidden: false
+                weight: 1
+              - name: all-bind
+                stdin: "2\n./src:/app/src\n/etc/nginx/nginx.conf:/etc/nginx/nginx.conf\n"
+                expected_stdout: "named=0\nbind=2\nanonymous=0"
+                is_hidden: true
+                weight: 1
+              - name: anonymous-only
+                stdin: "2\n/app/node_modules\n/tmp/cache\n"
+                expected_stdout: "named=0\nbind=0\nanonymous=2"
+                is_hidden: true
+                weight: 1
+              - name: single-named
+                stdin: "1\nmyvolume:/data\n"
+                expected_stdout: "named=1\nbind=0\nanonymous=0"
+                is_hidden: true
+                weight: 1
+
+  - title: Security and Best Practices
+    summary: Hardening containers against common attack vectors.
+    order_index: 5
+    lessons:
+      - slug: docker-security
+        title: Docker Security Best Practices
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/docker-security.md
+
+      - slug: docker-security-quiz
+        title: "Quiz: Docker Security"
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/docker-security-quiz.md
+
+  - title: Registries and CI/CD
+    summary: Storing images and automating builds and deployments.
+    order_index: 6
+    lessons:
+      - slug: docker-registry
+        title: Docker Registries
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/docker-registry.md
+
+      - slug: docker-in-ci
+        title: Docker in CI/CD Pipelines
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/docker-in-ci.md
+
+      - slug: docker-cicd-video
+        title: "Video: Docker CI/CD Pipeline"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=docker+cicd+pipeline+github+actions+tutorial"
+        content_file: lessons/docker-cicd-video.md
+
+  - title: Production Operations
+    summary: Health checks, restart policies, and resource management.
+    order_index: 7
+    lessons:
+      - slug: healthchecks-and-restart
+        title: Healthchecks and Restart Policies
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/healthchecks-and-restart.md
+
+      - slug: resource-limits
+        title: Container Resource Limits
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/resource-limits.md
+
+      - slug: docker-advanced-quiz
+        title: "Quiz: Advanced Docker Topics"
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/docker-advanced-quiz.md

@@ -25,6 +25,13 @@ modules:
     summary: "Waterfall vs Agile, Scrum, Kanban, and how teams turn requirements into shipped software."
     order_index: 1
     lessons:
+      - slug: video-agile-scrum
+        title: "Video: Agile and Scrum in Practice"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=agile+scrum+tutorial+full+course+freecodecamp"
+        content_file: lessons/video-agile-scrum.md
+
       - slug: sdlc-overview
         title: "SDLC: Waterfall, Agile, Scrum, and Kanban"
         type: reading
@@ -47,6 +54,13 @@ modules:
     summary: "Repos, commits, branches, merges, pull requests, branching workflows, and semantic versioning."
     order_index: 2
     lessons:
+      - slug: video-git-crash-course
+        title: "Video: Git and GitHub Full Crash Course"
+        type: video
+        duration_minutes: 70
+        video_url: "https://www.youtube.com/watch?v=RGOj5yH7evk"
+        content_file: lessons/video-git-crash-course.md
+
       - slug: git-fundamentals
         title: "Git Fundamentals: Repos, Commits, and Branches"
         type: reading
@@ -222,6 +236,13 @@ modules:
     summary: "Gathering requirements, architecture decisions, design documents, UML basics, and design patterns."
     order_index: 3
     lessons:
+      - slug: video-design-patterns
+        title: "Video: Design Patterns Explained"
+        type: video
+        duration_minutes: 60
+        video_url: "https://www.youtube.com/results?search_query=design+patterns+explained+tutorial+freecodecamp"
+        content_file: lessons/video-design-patterns.md
+
       - slug: requirements-gathering
         title: "Gathering Requirements"
         type: reading
@@ -250,6 +271,13 @@ modules:
     summary: "Clean code principles, naming, refactoring, code smells, and effective code review."
     order_index: 4
     lessons:
+      - slug: video-clean-code
+        title: "Video: Clean Code Principles"
+        type: video
+        duration_minutes: 50
+        video_url: "https://www.youtube.com/results?search_query=clean+code+principles+tutorial+robert+martin"
+        content_file: lessons/video-clean-code.md
+
       - slug: clean-code
         title: "Clean Code: Naming, Functions, and Readability"
         type: reading
@@ -432,6 +460,13 @@ modules:
     summary: "Unit, integration, and E2E tests; TDD red-green-refactor; test coverage; mocking."
     order_index: 5
     lessons:
+      - slug: video-tdd
+        title: "Video: Test-Driven Development (TDD) in Practice"
+        type: video
+        duration_minutes: 55
+        video_url: "https://www.youtube.com/results?search_query=test+driven+development+tdd+tutorial+full+course"
+        content_file: lessons/video-tdd.md
+
       - slug: testing-fundamentals
         title: "Testing Fundamentals: Unit, Integration, and End-to-End"
         type: reading
@@ -536,6 +571,13 @@ modules:
     summary: "Build pipelines, containers, deployment strategies, observability, and monitoring."
     order_index: 6
     lessons:
+      - slug: video-cicd
+        title: "Video: CI/CD Pipeline Full Tutorial"
+        type: video
+        duration_minutes: 60
+        video_url: "https://www.youtube.com/results?search_query=cicd+pipeline+github+actions+docker+tutorial+freecodecamp"
+        content_file: lessons/video-cicd.md
+
       - slug: cicd-pipelines
         title: "CI/CD Pipelines: Build, Test, Deploy"
         type: reading
@@ -705,6 +747,13 @@ modules:
     summary: "OWASP Top 10, input validation, secrets management, and writing secure code."
     order_index: 7
     lessons:
+      - slug: video-security-basics
+        title: "Video: Web Security for Developers — OWASP Top 10"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=owasp+top+10+web+security+tutorial+developers"
+        content_file: lessons/video-security-basics.md
+
       - slug: security-basics
         title: "Security Basics for Software Engineers"
         type: reading

@@ -15,7 +15,7 @@ course:
     shell, the filesystem, permissions, processes, package management, systemd,
     networking basics, text processing, and bash scripting.
   difficulty: beginner
-  estimated_hours: 12
+  estimated_hours: 18
   is_published: true
   order_index: 29
 
@@ -34,8 +34,13 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/permissions.md
+      - slug: environment-variables
+        title: Environment Variables
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/environment-variables.md
       - slug: linux-quiz
-        title: Quiz - Linux Basics
+        title: "Quiz: Linux Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/linux-quiz.md
@@ -45,7 +50,7 @@ modules:
     order_index: 2
     lessons:
       - slug: processes
-        title: Processes - ps, kill, signals
+        title: "Processes: ps, kill, signals"
         type: reading
         duration_minutes: 10
         content_file: lessons/processes.md
@@ -54,13 +59,24 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/systemd.md
+      - slug: systemd-video
+        title: "Video: systemd Crash Course"
+        type: video
+        duration_minutes: 30
+        video_url: "https://www.youtube.com/results?search_query=systemd+crash+course+linux+admin"
+        content_file: lessons/systemd-video.md
+      - slug: cron-and-scheduling
+        title: Cron and Task Scheduling
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/cron-and-scheduling.md
 
   - title: Text Processing and Scripting
     summary: grep, sed, awk, bash.
     order_index: 3
     lessons:
       - slug: text-processing
-        title: grep, sed, awk
+        title: "grep, sed, awk"
         type: reading
         duration_minutes: 14
         content_file: lessons/text-processing.md
@@ -132,3 +148,124 @@ modules:
                 expected_stdout: ""
                 is_hidden: true
                 weight: 1
+      - slug: bash-word-count-exercise
+        title: Word Frequency Counter
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/bash-word-count-exercise.md
+        exercises:
+          - slug: linux-word-count
+            title: Word Frequency Counter
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/linux-word-count.prompt.md
+            supported_languages: [python]
+            tags: [text-processing, scripting]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read()
+                    # TODO: count words and print sorted results
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import Counter
+
+                def solve():
+                    data = sys.stdin.read()
+                    words = data.lower().split()
+                    counts = Counter(words)
+                    # Sort by count descending, then word ascending
+                    for word, count in sorted(counts.items(), key=lambda x: (-x[1], x[0])):
+                        print(f"{word} {count}")
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "hello world hello\nworld hello\n"
+                expected_stdout: "hello 3\nworld 2"
+                is_hidden: false
+                weight: 1
+              - name: single-word
+                stdin: "linux\n"
+                expected_stdout: "linux 1"
+                is_hidden: false
+                weight: 1
+              - name: case-insensitive
+                stdin: "The the THE\n"
+                expected_stdout: "the 3"
+                is_hidden: false
+                weight: 1
+              - name: tie-alphabetical
+                stdin: "a b c\n"
+                expected_stdout: "a 1\nb 1\nc 1"
+                is_hidden: true
+                weight: 1
+              - name: multi-frequency
+                stdin: "foo foo foo bar bar baz\n"
+                expected_stdout: "foo 3\nbar 2\nbaz 1"
+                is_hidden: true
+                weight: 1
+
+  - title: Package Management
+    summary: Installing and managing software with apt and dnf.
+    order_index: 4
+    lessons:
+      - slug: package-management
+        title: Package Management with apt and dnf
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/package-management.md
+      - slug: linux-full-course-video
+        title: "Video: Linux Full Course for Beginners"
+        type: video
+        duration_minutes: 180
+        video_url: "https://www.youtube.com/watch?v=ROjZy1WbCIA"
+        content_file: lessons/linux-full-course-video.md
+
+  - title: Networking
+    summary: Interfaces, DNS, SSH, and firewalls.
+    order_index: 5
+    lessons:
+      - slug: networking-basics
+        title: Networking Basics for Linux Admins
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/networking-basics.md
+      - slug: ssh-and-remote-access
+        title: SSH and Remote Access
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/ssh-and-remote-access.md
+
+  - title: Users, Groups, and Storage
+    summary: User management, sudo, disks, and mounts.
+    order_index: 6
+    lessons:
+      - slug: users-and-groups
+        title: Users and Groups
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/users-and-groups.md
+      - slug: disk-and-storage
+        title: Disk and Storage Management
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/disk-and-storage.md
+      - slug: log-management
+        title: Log Management
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/log-management.md
+      - slug: linux-quiz-advanced
+        title: "Quiz: Networking and Users"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/linux-quiz-advanced.md

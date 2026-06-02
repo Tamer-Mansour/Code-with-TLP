@@ -16,15 +16,21 @@ course:
     generics, streams, lambdas, exceptions, and concurrency essentials you
     need to write idiomatic, modern Java code.
   difficulty: intermediate
-  estimated_hours: 18
+  estimated_hours: 24
   is_published: true
   order_index: 19
 
 modules:
   - title: Java Basics
-    summary: JVM, syntax, and types.
+    summary: JVM, syntax, types, and control flow.
     order_index: 1
     lessons:
+      - slug: java-intro-video
+        title: "Java Programming — Full Course Introduction"
+        type: video
+        duration_minutes: 60
+        video_url: "https://www.youtube.com/results?search_query=java+programming+full+course+freeCodeCamp"
+        content_file: lessons/java-intro-video.md
       - slug: jvm-and-hello-java
         title: The JVM and Hello, Java
         type: reading
@@ -35,6 +41,11 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/java-types.md
+      - slug: control-flow-and-arrays
+        title: Control Flow and Arrays
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/control-flow-and-arrays.md
       - slug: java-basics-quiz
         title: Quiz - Java Basics
         type: quiz
@@ -42,7 +53,7 @@ modules:
         content_file: lessons/java-basics-quiz.md
 
   - title: OOP in Java
-    summary: Classes, interfaces, inheritance.
+    summary: Classes, interfaces, inheritance, and polymorphism.
     order_index: 2
     lessons:
       - slug: classes-and-interfaces
@@ -55,6 +66,11 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/inheritance-and-polymorphism.md
+      - slug: oop-quiz
+        title: Quiz - OOP in Java
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/oop-quiz.md
 
   - title: Collections, Generics, Streams
     summary: List, Map, generics, and the Streams API.
@@ -135,12 +151,133 @@ modules:
                 is_hidden: true
                 weight: 1
 
-  - title: Concurrency
-    summary: Threads, Executors, CompletableFuture.
+  - title: Exception Handling and I/O
+    summary: Exceptions, try-with-resources, and file I/O with NIO.2.
     order_index: 4
+    lessons:
+      - slug: exception-handling
+        title: Exception Handling
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/exception-handling.md
+      - slug: file-io-and-nio
+        title: "File I/O and NIO.2"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/file-io-and-nio.md
+      - slug: io-exercise
+        title: Line Number Filter
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/io-exercise.md
+        exercises:
+          - slug: java-line-filter
+            title: Line Number Filter
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/java-line-filter.prompt.md
+            supported_languages: [python]
+            tags: [io, strings, filtering]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    # TODO
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    lines = data[1:n+1]
+                    keyword = data[n+1]
+                    for i, line in enumerate(lines, start=1):
+                        if keyword in line:
+                            print(f"{i}: {line}")
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "4\nHello world\nJava is great\nhello again\nGoodbye world\nworld\n"
+                expected_stdout: "1: Hello world\n4: Goodbye world"
+                is_hidden: false
+                weight: 1
+              - name: single-match
+                stdin: "3\nalpha\nbeta\ngamma\nalpha\n"
+                expected_stdout: "1: alpha"
+                is_hidden: false
+                weight: 1
+              - name: no-match
+                stdin: "2\nabc\ndef\nxyz\n"
+                expected_stdout: ""
+                is_hidden: false
+                weight: 1
+              - name: case-sensitive
+                stdin: "3\nJava\njava\nJAVA\njava\n"
+                expected_stdout: "2: java"
+                is_hidden: true
+                weight: 1
+              - name: multi-match
+                stdin: "5\ncat in a hat\ndog\nhat rack\nhat on hat\nbrim\nhat\n"
+                expected_stdout: "1: cat in a hat\n3: hat rack\n4: hat on hat"
+                is_hidden: true
+                weight: 1
+
+  - title: Concurrency
+    summary: Threads, Executors, synchronization, and CompletableFuture.
+    order_index: 5
     lessons:
       - slug: threads-and-executors
         title: Threads and ExecutorService
         type: reading
         duration_minutes: 14
         content_file: lessons/threads-and-executors.md
+      - slug: synchronization-and-locks
+        title: Synchronization and Locks
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/synchronization-and-locks.md
+      - slug: completable-future
+        title: CompletableFuture and Async Programming
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/completable-future.md
+      - slug: concurrency-quiz
+        title: Quiz - Java Concurrency
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/concurrency-quiz.md
+
+  - title: Modern Java and Tooling
+    summary: Java 14-21 features, Optional, unit testing, and build tools.
+    order_index: 6
+    lessons:
+      - slug: optional-and-null-safety
+        title: Optional and Null Safety
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/optional-and-null-safety.md
+      - slug: modern-java-features
+        title: "Modern Java Features (Java 14-21)"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/modern-java-features.md
+      - slug: java-testing-with-junit
+        title: Unit Testing with JUnit 5
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/java-testing-with-junit.md
+      - slug: java-build-tools-video
+        title: Java Build Tools — Maven and Gradle
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=maven+gradle+java+build+tools+tutorial"
+        content_file: lessons/java-build-tools-video.md

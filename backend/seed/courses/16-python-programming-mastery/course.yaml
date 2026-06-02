@@ -129,7 +129,7 @@ modules:
                 weight: 1
 
   - title: Functions and OOP
-    summary: Definitions, closures, classes, dataclasses.
+    summary: Definitions, closures, classes, dataclasses, exceptions, and context managers.
     order_index: 3
     lessons:
       - slug: functions-and-closures
@@ -142,6 +142,16 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/oop-and-dataclasses.md
+      - slug: error-handling
+        title: Error Handling and Exceptions
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/error-handling.md
+      - slug: context-managers
+        title: Context Managers
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/context-managers.md
 
   - title: Iterators, Generators, Decorators
     summary: Pythonic patterns for lazy evaluation and metaprogramming.
@@ -168,12 +178,113 @@ modules:
         duration_minutes: 12
         content_file: lessons/type-hints.md
       - slug: async-await
-        title: async/await
+        title: "async/await"
         type: reading
         duration_minutes: 14
         content_file: lessons/async-await.md
       - slug: packaging-and-venv
-        title: venv, pip, and Packaging
+        title: "venv, pip, and Packaging"
         type: reading
         duration_minutes: 10
         content_file: lessons/packaging-and-venv.md
+
+  - title: Standard Library Deep Dive
+    summary: "collections, pathlib, and the broader standard library."
+    order_index: 6
+    lessons:
+      - slug: stdlib-video
+        title: "Python Standard Library: Video Tour"
+        type: video
+        duration_minutes: 45
+        content_file: lessons/stdlib-video.md
+        video_url: "https://www.youtube.com/results?search_query=python+standard+library+tutorial+complete"
+      - slug: collections-module
+        title: The collections Module
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/collections-module.md
+      - slug: pathlib-and-os
+        title: pathlib and File System Operations
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/pathlib-and-os.md
+
+  - title: Testing and Debugging
+    summary: Write reliable tests and track down bugs quickly.
+    order_index: 7
+    lessons:
+      - slug: unit-testing
+        title: Unit Testing with unittest
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/unit-testing.md
+      - slug: debugging-with-pdb
+        title: Debugging with pdb
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/debugging-with-pdb.md
+      - slug: word-frequency-exercise
+        title: Word Frequency Counter
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/word-frequency-exercise.md
+        exercises:
+          - slug: py-word-frequency
+            title: Word Frequency Counter
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/py-word-frequency.prompt.md
+            supported_languages: [python]
+            tags: [strings, collections, sorting]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    line = sys.stdin.readline()
+                    # TODO
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import string
+
+                def solve():
+                    line = sys.stdin.readline()
+                    counts = {}
+                    for token in line.split():
+                        word = token.strip(string.punctuation).lower()
+                        if word:
+                            counts[word] = counts.get(word, 0) + 1
+                    for word in sorted(counts):
+                        print(f"{word}: {counts[word]}")
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "Hello world hello Python world world\n"
+                expected_stdout: "hello: 2\npython: 1\nworld: 3"
+                is_hidden: false
+                weight: 1
+              - name: with-punctuation
+                stdin: "Hello, world! Hello Python... world world\n"
+                expected_stdout: "hello: 2\npython: 1\nworld: 3"
+                is_hidden: false
+                weight: 1
+              - name: shakespeare
+                stdin: "to be or not to be\n"
+                expected_stdout: "be: 2\nnot: 1\nor: 1\nto: 2"
+                is_hidden: false
+                weight: 1
+              - name: single-word
+                stdin: "python\n"
+                expected_stdout: "python: 1"
+                is_hidden: true
+                weight: 1
+              - name: all-same
+                stdin: "yes yes yes yes\n"
+                expected_stdout: "yes: 4"
+                is_hidden: true
+                weight: 1

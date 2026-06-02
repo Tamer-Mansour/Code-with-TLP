@@ -26,6 +26,13 @@ modules:
     summary: Gates, combinational vs sequential circuits, latches, flip-flops, and registers.
     order_index: 1
     lessons:
+      - slug: video-digital-logic
+        title: "Video: Digital Logic Fundamentals"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=digital+logic+gates+fundamentals+computer+architecture"
+        content_file: lessons/video-digital-logic.md
+
       - slug: logic-gates
         title: Logic Gates
         type: reading
@@ -54,6 +61,13 @@ modules:
     summary: Two's complement, fixed and floating point, overflow, and bit-level encoding.
     order_index: 2
     lessons:
+      - slug: video-number-representation
+        title: "Video: Binary and Number Representation"
+        type: video
+        duration_minutes: 40
+        video_url: "https://www.youtube.com/results?search_query=binary+number+representation+twos+complement+IEEE754+computer+architecture"
+        content_file: lessons/video-number-representation.md
+
       - slug: number-representation
         title: Number Representation
         type: reading
@@ -234,6 +248,13 @@ modules:
     summary: ALU design, register files, control unit, and the fetch-decode-execute cycle.
     order_index: 3
     lessons:
+      - slug: video-cpu-datapath
+        title: "Video: CPU Datapath and the Fetch-Decode-Execute Cycle"
+        type: video
+        duration_minutes: 50
+        video_url: "https://www.youtube.com/results?search_query=CPU+datapath+fetch+decode+execute+cycle+single+cycle+RISC+processor"
+        content_file: lessons/video-cpu-datapath.md
+
       - slug: alu-and-registers
         title: The ALU and Register File
         type: reading
@@ -422,6 +443,13 @@ modules:
     summary: RISC vs CISC, assembly language basics, and addressing modes.
     order_index: 4
     lessons:
+      - slug: video-isa-assembly
+        title: "Video: Instruction Set Architecture and Assembly Language"
+        type: video
+        duration_minutes: 55
+        video_url: "https://www.youtube.com/results?search_query=instruction+set+architecture+RISC+CISC+assembly+language+computer+architecture"
+        content_file: lessons/video-isa-assembly.md
+
       - slug: risc-vs-cisc
         title: RISC vs CISC Architectures
         type: reading
@@ -450,6 +478,13 @@ modules:
     summary: Locality, cache lines, hits and misses, set-associative mapping, and write policies.
     order_index: 5
     lessons:
+      - slug: video-memory-caches
+        title: "Video: Memory Hierarchy, Caches, and Locality"
+        type: video
+        duration_minutes: 60
+        video_url: "https://www.youtube.com/results?search_query=memory+hierarchy+cache+locality+direct+mapped+set+associative+computer+architecture"
+        content_file: lessons/video-memory-caches.md
+
       - slug: memory-hierarchy
         title: The Memory Hierarchy
         type: reading
@@ -677,6 +712,13 @@ modules:
     summary: Pipeline stages, data and control hazards, forwarding, stalls, and branch prediction.
     order_index: 6
     lessons:
+      - slug: video-pipelining
+        title: "Video: CPU Pipelining and Hazards"
+        type: video
+        duration_minutes: 50
+        video_url: "https://www.youtube.com/results?search_query=CPU+pipelining+hazards+forwarding+branch+prediction+computer+architecture"
+        content_file: lessons/video-pipelining.md
+
       - slug: pipelining-intro
         title: Introduction to Pipelining
         type: reading
@@ -699,6 +741,13 @@ modules:
     summary: "Buses, interrupts, DMA, performance metrics, and Amdahl's Law."
     order_index: 7
     lessons:
+      - slug: video-io-performance
+        title: "Video: I/O Systems and Performance Analysis"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=IO+systems+DMA+interrupts+Amdahls+law+performance+computer+architecture"
+        content_file: lessons/video-io-performance.md
+
       - slug: io-and-buses
         title: "I/O, Buses, and Interrupts"
         type: reading

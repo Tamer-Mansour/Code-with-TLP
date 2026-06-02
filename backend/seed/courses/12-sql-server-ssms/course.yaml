@@ -42,7 +42,7 @@ modules:
         content_file: lessons/ssms-basics-quiz.md
 
   - title: T-SQL Essentials
-    summary: SELECT, JOIN, and the Microsoft-specific bits of T-SQL.
+    summary: SELECT, JOIN, stored procedures, error handling, and the Microsoft-specific bits of T-SQL.
     order_index: 2
     lessons:
       - slug: tsql-select-basics
@@ -55,9 +55,24 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/top-vs-limit.md
+      - slug: tsql-joins
+        title: Joins in T-SQL
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/tsql-joins.md
+      - slug: stored-procedures-functions
+        title: Stored Procedures and User-Defined Functions
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/stored-procedures-functions.md
+      - slug: try-catch-transactions
+        title: "Error Handling with TRY...CATCH and Transactions"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/try-catch-transactions.md
 
   - title: Advanced T-SQL
-    summary: CTEs, window functions, MERGE, and the OUTPUT clause.
+    summary: CTEs, window functions, MERGE, string functions, and the OUTPUT clause.
     order_index: 3
     lessons:
       - slug: ctes-and-windows
@@ -70,6 +85,16 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/merge-statement.md
+      - slug: string-functions
+        title: T-SQL String Functions
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/string-functions.md
+      - slug: tsql-quiz
+        title: Quiz - T-SQL Essentials
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/tsql-quiz.md
       - slug: window-rank-exercise
         title: Top-N Per Group
         type: exercise
@@ -139,9 +164,76 @@ modules:
                 expected_stdout: "B,2\nB,1\nA,9\nA,5"
                 is_hidden: true
                 weight: 1
+      - slug: tsql-string-exercise
+        title: String Aggregation Simulation
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/tsql-string-exercise.md
+        exercises:
+          - slug: tsql-string-agg-sim
+            title: "STRING_AGG Simulation"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/tsql-string-agg-sim.prompt.md
+            supported_languages: [python]
+            tags: [t-sql, strings, aggregation]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    # TODO
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = [ln for ln in sys.stdin.read().splitlines() if ln.strip()]
+                    n = int(lines[0])
+                    groups = {}
+                    order = []
+                    for ln in lines[1:1 + n]:
+                        group, value = ln.split(",", 1)
+                        if group not in groups:
+                            groups[group] = []
+                            order.append(group)
+                        groups[group].append(value)
+                    out = []
+                    for g in order:
+                        out.append(f"{g}: {', '.join(sorted(groups[g]))}")
+                    print("\n".join(out))
+
+                solve()
+            test_cases:
+              - name: basic
+                stdin: "5\nfruits,banana\nvegs,carrot\nfruits,apple\nvegs,broccoli\nfruits,cherry\n"
+                expected_stdout: "fruits: apple, banana, cherry\nvegs: broccoli, carrot"
+                is_hidden: false
+                weight: 1
+              - name: single-group-sorted
+                stdin: "3\na,z\na,a\na,m\n"
+                expected_stdout: "a: a, m, z"
+                is_hidden: false
+                weight: 1
+              - name: single-item
+                stdin: "1\nonly,one\n"
+                expected_stdout: "only: one"
+                is_hidden: true
+                weight: 1
+              - name: two-groups-order-preserved
+                stdin: "4\nb,2\na,1\nb,1\na,2\n"
+                expected_stdout: "b: 1, 2\na: 1, 2"
+                is_hidden: true
+                weight: 1
 
   - title: Indexes and Execution Plans
-    summary: Clustered vs nonclustered, included columns, and reading actual plans.
+    summary: Clustered vs nonclustered, included columns, fragmentation, and reading actual plans.
     order_index: 4
     lessons:
       - slug: clustered-vs-nonclustered
@@ -149,11 +241,22 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/clustered-vs-nonclustered.md
+      - slug: index-maintenance
+        title: Index Maintenance and Fragmentation
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/index-maintenance.md
       - slug: execution-plans
         title: Reading Execution Plans in SSMS
         type: reading
         duration_minutes: 14
         content_file: lessons/execution-plans.md
+      - slug: execution-plans-video
+        title: "Video: Reading SQL Server Execution Plans"
+        type: video
+        duration_minutes: 35
+        video_url: "https://www.youtube.com/results?search_query=sql+server+execution+plans+ssms+tutorial"
+        content_file: lessons/execution-plans-video.md
 
   - title: Operations - Security, Backup, Agent
     summary: Logins vs users, backup strategies, and SQL Server Agent jobs.
@@ -169,3 +272,28 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/backup-restore.md
+      - slug: sql-agent-jobs
+        title: SQL Server Agent Jobs
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/sql-agent-jobs.md
+      - slug: operations-quiz
+        title: Quiz - SQL Server Operations
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/operations-quiz.md
+
+  - title: Performance and Diagnostics
+    summary: Dynamic Management Views, Query Store, and diagnosing slow queries.
+    order_index: 6
+    lessons:
+      - slug: dynamic-management-views
+        title: Dynamic Management Views (DMVs)
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/dynamic-management-views.md
+      - slug: query-store
+        title: Query Store
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/query-store.md

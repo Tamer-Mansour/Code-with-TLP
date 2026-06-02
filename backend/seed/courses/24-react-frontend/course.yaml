@@ -13,18 +13,24 @@ course:
   description: |
     React is the dominant frontend library. This course covers components,
     JSX, the core hooks (useState, useEffect, useReducer, useMemo,
-    useCallback, useContext), data fetching, forms, routing, and the
-    patterns you'll use daily in production codebases.
+    useCallback, useContext), data fetching, forms, routing, testing,
+    and the patterns you'll use daily in production codebases.
   difficulty: intermediate
-  estimated_hours: 14
+  estimated_hours: 22
   is_published: true
   order_index: 24
 
 modules:
   - title: React Basics
-    summary: JSX, components, props.
+    summary: JSX, components, props, and the React developer environment.
     order_index: 1
     lessons:
+      - slug: react-intro-video
+        title: "React Full Course — Video Introduction"
+        type: video
+        duration_minutes: 60
+        content_file: lessons/react-intro-video.md
+        video_url: "https://www.youtube.com/results?search_query=react+full+course+freecodecamp+2024"
       - slug: jsx-and-components
         title: JSX and Components
         type: reading
@@ -35,14 +41,19 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/props-and-children.md
+      - slug: react-devtools
+        title: React Developer Tools
+        type: reading
+        duration_minutes: 8
+        content_file: lessons/react-devtools.md
       - slug: react-quiz
-        title: Quiz - React Basics
+        title: "Quiz: React Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/react-quiz.md
 
   - title: State and Effects
-    summary: useState, useEffect, custom hooks.
+    summary: useState, useEffect, useReducer, and custom hooks.
     order_index: 2
     lessons:
       - slug: usestate-and-events
@@ -55,21 +66,36 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/useeffect-and-fetching.md
+      - slug: usereducer
+        title: useReducer — Complex State Logic
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/usereducer.md
       - slug: custom-hooks
         title: Custom Hooks
         type: reading
         duration_minutes: 10
         content_file: lessons/custom-hooks.md
+      - slug: state-effects-quiz
+        title: "Quiz: State and Effects"
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/state-effects-quiz.md
 
   - title: Performance and Patterns
     summary: memo, useMemo, useCallback, context.
     order_index: 3
     lessons:
       - slug: memo-and-performance
-        title: memo, useMemo, useCallback
+        title: "memo, useMemo, useCallback"
         type: reading
         duration_minutes: 12
         content_file: lessons/memo-and-performance.md
+      - slug: usecontext
+        title: "useContext — Sharing State Without Prop Drilling"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/usecontext.md
       - slug: virtual-dom-exercise
         title: Counting Renders
         type: exercise
@@ -133,3 +159,151 @@ modules:
                 expected_stdout: "0"
                 is_hidden: true
                 weight: 1
+
+  - title: Forms and Validation
+    summary: Controlled inputs, validation patterns, and React Hook Form.
+    order_index: 4
+    lessons:
+      - slug: react-forms
+        title: Forms in React
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/react-forms.md
+      - slug: form-validation-exercise
+        title: Form Validation Rules
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/form-validation-exercise.md
+        exercises:
+          - slug: form-validation-check
+            title: Form Validation Checker
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/form-validation-check.prompt.md
+            supported_languages: [python]
+            tags: [forms, validation, regex]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                import re
+
+                def solve():
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import re
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    for line in lines:
+                        if not line.strip():
+                            continue
+                        parts = line.split()
+                        if len(parts) < 4:
+                            continue
+                        field, value, rule, param = parts[0], parts[1], parts[2], parts[3]
+                        if rule == "required":
+                            ok = value != "_" and value != ""
+                        elif rule == "minlen":
+                            ok = len(value) >= int(param)
+                        elif rule == "maxlen":
+                            ok = len(value) <= int(param)
+                        elif rule == "regex":
+                            ok = bool(re.fullmatch(param, value))
+                        else:
+                            ok = False
+                        print(f"{field}: {'PASS' if ok else 'FAIL'}")
+
+                solve()
+            test_cases:
+              - name: required-pass
+                stdin: "email alice@example.com required _\n"
+                expected_stdout: "email: PASS"
+                is_hidden: false
+                weight: 1
+              - name: required-fail
+                stdin: "name _ required _\n"
+                expected_stdout: "name: FAIL"
+                is_hidden: false
+                weight: 1
+              - name: minlen-pass
+                stdin: "pass secret123 minlen 8\n"
+                expected_stdout: "pass: PASS"
+                is_hidden: false
+                weight: 1
+              - name: minlen-fail
+                stdin: "pass hi minlen 8\n"
+                expected_stdout: "pass: FAIL"
+                is_hidden: true
+                weight: 1
+              - name: maxlen-pass
+                stdin: "code abc maxlen 5\n"
+                expected_stdout: "code: PASS"
+                is_hidden: true
+                weight: 1
+              - name: multi-rules
+                stdin: "email alice@example.com required _\nname _ required _\npass secret123 minlen 8\n"
+                expected_stdout: "email: PASS\nname: FAIL\npass: PASS"
+                is_hidden: true
+                weight: 1
+
+  - title: Routing with React Router
+    summary: Client-side navigation, URL params, nested routes, and protected routes.
+    order_index: 5
+    lessons:
+      - slug: react-router-video
+        title: "React Router v6 — Video Walkthrough"
+        type: video
+        duration_minutes: 45
+        content_file: lessons/react-router-video.md
+        video_url: "https://www.youtube.com/results?search_query=react+router+v6+tutorial+2024"
+      - slug: react-router
+        title: "React Router — Client-Side Navigation"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/react-router.md
+
+  - title: Data Fetching
+    summary: Fetch patterns, custom hooks, React Query, and SWR.
+    order_index: 6
+    lessons:
+      - slug: data-fetching-patterns
+        title: Data Fetching Patterns
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/data-fetching-patterns.md
+
+  - title: TypeScript and Testing
+    summary: Typing React components and testing with React Testing Library.
+    order_index: 7
+    lessons:
+      - slug: react-typescript
+        title: React with TypeScript
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/react-typescript.md
+      - slug: testing-react
+        title: Testing React Components
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/testing-react.md
+      - slug: react-patterns-quiz
+        title: "Quiz: React Patterns and Advanced Concepts"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/react-patterns-quiz.md
+
+  - title: Project Structure and Best Practices
+    summary: Folder layout, naming conventions, performance, and code-splitting.
+    order_index: 8
+    lessons:
+      - slug: react-project-structure
+        title: Project Structure and Best Practices
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/react-project-structure.md

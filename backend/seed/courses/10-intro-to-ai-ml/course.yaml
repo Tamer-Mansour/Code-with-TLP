@@ -25,6 +25,13 @@ modules:
     summary: "History of AI, narrow vs general intelligence, the agent model, and today's AI landscape."
     order_index: 1
     lessons:
+      - slug: video-ai-history
+        title: "Video: The History of Artificial Intelligence"
+        type: video
+        duration_minutes: 75
+        video_url: "https://www.youtube.com/results?search_query=history+of+artificial+intelligence+full+course"
+        content_file: lessons/video-ai-history.md
+
       - slug: ai-history-and-landscape
         title: "A Brief History of AI and the Landscape Today"
         type: reading
@@ -47,6 +54,13 @@ modules:
     summary: "State spaces, BFS, DFS, heuristics, A*, and adversarial minimax search."
     order_index: 2
     lessons:
+      - slug: video-search-algorithms
+        title: "Video: Search Algorithms — BFS, DFS, and A*"
+        type: video
+        duration_minutes: 65
+        video_url: "https://www.youtube.com/results?search_query=BFS+DFS+A+star+search+algorithms+artificial+intelligence"
+        content_file: lessons/video-search-algorithms.md
+
       - slug: state-space-search
         title: "State Spaces and the Language of Search"
         type: reading
@@ -179,6 +193,13 @@ modules:
     summary: "What ML is, the three learning paradigms, train/test split, bias-variance tradeoff, and cross-validation."
     order_index: 3
     lessons:
+      - slug: video-ml-foundations
+        title: "Video: Machine Learning Foundations"
+        type: video
+        duration_minutes: 65
+        video_url: "https://www.youtube.com/results?search_query=machine+learning+foundations+bias+variance+tradeoff+tutorial"
+        content_file: lessons/video-ml-foundations.md
+
       - slug: what-is-ml
         title: "What Is Machine Learning?"
         type: reading
@@ -201,6 +222,13 @@ modules:
     summary: "Linear and logistic regression, k-NN, decision trees, entropy, and evaluation metrics."
     order_index: 4
     lessons:
+      - slug: video-supervised-learning
+        title: "Video: Supervised Learning — Regression, Classification, and Trees"
+        type: video
+        duration_minutes: 70
+        video_url: "https://www.youtube.com/results?search_query=supervised+learning+linear+logistic+regression+decision+tree+full+tutorial"
+        content_file: lessons/video-supervised-learning.md
+
       - slug: linear-logistic-regression
         title: "Linear and Logistic Regression"
         type: reading
@@ -493,6 +521,13 @@ modules:
     summary: "k-Means clustering, the elbow method, and dimensionality reduction with PCA and t-SNE."
     order_index: 5
     lessons:
+      - slug: video-unsupervised-learning
+        title: "Video: Unsupervised Learning — Clustering and Dimensionality Reduction"
+        type: video
+        duration_minutes: 65
+        video_url: "https://www.youtube.com/results?search_query=unsupervised+learning+kmeans+clustering+PCA+tutorial"
+        content_file: lessons/video-unsupervised-learning.md
+
       - slug: kmeans-clustering
         title: "k-Means Clustering"
         type: reading
@@ -803,6 +838,13 @@ modules:
     summary: "Artificial neurons, layers, activation functions, gradient descent variants, and backpropagation."
     order_index: 6
     lessons:
+      - slug: video-neural-networks
+        title: "Video: Neural Networks and Deep Learning"
+        type: video
+        duration_minutes: 75
+        video_url: "https://www.youtube.com/results?search_query=neural+networks+deep+learning+backpropagation+from+scratch+python"
+        content_file: lessons/video-neural-networks.md
+
       - slug: neurons-and-layers
         title: "Neurons, Layers, and Activation Functions"
         type: reading
@@ -814,6 +856,12 @@ modules:
         type: reading
         duration_minutes: 16
         content_file: lessons/gradient-descent-backprop.md
+
+      - slug: convolutional-networks
+        title: "Convolutional Neural Networks"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/convolutional-networks.md
 
       - slug: ai-gradient-descent-step
         title: "Exercise: One Step of Gradient Descent"
@@ -912,6 +960,13 @@ modules:
     summary: "Word embeddings, the Transformer architecture, attention mechanism, prompting techniques, and AI ethics."
     order_index: 7
     lessons:
+      - slug: video-transformers-llms
+        title: "Video: Transformers, Attention, and Large Language Models"
+        type: video
+        duration_minutes: 80
+        video_url: "https://www.youtube.com/results?search_query=transformer+architecture+attention+mechanism+large+language+models+explained"
+        content_file: lessons/video-transformers-llms.md
+
       - slug: embeddings-and-transformers
         title: "Embeddings and the Transformer Architecture"
         type: reading

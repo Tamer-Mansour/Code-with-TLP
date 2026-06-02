@@ -43,6 +43,13 @@ modules:
         duration_minutes: 16
         content_file: lessons/osi-vs-tcpip.md
 
+      - slug: video-network-foundations
+        title: "Video: Computer Networking Fundamentals"
+        type: video
+        duration_minutes: 70
+        video_url: "https://www.youtube.com/results?search_query=computer+networking+full+course+freeCodeCamp"
+        content_file: lessons/video-network-foundations.md
+
       - slug: quiz-network-foundations
         title: "Quiz: Network Foundations"
         type: quiz
@@ -147,6 +154,13 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: video-http-and-application-layer
+        title: "Video: HTTP and the Application Layer"
+        type: video
+        duration_minutes: 75
+        video_url: "https://www.youtube.com/results?search_query=HTTP+DNS+application+layer+networking+tutorial"
+        content_file: lessons/video-http-and-application-layer.md
+
       - slug: quiz-application-layer
         title: "Quiz: Application Layer"
         type: quiz
@@ -174,6 +188,13 @@ modules:
         type: reading
         duration_minutes: 18
         content_file: lessons/tcp-congestion-control.md
+
+      - slug: video-tcp-transport-layer
+        title: "Video: TCP and the Transport Layer"
+        type: video
+        duration_minutes: 80
+        video_url: "https://www.youtube.com/results?search_query=TCP+UDP+transport+layer+networking+deep+dive"
+        content_file: lessons/video-tcp-transport-layer.md
 
       - slug: quiz-transport-layer
         title: "Quiz: Transport Layer"
@@ -476,6 +497,13 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: video-ip-and-network-layer
+        title: "Video: IP Addressing, Subnetting, and the Network Layer"
+        type: video
+        duration_minutes: 100
+        video_url: "https://www.youtube.com/results?search_query=IP+addressing+subnetting+CIDR+network+layer+tutorial"
+        content_file: lessons/video-ip-and-network-layer.md
+
       - slug: quiz-network-layer
         title: "Quiz: Network Layer"
         type: quiz
@@ -636,6 +664,13 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: video-link-layer-and-ethernet
+        title: "Video: The Link Layer — Ethernet, MAC, and Switches"
+        type: video
+        duration_minutes: 60
+        video_url: "https://www.youtube.com/results?search_query=link+layer+Ethernet+MAC+address+ARP+switches+tutorial"
+        content_file: lessons/video-link-layer-and-ethernet.md
+
       - slug: quiz-link-layer
         title: "Quiz: Link Layer"
         type: quiz
@@ -646,6 +681,19 @@ modules:
     summary: Routing algorithms, longest prefix match, and a hands-on routing exercise.
     order_index: 6
     lessons:
+      - slug: routing-algorithms
+        title: Routing Algorithms
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/routing-algorithms.md
+
+      - slug: video-routing-algorithms
+        title: "Video: Routing Algorithms and Protocols"
+        type: video
+        duration_minutes: 100
+        video_url: "https://www.youtube.com/results?search_query=routing+algorithms+OSPF+BGP+Dijkstra+distance+vector+networking"
+        content_file: lessons/video-routing-algorithms.md
+
       - slug: longest-prefix-match-exercise
         title: "Exercise: Longest Prefix Match"
         type: exercise
@@ -840,6 +888,13 @@ modules:
                 expected_stdout: "65534"
                 is_hidden: true
                 weight: 1
+
+      - slug: video-tls-and-network-security
+        title: "Video: TLS, Cryptography, and Network Security"
+        type: video
+        duration_minutes: 105
+        video_url: "https://www.youtube.com/results?search_query=TLS+cryptography+network+security+HTTPS+full+course"
+        content_file: lessons/video-tls-and-network-security.md
 
       - slug: quiz-network-security
         title: "Quiz: Network Security Basics"

@@ -16,7 +16,7 @@ course:
     conditional and mapped types, decorators, and patterns that pay off in
     production codebases.
   difficulty: intermediate
-  estimated_hours: 14
+  estimated_hours: 22
   is_published: true
   order_index: 18
 
@@ -30,6 +30,12 @@ modules:
         type: reading
         duration_minutes: 8
         content_file: lessons/why-typescript.md
+      - slug: ts-full-course-video
+        title: "TypeScript Full Course (freeCodeCamp)"
+        type: video
+        duration_minutes: 240
+        video_url: "https://www.youtube.com/results?search_query=typescript+full+course+freecodecamp"
+        content_file: lessons/ts-full-course-video.md
       - slug: primitives-and-objects
         title: Primitives, Arrays, Objects
         type: reading
@@ -41,7 +47,7 @@ modules:
         duration_minutes: 10
         content_file: lessons/interfaces-vs-types.md
       - slug: ts-basics-quiz
-        title: Quiz - TS Basics
+        title: "Quiz: TS Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/ts-basics-quiz.md
@@ -60,6 +66,92 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/discriminated-unions.md
+      - slug: type-guards-advanced
+        title: Advanced Type Guards
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/type-guards-advanced.md
+      - slug: ts-narrowing-exercise
+        title: Union Type Discriminator
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ts-narrowing-exercise.md
+        exercises:
+          - slug: ts-discriminator
+            title: Shape and Text Discriminator
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/ts-discriminator.prompt.md
+            supported_languages: [python]
+            tags: [typescript, unions, narrowing]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys, json, math
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    for i in range(1, 1 + n):
+                        # TODO: parse and dispatch on kind
+                        pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys, json, math
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    results = []
+                    for i in range(1, 1 + n):
+                        try:
+                            obj = json.loads(data[i])
+                        except Exception:
+                            results.append("unknown")
+                            continue
+                        kind = obj.get("kind", "")
+                        if kind == "circle":
+                            area = math.pi * obj["radius"] ** 2
+                            results.append(f"circle area={area:.2f}")
+                        elif kind == "rectangle":
+                            area = obj["width"] * obj["height"]
+                            results.append(f"rectangle area={area:.2f}")
+                        elif kind == "text":
+                            results.append(f"text len={len(obj['value'])}")
+                        else:
+                            results.append("unknown")
+                    print("\n".join(results))
+
+                solve()
+            test_cases:
+              - name: basic-shapes
+                stdin: "3\n{\"kind\":\"circle\",\"radius\":5}\n{\"kind\":\"rectangle\",\"width\":4,\"height\":3}\n{\"kind\":\"text\",\"value\":\"hello\"}\n"
+                expected_stdout: "circle area=78.54\nrectangle area=12.00\ntext len=5"
+                is_hidden: false
+                weight: 1
+              - name: small-circle
+                stdin: "2\n{\"kind\":\"circle\",\"radius\":3}\n{\"kind\":\"text\",\"value\":\"hi\"}\n"
+                expected_stdout: "circle area=28.27\ntext len=2"
+                is_hidden: false
+                weight: 1
+              - name: unknown-kind
+                stdin: "2\n{\"kind\":\"triangle\",\"base\":4,\"height\":3}\n{\"kind\":\"circle\",\"radius\":1}\n"
+                expected_stdout: "unknown\ncircle area=3.14"
+                is_hidden: true
+                weight: 1
+              - name: empty-text
+                stdin: "1\n{\"kind\":\"text\",\"value\":\"\"}\n"
+                expected_stdout: "text len=0"
+                is_hidden: true
+                weight: 1
+              - name: square-rectangle
+                stdin: "1\n{\"kind\":\"rectangle\",\"width\":7,\"height\":7}\n"
+                expected_stdout: "rectangle area=49.00"
+                is_hidden: true
+                weight: 1
 
   - title: Generics and Advanced Types
     summary: Generics, conditional and mapped types, utility types.
@@ -75,6 +167,16 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/utility-and-mapped-types.md
+      - slug: conditional-types
+        title: Conditional Types
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/conditional-types.md
+      - slug: ts-advanced-types-quiz
+        title: "Quiz: Advanced TypeScript Types"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/ts-advanced-types-quiz.md
       - slug: validate-shape-exercise
         title: Shape Validator
         type: exercise
@@ -121,32 +223,87 @@ modules:
                 solve()
             test_cases:
               - name: ok-and-missing
-                stdin: 'name,email\n3\n{"name":"Alice","email":"a@x"}\n{"name":"Bob"}\n{"email":"c@x"}\n'
+                stdin: "name,email\n3\n{\"name\":\"Alice\",\"email\":\"a@x\"}\n{\"name\":\"Bob\"}\n{\"email\":\"c@x\"}\n"
                 expected_stdout: "OK\nMISSING email\nMISSING name"
                 is_hidden: false
                 weight: 1
               - name: extra-fields-ok
-                stdin: 'id\n2\n{"id":1,"extra":true}\n{}\n'
+                stdin: "id\n2\n{\"id\":1,\"extra\":true}\n{}\n"
                 expected_stdout: "OK\nMISSING id"
                 is_hidden: false
                 weight: 1
               - name: invalid-json
-                stdin: 'a\n2\n{"a":1}\n{not json\n'
+                stdin: "a\n2\n{\"a\":1}\n{not json\n"
                 expected_stdout: "OK\nINVALID"
                 is_hidden: true
                 weight: 1
               - name: multiple-missing
-                stdin: 'a,b,c\n1\n{"a":1}\n'
+                stdin: "a,b,c\n1\n{\"a\":1}\n"
                 expected_stdout: "MISSING b,c"
                 is_hidden: true
                 weight: 1
 
-  - title: TypeScript in Practice
-    summary: tsconfig flags, gradual adoption, common patterns.
+  - title: Functions and Classes
+    summary: Function type annotations, overloads, class access modifiers, and abstract classes.
     order_index: 4
+    lessons:
+      - slug: function-types
+        title: Function Types in TypeScript
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/function-types.md
+      - slug: classes-in-typescript
+        title: Classes in TypeScript
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/classes-in-typescript.md
+
+  - title: Async TypeScript
+    summary: Typing Promises, async/await, and async iterators.
+    order_index: 5
+    lessons:
+      - slug: async-typescript
+        title: Async TypeScript
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/async-typescript.md
+
+  - title: Decorators and Metadata
+    summary: Class, method, property, and parameter decorators in real codebases.
+    order_index: 6
+    lessons:
+      - slug: decorators
+        title: Decorators in TypeScript
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/decorators.md
+
+  - title: TypeScript in Practice
+    summary: tsconfig flags, modules, gradual adoption, React integration, and common patterns.
+    order_index: 7
     lessons:
       - slug: tsconfig-essentials
         title: tsconfig Essentials
         type: reading
         duration_minutes: 10
         content_file: lessons/tsconfig-essentials.md
+      - slug: typescript-modules
+        title: TypeScript Modules and Namespaces
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/typescript-modules.md
+      - slug: typescript-with-react
+        title: TypeScript with React
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/typescript-with-react.md
+      - slug: gradual-migration
+        title: Gradual Migration from JavaScript
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/gradual-migration.md
+      - slug: ts-patterns-quiz
+        title: "Quiz: TypeScript Patterns"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/ts-patterns-quiz.md

@@ -9,14 +9,14 @@ subject:
 course:
   slug: aws-cloud
   title: AWS Cloud Computing
-  summary: IAM, EC2, S3, VPC, RDS, Lambda - the AWS services you'll meet first.
+  summary: "IAM, EC2, S3, VPC, RDS, Lambda - the AWS services you'll meet first."
   description: |
     AWS is the most-used cloud provider. This course covers the foundational
     services - IAM for permissions, EC2 and Fargate for compute, S3 for
     storage, VPC for networking, RDS and DynamoDB for databases, Lambda for
     serverless - and the patterns that connect them in real applications.
   difficulty: intermediate
-  estimated_hours: 12
+  estimated_hours: 20
   is_published: true
   order_index: 28
 
@@ -25,36 +25,147 @@ modules:
     summary: Accounts, regions, IAM, the CLI.
     order_index: 1
     lessons:
+      - slug: aws-intro-video
+        title: "AWS Cloud Practitioner Essentials - Full Course Video"
+        type: video
+        duration_minutes: 60
+        video_url: "https://www.youtube.com/results?search_query=aws+cloud+practitioner+essentials+full+course+freecodecamp"
+        content_file: lessons/aws-intro-video.md
+
       - slug: aws-overview
-        title: AWS Overview - Regions, Accounts, Console, CLI
+        title: "AWS Overview - Regions, Accounts, Console, CLI"
         type: reading
         duration_minutes: 12
         content_file: lessons/aws-overview.md
+
       - slug: iam
-        title: IAM - Users, Roles, Policies
+        title: "IAM - Users, Roles, Policies"
         type: reading
         duration_minutes: 12
         content_file: lessons/iam.md
+
+      - slug: iam-advanced
+        title: "IAM Advanced - Policies, Roles, and Least Privilege"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/iam-advanced.md
+
       - slug: aws-quiz
-        title: Quiz - AWS Basics
+        title: "Quiz - AWS Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/aws-quiz.md
 
   - title: Compute and Storage
-    summary: EC2, S3, EBS, Lambda.
+    summary: EC2, S3, EBS, Lambda, Fargate, CloudFront.
     order_index: 2
     lessons:
       - slug: ec2-and-storage
-        title: EC2, EBS, and S3
+        title: "EC2, EBS, and S3"
         type: reading
         duration_minutes: 14
         content_file: lessons/ec2-and-storage.md
+
+      - slug: compute-video
+        title: "AWS EC2, Lambda, and Fargate - Compute Deep Dive Video"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=aws+ec2+lambda+fargate+deep+dive+tutorial"
+        content_file: lessons/compute-video.md
+
       - slug: lambda-and-serverless
         title: Lambda and Serverless
         type: reading
         duration_minutes: 12
         content_file: lessons/lambda-and-serverless.md
+
+      - slug: fargate-and-ecs
+        title: "Fargate and ECS - Running Containers on AWS"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/fargate-and-ecs.md
+
+      - slug: cloudfront-and-cdn
+        title: CloudFront and Content Delivery
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/cloudfront-and-cdn.md
+
+      - slug: s3-lifecycle-exercise
+        title: S3 Storage Class Cost Calculator
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/s3-lifecycle-exercise.md
+        exercises:
+          - slug: aws-s3-cost-calc
+            title: S3 Storage Class Cost Calculator
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/aws-s3-cost-calc.prompt.md
+            supported_languages: [python]
+            tags: [s3, storage, cost]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    # TODO
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    tokens = sys.stdin.read().split()
+                    idx = 0
+                    n = int(tokens[idx]); idx += 1
+                    total = 0.0
+                    for _ in range(n):
+                        size = int(tokens[idx]); idx += 1
+                        age = int(tokens[idx]); idx += 1
+                        if age >= 365:
+                            rate = 0.00099
+                        elif age >= 90:
+                            rate = 0.004
+                        elif age >= 30:
+                            rate = 0.0125
+                        else:
+                            rate = 0.023
+                        total += size * rate
+                    print(f"{total:.4f}")
+
+                solve()
+            test_cases:
+              - name: mixed-classes
+                stdin: "3\n10 15\n50 45\n100 400\n"
+                expected_stdout: "0.9540"
+                is_hidden: false
+                weight: 1
+              - name: all-standard
+                stdin: "2\n5 0\n20 29\n"
+                expected_stdout: "0.5750"
+                is_hidden: false
+                weight: 1
+              - name: single-deep-archive
+                stdin: "1\n1000 365\n"
+                expected_stdout: "0.9900"
+                is_hidden: true
+                weight: 1
+              - name: glacier-instant-boundary
+                stdin: "1\n100 90\n"
+                expected_stdout: "0.4000"
+                is_hidden: true
+                weight: 1
+              - name: standard-ia-boundary
+                stdin: "1\n80 30\n"
+                expected_stdout: "1.0000"
+                is_hidden: true
+                weight: 1
 
   - title: Networking and Databases
     summary: VPC, RDS, DynamoDB.
@@ -65,6 +176,19 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/vpc-basics.md
+
+      - slug: rds-and-dynamodb
+        title: "RDS and DynamoDB - Managed Databases on AWS"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/rds-and-dynamodb.md
+
+      - slug: networking-quiz
+        title: "Quiz - VPC and Networking"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/networking-quiz.md
+
       - slug: cidr-overlap-exercise
         title: CIDR Overlap Check
         type: exercise
@@ -132,3 +256,54 @@ modules:
                 expected_stdout: "NO"
                 is_hidden: true
                 weight: 1
+
+  - title: Security and Observability
+    summary: Secrets Manager, KMS, CloudWatch, SQS, SNS.
+    order_index: 4
+    lessons:
+      - slug: secrets-and-kms
+        title: "Secrets Manager and KMS - Managing Credentials and Encryption"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/secrets-and-kms.md
+
+      - slug: sqs-and-sns
+        title: "SQS and SNS - Messaging and Event Distribution"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/sqs-and-sns.md
+
+      - slug: cloudwatch-and-observability
+        title: CloudWatch and Observability on AWS
+        type: reading
+        duration_minutes: 13
+        content_file: lessons/cloudwatch-and-observability.md
+
+      - slug: security-quiz
+        title: "Quiz - AWS Security and Observability"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/security-quiz.md
+
+  - title: Deploying and Architecting
+    summary: "CI/CD, the Well-Architected Framework, and putting it all together."
+    order_index: 5
+    lessons:
+      - slug: cicd-on-aws
+        title: "CI/CD on AWS - CodePipeline, CodeBuild, and GitHub Actions"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/cicd-on-aws.md
+
+      - slug: well-architected
+        title: The AWS Well-Architected Framework
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/well-architected.md
+
+      - slug: architecture-video
+        title: "AWS Architecture Patterns - Full Application Design Video"
+        type: video
+        duration_minutes: 50
+        video_url: "https://www.youtube.com/results?search_query=aws+full+stack+application+architecture+tutorial+production"
+        content_file: lessons/architecture-video.md

@@ -26,6 +26,13 @@ modules:
     summary: The building blocks of OOP — state, behavior, attributes, methods, and instances.
     order_index: 1
     lessons:
+      - slug: video-classes-and-objects
+        title: "Video: Classes and Objects in Python"
+        type: video
+        duration_minutes: 45
+        video_url: "https://www.youtube.com/results?search_query=python+classes+and+objects+oop+tutorial+freeCodeCamp"
+        content_file: lessons/video-classes-and-objects.md
+
       - slug: state-vs-behavior
         title: State vs Behavior
         type: reading
@@ -43,6 +50,12 @@ modules:
         type: reading
         duration_minutes: 16
         content_file: lessons/constructors-and-instances.md
+
+      - slug: dunder-methods
+        title: "Dunder Methods: Python's Object Protocol"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/dunder-methods.md
 
       - slug: bank-account-exercise
         title: "Exercise: Bank Account Command Processor"
@@ -159,6 +172,13 @@ modules:
     summary: Control access to internal state with name conventions, properties, and invariants.
     order_index: 2
     lessons:
+      - slug: video-encapsulation
+        title: "Video: Encapsulation in Python"
+        type: video
+        duration_minutes: 35
+        video_url: "https://www.youtube.com/results?search_query=python+encapsulation+properties+oop+tutorial"
+        content_file: lessons/video-encapsulation.md
+
       - slug: access-control
         title: "Access Control and Encapsulation"
         type: reading
@@ -181,6 +201,13 @@ modules:
     summary: Build class hierarchies with subclassing, super(), method overriding, and composition.
     order_index: 3
     lessons:
+      - slug: video-inheritance
+        title: "Video: Inheritance and the super() Function"
+        type: video
+        duration_minutes: 40
+        video_url: "https://www.youtube.com/results?search_query=python+inheritance+super+method+resolution+order+tutorial"
+        content_file: lessons/video-inheritance.md
+
       - slug: subclassing-and-super
         title: "Subclassing and the super() Function"
         type: reading
@@ -192,6 +219,12 @@ modules:
         type: reading
         duration_minutes: 16
         content_file: lessons/overriding-methods.md
+
+      - slug: multiple-inheritance-mro
+        title: Multiple Inheritance and the Method Resolution Order
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/multiple-inheritance-mro.md
 
       - slug: shape-area-exercise
         title: "Exercise: Shape Area Calculator"
@@ -458,6 +491,13 @@ modules:
     summary: Dynamic dispatch, duck typing, method overriding, and abstract methods in Python.
     order_index: 4
     lessons:
+      - slug: video-polymorphism
+        title: "Video: Polymorphism and Duck Typing in Python"
+        type: video
+        duration_minutes: 35
+        video_url: "https://www.youtube.com/results?search_query=python+polymorphism+duck+typing+abstract+methods+oop"
+        content_file: lessons/video-polymorphism.md
+
       - slug: dynamic-dispatch
         title: Dynamic Dispatch and Polymorphism
         type: reading
@@ -726,6 +766,13 @@ modules:
     summary: Abstract base classes, Python protocols, contracts, and interface design.
     order_index: 5
     lessons:
+      - slug: video-abstract-base-classes
+        title: "Video: Abstract Base Classes and Interfaces in Python"
+        type: video
+        duration_minutes: 38
+        video_url: "https://www.youtube.com/results?search_query=python+abstract+base+classes+abc+protocol+typing+tutorial"
+        content_file: lessons/video-abstract-base-classes.md
+
       - slug: abstract-base-classes
         title: Abstract Base Classes and Interfaces
         type: reading
@@ -861,6 +908,13 @@ modules:
     summary: Apply the five SOLID principles to write maintainable, extensible Python code.
     order_index: 6
     lessons:
+      - slug: video-solid-principles
+        title: "Video: The SOLID Principles Explained"
+        type: video
+        duration_minutes: 50
+        video_url: "https://www.youtube.com/results?search_query=SOLID+principles+python+object+oriented+programming+tutorial"
+        content_file: lessons/video-solid-principles.md
+
       - slug: solid-srp-ocp
         title: "SOLID: Single Responsibility and Open/Closed"
         type: reading
@@ -883,6 +937,13 @@ modules:
     summary: "Singleton, Factory, Strategy, Observer, Decorator, Adapter, and Command — with Python examples."
     order_index: 7
     lessons:
+      - slug: video-design-patterns
+        title: "Video: Design Patterns in Python"
+        type: video
+        duration_minutes: 55
+        video_url: "https://www.youtube.com/results?search_query=python+design+patterns+singleton+factory+observer+strategy+tutorial"
+        content_file: lessons/video-design-patterns.md
+
       - slug: singleton-and-factory
         title: "Design Patterns: Singleton and Factory"
         type: reading

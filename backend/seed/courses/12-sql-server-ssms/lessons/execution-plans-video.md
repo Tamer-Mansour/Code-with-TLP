@@ -1,0 +1,3 @@
+# Video: Reading SQL Server Execution Plans
+
+This video from TechBrothersIT covers how to read and interpret SQL Server execution plans in SSMS, including understanding operators like Index Seek, Index Scan, Hash Match, Nested Loops, and Key Lookup. Key takeaways include how to identify the most expensive operators, what the thick arrows between operators mean (row estimates vs actual rows), and how to spot common plan problems like missing index warnings, RID Lookups, and implicit conversions. Approximate timestamps: 0:00 Introduction, 5:00 Estimated vs Actual plans, 12:00 Common operators explained, 22:00 Key Lookup problem and fix, 30:00 Missing index hints.
