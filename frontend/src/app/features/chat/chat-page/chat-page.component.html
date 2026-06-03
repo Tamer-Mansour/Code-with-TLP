@@ -7,11 +7,9 @@
     [class.w-0]="!sidebarOpen()"
   >
     <div class="flex flex-col h-full min-w-64">
-
       <!-- Sidebar header -->
       <div class="flex items-center justify-between px-4 py-3 border-b border-app-border shrink-0">
         <div class="flex items-center gap-2">
-          <!-- Animated orb mark -->
           <div class="relative w-6 h-6 shrink-0">
             <div class="absolute inset-0 rounded-full brand-gradient opacity-20 animate-pulse-soft"></div>
             <div class="absolute inset-0.5 rounded-full brand-gradient flex items-center justify-center">
@@ -23,8 +21,7 @@
         <button
           (click)="newChat()"
           class="w-7 h-7 rounded-lg flex items-center justify-center text-app-text-muted hover:text-app-text hover:bg-app-surface-2 transition-all duration-150"
-          title="New chat"
-          aria-label="New chat"
+          title="New chat" aria-label="New chat"
         >
           <lucide-icon [img]="Plus" [size]="15"></lucide-icon>
         </button>
@@ -34,9 +31,7 @@
       <div class="flex-1 overflow-y-auto py-2 px-2">
         @if (loadingSessions()) {
           <div class="space-y-1.5 mt-1">
-            @for (i of [1,2,3,4]; track i) {
-              <div class="skeleton h-9 rounded-lg w-full"></div>
-            }
+            @for (i of [1,2,3,4]; track i) { <div class="skeleton h-9 rounded-lg w-full"></div> }
           </div>
         } @else if (sessions().length === 0) {
           <div class="flex flex-col items-center justify-center h-full py-12 px-4 text-center">
@@ -44,9 +39,7 @@
               <lucide-icon [img]="MessageSquare" [size]="18" class="text-brand"></lucide-icon>
             </div>
             <p class="text-xs text-app-text-muted">No conversations yet.</p>
-            <button (click)="newChat()" class="mt-3 text-xs text-brand hover:text-brand-dark font-medium transition-colors">
-              Start one
-            </button>
+            <button (click)="newChat()" class="mt-3 text-xs text-brand hover:text-brand-dark font-medium transition-colors">Start one</button>
           </div>
         } @else {
           @for (session of sessions(); track session.id) {
@@ -59,20 +52,14 @@
               [class.text-app-text-2]="activeSessionId() !== session.id"
               [class.hover:bg-app-surface-2]="activeSessionId() !== session.id"
             >
-              <lucide-icon
-                [img]="MessageSquare"
-                [size]="12"
-                class="shrink-0 opacity-50"
+              <lucide-icon [img]="MessageSquare" [size]="12" class="shrink-0 opacity-50"
                 [class.opacity-80]="activeSessionId() === session.id"
-                [class.text-brand]="activeSessionId() === session.id"
-              ></lucide-icon>
+                [class.text-brand]="activeSessionId() === session.id"></lucide-icon>
               <span class="flex-1 text-xs truncate">{{ getSessionTitle(session) }}</span>
               <span class="text-[10px] text-app-text-muted shrink-0 hidden group-hover:block">{{ formatTime(session.updated_at) }}</span>
-              <button
-                (click)="deleteSession(session.id, $event)"
+              <button (click)="deleteSession(session.id, $event)"
                 class="shrink-0 opacity-0 group-hover:opacity-100 w-5 h-5 rounded flex items-center justify-center hover:text-red-500 hover:bg-red-500/10 transition-all duration-150"
-                aria-label="Delete session"
-              >
+                aria-label="Delete session">
                 <lucide-icon [img]="Trash2" [size]="11"></lucide-icon>
               </button>
             </button>
@@ -82,11 +69,9 @@
 
       <!-- Sidebar footer -->
       <div class="border-t border-app-border px-2 py-2.5 shrink-0">
-        <a
-          routerLink="/settings/ai-keys"
+        <a routerLink="/settings/ai-keys"
           class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-colors"
-          style="text-decoration: none;"
-        >
+          style="text-decoration: none;">
           <lucide-icon [img]="Settings" [size]="13" class="shrink-0"></lucide-icon>
           AI Keys
         </a>
@@ -94,462 +79,343 @@
     </div>
   </aside>
 
-  <!-- ── Main chat area ────────────────────────────────────────────────────── -->
-  <div class="relative flex-1 flex flex-col min-w-0 overflow-hidden">
+  <!-- ── Split: chat column + artifact panel ──────────────────────────────── -->
+  <div #splitContainer class="relative flex-1 flex min-w-0 overflow-hidden">
 
-    <!-- Ambient aurora backdrop -->
-    <div class="chat-aurora" aria-hidden="true"></div>
+    <!-- ── Chat column ──────────────────────────────────────────────────────── -->
+    <div class="relative flex flex-col min-w-0 overflow-hidden flex-1"
+         [class.hidden]="panelExpanded()" [class.lg:flex]="true">
 
-    <!-- ── Top bar ──────────────────────────────────────────────────────────── -->
-    <div class="relative z-10 flex items-center gap-3 px-4 h-13 border-b border-app-border bg-app-surface/80 backdrop-blur-md shrink-0 py-2">
-      <!-- Sidebar toggle -->
-      <button
-        (click)="toggleSidebar()"
-        class="w-8 h-8 rounded-lg flex items-center justify-center text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150"
-        aria-label="Toggle sidebar"
-      >
-        <lucide-icon [img]="MessageSquare" [size]="16"></lucide-icon>
-      </button>
+      <!-- Ambient aurora backdrop -->
+      <div class="chat-aurora" aria-hidden="true"></div>
 
-      <!-- Gradient header orb + title -->
-      <div class="flex items-center gap-2.5 min-w-0 flex-1">
-        <div class="relative w-7 h-7 shrink-0">
-          <div
-            class="absolute inset-0 rounded-full brand-gradient opacity-25"
-            [class.animate-pulse]="streaming()"
-          ></div>
-          <div class="absolute inset-0.5 rounded-full brand-gradient flex items-center justify-center shadow-sm">
-            <lucide-icon [img]="Bot" [size]="13" class="text-white"></lucide-icon>
+      <!-- ── Top bar ──────────────────────────────────────────────────────────── -->
+      <div class="relative z-10 flex items-center gap-3 px-3 sm:px-4 h-13 border-b border-app-border bg-app-surface/80 backdrop-blur-md shrink-0 py-2">
+        <button (click)="toggleSidebar()"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150"
+          aria-label="Toggle sidebar">
+          <lucide-icon [img]="PanelLeft" [size]="16"></lucide-icon>
+        </button>
+
+        <div class="flex items-center gap-2.5 min-w-0 flex-1">
+          <div class="relative w-7 h-7 shrink-0">
+            <div class="absolute inset-0 rounded-full brand-gradient opacity-25" [class.animate-pulse]="streaming()"></div>
+            <div class="absolute inset-0.5 rounded-full brand-gradient flex items-center justify-center shadow-sm">
+              <lucide-icon [img]="Bot" [size]="13" class="text-white"></lucide-icon>
+            </div>
           </div>
-        </div>
-        <div class="min-w-0">
-          @if (activeSessionId()) {
-            <p class="text-sm font-semibold text-app-text truncate leading-tight">
-              {{ getSessionTitle(sessions()[(sessions().findIndex(s => s.id === activeSessionId()))]) }}
-            </p>
-            @if (streaming()) {
-              <p class="text-[10px] text-brand font-medium leading-tight">
-                Generating response...
+          <div class="min-w-0">
+            @if (activeSessionId()) {
+              <p class="text-sm font-semibold text-app-text truncate leading-tight">
+                {{ getSessionTitle(sessions()[(sessions().findIndex(s => s.id === activeSessionId()))]) }}
               </p>
-            }
-          } @else {
-            <p class="text-sm font-semibold text-app-text leading-tight">TLP Chat</p>
-            <p class="text-[10px] text-app-text-muted leading-tight">AI-powered study assistant</p>
-          }
-      </div>
-    </div>
-
-      <!-- Model / provider picker -->
-      @if (hasKeys()) {
-        <div class="relative shrink-0">
-          <button
-            (click)="togglePicker()"
-            class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-app-border bg-app-surface text-xs text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150 max-w-[200px]"
-          >
-            <div class="w-3.5 h-3.5 rounded-full brand-gradient shrink-0 flex items-center justify-center">
-              <lucide-icon [img]="Bot" [size]="8" class="text-white"></lucide-icon>
-            </div>
-            <span class="truncate">{{ selectedKeyLabel() }}</span>
-            <lucide-icon
-              [img]="ChevronDown"
-              [size]="11"
-              class="shrink-0 transition-transform duration-150"
-              [class.rotate-180]="pickerOpen()"
-            ></lucide-icon>
-          </button>
-
-          @if (pickerOpen()) {
-            <div class="absolute right-0 top-full mt-1.5 w-72 bg-app-surface border border-app-border rounded-xl shadow-popover z-30 py-1 animate-slide-up overflow-hidden">
-              @for (key of keys(); track key.id) {
-                <div class="px-2 py-1 border-b border-app-border/50 last:border-0">
-                  <button
-                    (click)="onKeyChange(key.id)"
-                    class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
-                    [class.bg-brand/10]="selectedKeyId() === key.id"
-                    [class.text-brand]="selectedKeyId() === key.id"
-                    [class.text-app-text-2]="selectedKeyId() !== key.id"
-                    [class.hover:bg-app-surface-2]="selectedKeyId() !== key.id"
-                  >
-                    <div class="w-2 h-2 rounded-full brand-gradient shrink-0"></div>
-                    {{ key.label || key.provider }}
-                    <span class="text-app-text-muted font-normal ml-auto">{{ key.masked_key }}</span>
-                  </button>
-
-                  @if (selectedKeyId() === key.id && modelOptions().length > 0) {
-                    <div class="mt-0.5 pl-4 space-y-0.5 pb-1">
-                      @for (m of modelOptions(); track m) {
-                        <button
-                          (click)="selectedModel.set(m); pickerOpen.set(false)"
-                          class="w-full text-left px-2 py-1 rounded text-[11px] transition-colors"
-                          [class.text-brand]="selectedModel() === m"
-                          [class.font-medium]="selectedModel() === m"
-                          [class.bg-brand/5]="selectedModel() === m"
-                          [class.text-app-text-muted]="selectedModel() !== m"
-                          [class.hover:bg-app-surface-2]="selectedModel() !== m"
-                        >
-                          {{ m }}
-                        </button>
-                      }
-                    </div>
-                  }
-                </div>
+              @if (streaming()) {
+                <p class="text-[10px] leading-tight tlp-shimmer-text font-medium">Generating response…</p>
               }
-            </div>
-          }
-        </div>
-      }
-    </div>
-
-    <!-- ── Messages area ──────────────────────────────────────────────────── -->
-    <div class="relative z-10 flex-1 overflow-y-auto">
-
-      @if (!hasKeys()) {
-        <!-- No AI keys state -->
-        <div class="flex flex-col items-center justify-center h-full px-6 text-center animate-fade-in">
-          <div class="relative mb-6">
-            <div class="w-20 h-20 rounded-2xl bg-brand/15 border border-brand/20 flex items-center justify-center">
-              <lucide-icon [img]="Bot" [size]="32" class="text-brand"></lucide-icon>
-            </div>
-            <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full brand-gradient flex items-center justify-center">
-              <lucide-icon [img]="Settings" [size]="10" class="text-white"></lucide-icon>
-            </div>
+            } @else {
+              <p class="text-sm font-semibold text-app-text leading-tight">TLP Chat</p>
+              <p class="text-[10px] text-app-text-muted leading-tight">AI-powered study assistant</p>
+            }
           </div>
-          <h2 class="text-xl font-bold text-app-text mb-2">No AI Keys Configured</h2>
-          <p class="text-sm text-app-text-2 max-w-xs mb-6 leading-relaxed">
-            Add an AI provider key to start chatting with TLP Chat.
-          </p>
-          <a
-            routerLink="/settings/ai-keys"
-            class="btn btn-primary btn-sm"
-            style="text-decoration: none;"
-          >
-            <lucide-icon [img]="Settings" [size]="14"></lucide-icon>
-            Configure AI Keys
-          </a>
         </div>
 
-      } @else if (!activeSessionId() && messages().length === 0) {
-        <!-- Empty state — centered TLP logo + composer -->
-        <div class="tlp-empty-state flex flex-col items-center justify-center h-full gap-8">
-          <div class="tlp-empty-orb relative">
-            <!-- Soft outer glow halo -->
-            <div class="absolute -inset-12 rounded-full tlp-orbit-glow"></div>
-            <!-- Rotating conic ring -->
-            <div class="tlp-orb-ring-empty absolute -inset-2 rounded-2xl"></div>
-            <!-- Pulsing shadow -->
-            <div class="absolute -inset-6 rounded-3xl bg-brand/10 blur-2xl animate-pulse-soft"></div>
-            <div class="tlp-orb-main relative w-24 h-24 rounded-2xl brand-gradient flex items-center justify-center shadow-2xl">
-              <div class="w-16 h-16 rounded-xl bg-white/10 backdrop-blur-[1px] flex items-center justify-center">
-                <img src="tlp-logo.svg" alt="TLP" class="tlp-logo-white w-12 h-12" />
+        <!-- Reopen code panel -->
+        @if (!panelOpen() && panelArtifacts().length > 0) {
+          <button (click)="panelOpen.set(true)"
+            class="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-app-border text-xs font-medium text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all"
+            title="Show code panel">
+            <lucide-icon [img]="Code2" [size]="14"></lucide-icon>
+            <span class="hidden sm:inline">Code</span>
+          </button>
+        }
+
+        <!-- Model / provider picker -->
+        @if (hasKeys()) {
+          <div class="relative shrink-0">
+            <button (click)="togglePicker()"
+              class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-app-border bg-app-surface text-xs text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all duration-150 max-w-[160px] sm:max-w-[200px]">
+              <div class="w-3.5 h-3.5 rounded-full brand-gradient shrink-0 flex items-center justify-center">
+                <lucide-icon [img]="Bot" [size]="8" class="text-white"></lucide-icon>
               </div>
-            </div>
-          </div>
+              <span class="truncate">{{ selectedKeyLabel() }}</span>
+              <lucide-icon [img]="ChevronDown" [size]="11" class="shrink-0 transition-transform duration-150" [class.rotate-180]="pickerOpen()"></lucide-icon>
+            </button>
 
-          <!-- Composer inline (new chat) -->
-          <div class="w-full max-w-3xl px-4">
-            <!-- Attachment chips row -->
-            @if (attachments().length > 0) {
-              <div class="flex flex-wrap gap-1.5 mb-2 px-1">
-                @for (att of attachments(); track $index) {
-                  <div
-                    class="inline-flex items-center gap-1 pl-2 pr-1 py-0.5 rounded-full text-[11px] font-medium transition-all duration-150"
-                    [class.bg-brand/10]="!isUnsupported(att)"
-                    [class.text-brand]="!isUnsupported(att)"
-                    [class.border]="true"
-                    [class.border-brand/20]="!isUnsupported(att)"
-                    [class.bg-red-500/10]="isUnsupported(att)"
-                    [class.text-red-500]="isUnsupported(att)"
-                    [class.border-red-500/20]="isUnsupported(att)"
-                  >
-                    <lucide-icon [img]="Paperclip" [size]="9" class="shrink-0"></lucide-icon>
-                    <span class="max-w-[120px] truncate">{{ att.name }}</span>
-                    <button
-                      (click)="removeAttachment($index)"
-                      class="ml-0.5 w-4 h-4 rounded-full flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
-                      aria-label="Remove attachment"
-                    >
-                      <lucide-icon [img]="X" [size]="9"></lucide-icon>
+            @if (pickerOpen()) {
+              <div class="absolute right-0 top-full mt-1.5 w-72 max-w-[80vw] bg-app-surface border border-app-border rounded-xl shadow-popover z-30 py-1 animate-slide-up overflow-hidden">
+                @for (key of keys(); track key.id) {
+                  <div class="px-2 py-1 border-b border-app-border/50 last:border-0">
+                    <button (click)="onKeyChange(key.id)"
+                      class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
+                      [class.bg-brand/10]="selectedKeyId() === key.id"
+                      [class.text-brand]="selectedKeyId() === key.id"
+                      [class.text-app-text-2]="selectedKeyId() !== key.id"
+                      [class.hover:bg-app-surface-2]="selectedKeyId() !== key.id">
+                      <div class="w-2 h-2 rounded-full brand-gradient shrink-0"></div>
+                      {{ key.label || key.provider }}
+                      <span class="text-app-text-muted font-normal ml-auto">{{ key.masked_key }}</span>
                     </button>
+                    @if (selectedKeyId() === key.id && modelOptions().length > 0) {
+                      <div class="mt-0.5 pl-4 space-y-0.5 pb-1">
+                        @for (m of modelOptions(); track m) {
+                          <button (click)="selectedModel.set(m); pickerOpen.set(false)"
+                            class="w-full text-left px-2 py-1 rounded text-[11px] transition-colors"
+                            [class.text-brand]="selectedModel() === m"
+                            [class.font-medium]="selectedModel() === m"
+                            [class.bg-brand/5]="selectedModel() === m"
+                            [class.text-app-text-muted]="selectedModel() !== m"
+                            [class.hover:bg-app-surface-2]="selectedModel() !== m">{{ m }}</button>
+                        }
+                      </div>
+                    }
                   </div>
                 }
               </div>
             }
-
-            <!-- Main input row -->
-            <div class="composer-glow flex items-end gap-2 rounded-2xl px-3 py-2.5 transition-all duration-200">
-
-              <!-- Attach button -->
-              <button
-                (click)="openFilePicker()"
-                [disabled]="streaming()"
-                class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-app-text-muted hover:text-brand hover:bg-brand/10 transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed mb-0.5"
-                title="Attach file"
-                aria-label="Attach file"
-              >
-                <lucide-icon [img]="Paperclip" [size]="16"></lucide-icon>
-              </button>
-
-              <!-- Hidden file input -->
-              <input
-                #fileInput
-                type="file"
-                multiple
-                [accept]="ACCEPTED_EXTS.join(',')"
-                class="hidden"
-                (change)="onFilesSelected($event)"
-              />
-
-              <!-- Textarea -->
-              <textarea
-                #textareaRef
-                autofocus
-                [ngModel]="inputText()"
-                (ngModelChange)="inputText.set($event)"
-                (keydown)="onKeydown($event)"
-                placeholder="Message TLP Chat..."
-                rows="1"
-                class="flex-1 resize-none bg-transparent text-sm text-app-text placeholder-app-text-muted outline-none leading-6 max-h-40 min-h-[1.5rem] py-0.5"
-                [disabled]="streaming()"
-                aria-label="Chat message input"
-                style="field-sizing: content;"
-              ></textarea>
-
-              <!-- Stop / Send button -->
-              @if (streaming()) {
-                <button
-                  (click)="stopStreaming()"
-                  class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center bg-brand/20 border border-brand/30 text-brand hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-500 transition-all duration-150 mb-0.5"
-                  title="Stop generating"
-                  aria-label="Stop generating"
-                >
-                  <lucide-icon [img]="Square" [size]="13"></lucide-icon>
-                </button>
-              } @else {
-                <button
-                  (click)="send()"
-                  [disabled]="!inputText().trim() && attachments().length === 0"
-                  class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150 disabled:opacity-35 disabled:cursor-not-allowed mb-0.5"
-                  [class.brand-gradient]="inputText().trim() || attachments().length > 0"
-                  [class.text-white]="inputText().trim() || attachments().length > 0"
-                  [class.shadow-sm]="inputText().trim() || attachments().length > 0"
-                  [class.bg-app-surface-2]="!inputText().trim() && attachments().length === 0"
-                  [class.text-app-text-muted]="!inputText().trim() && attachments().length === 0"
-                  aria-label="Send message"
-                >
-                  <lucide-icon [img]="Send" [size]="14"></lucide-icon>
-                </button>
-              }
-            </div>
-
-            <p class="text-[10px] text-app-text-muted text-center mt-1.5">
-              Enter to send &nbsp;&middot;&nbsp; Shift+Enter for new line &nbsp;&middot;&nbsp; Attach text files with the paperclip
-            </p>
           </div>
-        </div>
+        }
+      </div>
 
-      } @else if (loadingMessages()) {
-        <div class="flex items-center justify-center h-full">
-          <div class="flex flex-col items-center gap-3">
-            <div class="relative w-10 h-10">
-              <div class="absolute inset-0 rounded-xl bg-brand/20 animate-pulse-soft"></div>
-              <div class="absolute inset-1 rounded-lg brand-gradient flex items-center justify-center">
-                <lucide-icon [img]="Bot" [size]="16" class="text-white"></lucide-icon>
+      <!-- ── Messages area ──────────────────────────────────────────────────── -->
+      <div class="relative z-10 flex-1 overflow-y-auto">
+
+        @if (!hasKeys()) {
+          <div class="flex flex-col items-center justify-center h-full px-6 text-center animate-fade-in">
+            <div class="relative mb-6">
+              <div class="w-20 h-20 rounded-2xl bg-brand/15 border border-brand/20 flex items-center justify-center">
+                <lucide-icon [img]="Bot" [size]="32" class="text-brand"></lucide-icon>
+              </div>
+              <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full brand-gradient flex items-center justify-center">
+                <lucide-icon [img]="Settings" [size]="10" class="text-white"></lucide-icon>
               </div>
             </div>
-            <p class="text-xs text-app-text-muted">Loading conversation...</p>
+            <h2 class="text-xl font-bold text-app-text mb-2">No AI Keys Configured</h2>
+            <p class="text-sm text-app-text-2 max-w-xs mb-6 leading-relaxed">Add an AI provider key to start chatting with TLP Chat.</p>
+            <a routerLink="/settings/ai-keys" class="btn btn-primary btn-sm" style="text-decoration: none;">
+              <lucide-icon [img]="Settings" [size]="14"></lucide-icon> Configure AI Keys
+            </a>
           </div>
-        </div>
 
-      } @else {
-        <!-- Messages list -->
-        <div class="max-w-3xl mx-auto px-4 py-6 space-y-5">
-          @for (msg of messages(); track $index) {
-
-            <!-- User bubble -->
-            @if (msg.role === 'user') {
-              <div class="flex justify-end animate-slide-up">
-                <div class="max-w-[78%] flex flex-col items-end gap-1.5">
-                  <!-- Attachment chips -->
-                  @if (msg.attachments && msg.attachments.length > 0) {
-                    <div class="flex flex-wrap gap-1 justify-end">
-                      @for (att of msg.attachments; track att.name) {
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-brand/10 text-brand border border-brand/20">
-                          <lucide-icon [img]="Paperclip" [size]="9"></lucide-icon>
-                          {{ att.name }}
-                        </span>
-                      }
-                    </div>
-                  }
-                  <!-- Bubble -->
-                  <div class="brand-gradient text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm">
-                    <p class="text-sm leading-relaxed whitespace-pre-wrap">{{ msg.content }}</p>
-                  </div>
+        } @else if (!activeSessionId() && messages().length === 0) {
+          <!-- Empty state — centered TLP logo + composer -->
+          <div class="tlp-empty-state flex flex-col items-center justify-center h-full gap-8">
+            <div class="tlp-empty-orb relative">
+              <div class="absolute -inset-12 rounded-full tlp-orbit-glow"></div>
+              <div class="tlp-orb-ring-empty absolute -inset-2 rounded-2xl"></div>
+              <div class="absolute -inset-6 rounded-3xl bg-brand/10 blur-2xl animate-pulse-soft"></div>
+              <div class="tlp-orb-main relative w-24 h-24 rounded-2xl brand-gradient flex items-center justify-center shadow-2xl">
+                <div class="w-16 h-16 rounded-xl bg-white/10 backdrop-blur-[1px] flex items-center justify-center">
+                  <img src="tlp-logo.svg" alt="TLP" class="tlp-logo-white w-12 h-12" />
                 </div>
               </div>
-            }
+            </div>
 
-            <!-- Assistant bubble -->
-            @if (msg.role === 'assistant') {
-              <div class="flex gap-3 animate-slide-up">
-                <!-- Orb avatar -->
-                <div class="relative w-8 h-8 shrink-0 mt-0.5">
-                  @if (msg.streaming) {
-                    <div class="absolute inset-0 rounded-xl brand-gradient opacity-30 animate-pulse"></div>
-                  }
-                  <div class="absolute inset-0 rounded-xl brand-gradient flex items-center justify-center shadow-sm">
-                    <lucide-icon [img]="Bot" [size]="14" class="text-white"></lucide-icon>
-                  </div>
+            <div class="w-full max-w-3xl px-4">
+              <ng-container *ngTemplateOutlet="composer; context: { centered: true }"></ng-container>
+              <p class="text-[10px] text-app-text-muted text-center mt-1.5">
+                Enter to send &nbsp;&middot;&nbsp; Shift+Enter for new line &nbsp;&middot;&nbsp; Code opens in a side panel
+              </p>
+            </div>
+          </div>
+
+        } @else if (loadingMessages()) {
+          <div class="flex items-center justify-center h-full">
+            <div class="flex flex-col items-center gap-3">
+              <div class="relative w-10 h-10">
+                <div class="absolute inset-0 rounded-xl bg-brand/20 animate-pulse-soft"></div>
+                <div class="absolute inset-1 rounded-lg brand-gradient flex items-center justify-center">
+                  <lucide-icon [img]="Bot" [size]="16" class="text-white"></lucide-icon>
                 </div>
+              </div>
+              <p class="text-xs tlp-shimmer-text">Loading conversation…</p>
+            </div>
+          </div>
 
-                <!-- Content card -->
-                <div class="flex-1 min-w-0">
-                  <div
-                    class="bg-app-surface border border-app-border rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-card"
-                    [class.border-brand/20]="msg.streaming"
-                  >
-                    @if (msg.streaming && !msg.content) {
-                      <!-- Typing dots -->
-                      <div class="flex items-center gap-1.5 py-0.5">
-                        <span class="w-2 h-2 rounded-full bg-brand/80 animate-bounce" style="animation-delay: 0ms; animation-duration: 900ms;"></span>
-                        <span class="w-2 h-2 rounded-full bg-brand/60 animate-bounce" style="animation-delay: 180ms; animation-duration: 900ms;"></span>
-                        <span class="w-2 h-2 rounded-full bg-brand/40 animate-bounce" style="animation-delay: 360ms; animation-duration: 900ms;"></span>
-                      </div>
-                    } @else {
-                      <!-- Full markdown — rendered live while streaming AND when complete -->
-                      <div class="content-prose text-sm max-w-none">
-                        <markdown [data]="msg.content" [disableSanitizer]="false"></markdown>
+        } @else {
+          <!-- Messages list -->
+          <div class="max-w-3xl mx-auto px-3 sm:px-4 py-6 space-y-5">
+            @for (msg of messages(); track $index; let msgIndex = $index) {
+
+              @if (msg.role === 'user') {
+                <div class="flex justify-end tlp-msg-in">
+                  <div class="max-w-[85%] sm:max-w-[78%] flex flex-col items-end gap-1.5">
+                    @if (msg.attachments && msg.attachments.length > 0) {
+                      <div class="flex flex-wrap gap-1 justify-end">
+                        @for (att of msg.attachments; track att.name) {
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-brand/10 text-brand border border-brand/20">
+                            <lucide-icon [img]="Paperclip" [size]="9"></lucide-icon> {{ att.name }}
+                          </span>
+                        }
                       </div>
                     }
+                    <div class="brand-gradient text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm">
+                      <p class="text-sm leading-relaxed whitespace-pre-wrap">{{ msg.content }}</p>
+                    </div>
                   </div>
-                  @if (msg.model && !msg.streaming) {
-                    <p class="text-[10px] text-app-text-muted mt-1 ml-1">{{ msg.model }}</p>
-                  }
                 </div>
-              </div>
-            }
-          }
+              }
 
-          <!-- Scroll anchor -->
-          <div #messagesEnd></div>
+              @if (msg.role === 'assistant') {
+                <div class="flex gap-3 tlp-msg-in">
+                  <div class="relative w-8 h-8 shrink-0 mt-0.5">
+                    @if (msg.streaming) { <div class="absolute inset-0 rounded-xl brand-gradient opacity-30 animate-pulse"></div> }
+                    <div class="absolute inset-0 rounded-xl brand-gradient flex items-center justify-center shadow-sm">
+                      <lucide-icon [img]="Bot" [size]="14" class="text-white"></lucide-icon>
+                    </div>
+                  </div>
+
+                  <div class="flex-1 min-w-0">
+                    @if (msg.streaming && !msg.content) {
+                      <!-- Thinking -->
+                      <div class="inline-flex items-center gap-2 bg-app-surface border border-app-border rounded-2xl rounded-tl-sm px-4 py-3 shadow-card">
+                        <span class="flex items-center gap-1">
+                          <span class="w-2 h-2 rounded-full bg-brand/80 tlp-dot" style="animation-delay:0ms"></span>
+                          <span class="w-2 h-2 rounded-full bg-brand/60 tlp-dot" style="animation-delay:160ms"></span>
+                          <span class="w-2 h-2 rounded-full bg-brand/40 tlp-dot" style="animation-delay:320ms"></span>
+                        </span>
+                        <span class="text-xs tlp-shimmer-text font-medium">Thinking…</span>
+                      </div>
+                    } @else {
+                      <div class="space-y-3">
+                        @for (part of msg.parts ?? []; track $index) {
+                          @if (part.kind === 'text') {
+                            <div class="bg-app-surface border border-app-border rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-card" [class.border-brand/20]="msg.streaming">
+                              <div class="content-prose text-sm max-w-none">
+                                <markdown [data]="part.markdown" [disableSanitizer]="false"></markdown>
+                                @if (msg.streaming && $last) { <span class="tlp-caret"></span> }
+                              </div>
+                            </div>
+                          } @else {
+                            <app-code-card
+                              [artifact]="part.artifact"
+                              [isActive]="isActiveArtifact(msgIndex, part.artifact.id)"
+                              (open)="openArtifact(msgIndex, part.artifact.id)"
+                            ></app-code-card>
+                          }
+                        }
+                      </div>
+                    }
+                    @if (msg.model && !msg.streaming) {
+                      <p class="text-[10px] text-app-text-muted mt-1 ml-1">{{ msg.model }}</p>
+                    }
+                  </div>
+                </div>
+              }
+            }
+            <div #messagesEnd></div>
+          </div>
+        }
+      </div>
+
+      <!-- ── Composer (docked) ──────────────────────────────────────────────── -->
+      @if (activeSessionId() || messages().length > 0) {
+        <div class="relative z-10 shrink-0 border-t border-app-border bg-app-surface/80 backdrop-blur-md px-3 sm:px-4 py-3">
+          <div class="max-w-3xl mx-auto">
+            <ng-container *ngTemplateOutlet="composer; context: { centered: false }"></ng-container>
+            <p class="text-[10px] text-app-text-muted text-center mt-1.5">
+              Enter to send &nbsp;&middot;&nbsp; Shift+Enter for new line &nbsp;&middot;&nbsp; Code opens in a side panel
+            </p>
+          </div>
         </div>
       }
     </div>
 
-    @if (activeSessionId() || messages().length > 0) {
-    <!-- ── Composer ───────────────────────────────────────────────────────── -->
-    <div class="relative z-10 shrink-0 border-t border-app-border bg-app-surface/80 backdrop-blur-md px-4 py-3">
-      <div class="max-w-3xl mx-auto">
-
-        @if (!hasKeys()) {
-          <div class="text-center py-2">
-            <p class="text-xs text-app-text-muted">
-              Configure an AI key to start chatting —
-              <a routerLink="/settings/ai-keys" class="text-brand hover:underline" style="text-decoration: none;">AI Keys Settings</a>
-            </p>
-          </div>
-        } @else {
-
-          <!-- Attachment chips row -->
-          @if (attachments().length > 0) {
-            <div class="flex flex-wrap gap-1.5 mb-2 px-1">
-              @for (att of attachments(); track $index) {
-                <div
-                  class="inline-flex items-center gap-1 pl-2 pr-1 py-0.5 rounded-full text-[11px] font-medium transition-all duration-150"
-                  [class.bg-brand/10]="!isUnsupported(att)"
-                  [class.text-brand]="!isUnsupported(att)"
-                  [class.border]="true"
-                  [class.border-brand/20]="!isUnsupported(att)"
-                  [class.bg-red-500/10]="isUnsupported(att)"
-                  [class.text-red-500]="isUnsupported(att)"
-                  [class.border-red-500/20]="isUnsupported(att)"
-                >
-                  <lucide-icon [img]="Paperclip" [size]="9" class="shrink-0"></lucide-icon>
-                  <span class="max-w-[120px] truncate">{{ att.name }}</span>
-                  <button
-                    (click)="removeAttachment($index)"
-                    class="ml-0.5 w-4 h-4 rounded-full flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
-                    aria-label="Remove attachment"
-                  >
-                    <lucide-icon [img]="X" [size]="9"></lucide-icon>
-                  </button>
-                </div>
-              }
-            </div>
-          }
-
-          <!-- Main input row -->
-          <div class="composer-glow flex items-end gap-2 rounded-2xl px-3 py-2.5 transition-all duration-200">
-
-            <!-- Attach button -->
-            <button
-              (click)="openFilePicker()"
-              [disabled]="streaming()"
-              class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-app-text-muted hover:text-brand hover:bg-brand/10 transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed mb-0.5"
-              title="Attach file"
-              aria-label="Attach file"
-            >
-              <lucide-icon [img]="Paperclip" [size]="16"></lucide-icon>
-            </button>
-
-            <!-- Hidden file input -->
-            <input
-              #fileInput
-              type="file"
-              multiple
-              [accept]="ACCEPTED_EXTS.join(',')"
-              class="hidden"
-              (change)="onFilesSelected($event)"
-            />
-
-            <!-- Textarea -->
-            <textarea
-              #textareaRef
-              autofocus
-              [ngModel]="inputText()"
-              (ngModelChange)="inputText.set($event)"
-              (keydown)="onKeydown($event)"
-              placeholder="Message TLP Chat..."
-              rows="1"
-              class="flex-1 resize-none bg-transparent text-sm text-app-text placeholder-app-text-muted outline-none leading-6 max-h-40 min-h-[1.5rem] py-0.5"
-              [disabled]="streaming()"
-              aria-label="Chat message input"
-              style="field-sizing: content;"
-            ></textarea>
-
-            <!-- Stop / Send button -->
-            @if (streaming()) {
-              <button
-                (click)="stopStreaming()"
-                class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center bg-brand/20 border border-brand/30 text-brand hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-500 transition-all duration-150 mb-0.5"
-                title="Stop generating"
-                aria-label="Stop generating"
-              >
-                <lucide-icon [img]="Square" [size]="13"></lucide-icon>
-              </button>
-            } @else {
-              <button
-                (click)="send()"
-                [disabled]="!inputText().trim() && attachments().length === 0"
-                class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150 disabled:opacity-35 disabled:cursor-not-allowed mb-0.5"
-                [class.brand-gradient]="inputText().trim() || attachments().length > 0"
-                [class.text-white]="inputText().trim() || attachments().length > 0"
-                [class.shadow-sm]="inputText().trim() || attachments().length > 0"
-                [class.bg-app-surface-2]="!inputText().trim() && attachments().length === 0"
-                [class.text-app-text-muted]="!inputText().trim() && attachments().length === 0"
-                aria-label="Send message"
-              >
-                <lucide-icon [img]="Send" [size]="14"></lucide-icon>
-              </button>
-            }
-          </div>
-
-          <p class="text-[10px] text-app-text-muted text-center mt-1.5">
-            Enter to send &nbsp;&middot;&nbsp; Shift+Enter for new line &nbsp;&middot;&nbsp; Attach text files with the paperclip
-          </p>
-        }
-      </div>
-    </div>
+    <!-- ── Resize handle (desktop) ──────────────────────────────────────────── -->
+    @if (panelOpen() && !panelExpanded()) {
+      <div class="tlp-resize-handle hidden lg:block" tlpDragResize
+        (dragMove)="onResizeMove($event)" (dragEnd)="persistWidth()" (resetWidth)="resetPanelWidth()"
+        role="separator" aria-orientation="vertical" aria-label="Resize code panel"></div>
     }
 
+    <!-- ── Artifact panel (desktop split) ───────────────────────────────────── -->
+    @if (panelOpen()) {
+      <aside class="hidden lg:flex shrink-0 border-l border-app-border h-full overflow-hidden"
+        [class.flex-1]="panelExpanded()"
+        [style.width.px]="panelExpanded() ? null : panelWidth()">
+        <app-code-artifact-panel class="w-full"
+          [artifacts]="panelArtifacts()"
+          [activeId]="activeArtifactId()"
+          [streaming]="panelStreaming()"
+          [expanded]="panelExpanded()"
+          (activeIdChange)="onActiveIdChange($event)"
+          (toggleExpand)="toggleExpand()"
+          (closed)="closePanel()"
+        ></app-code-artifact-panel>
+      </aside>
+    }
   </div>
+
+  <!-- ── Artifact panel (mobile overlay) ────────────────────────────────────── -->
+  @if (panelOpen()) {
+    <div class="lg:hidden fixed inset-0 z-50 flex flex-col bg-app-bg animate-slide-up" role="dialog" aria-modal="true">
+      <app-code-artifact-panel class="flex-1 min-h-0"
+        [artifacts]="panelArtifacts()"
+        [activeId]="activeArtifactId()"
+        [streaming]="panelStreaming()"
+        [expanded]="false"
+        (activeIdChange)="onActiveIdChange($event)"
+        (closed)="closePanel()"
+      ></app-code-artifact-panel>
+    </div>
+  }
 </div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SHARED COMPOSER TEMPLATE
+     ═══════════════════════════════════════════════════════════════ -->
+<ng-template #composer let-centered="centered">
+  <!-- Attachment chips -->
+  @if (attachments().length > 0) {
+    <div class="flex flex-wrap gap-1.5 mb-2 px-1">
+      @for (att of attachments(); track $index) {
+        <div class="inline-flex items-center gap-1 pl-2 pr-1 py-0.5 rounded-full text-[11px] font-medium transition-all duration-150"
+          [class.bg-brand/10]="!isUnsupported(att)" [class.text-brand]="!isUnsupported(att)"
+          [class.border]="true" [class.border-brand/20]="!isUnsupported(att)"
+          [class.bg-red-500/10]="isUnsupported(att)" [class.text-red-500]="isUnsupported(att)" [class.border-red-500/20]="isUnsupported(att)">
+          <lucide-icon [img]="Paperclip" [size]="9" class="shrink-0"></lucide-icon>
+          <span class="max-w-[120px] truncate">{{ att.name }}</span>
+          <button (click)="removeAttachment($index)"
+            class="ml-0.5 w-4 h-4 rounded-full flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+            aria-label="Remove attachment">
+            <lucide-icon [img]="X" [size]="9"></lucide-icon>
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="composer-glow flex items-end gap-2 rounded-2xl px-3 py-2.5 transition-all duration-200">
+    <button (click)="openFilePicker()" [disabled]="streaming()"
+      class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-app-text-muted hover:text-brand hover:bg-brand/10 transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed mb-0.5"
+      title="Attach file" aria-label="Attach file">
+      <lucide-icon [img]="Paperclip" [size]="16"></lucide-icon>
+    </button>
+
+    <input #fileInput type="file" multiple [accept]="ACCEPTED_EXTS.join(',')" class="hidden" (change)="onFilesSelected($event)" />
+
+    <textarea #textareaRef autofocus
+      [ngModel]="inputText()" (ngModelChange)="inputText.set($event)" (keydown)="onKeydown($event)"
+      placeholder="Message TLP Chat…" rows="1"
+      class="flex-1 resize-none bg-transparent text-sm text-app-text placeholder-app-text-muted outline-none leading-6 max-h-40 min-h-[1.5rem] py-1.5"
+      [disabled]="streaming()" aria-label="Chat message input" style="field-sizing: content;"></textarea>
+
+    @if (streaming()) {
+      <button (click)="stopStreaming()"
+        class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center bg-brand/20 border border-brand/30 text-brand hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-500 transition-all duration-150 mb-0.5"
+        title="Stop generating" aria-label="Stop generating">
+        <lucide-icon [img]="Square" [size]="13"></lucide-icon>
+      </button>
+    } @else {
+      <button (click)="send()" [disabled]="!inputText().trim() && attachments().length === 0"
+        class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150 disabled:opacity-35 disabled:cursor-not-allowed mb-0.5"
+        [class.brand-gradient]="inputText().trim() || attachments().length > 0"
+        [class.text-white]="inputText().trim() || attachments().length > 0"
+        [class.shadow-sm]="inputText().trim() || attachments().length > 0"
+        [class.bg-app-surface-2]="!inputText().trim() && attachments().length === 0"
+        [class.text-app-text-muted]="!inputText().trim() && attachments().length === 0"
+        aria-label="Send message">
+        <lucide-icon [img]="Send" [size]="14"></lucide-icon>
+      </button>
+    }
+  </div>
+</ng-template>

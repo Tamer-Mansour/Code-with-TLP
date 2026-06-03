@@ -1,0 +1,333 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     ONBOARDING WIZARD — build your personalized learning path
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="onb-root relative min-h-dvh w-full overflow-hidden bg-app-bg flex flex-col">
+
+  <!-- Ambient backdrop -->
+  <div class="onb-aurora" aria-hidden="true"></div>
+
+  <!-- ── Top bar: progress + skip ─────────────────────────────────── -->
+  <header class="relative z-10 shrink-0 px-4 sm:px-6 pt-4 pb-3">
+    <div class="max-w-3xl mx-auto flex items-center gap-4">
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center shadow-sm">
+          <lucide-icon [img]="Wand2" [size]="14" class="text-white"></lucide-icon>
+        </div>
+        <span class="text-sm font-semibold text-app-text hidden sm:block">Personalize</span>
+      </div>
+
+      <div class="flex-1 h-1.5 rounded-full bg-app-surface-2 overflow-hidden">
+        <div class="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-[width] duration-500 ease-out"
+             [style.width.%]="progressPct()"></div>
+      </div>
+
+      @if (step() < 7) {
+        <button (click)="skip()"
+          class="shrink-0 text-xs font-medium text-app-text-muted hover:text-app-text transition-colors px-2 py-1.5">
+          Skip for now
+        </button>
+      }
+    </div>
+  </header>
+
+  <!-- ── Body ─────────────────────────────────────────────────────── -->
+  <main class="relative z-10 flex-1 overflow-y-auto px-4 sm:px-6 py-4">
+    <div class="max-w-3xl mx-auto">
+      @switch (step()) {
+
+        <!-- ── 0 · Welcome ──────────────────────────────────────── -->
+        @case (0) {
+          <div class="tlp-msg-in flex flex-col items-center text-center pt-8 sm:pt-16">
+            <div class="onb-orb relative mb-8">
+              <div class="absolute -inset-8 rounded-full tlp-orbit-glow"></div>
+              <div class="relative w-24 h-24 rounded-3xl brand-gradient flex items-center justify-center shadow-2xl tlp-orb-main">
+                <lucide-icon [img]="iconMap['Compass']" [size]="44" class="text-white"></lucide-icon>
+              </div>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-app-text tracking-tight mb-3">
+              Let's build <span class="brand-gradient-text">your</span> learning path
+            </h1>
+            <p class="text-app-text-2 max-w-md leading-relaxed mb-8">
+              Answer a few quick questions and we'll craft a personalized curriculum —
+              and float the courses you care about to the top.
+            </p>
+            <button (click)="next()" class="btn btn-primary btn-lg w-full sm:w-auto justify-center min-w-56">
+              <lucide-icon [img]="Sparkles" [size]="16"></lucide-icon>
+              Get started
+            </button>
+            <p class="text-xs text-app-text-muted mt-3">Takes about a minute · You can redo it anytime</p>
+          </div>
+        }
+
+        <!-- ── 1 · Goal ─────────────────────────────────────────── -->
+        @case (1) {
+          <div class="tlp-msg-in">
+            <div class="text-center mb-7">
+              <h2 class="text-2xl font-bold text-app-text mb-1.5">What brings you here?</h2>
+              <p class="text-sm text-app-text-2">Pick your main goal — it shapes your plan.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              @for (g of goals; track g.key) {
+                <button (click)="selectGoal(g.key)"
+                  class="onb-card group relative flex items-center gap-4 p-4 rounded-2xl border text-left transition-all"
+                  [class.border-app-border]="goal() !== g.key"
+                  [class.border-transparent]="goal() === g.key"
+                  [class.onb-selected]="goal() === g.key">
+                  <span class="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center shadow-sm text-white"
+                        [class]="'bg-gradient-to-br ' + g.gradient">
+                    <lucide-icon [img]="iconMap[g.icon]" [size]="22"></lucide-icon>
+                  </span>
+                  <span class="min-w-0 flex-1">
+                    <span class="block text-sm font-semibold text-app-text">{{ g.label }}</span>
+                    <span class="block text-xs text-app-text-2 mt-0.5">{{ g.blurb }}</span>
+                  </span>
+                  <span class="onb-check shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                        [class.opacity-0]="goal() !== g.key" [class.opacity-100]="goal() === g.key">
+                    <lucide-icon [img]="Check" [size]="14" class="text-white"></lucide-icon>
+                  </span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- ── 2 · Interests (photo cards) ──────────────────────── -->
+        @case (2) {
+          <div class="tlp-msg-in">
+            <div class="text-center mb-7">
+              <h2 class="text-2xl font-bold text-app-text mb-1.5">What do you want to learn?</h2>
+              <p class="text-sm text-app-text-2">Choose all that interest you — these rise to the top of your catalog.</p>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+              @for (opt of interestOptions; track opt.key) {
+                <button (click)="toggleInterest(opt.key)"
+                  class="onb-photo group relative rounded-2xl overflow-hidden text-left aspect-[4/3] border transition-all"
+                  [class.border-transparent]="!isInterest(opt.key)"
+                  [class.onb-selected]="isInterest(opt.key)"
+                  [class]="'bg-gradient-to-br ' + opt.gradient">
+                  <!-- Photographic texture -->
+                  <img [src]="opt.image" alt="" loading="lazy"
+                    class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500" />
+                  <!-- Legibility scrim -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10"></div>
+
+                  <!-- Content -->
+                  <div class="relative h-full flex flex-col justify-between p-3.5">
+                    <span class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <lucide-icon [img]="iconMap[opt.icon]" [size]="20" class="text-white"></lucide-icon>
+                    </span>
+                    <span>
+                      <span class="block text-sm font-bold text-white leading-tight">{{ opt.label }}</span>
+                      <span class="block text-[11px] text-white/80 mt-0.5 leading-snug">{{ opt.blurb }}</span>
+                    </span>
+                  </div>
+
+                  <!-- Selected check -->
+                  <span class="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow transition-all"
+                        [class.opacity-0]="!isInterest(opt.key)" [class.scale-50]="!isInterest(opt.key)"
+                        [class.opacity-100]="isInterest(opt.key)" [class.scale-100]="isInterest(opt.key)">
+                    <lucide-icon [img]="Check" [size]="14" class="text-brand"></lucide-icon>
+                  </span>
+                </button>
+              }
+            </div>
+            <p class="text-center text-xs text-app-text-muted mt-4">
+              {{ interests().length }} selected
+            </p>
+          </div>
+        }
+
+        <!-- ── 3 · Level ────────────────────────────────────────── -->
+        @case (3) {
+          <div class="tlp-msg-in">
+            <div class="text-center mb-7">
+              <h2 class="text-2xl font-bold text-app-text mb-1.5">How much coding experience?</h2>
+              <p class="text-sm text-app-text-2">We'll tune the difficulty to match.</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              @for (l of levels; track l.key) {
+                <button (click)="selectLevel(l.key)"
+                  class="onb-card relative flex flex-col items-center text-center gap-2 p-4 rounded-2xl border transition-all"
+                  [class.border-app-border]="level() !== l.key"
+                  [class.border-transparent]="level() === l.key"
+                  [class.onb-selected]="level() === l.key">
+                  <span class="w-12 h-12 rounded-xl bg-app-surface-2 flex items-center justify-center"
+                        [class.brand-gradient]="level() === l.key">
+                    <lucide-icon [img]="iconMap[l.icon]" [size]="22"
+                      [class.text-white]="level() === l.key" [class.text-app-text-2]="level() !== l.key"></lucide-icon>
+                  </span>
+                  <span class="block text-sm font-semibold text-app-text">{{ l.label }}</span>
+                  <span class="block text-[11px] text-app-text-2 leading-snug">{{ l.blurb }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- ── 4 · Time ─────────────────────────────────────────── -->
+        @case (4) {
+          <div class="tlp-msg-in">
+            <div class="text-center mb-7">
+              <h2 class="text-2xl font-bold text-app-text mb-1.5">How much time can you invest?</h2>
+              <p class="text-sm text-app-text-2">We'll estimate how fast you'll finish.</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              @for (h of hourOptions; track h.value) {
+                <button (click)="selectHours(h.value)"
+                  class="onb-card relative flex flex-col items-center text-center gap-1.5 p-4 rounded-2xl border transition-all"
+                  [class.border-app-border]="weeklyHours() !== h.value"
+                  [class.border-transparent]="weeklyHours() === h.value"
+                  [class.onb-selected]="weeklyHours() === h.value">
+                  <span class="w-11 h-11 rounded-xl bg-app-surface-2 flex items-center justify-center"
+                        [class.brand-gradient]="weeklyHours() === h.value">
+                    <lucide-icon [img]="Clock" [size]="20"
+                      [class.text-white]="weeklyHours() === h.value" [class.text-app-text-2]="weeklyHours() !== h.value"></lucide-icon>
+                  </span>
+                  <span class="block text-sm font-semibold text-app-text">{{ h.label }}</span>
+                  <span class="block text-[11px] text-app-text-2">{{ h.sub }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- ── 5 · Languages (optional) ─────────────────────────── -->
+        @case (5) {
+          <div class="tlp-msg-in">
+            <div class="text-center mb-7">
+              <h2 class="text-2xl font-bold text-app-text mb-1.5">Any languages you prefer?</h2>
+              <p class="text-sm text-app-text-2">Optional — helps us recommend the right courses.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2.5">
+              @for (lang of languageOptions; track lang.key) {
+                <button (click)="toggleLanguage(lang.key)"
+                  class="onb-chip inline-flex items-center gap-2 px-4 h-11 rounded-xl border text-sm font-medium transition-all"
+                  [class.border-app-border]="!isLanguage(lang.key)"
+                  [class.text-app-text-2]="!isLanguage(lang.key)"
+                  [class.bg-app-surface]="!isLanguage(lang.key)"
+                  [class.border-transparent]="isLanguage(lang.key)"
+                  [class.onb-selected]="isLanguage(lang.key)"
+                  [class.text-app-text]="isLanguage(lang.key)">
+                  <lucide-icon [img]="iconMap[lang.icon]" [size]="15"></lucide-icon>
+                  {{ lang.label }}
+                  @if (isLanguage(lang.key)) { <lucide-icon [img]="Check" [size]="14" class="text-brand"></lucide-icon> }
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- ── 6 · Building ─────────────────────────────────────── -->
+        @case (6) {
+          <div class="tlp-msg-in flex flex-col items-center text-center pt-10 sm:pt-20">
+            <div class="onb-orb relative mb-8">
+              <div class="absolute -inset-10 rounded-full tlp-orbit-glow"></div>
+              <div class="tlp-orb-ring-empty absolute -inset-2 rounded-3xl"></div>
+              <div class="relative w-24 h-24 rounded-3xl brand-gradient flex items-center justify-center shadow-2xl tlp-orb-main">
+                <lucide-icon [img]="Wand2" [size]="40" class="text-white"></lucide-icon>
+              </div>
+            </div>
+            <h2 class="text-2xl font-bold text-app-text mb-2 tlp-shimmer-text">Crafting your learning curve…</h2>
+            <p class="text-sm text-app-text-2 max-w-sm">
+              Matching <span class="font-semibold text-app-text">{{ interests().length }}</span> interests
+              against the catalog and ordering your path.
+            </p>
+          </div>
+        }
+
+        <!-- ── 7 · Result ───────────────────────────────────────── -->
+        @case (7) {
+          <div class="tlp-msg-in">
+            <div class="text-center mb-6">
+              <div class="inline-flex w-14 h-14 rounded-2xl brand-gradient items-center justify-center shadow-lg mb-3">
+                <lucide-icon [img]="PartyPopper" [size]="26" class="text-white"></lucide-icon>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-bold text-app-text tracking-tight mb-1.5">Your path is ready</h2>
+              <p class="text-sm text-app-text-2">
+                Tailored to <span class="font-semibold text-app-text">{{ goalLabel() || 'your goals' }}</span>.
+                Here's where to start.
+              </p>
+            </div>
+
+            <!-- Stat strip -->
+            <div class="grid grid-cols-3 gap-2.5 mb-6">
+              <div class="rounded-xl border border-app-border bg-app-surface p-3 text-center">
+                <p class="text-xl font-bold brand-gradient-text">{{ recommendedOrFallback().length }}</p>
+                <p class="text-[11px] text-app-text-2 mt-0.5">courses</p>
+              </div>
+              <div class="rounded-xl border border-app-border bg-app-surface p-3 text-center">
+                <p class="text-xl font-bold brand-gradient-text">~{{ totalHours() }}h</p>
+                <p class="text-[11px] text-app-text-2 mt-0.5">to complete</p>
+              </div>
+              <div class="rounded-xl border border-app-border bg-app-surface p-3 text-center">
+                <p class="text-xl font-bold brand-gradient-text">{{ weeksToFinish() ? '~' + weeksToFinish() + 'w' : '—' }}</p>
+                <p class="text-[11px] text-app-text-2 mt-0.5">at your pace</p>
+              </div>
+            </div>
+
+            <!-- Roadmap -->
+            <div class="space-y-2.5 mb-7">
+              @for (item of recommendedOrFallback(); track item.course.id; let i = $index) {
+                <div class="relative flex items-start gap-3.5 rounded-2xl border border-app-border bg-app-surface p-3.5 shadow-card">
+                  <div class="shrink-0 flex flex-col items-center">
+                    <span class="w-8 h-8 rounded-full brand-gradient text-white text-sm font-bold flex items-center justify-center shadow-sm">{{ i + 1 }}</span>
+                    @if (!$last) { <span class="w-0.5 flex-1 min-h-4 mt-1 bg-app-border rounded-full"></span> }
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                      <p class="text-sm font-semibold text-app-text leading-snug">{{ item.course.title }}</p>
+                      <span class="shrink-0 text-[11px] text-app-text-muted whitespace-nowrap">{{ item.course.estimated_hours }}h</span>
+                    </div>
+                    @if (item.course.summary) {
+                      <p class="text-xs text-app-text-2 mt-0.5 line-clamp-2 leading-snug">{{ item.course.summary }}</p>
+                    }
+                    <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-app-surface-2 text-app-text-2 capitalize">{{ difficultyLabel(item.course.difficulty) }}</span>
+                      @if (item.reason) {
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-brand/10 text-brand">
+                          <lucide-icon [img]="Star" [size]="9"></lucide-icon> {{ item.reason }}
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (recommendedOrFallback().length === 0) {
+                <div class="rounded-2xl border border-app-border bg-app-surface p-6 text-center">
+                  <p class="text-sm text-app-text-2">We'll show all courses — explore and pick what excites you.</p>
+                </div>
+              }
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <button (click)="finish()" [disabled]="saving()" class="btn btn-primary flex-1 justify-center">
+                @if (saving()) {
+                  <lucide-icon [img]="Loader2" [size]="16" class="animate-spin"></lucide-icon> Saving…
+                } @else {
+                  <lucide-icon [img]="ArrowRight" [size]="16"></lucide-icon> Start learning
+                }
+              </button>
+              <button (click)="skip()" class="btn btn-secondary justify-center">Browse all courses</button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </main>
+
+  <!-- ── Footer nav (question steps only) ─────────────────────────── -->
+  @if (step() >= 1 && step() <= 5) {
+    <footer class="relative z-10 shrink-0 border-t border-app-border bg-app-surface/70 backdrop-blur-md px-4 sm:px-6 py-3">
+      <div class="max-w-3xl mx-auto flex items-center justify-between gap-3">
+        <button (click)="back()" class="btn btn-ghost">
+          <lucide-icon [img]="ArrowLeft" [size]="16"></lucide-icon> Back
+        </button>
+        <span class="text-xs text-app-text-muted">Step {{ step() }} of {{ TOTAL_QUESTION_STEPS }}</span>
+        <button (click)="next()" [disabled]="!canAdvance()" class="btn btn-primary min-w-32 justify-center">
+          {{ step() === 5 ? 'Build my path' : 'Continue' }}
+          <lucide-icon [img]="ArrowRight" [size]="16"></lucide-icon>
+        </button>
+      </div>
+    </footer>
+  }
+</div>

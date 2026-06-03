@@ -296,6 +296,74 @@
   .anim-float, .anim-mesh, .anim-blink, .marquee-track { animation: none; }
 }
 
+/* ─── Claude-style chat workspace ─────────────────────────── */
+/* Drag-to-resize handle for the chat ↔ code-artifact split */
+body.tlp-resizing,
+body.tlp-resizing * { cursor: col-resize !important; user-select: none !important; }
+
+.tlp-resize-handle {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 9px;
+  cursor: col-resize;
+  touch-action: none;
+}
+.tlp-resize-handle::before {
+  content: "";
+  position: absolute;
+  inset: 0 4px;
+  border-radius: 9999px;
+  background: rgb(var(--color-app-border));
+  transition: background .15s ease, transform .15s ease;
+}
+.tlp-resize-handle:hover::before,
+.tlp-resize-handle:active::before {
+  background: linear-gradient(180deg, rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)));
+  transform: scaleX(1.4);
+}
+
+/* Message entrance — gentle rise + fade */
+@keyframes tlp-msg-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.tlp-msg-in { animation: tlp-msg-in .32s cubic-bezier(.22,1,.36,1) both; }
+
+/* Streaming caret that trails the last assistant token */
+@keyframes tlp-caret-blink { 0%,45% { opacity: 1; } 55%,100% { opacity: 0; } }
+.tlp-caret {
+  display: inline-block;
+  width: .55ch;
+  height: 1.05em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  background: linear-gradient(180deg, rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)));
+  animation: tlp-caret-blink 1s steps(1) infinite;
+}
+
+/* Thinking shimmer for the assistant "working" label */
+@keyframes tlp-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.tlp-shimmer-text {
+  background: linear-gradient(90deg,
+    rgb(var(--color-app-text-muted)) 0%,
+    rgb(var(--color-app-text)) 50%,
+    rgb(var(--color-app-text-muted)) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: tlp-shimmer 1.6s linear infinite;
+}
+
+/* Soft three-dot "thinking" pulse (reused by both chat surfaces) */
+@keyframes tlp-dot { 0%,80%,100% { transform: scale(.7); opacity: .4; } 40% { transform: scale(1); opacity: 1; } }
+.tlp-dot { animation: tlp-dot 1.2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tlp-msg-in { animation: none; }
+  .tlp-caret { animation: none; opacity: 1; }
+  .tlp-shimmer-text { animation: none; -webkit-text-fill-color: rgb(var(--color-app-text-2)); }
+  .tlp-dot { animation: none; }
+}
+
 /* ─── Utilities ───────────────────────────────────────────── */
 @layer utilities {
   .text-gradient { @apply bg-gradient-to-r from-brand to-brand-light bg-clip-text text-transparent; }

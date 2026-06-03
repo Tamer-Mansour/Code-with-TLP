@@ -110,7 +110,8 @@ export class RegisterComponent {
         next: () => {
           this.loading.set(false);
           this.toast.success('Account created! Welcome to StudyingApp.');
-          this.router.navigate(['/catalog']);
+          // New users land in the (skippable) onboarding wizard to build their path.
+          this.router.navigate(['/onboarding']);
         },
         error: (err) => {
           this.loading.set(false);

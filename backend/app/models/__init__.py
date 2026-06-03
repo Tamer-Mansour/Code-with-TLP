@@ -18,8 +18,10 @@ from app.models.quiz import QuizQuestion, QuizAnswer
 from app.models.ai import UserAIKey, ChatSession, ChatMessage
 from app.models.interview import InterviewCategory, InterviewQuestion
 from app.models.user_settings import UserSettings
+from app.models.learning_profile import LearningProfile
 
 __all__ = [
+    "LearningProfile",
     "InterviewCategory",
     "InterviewQuestion",
     "QuizQuestion",

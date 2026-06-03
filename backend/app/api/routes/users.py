@@ -6,8 +6,10 @@ from app.core.database import get_db
 from app.core.security import hash_password
 from app.models.user import User
 from app.models.user_settings import UserSettings
+from app.models.learning_profile import LearningProfile
 from app.schemas.user import UserRead, UserUpdate
 from app.schemas.user_settings import UserSettingsRead, UserSettingsUpdate
+from app.schemas.learning_profile import LearningProfileRead, LearningProfileUpdate
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -61,3 +63,32 @@ def update_my_settings(
     db.commit()
     db.refresh(current.settings)
     return current.settings
+
+
+# ── Learning profile (onboarding wizard) ─────────────────────────────────────
+@router.get("/me/learning-profile", response_model=LearningProfileRead)
+def get_my_learning_profile(
+    current: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> LearningProfile:
+    if current.learning_profile is None:
+        current.learning_profile = LearningProfile(user_id=current.id)
+        db.commit()
+        db.refresh(current)
+    return current.learning_profile
+
+
+@router.put("/me/learning-profile", response_model=LearningProfileRead)
+def upsert_my_learning_profile(
+    payload: LearningProfileUpdate,
+    current: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> LearningProfile:
+    if current.learning_profile is None:
+        current.learning_profile = LearningProfile(user_id=current.id)
+    data = payload.model_dump(exclude_unset=True)
+    for key, value in data.items():
+        setattr(current.learning_profile, key, value)
+    db.commit()
+    db.refresh(current.learning_profile)
+    return current.learning_profile

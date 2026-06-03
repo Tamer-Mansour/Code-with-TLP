@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from app.models.progress import Enrollment, LessonProgress
     from app.models.submission import Submission
     from app.models.user_settings import UserSettings
+    from app.models.learning_profile import LearningProfile
 
 
 class UserRole(str, enum.Enum):
@@ -34,3 +35,4 @@ class User(Base, TimestampMixin):
     lesson_progress: Mapped[list["LessonProgress"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     submissions: Mapped[list["Submission"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     settings: Mapped["UserSettings | None"] = relationship(back_populates="user", cascade="all, delete-orphan", uselist=False)
+    learning_profile: Mapped["LearningProfile | None"] = relationship(back_populates="user", cascade="all, delete-orphan", uselist=False)

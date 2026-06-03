@@ -18,17 +18,24 @@ import { MarkdownModule } from 'ngx-markdown';
 import {
   LucideAngularModule,
   Bot, Send, Square, Settings, ChevronDown, Globe, Sparkles,
-  Languages, ListChecks, FileText, RefreshCcw, LogIn,
+  Languages, ListChecks, FileText, RefreshCcw, LogIn, Code2,
 } from 'lucide-angular';
 import { ChatService } from '../../../../core/services/chat.service';
+import { CodeBlockService } from '../../../../core/services/code-block.service';
 import type { AiKey, AiProvider } from '../../../../core/models/chat.model';
+import type { CodeArtifact } from '../../../../core/models/chat-ui.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import type { LocalMessage, QuickAction } from '../../models/lesson-chat.model';
+import { CodeArtifactPanelComponent } from '../../../../shared/components/code-artifact-panel/code-artifact-panel.component';
+import { CodeCardComponent } from '../../../../shared/components/code-artifact-panel/code-card.component';
 
 @Component({
   selector: 'app-lesson-chat',
   standalone: true,
-  imports: [FormsModule, MarkdownModule, LucideAngularModule, RouterLink],
+  imports: [
+    FormsModule, MarkdownModule, LucideAngularModule, RouterLink,
+    CodeArtifactPanelComponent, CodeCardComponent,
+  ],
   templateUrl: './lesson-chat.component.html',
   styleUrl: './lesson-chat.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,6 +50,7 @@ export class LessonChatComponent implements OnDestroy, AfterViewChecked {
   readonly lessonContent = input<string>('');
 
   private readonly chatSvc = inject(ChatService);
+  private readonly codeBlocks = inject(CodeBlockService);
   readonly auth = inject(AuthService);
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -56,6 +64,15 @@ export class LessonChatComponent implements OnDestroy, AfterViewChecked {
   readonly Sparkles = Sparkles;
   readonly RefreshCcw = RefreshCcw;
   readonly LogIn = LogIn;
+  readonly Code2 = Code2;
+
+  // ── Code-artifact panel (overlays the tutor; the tutor is too narrow to split) ──
+  readonly panelOpen        = signal(false);
+  readonly panelArtifacts   = signal<CodeArtifact[]>([]);
+  readonly activeArtifactId = signal<string | null>(null);
+  readonly panelStreaming   = signal(false);
+  private panelMsgIndex: number | null = null;
+  private panelDismissed = false;
 
   // State
   readonly keys = signal<AiKey[]>([]);
@@ -140,6 +157,64 @@ export class LessonChatComponent implements OnDestroy, AfterViewChecked {
     this.sessionId = null;
     this.messages.set([]);
     this.streaming.set(false);
+    this.closePanel();
+    this.panelArtifacts.set([]);
+  }
+
+  /** Clear the on-screen conversation (keeps the session). */
+  clearMessages(): void {
+    this.messages.set([]);
+    this.closePanel();
+    this.panelArtifacts.set([]);
+  }
+
+  // ── Code-artifact panel ────────────────────────────────────────────────────
+  private decorate(msg: LocalMessage): LocalMessage {
+    if (msg.role !== 'assistant') return msg;
+    return { ...msg, parts: this.codeBlocks.segment(msg.content) };
+  }
+
+  private artifactsOf(msgIndex: number): CodeArtifact[] {
+    const msg = this.messages()[msgIndex];
+    if (!msg) return [];
+    return (msg.parts ?? [])
+      .filter((p): p is { kind: 'code'; artifact: CodeArtifact } => p.kind === 'code')
+      .map(p => p.artifact);
+  }
+
+  private syncPanel(msgIndex: number, streaming: boolean): void {
+    const artifacts = this.artifactsOf(msgIndex);
+    if (artifacts.length === 0) return;
+    this.panelMsgIndex = msgIndex;
+    this.panelArtifacts.set(artifacts);
+    this.panelStreaming.set(streaming);
+    const last = artifacts[artifacts.length - 1];
+    if (!this.panelDismissed && last.lineCount >= this.codeBlocks.AUTO_OPEN_MIN_LINES) {
+      this.panelOpen.set(true);
+      if (streaming || !this.activeArtifactId()) this.activeArtifactId.set(last.id);
+    }
+  }
+
+  openArtifact(msgIndex: number, id: string): void {
+    const artifacts = this.artifactsOf(msgIndex);
+    if (artifacts.length === 0) return;
+    this.panelMsgIndex = msgIndex;
+    this.panelArtifacts.set(artifacts);
+    this.activeArtifactId.set(id);
+    this.panelStreaming.set(!!this.messages()[msgIndex]?.streaming);
+    this.panelDismissed = false;
+    this.panelOpen.set(true);
+  }
+
+  isActiveArtifact(msgIndex: number, id: string): boolean {
+    return this.panelOpen() && this.panelMsgIndex === msgIndex && this.activeArtifactId() === id;
+  }
+
+  onActiveIdChange(id: string): void { this.activeArtifactId.set(id); }
+
+  closePanel(): void {
+    this.panelOpen.set(false);
+    if (this.streaming()) this.panelDismissed = true;
   }
 
   private scrollToBottom(): void {
@@ -203,6 +278,7 @@ export class LessonChatComponent implements OnDestroy, AfterViewChecked {
       ms.map((m, i) => (i === ms.length - 1 && m.streaming ? { ...m, streaming: false } : m))
     );
     this.streaming.set(false);
+    this.panelStreaming.set(false);
     this.cdr.markForCheck();
   }
 
@@ -218,11 +294,12 @@ export class LessonChatComponent implements OnDestroy, AfterViewChecked {
 
     const start = (sessionId: string) => {
       this.streaming.set(true);
+      this.panelDismissed = false;
       this.inputText.set('');
       this.messages.update(ms => [
         ...ms,
         { role: 'user', content: text },
-        { role: 'assistant', content: '', streaming: true },
+        { role: 'assistant', content: '', streaming: true, parts: [] },
       ]);
       this.shouldScroll = true;
       this.cdr.markForCheck();
@@ -267,31 +344,42 @@ export class LessonChatComponent implements OnDestroy, AfterViewChecked {
   }
 
   private appendToken(token: string): void {
+    let lastIndex = -1;
     this.messages.update(ms => {
       const updated = [...ms];
-      const last = updated[updated.length - 1];
-      if (last?.streaming) updated[updated.length - 1] = { ...last, content: last.content + token };
+      const i = updated.length - 1;
+      const last = updated[i];
+      if (last?.streaming) {
+        updated[i] = this.decorate({ ...last, content: last.content + token });
+        lastIndex = i;
+      }
       return updated;
     });
+    if (lastIndex >= 0) this.syncPanel(lastIndex, true);
     this.shouldScroll = true;
     this.cdr.markForCheck();
   }
 
   private finishStreaming(model?: string, errorContent?: string): void {
+    let lastIndex = -1;
     this.messages.update(ms => {
       const updated = [...ms];
-      const last = updated[updated.length - 1];
+      const i = updated.length - 1;
+      const last = updated[i];
       if (last?.streaming) {
-        updated[updated.length - 1] = {
+        updated[i] = this.decorate({
           ...last,
           streaming: false,
           model,
           content: errorContent ? (last.content || errorContent) : last.content,
-        };
+        });
+        lastIndex = i;
       }
       return updated;
     });
+    if (lastIndex >= 0) this.syncPanel(lastIndex, false);
     this.streaming.set(false);
+    this.panelStreaming.set(false);
     this.abortStream = null;
     this.shouldScroll = true;
     this.cdr.markForCheck();

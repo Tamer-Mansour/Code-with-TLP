@@ -1,7 +1,7 @@
 <!-- ═══════════════════════════════════════════════════════════════
      LESSON TUTOR — compact content-aware chat panel
      ═══════════════════════════════════════════════════════════════ -->
-<div class="flex flex-col h-full min-h-0 bg-app-surface">
+<div class="relative flex flex-col h-full min-h-0 bg-app-surface">
 
   <!-- ── Header ─────────────────────────────────────────────────── -->
   <div class="flex items-center gap-2 px-3.5 h-13 border-b border-app-border shrink-0 py-2">
@@ -22,7 +22,7 @@
       <!-- Reset conversation -->
       @if (messages().length > 0) {
         <button
-          (click)="messages.set([])"
+          (click)="clearMessages()"
           class="w-7 h-7 rounded-lg flex items-center justify-center text-app-text-muted hover:text-app-text hover:bg-app-surface-2 transition-all"
           title="Clear conversation" aria-label="Clear conversation"
         >
@@ -141,34 +141,50 @@
     } @else {
       <!-- Messages -->
       <div class="px-3.5 py-4 space-y-4">
-        @for (msg of messages(); track $index) {
+        @for (msg of messages(); track $index; let msgIndex = $index) {
           @if (msg.role === 'user') {
-            <div class="flex justify-end">
+            <div class="flex justify-end tlp-msg-in">
               <div class="max-w-[88%] brand-gradient text-white rounded-2xl rounded-tr-sm px-3.5 py-2.5 shadow-sm">
                 <p class="text-[13px] leading-relaxed whitespace-pre-wrap">{{ msg.content }}</p>
               </div>
             </div>
           } @else {
-            <div class="flex gap-2.5">
+            <div class="flex gap-2.5 tlp-msg-in">
               <div class="relative w-7 h-7 shrink-0 mt-0.5">
                 <div class="absolute inset-0 rounded-lg brand-gradient flex items-center justify-center shadow-sm">
                   <lucide-icon [img]="Bot" [size]="13" class="text-white"></lucide-icon>
                 </div>
               </div>
               <div class="flex-1 min-w-0">
-                <div class="bg-app-surface-2/60 border border-app-border rounded-2xl rounded-tl-sm px-3.5 py-3 shadow-card" [class.border-brand/20]="msg.streaming">
-                  @if (msg.streaming && !msg.content) {
-                    <div class="flex items-center gap-1.5 py-0.5">
-                      <span class="w-1.5 h-1.5 rounded-full bg-brand/80 animate-bounce" style="animation-delay:0ms;animation-duration:900ms;"></span>
-                      <span class="w-1.5 h-1.5 rounded-full bg-brand/60 animate-bounce" style="animation-delay:180ms;animation-duration:900ms;"></span>
-                      <span class="w-1.5 h-1.5 rounded-full bg-brand/40 animate-bounce" style="animation-delay:360ms;animation-duration:900ms;"></span>
-                    </div>
-                  } @else {
-                    <div class="content-prose text-[13px] max-w-none">
-                      <markdown [data]="msg.content" [disableSanitizer]="false"></markdown>
-                    </div>
-                  }
-                </div>
+                @if (msg.streaming && !msg.content) {
+                  <div class="inline-flex items-center gap-2 bg-app-surface-2/60 border border-app-border rounded-2xl rounded-tl-sm px-3.5 py-3 shadow-card">
+                    <span class="flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-brand/80 tlp-dot" style="animation-delay:0ms"></span>
+                      <span class="w-1.5 h-1.5 rounded-full bg-brand/60 tlp-dot" style="animation-delay:160ms"></span>
+                      <span class="w-1.5 h-1.5 rounded-full bg-brand/40 tlp-dot" style="animation-delay:320ms"></span>
+                    </span>
+                    <span class="text-[11px] tlp-shimmer-text font-medium">Thinking…</span>
+                  </div>
+                } @else {
+                  <div class="space-y-2.5">
+                    @for (part of msg.parts ?? []; track $index) {
+                      @if (part.kind === 'text') {
+                        <div class="bg-app-surface-2/60 border border-app-border rounded-2xl rounded-tl-sm px-3.5 py-3 shadow-card" [class.border-brand/20]="msg.streaming">
+                          <div class="content-prose text-[13px] max-w-none">
+                            <markdown [data]="part.markdown" [disableSanitizer]="false"></markdown>
+                            @if (msg.streaming && $last) { <span class="tlp-caret"></span> }
+                          </div>
+                        </div>
+                      } @else {
+                        <app-code-card
+                          [artifact]="part.artifact"
+                          [isActive]="isActiveArtifact(msgIndex, part.artifact.id)"
+                          (open)="openArtifact(msgIndex, part.artifact.id)"
+                        ></app-code-card>
+                      }
+                    }
+                  </div>
+                }
               </div>
             </div>
           }
@@ -236,6 +252,20 @@
           </button>
         }
       </div>
+    </div>
+  }
+
+  <!-- ── Code-artifact panel (overlays the narrow tutor) ─────────── -->
+  @if (panelOpen()) {
+    <div class="absolute inset-0 z-30 bg-app-surface animate-slide-up">
+      <app-code-artifact-panel class="h-full"
+        [artifacts]="panelArtifacts()"
+        [activeId]="activeArtifactId()"
+        [streaming]="panelStreaming()"
+        [expanded]="false"
+        (activeIdChange)="onActiveIdChange($event)"
+        (closed)="closePanel()"
+      ></app-code-artifact-panel>
     </div>
   }
 </div>

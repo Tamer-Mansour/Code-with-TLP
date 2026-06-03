@@ -1,0 +1,73 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     CODE ARTIFACT PANEL — Claude-style side editor
+     ═══════════════════════════════════════════════════════════════ -->
+@if (active(); as art) {
+  <div class="flex flex-col h-full min-h-0 bg-app-surface">
+
+    <!-- Header -->
+    <div class="flex items-center gap-2 px-3 h-12 border-b border-app-border shrink-0 bg-app-surface-2/40">
+      <span class="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center shrink-0 shadow-sm">
+        <lucide-icon [img]="FileCode2" [size]="14" class="text-white"></lucide-icon>
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-semibold text-app-text leading-tight truncate">{{ art.title }}</p>
+        <p class="text-[10px] text-app-text-muted leading-tight">
+          {{ art.lineCount }} {{ art.lineCount === 1 ? 'line' : 'lines' }}
+          @if (!art.complete && streaming()) { · writing… }
+        </p>
+      </div>
+
+      <!-- Multi-artifact pager -->
+      @if (artifacts().length > 1) {
+        <div class="flex items-center gap-0.5 mr-1">
+          <button (click)="prev()" [disabled]="activeIndex() <= 0"
+            class="w-7 h-7 rounded-lg flex items-center justify-center text-app-text-muted hover:text-app-text hover:bg-app-surface-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            aria-label="Previous code block">
+            <lucide-icon [img]="ChevronLeft" [size]="15"></lucide-icon>
+          </button>
+          <span class="text-[10px] tabular-nums text-app-text-muted px-0.5">{{ activeIndex() + 1 }}/{{ artifacts().length }}</span>
+          <button (click)="next()" [disabled]="activeIndex() >= artifacts().length - 1"
+            class="w-7 h-7 rounded-lg flex items-center justify-center text-app-text-muted hover:text-app-text hover:bg-app-surface-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            aria-label="Next code block">
+            <lucide-icon [img]="ChevronRight" [size]="15"></lucide-icon>
+          </button>
+        </div>
+      }
+
+      <!-- Actions -->
+      <button (click)="copy()"
+        class="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg text-xs font-medium border border-app-border text-app-text-2 hover:text-app-text hover:bg-app-surface-2 transition-all"
+        [class.text-green-500]="justCopied()" [class.border-green-500/40]="justCopied()"
+        aria-label="Copy code">
+        <lucide-icon [img]="justCopied() ? Check : Copy" [size]="13"></lucide-icon>
+        <span class="hidden sm:inline">{{ justCopied() ? 'Copied' : 'Copy' }}</span>
+      </button>
+      <button (click)="download()"
+        class="w-8 h-8 rounded-lg flex items-center justify-center text-app-text-muted hover:text-app-text hover:bg-app-surface-2 transition-all"
+        title="Download" aria-label="Download code">
+        <lucide-icon [img]="Download" [size]="14"></lucide-icon>
+      </button>
+      <button (click)="toggleExpand.emit()"
+        class="hidden lg:flex w-8 h-8 rounded-lg items-center justify-center text-app-text-muted hover:text-app-text hover:bg-app-surface-2 transition-all"
+        [title]="expanded() ? 'Collapse' : 'Expand'" aria-label="Toggle expand">
+        <lucide-icon [img]="expanded() ? Minimize2 : Maximize2" [size]="14"></lucide-icon>
+      </button>
+      <button (click)="closed.emit()"
+        class="w-8 h-8 rounded-lg flex items-center justify-center text-app-text-muted hover:text-app-text hover:bg-app-surface-2 transition-all"
+        title="Close panel" aria-label="Close code panel">
+        <lucide-icon [img]="X" [size]="16"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- Editor -->
+    <div class="flex-1 min-h-0 relative">
+      <app-monaco-editor
+        class="absolute inset-0"
+        [value]="art.code"
+        [language]="monacoLanguage()"
+        [theme]="monacoTheme()"
+        [readOnly]="true"
+      ></app-monaco-editor>
+    </div>
+  </div>
+}

@@ -1,0 +1,518 @@
+subject:
+  slug: learning-paths
+  name: "Learning Paths"
+  description: "Guided, multi-week roadmaps that sequence courses, projects, and milestones into a clear path from beginner to job-ready."
+  icon: map
+  color: "#f59e0b"
+  order_index: 13
+
+course:
+  slug: backend-developer-roadmap
+  title: "Backend Developer Roadmap (Java + Spring)"
+  summary: "A 16-week guided path: learn Java, MySQL, HTML, CSS, and JavaScript with installation guides, projects, quizzes, and challenges — then move on to Spring Boot."
+  description: |
+    A step-by-step roadmap that takes you from zero to a job-ready full-stack-capable backend
+    developer. You will install your toolchain, learn Java and MySQL, pick up HTML, CSS, and
+    JavaScript for the web, and build real projects (Finance Tracker, Employee Database, Portfolio
+    Site, Weather Dashboard, Full-Stack Contact Manager) along the way. Each module has projects,
+    quizzes, coding challenges, and clear sub-tasks. Finish this, then take Spring Boot Mastery.
+  difficulty: beginner
+  estimated_hours: 60
+  is_published: true
+  order_index: 36
+
+modules:
+  - title: "Start Here: Roadmap & Setup"
+    summary: "How the roadmap works and how to install everything you need."
+    order_index: 1
+    lessons:
+      - slug: how-to-use-this-roadmap
+        title: "How to Use This Roadmap"
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/how-to-use-this-roadmap.md
+      - slug: the-16-week-plan
+        title: "The 16-Week Plan at a Glance"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/the-16-week-plan.md
+      - slug: install-your-toolchain
+        title: "Installation: JDK, IDE, Git, MySQL, Node, and Browser Tools"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/install-your-toolchain.md
+      - slug: git-and-github-basics
+        title: "Git and GitHub Basics"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/git-and-github-basics.md
+      - slug: quiz-getting-started
+        title: "Quiz: Getting Started"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-getting-started.md
+
+  - title: "Java Foundations"
+    summary: "Variables, OOP, collections, exceptions, and debugging — with projects and challenges."
+    order_index: 2
+    lessons:
+      - slug: java-syntax-and-variables
+        title: "Java Syntax, Variables, and Types"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/java-syntax-and-variables.md
+      - slug: control-flow-and-methods
+        title: "Control Flow and Methods"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/control-flow-and-methods.md
+      - slug: oop-classes-objects
+        title: "OOP: Classes and Objects"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/oop-classes-objects.md
+      - slug: inheritance-and-encapsulation
+        title: "Inheritance and Encapsulation"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/inheritance-and-encapsulation.md
+      - slug: collections-list-set-map
+        title: "Collections: List, Set, and Map"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/collections-list-set-map.md
+      - slug: java-exception-handling
+        title: "Exception Handling"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/java-exception-handling.md
+      - slug: debugging-in-the-ide
+        title: "Debugging in the IDE"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/debugging-in-the-ide.md
+      - slug: java-foundations-video
+        title: "Video: Java Full Course for Beginners"
+        type: video
+        duration_minutes: 25
+        video_url: "https://www.youtube.com/results?search_query=java+full+course+for+beginners+freeCodeCamp"
+        content_file: lessons/java-foundations-video.md
+      - slug: challenge-cli-calculator
+        title: "Challenge: Command-Line Calculator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/challenge-cli-calculator.md
+        exercises:
+          - slug: roadmap-cli-calculator
+            title: "Command-Line Calculator"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/roadmap-cli-calculator.prompt.md
+            supported_languages: [java, python]
+            tags: [java, basics, arithmetic]
+            time_limit_ms: 4000
+            memory_limit_mb: 256
+            starter_code:
+              java: |
+                import java.util.Scanner;
+
+                public class Main {
+                    public static void main(String[] args) {
+                        Scanner sc = new Scanner(System.in);
+                        String line = sc.nextLine().trim();
+                        // line looks like: "3 + 4"
+                        // TODO: parse a, op, b and print the integer result
+                    }
+                }
+              python: |
+                import sys
+
+                def solve():
+                    a, op, b = sys.stdin.readline().split()
+                    a, b = int(a), int(b)
+                    # TODO: compute and print result
+                solve()
+            solution_code:
+              java: |
+                import java.util.Scanner;
+
+                public class Main {
+                    public static void main(String[] args) {
+                        Scanner sc = new Scanner(System.in);
+                        String line = sc.nextLine().trim();
+                        String[] parts = line.split("\\s+");
+                        long a = Long.parseLong(parts[0]);
+                        String op = parts[1];
+                        long b = Long.parseLong(parts[2]);
+                        long result = 0;
+                        switch (op) {
+                            case "+": result = a + b; break;
+                            case "-": result = a - b; break;
+                            case "*": result = a * b; break;
+                            case "/": result = a / b; break;
+                        }
+                        System.out.println(result);
+                    }
+                }
+              python: |
+                import sys
+
+                def solve():
+                    a, op, b = sys.stdin.readline().split()
+                    a, b = int(a), int(b)
+                    if op == '+':
+                        print(a + b)
+                    elif op == '-':
+                        print(a - b)
+                    elif op == '*':
+                        print(a * b)
+                    elif op == '/':
+                        print(a // b)
+                solve()
+            test_cases:
+              - name: "addition"
+                stdin: "3 + 4\n"
+                expected_stdout: "7"
+                is_hidden: false
+                weight: 1
+              - name: "subtraction"
+                stdin: "10 - 6\n"
+                expected_stdout: "4"
+                is_hidden: false
+                weight: 1
+              - name: "multiplication"
+                stdin: "5 * 6\n"
+                expected_stdout: "30"
+                is_hidden: false
+                weight: 1
+              - name: "division"
+                stdin: "20 / 4\n"
+                expected_stdout: "5"
+                is_hidden: true
+                weight: 1
+              - name: "negative-result"
+                stdin: "2 - 9\n"
+                expected_stdout: "-7"
+                is_hidden: true
+                weight: 1
+      - slug: challenge-fizzbuzz
+        title: "Challenge: FizzBuzz"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/challenge-fizzbuzz.md
+        exercises:
+          - slug: roadmap-fizzbuzz
+            title: "FizzBuzz"
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/roadmap-fizzbuzz.prompt.md
+            supported_languages: [java, python]
+            tags: [java, basics, control-flow]
+            time_limit_ms: 4000
+            memory_limit_mb: 256
+            starter_code:
+              java: |
+                import java.util.Scanner;
+
+                public class Main {
+                    public static void main(String[] args) {
+                        int n = Integer.parseInt(new Scanner(System.in).nextLine().trim());
+                        // TODO: print 1..n, with Fizz/Buzz/FizzBuzz rules, one per line
+                    }
+                }
+              python: |
+                import sys
+
+                def solve():
+                    n = int(sys.stdin.readline().strip())
+                    # TODO
+                solve()
+            solution_code:
+              java: |
+                import java.util.Scanner;
+
+                public class Main {
+                    public static void main(String[] args) {
+                        int n = Integer.parseInt(new Scanner(System.in).nextLine().trim());
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 1; i <= n; i++) {
+                            if (i % 15 == 0) sb.append("FizzBuzz");
+                            else if (i % 3 == 0) sb.append("Fizz");
+                            else if (i % 5 == 0) sb.append("Buzz");
+                            else sb.append(i);
+                            if (i < n) sb.append("\n");
+                        }
+                        System.out.println(sb.toString());
+                    }
+                }
+              python: |
+                import sys
+
+                def solve():
+                    n = int(sys.stdin.readline().strip())
+                    out = []
+                    for i in range(1, n + 1):
+                        if i % 15 == 0:
+                            out.append("FizzBuzz")
+                        elif i % 3 == 0:
+                            out.append("Fizz")
+                        elif i % 5 == 0:
+                            out.append("Buzz")
+                        else:
+                            out.append(str(i))
+                    print("\n".join(out))
+                solve()
+            test_cases:
+              - name: "first-five"
+                stdin: "5\n"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz"
+                is_hidden: false
+                weight: 1
+              - name: "through-fifteen"
+                stdin: "15\n"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"
+                is_hidden: false
+                weight: 2
+              - name: "one"
+                stdin: "1\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: "three"
+                stdin: "3\n"
+                expected_stdout: "1\n2\nFizz"
+                is_hidden: true
+                weight: 1
+      - slug: project-finance-tracker
+        title: "Project: Personal Finance Tracker (Console)"
+        type: reading
+        duration_minutes: 50
+        content_file: lessons/project-finance-tracker.md
+      - slug: project-student-management
+        title: "Project: Student Management System (Console)"
+        type: reading
+        duration_minutes: 50
+        content_file: lessons/project-student-management.md
+      - slug: quiz-java-foundations
+        title: "Quiz: Java Foundations"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-java-foundations.md
+
+  - title: "Databases with MySQL"
+    summary: "Relational modeling, SQL, JOINs, CRUD, and schema design."
+    order_index: 3
+    lessons:
+      - slug: relational-model-basics
+        title: "The Relational Model"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/relational-model-basics.md
+      - slug: install-and-connect-mysql
+        title: "Installation: MySQL and a Client"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/install-and-connect-mysql.md
+      - slug: sql-select-where-order
+        title: "SELECT, WHERE, ORDER BY"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/sql-select-where-order.md
+      - slug: joins-and-relationships
+        title: "JOINs and Relationships"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/joins-and-relationships.md
+      - slug: crud-insert-update-delete
+        title: "CRUD: INSERT, UPDATE, DELETE"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/crud-insert-update-delete.md
+      - slug: schema-design-and-keys
+        title: "Schema Design, Primary and Foreign Keys"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/schema-design-and-keys.md
+      - slug: mysql-video
+        title: "Video: SQL and MySQL Full Course"
+        type: video
+        duration_minutes: 22
+        video_url: "https://www.youtube.com/results?search_query=sql+mysql+full+course+freeCodeCamp"
+        content_file: lessons/mysql-video.md
+      - slug: project-employee-database
+        title: "Project: Employee Database"
+        type: reading
+        duration_minutes: 50
+        content_file: lessons/project-employee-database.md
+      - slug: challenge-sql-queries
+        title: "Challenge: 20 SQL Queries"
+        type: reading
+        duration_minutes: 35
+        content_file: lessons/challenge-sql-queries.md
+      - slug: quiz-mysql
+        title: "Quiz: MySQL"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-mysql.md
+
+  - title: "Web Basics: HTML & CSS"
+    summary: "Document structure, semantic HTML, forms, the box model, flexbox, grid, and responsive design."
+    order_index: 4
+    lessons:
+      - slug: html-document-structure
+        title: "HTML Document Structure"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/html-document-structure.md
+      - slug: semantic-html-and-forms
+        title: "Semantic HTML and Forms"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/semantic-html-and-forms.md
+      - slug: css-selectors-and-box-model
+        title: "CSS Selectors and the Box Model"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/css-selectors-and-box-model.md
+      - slug: flexbox-and-grid
+        title: "Layout with Flexbox and Grid"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/flexbox-and-grid.md
+      - slug: responsive-design
+        title: "Responsive Design and Media Queries"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/responsive-design.md
+      - slug: htmlcss-video
+        title: "Video: HTML & CSS Full Course"
+        type: video
+        duration_minutes: 22
+        video_url: "https://www.youtube.com/results?search_query=html+css+full+course+freeCodeCamp"
+        content_file: lessons/htmlcss-video.md
+      - slug: project-portfolio-site
+        title: "Project: Personal Portfolio Website"
+        type: reading
+        duration_minutes: 50
+        content_file: lessons/project-portfolio-site.md
+      - slug: quiz-html-css
+        title: "Quiz: HTML & CSS"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-html-css.md
+
+  - title: "JavaScript Essentials"
+    summary: "Syntax, the DOM, events, fetch, and async — enough to wire up a frontend."
+    order_index: 5
+    lessons:
+      - slug: js-syntax-and-types
+        title: "JavaScript Syntax and Types"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/js-syntax-and-types.md
+      - slug: functions-and-scope
+        title: "Functions, Scope, and Closures"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/functions-and-scope.md
+      - slug: dom-and-events
+        title: "The DOM and Events"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/dom-and-events.md
+      - slug: fetch-and-async
+        title: "Fetch, Promises, and async/await"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/fetch-and-async.md
+      - slug: es6-features
+        title: "Modern JavaScript (ES6+) Features"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/es6-features.md
+      - slug: js-video
+        title: "Video: JavaScript Full Course"
+        type: video
+        duration_minutes: 24
+        video_url: "https://www.youtube.com/results?search_query=javascript+full+course+for+beginners+freeCodeCamp"
+        content_file: lessons/js-video.md
+      - slug: project-weather-dashboard
+        title: "Project: Weather Dashboard"
+        type: reading
+        duration_minutes: 50
+        content_file: lessons/project-weather-dashboard.md
+      - slug: challenge-todo-app
+        title: "Challenge: To-Do App"
+        type: reading
+        duration_minutes: 35
+        content_file: lessons/challenge-todo-app.md
+      - slug: quiz-javascript
+        title: "Quiz: JavaScript"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-javascript.md
+
+  - title: "Your First Backend & Full-Stack"
+    summary: "REST APIs, your first Spring Boot endpoint, and connecting a frontend to a backend."
+    order_index: 6
+    lessons:
+      - slug: what-is-a-rest-api
+        title: "What Is a REST API?"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/what-is-a-rest-api.md
+      - slug: first-spring-boot-endpoint
+        title: "Your First Spring Boot Endpoint"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/first-spring-boot-endpoint.md
+      - slug: connecting-frontend-to-backend
+        title: "Connecting a Frontend to a Backend (fetch + CORS)"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/connecting-frontend-to-backend.md
+      - slug: intro-to-jwt-auth
+        title: "Introduction to JWT Authentication"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/intro-to-jwt-auth.md
+      - slug: project-fullstack-contact-manager
+        title: "Project: Full-Stack Contact Manager"
+        type: reading
+        duration_minutes: 70
+        content_file: lessons/project-fullstack-contact-manager.md
+      - slug: quiz-fullstack
+        title: "Quiz: Full-Stack Basics"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-fullstack.md
+
+  - title: "Capstone & Career Readiness"
+    summary: "Pick a capstone, work like a team, present your work, and prepare for the job hunt."
+    order_index: 7
+    lessons:
+      - slug: capstone-project-options
+        title: "Capstone Project Options"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/capstone-project-options.md
+      - slug: team-workflow-and-git
+        title: "Team Workflow and Git Collaboration"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/team-workflow-and-git.md
+      - slug: presenting-your-project
+        title: "Presenting Your Project"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/presenting-your-project.md
+      - slug: portfolio-and-career-prep
+        title: "Portfolio and Career Preparation"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/portfolio-and-career-prep.md
+      - slug: final-roadmap-quiz
+        title: "Final Quiz: Roadmap Review"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/final-roadmap-quiz.md

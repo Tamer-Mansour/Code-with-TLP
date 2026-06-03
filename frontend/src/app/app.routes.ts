@@ -157,6 +157,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'onboarding',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/onboarding/onboarding-wizard/onboarding-wizard.component').then(
+        m => m.OnboardingWizardComponent
+      ),
+  },
+  {
     path: 'chat',
     canActivate: [authGuard],
     loadComponent: () =>

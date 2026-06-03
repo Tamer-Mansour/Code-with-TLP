@@ -1,0 +1,99 @@
+:host { display: block; }
+
+@property --onb-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* ── Ambient backdrop ─────────────────────────────────────────── */
+.onb-aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.onb-aurora::before,
+.onb-aurora::after {
+  content: "";
+  position: absolute;
+  width: 48%;
+  height: 48%;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: 0.16;
+  will-change: transform;
+}
+.onb-aurora::before {
+  background: rgb(var(--color-brand-light-rgb));
+  top: -14%; left: 4%;
+  animation: onb-float-a 18s ease-in-out infinite;
+}
+.onb-aurora::after {
+  background: rgb(var(--color-brand-rgb));
+  bottom: -14%; right: 4%;
+  animation: onb-float-b 22s ease-in-out infinite;
+}
+@keyframes onb-float-a { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(8%,6%) scale(1.12); } }
+@keyframes onb-float-b { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-8%,-6%) scale(1.1); } }
+
+/* ── Selectable cards ─────────────────────────────────────────── */
+.onb-card {
+  background: rgb(var(--color-app-surface));
+  cursor: pointer;
+}
+.onb-card:hover {
+  border-color: rgb(var(--color-app-border-2));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+.onb-card.onb-selected,
+.onb-chip.onb-selected {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(rgb(var(--color-app-surface)), rgb(var(--color-app-surface))) padding-box,
+    linear-gradient(135deg, rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb))) border-box;
+  box-shadow: 0 0 0 4px rgba(var(--color-brand-rgb), 0.12);
+}
+
+.onb-check {
+  background: linear-gradient(135deg, rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)));
+}
+
+/* Photo interest tiles */
+.onb-photo { cursor: pointer; }
+.onb-photo:hover { transform: translateY(-2px); }
+.onb-photo.onb-selected {
+  box-shadow: 0 0 0 3px rgb(var(--color-brand-rgb)), 0 10px 28px rgba(var(--color-brand-rgb), 0.28);
+  transform: translateY(-2px);
+}
+
+/* ── Orb (welcome / building) ─────────────────────────────────── */
+.tlp-orbit-glow {
+  background: radial-gradient(circle, rgba(var(--color-brand-rgb), 0.20) 0%, rgba(var(--color-brand-dark-rgb), 0.08) 42%, transparent 72%);
+  border-radius: 50%;
+  animation: onb-orbit 5s ease-in-out infinite;
+  pointer-events: none;
+}
+.tlp-orb-main { animation: onb-breathe 3.2s ease-in-out infinite; }
+.tlp-orb-ring-empty {
+  background: conic-gradient(from var(--onb-angle),
+    rgb(var(--color-brand-light-rgb)), rgb(var(--color-brand-rgb)), rgb(var(--color-brand-dark-rgb)), rgb(var(--color-brand-light-rgb)));
+  filter: blur(12px);
+  opacity: 0.55;
+  animation: onb-spin 5s linear infinite;
+  pointer-events: none;
+}
+@keyframes onb-spin { to { --onb-angle: 360deg; } }
+@keyframes onb-orbit { 0%,100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 0.55; transform: scale(1.1); } }
+@keyframes onb-breathe {
+  0%,100% { transform: scale(1); box-shadow: 0 0 50px rgba(var(--color-brand-rgb), 0.25); }
+  50%      { transform: scale(1.03); box-shadow: 0 0 80px rgba(var(--color-brand-rgb), 0.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onb-aurora::before, .onb-aurora::after,
+  .tlp-orbit-glow, .tlp-orb-main, .tlp-orb-ring-empty { animation: none; }
+  .onb-card:hover, .onb-photo:hover, .onb-photo.onb-selected, .onb-card.onb-selected { transform: none; }
+}

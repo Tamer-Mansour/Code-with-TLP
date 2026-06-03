@@ -1,0 +1,408 @@
+subject:
+  slug: java-spring
+  name: "Java & Spring"
+  description: "Master backend development with Java and the Spring ecosystem — from your first REST endpoint to production-ready, secured, tested services."
+  icon: leaf
+  color: "#6db33f"
+  order_index: 12
+
+course:
+  slug: spring-boot-mastery
+  title: "Spring Boot Mastery"
+  summary: "Master Spring Boot in Java: REST APIs, Spring Data JPA, validation, Spring Security + JWT, testing, and production deployment — with real projects."
+  description: |
+    A complete, project-driven path to mastering Spring Boot 3 with Java 17+. You will go from
+    installing the toolchain to building secured, tested, production-ready REST APIs. Every module
+    pairs concepts with a hands-on project (Product Catalog, Book Library, Task Management, a secured
+    JWT API, and an e-commerce capstone), plus quizzes and coding challenges. Designed to follow the
+    Backend Developer Roadmap — do that first if Java, SQL, and the web basics are new to you.
+  difficulty: intermediate
+  estimated_hours: 45
+  is_published: true
+  order_index: 35
+
+modules:
+  - title: "Getting Started with Spring Boot"
+    summary: "What Spring is, installing the toolchain, and running your first app."
+    order_index: 1
+    lessons:
+      - slug: spring-the-big-picture
+        title: "Spring: The Big Picture"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/spring-the-big-picture.md
+      - slug: what-is-spring-boot
+        title: "What Is Spring Boot?"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/what-is-spring-boot.md
+      - slug: install-jdk-and-tooling
+        title: "Installation: JDK, IDE, and Build Tools"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/install-jdk-and-tooling.md
+      - slug: maven-and-gradle-basics
+        title: "Maven and Gradle Basics"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/maven-and-gradle-basics.md
+      - slug: spring-initializr-first-app
+        title: "Your First App with Spring Initializr"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/spring-initializr-first-app.md
+      - slug: project-structure-and-run
+        title: "Project Structure and the Run Lifecycle"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/project-structure-and-run.md
+      - slug: spring-boot-intro-video
+        title: "Video: Spring Boot Crash Course"
+        type: video
+        duration_minutes: 20
+        video_url: "https://www.youtube.com/results?search_query=spring+boot+3+full+course+freeCodeCamp"
+        content_file: lessons/spring-boot-intro-video.md
+      - slug: quiz-spring-basics
+        title: "Quiz: Spring Boot Basics"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-spring-basics.md
+
+  - title: "Spring Core: IoC & Dependency Injection"
+    summary: "Beans, the application context, and how Spring wires your objects."
+    order_index: 2
+    lessons:
+      - slug: ioc-and-dependency-injection
+        title: "Inversion of Control and Dependency Injection"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/ioc-and-dependency-injection.md
+      - slug: beans-and-application-context
+        title: "Beans and the Application Context"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/beans-and-application-context.md
+      - slug: component-scanning-and-stereotypes
+        title: "Component Scanning and Stereotype Annotations"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/component-scanning-and-stereotypes.md
+      - slug: configuration-and-profiles
+        title: "Java Configuration and Bean Scopes"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/configuration-and-profiles.md
+      - slug: quiz-spring-core
+        title: "Quiz: Spring Core & DI"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-spring-core.md
+
+  - title: "Building REST APIs"
+    summary: "Controllers, request mapping, status codes, and your first real API project."
+    order_index: 3
+    lessons:
+      - slug: rest-fundamentals
+        title: "REST Fundamentals"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/rest-fundamentals.md
+      - slug: rest-controllers-and-mapping
+        title: "@RestController and Request Mapping"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/rest-controllers-and-mapping.md
+      - slug: request-params-path-body
+        title: "Path Variables, Query Params, and Request Bodies"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/request-params-path-body.md
+      - slug: responseentity-and-status-codes
+        title: "ResponseEntity and HTTP Status Codes"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/responseentity-and-status-codes.md
+      - slug: testing-apis-with-postman
+        title: "Testing APIs with Postman and curl"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/testing-apis-with-postman.md
+      - slug: rest-api-video
+        title: "Video: Building REST APIs with Spring Boot"
+        type: video
+        duration_minutes: 22
+        video_url: "https://www.youtube.com/results?search_query=spring+boot+rest+api+tutorial+full"
+        content_file: lessons/rest-api-video.md
+      - slug: project-product-catalog-api
+        title: "Project: Product Catalog API"
+        type: reading
+        duration_minutes: 45
+        content_file: lessons/project-product-catalog-api.md
+      - slug: quiz-rest-apis
+        title: "Quiz: REST APIs"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-rest-apis.md
+
+  - title: "Data Persistence with Spring Data JPA"
+    summary: "Map Java objects to tables, define relationships, and stop writing SQL by hand."
+    order_index: 4
+    lessons:
+      - slug: intro-to-jpa-and-orm
+        title: "Introduction to JPA and ORM"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/intro-to-jpa-and-orm.md
+      - slug: entities-and-repositories
+        title: "Entities and Spring Data Repositories"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/entities-and-repositories.md
+      - slug: entity-relationships
+        title: "Entity Relationships: One-to-Many and Many-to-Many"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/entity-relationships.md
+      - slug: queries-and-derived-methods
+        title: "Derived Queries, JPQL, and @Query"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/queries-and-derived-methods.md
+      - slug: transactions-basics
+        title: "Transactions with @Transactional"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/transactions-basics.md
+      - slug: jpa-video
+        title: "Video: Spring Data JPA and Hibernate"
+        type: video
+        duration_minutes: 22
+        video_url: "https://www.youtube.com/results?search_query=spring+data+jpa+hibernate+tutorial+full+course"
+        content_file: lessons/jpa-video.md
+      - slug: project-book-library-api
+        title: "Project: Book Library API"
+        type: reading
+        duration_minutes: 50
+        content_file: lessons/project-book-library-api.md
+      - slug: quiz-jpa
+        title: "Quiz: Spring Data JPA"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-jpa.md
+
+  - title: "Validation & Error Handling"
+    summary: "Bean validation, global exception handling, and clean pagination."
+    order_index: 5
+    lessons:
+      - slug: bean-validation
+        title: "Bean Validation with Jakarta Validation"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/bean-validation.md
+      - slug: global-exception-handling
+        title: "Global Exception Handling with @ControllerAdvice"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/global-exception-handling.md
+      - slug: problem-details-and-responses
+        title: "Problem Details and Consistent Error Responses"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/problem-details-and-responses.md
+      - slug: pagination-and-sorting
+        title: "Pagination and Sorting"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/pagination-and-sorting.md
+      - slug: project-task-management-api
+        title: "Project: Task Management API"
+        type: reading
+        duration_minutes: 50
+        content_file: lessons/project-task-management-api.md
+      - slug: quiz-validation-errors
+        title: "Quiz: Validation & Error Handling"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-validation-errors.md
+
+  - title: "Security with Spring Security & JWT"
+    summary: "Authentication, authorization, password hashing, JWT, and role-based access."
+    order_index: 6
+    lessons:
+      - slug: authentication-vs-authorization
+        title: "Authentication vs Authorization"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/authentication-vs-authorization.md
+      - slug: spring-security-architecture
+        title: "Spring Security Architecture and the Filter Chain"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/spring-security-architecture.md
+      - slug: password-encoding-and-users
+        title: "User Details and Password Encoding"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/password-encoding-and-users.md
+      - slug: jwt-authentication
+        title: "JWT Authentication End to End"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/jwt-authentication.md
+      - slug: method-security-and-roles
+        title: "Method Security and Roles"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/method-security-and-roles.md
+      - slug: security-video
+        title: "Video: Spring Security and JWT"
+        type: video
+        duration_minutes: 24
+        video_url: "https://www.youtube.com/results?search_query=spring+security+jwt+tutorial+full+course"
+        content_file: lessons/security-video.md
+      - slug: project-secure-task-api
+        title: "Project: Secure Task API with JWT"
+        type: reading
+        duration_minutes: 55
+        content_file: lessons/project-secure-task-api.md
+      - slug: quiz-security
+        title: "Quiz: Spring Security & JWT"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-security.md
+
+  - title: "Testing Spring Applications"
+    summary: "Unit tests, slice tests, and integration tests that give you confidence."
+    order_index: 7
+    lessons:
+      - slug: testing-pyramid-and-junit
+        title: "The Testing Pyramid and JUnit 5"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/testing-pyramid-and-junit.md
+      - slug: unit-testing-with-mockito
+        title: "Unit Testing Services with Mockito"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/unit-testing-with-mockito.md
+      - slug: web-layer-tests-webmvctest
+        title: "Web Layer Tests with @WebMvcTest"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/web-layer-tests-webmvctest.md
+      - slug: data-layer-tests-datajpatest
+        title: "Data Layer Tests with @DataJpaTest"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/data-layer-tests-datajpatest.md
+      - slug: integration-testing
+        title: "Integration Testing with @SpringBootTest"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/integration-testing.md
+      - slug: quiz-testing
+        title: "Quiz: Testing Spring Apps"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-testing.md
+
+  - title: "Production-Ready Spring Boot"
+    summary: "Configuration, Actuator, logging, packaging, and Docker."
+    order_index: 8
+    lessons:
+      - slug: configuration-and-properties
+        title: "External Configuration and Profiles"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/configuration-and-properties.md
+      - slug: actuator-and-monitoring
+        title: "Actuator, Health Checks, and Metrics"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/actuator-and-monitoring.md
+      - slug: logging-best-practices
+        title: "Logging Best Practices"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/logging-best-practices.md
+      - slug: packaging-and-running
+        title: "Packaging and Running the Executable JAR"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/packaging-and-running.md
+      - slug: dockerizing-spring-boot
+        title: "Dockerizing a Spring Boot App"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/dockerizing-spring-boot.md
+      - slug: deploy-video
+        title: "Video: Deploying Spring Boot"
+        type: video
+        duration_minutes: 18
+        video_url: "https://www.youtube.com/results?search_query=deploy+spring+boot+docker+tutorial"
+        content_file: lessons/deploy-video.md
+      - slug: quiz-production
+        title: "Quiz: Production Readiness"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-production.md
+
+  - title: "Advanced Spring"
+    summary: "AOP, caching, async, scheduling, and a deeper look at transactions."
+    order_index: 9
+    lessons:
+      - slug: aop-and-cross-cutting-concerns
+        title: "Aspect-Oriented Programming"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/aop-and-cross-cutting-concerns.md
+      - slug: caching-with-spring
+        title: "Caching with Spring"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/caching-with-spring.md
+      - slug: async-and-scheduling
+        title: "Async Methods and Scheduled Tasks"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/async-and-scheduling.md
+      - slug: transactions-deep-dive
+        title: "Transactions Deep Dive: Propagation and Isolation"
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/transactions-deep-dive.md
+      - slug: quiz-advanced
+        title: "Quiz: Advanced Spring"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-advanced.md
+
+  - title: "Capstone & Challenges"
+    summary: "Build a full e-commerce API, tackle challenges, and plan your next steps."
+    order_index: 10
+    lessons:
+      - slug: capstone-overview
+        title: "Capstone Overview and Requirements"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/capstone-overview.md
+      - slug: capstone-ecommerce-api
+        title: "Capstone Project: E-Commerce REST API"
+        type: reading
+        duration_minutes: 90
+        content_file: lessons/capstone-ecommerce-api.md
+      - slug: coding-challenges
+        title: "Spring Coding Challenges"
+        type: reading
+        duration_minutes: 40
+        content_file: lessons/coding-challenges.md
+      - slug: spring-mastery-final-quiz
+        title: "Final Quiz: Spring Boot Mastery"
+        type: quiz
+        duration_minutes: 12
+        content_file: lessons/spring-mastery-final-quiz.md
+      - slug: whats-next-resources
+        title: "What's Next: Resources and Roadmap"
+        type: reading
+        duration_minutes: 10
+        content_file: lessons/whats-next-resources.md
