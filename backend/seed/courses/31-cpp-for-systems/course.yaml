@@ -799,6 +799,180 @@ modules:
     type: reading
     duration_minutes: 10
     content_file: lessons/virtual-destructor.md
+  - slug: cpp-vtable-dispatch
+    title: 'Problem: Virtual Dispatch Table Lookup'
+    type: exercise
+    duration_minutes: 25
+    order_index: 12
+    points: 175
+    difficulty: medium
+    prompt_file: lessons/cpp-vtable-dispatch.prompt.md
+    content_file: lessons/cpp-vtable-dispatch.md
+    supported_languages:
+    - python
+    starter_code:
+      python: |
+        import sys
+
+        data = [l.strip() for l in sys.stdin if l.strip()]
+        idx = 0
+        # TODO: parse classes, methods, objects, and resolve CALL commands
+    solution_code:
+      python: |
+        import sys
+
+        def main():
+            data = [l.strip() for l in sys.stdin if l.strip()]
+            idx = 0
+
+            n = int(data[idx]); idx += 1
+            parent = {}
+            for _ in range(n):
+                parts = data[idx].split(); idx += 1
+                cname = parts[1]
+                par = parts[2] if len(parts) > 2 else None
+                parent[cname] = par
+
+            m = int(data[idx]); idx += 1
+            methods = {}
+            for _ in range(m):
+                parts = data[idx].split(); idx += 1
+                methods[(parts[1], parts[2])] = parts[3]
+
+            k = int(data[idx]); idx += 1
+            objects = {}
+            for _ in range(k):
+                parts = data[idx].split(); idx += 1
+                objects[parts[1]] = parts[2]
+
+            q = int(data[idx]); idx += 1
+            for _ in range(q):
+                parts = data[idx].split(); idx += 1
+                obj = parts[1]
+                method = parts[2]
+                cls = objects[obj]
+                result = None
+                cur = cls
+                while cur is not None:
+                    if (cur, method) in methods:
+                        result = methods[(cur, method)]
+                        break
+                    cur = parent.get(cur)
+                print(result if result is not None else 'ERROR')
+
+        main()
+    test_cases:
+    - name: animal_hierarchy
+      stdin: |
+        3
+        CLASS Animal
+        CLASS Dog Animal
+        CLASS Poodle Dog
+        4
+        METHOD Animal speak Grunt
+        METHOD Dog speak Woof
+        METHOD Animal breathe Inhale
+        METHOD Poodle groom Fluff
+        3
+        OBJECT a Animal
+        OBJECT d Dog
+        OBJECT p Poodle
+        5
+        CALL a speak
+        CALL d speak
+        CALL p speak
+        CALL p breathe
+        CALL p groom
+      expected_stdout: |
+        Grunt
+        Woof
+        Woof
+        Inhale
+        Fluff
+      is_hidden: false
+      weight: 1
+    - name: shape_hierarchy
+      stdin: |
+        2
+        CLASS Shape
+        CLASS Circle Shape
+        3
+        METHOD Shape area Zero
+        METHOD Shape describe ShapeObj
+        METHOD Circle area PiRsq
+        2
+        OBJECT s Shape
+        OBJECT c Circle
+        4
+        CALL s area
+        CALL c area
+        CALL c describe
+        CALL c missing
+      expected_stdout: |
+        Zero
+        PiRsq
+        ShapeObj
+        ERROR
+      is_hidden: false
+      weight: 1
+    - name: deep_chain_override
+      stdin: |
+        4
+        CLASS A
+        CLASS B A
+        CLASS C B
+        CLASS D C
+        2
+        METHOD A run Go
+        METHOD C run Fast
+        3
+        OBJECT x A
+        OBJECT y B
+        OBJECT z D
+        3
+        CALL x run
+        CALL y run
+        CALL z run
+      expected_stdout: |
+        Go
+        Go
+        Fast
+      is_hidden: false
+      weight: 1
+    - name: no_override_base_only
+      stdin: |
+        2
+        CLASS Base
+        CLASS Child Base
+        1
+        METHOD Base greet Hello
+        2
+        OBJECT b Base
+        OBJECT c Child
+        2
+        CALL b greet
+        CALL c greet
+      expected_stdout: |
+        Hello
+        Hello
+      is_hidden: true
+      weight: 1
+    - name: error_on_missing
+      stdin: |
+        1
+        CLASS Widget
+        1
+        METHOD Widget draw Square
+        1
+        OBJECT w Widget
+        2
+        CALL w draw
+        CALL w resize
+      expected_stdout: |
+        Square
+        ERROR
+      is_hidden: true
+      weight: 1
   - slug: quiz-polymorphism-virtual
     title: 'Quiz: Polymorphism and Virtual Functions'
     type: quiz
@@ -981,6 +1155,156 @@ modules:
     type: exercise
     duration_minutes: 20
     content_file: lessons/cpp-refcount-cycle-simulation.prompt.md
+  - slug: cpp-shared-ptr-refcount
+    title: 'Problem: Reference Counting Simulation'
+    type: exercise
+    duration_minutes: 20
+    order_index: 11
+    points: 150
+    difficulty: medium
+    prompt_file: lessons/cpp-shared-ptr-refcount.prompt.md
+    content_file: lessons/cpp-shared-ptr-refcount.md
+    supported_languages:
+    - python
+    starter_code:
+      python: |
+        import sys
+
+        handle_to_obj = {}
+        ref_counts = {}
+
+        for line in sys.stdin:
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split()
+            cmd = parts[0]
+            # TODO: handle CREATE, COPY, DROP, QUERY
+    solution_code:
+      python: |
+        import sys
+
+        def main():
+            handle_to_obj = {}
+            ref_counts = {}
+
+            for line in sys.stdin:
+                line = line.strip()
+                if not line:
+                    continue
+                parts = line.split()
+                cmd = parts[0]
+
+                if cmd == 'CREATE':
+                    handle = parts[1]
+                    obj_id = handle
+                    handle_to_obj[handle] = obj_id
+                    ref_counts[obj_id] = 1
+
+                elif cmd == 'COPY':
+                    src = parts[1]
+                    dst = parts[2]
+                    obj_id = handle_to_obj[src]
+                    handle_to_obj[dst] = obj_id
+                    ref_counts[obj_id] += 1
+
+                elif cmd == 'DROP':
+                    handle = parts[1]
+                    obj_id = handle_to_obj.pop(handle)
+                    ref_counts[obj_id] -= 1
+                    if ref_counts[obj_id] == 0:
+                        print(f'DESTROYED {obj_id}')
+                        del ref_counts[obj_id]
+
+                elif cmd == 'QUERY':
+                    handle = parts[1]
+                    obj_id = handle_to_obj[handle]
+                    print(ref_counts[obj_id])
+
+        main()
+    test_cases:
+    - name: basic_shared_ownership
+      stdin: |
+        CREATE A
+        COPY A B
+        COPY A C
+        QUERY B
+        DROP A
+        QUERY C
+        DROP B
+        DROP C
+      expected_stdout: |
+        3
+        2
+        DESTROYED A
+      is_hidden: false
+      weight: 1
+    - name: single_owner
+      stdin: |
+        CREATE X
+        QUERY X
+        DROP X
+      expected_stdout: |
+        1
+        DESTROYED X
+      is_hidden: false
+      weight: 1
+    - name: two_objects
+      stdin: |
+        CREATE obj1
+        CREATE obj2
+        COPY obj1 ref1
+        COPY obj2 ref2
+        COPY obj1 ref3
+        QUERY ref1
+        QUERY ref3
+        DROP obj1
+        QUERY ref1
+        DROP ref1
+        DROP ref3
+        DROP obj2
+        DROP ref2
+      expected_stdout: |
+        3
+        3
+        2
+        1
+        DESTROYED obj1
+        DESTROYED obj2
+      is_hidden: false
+      weight: 1
+    - name: no_destroy_until_last
+      stdin: |
+        CREATE R
+        COPY R S
+        COPY R T
+        DROP R
+        DROP S
+        QUERY T
+        DROP T
+      expected_stdout: |
+        1
+        DESTROYED R
+      is_hidden: true
+      weight: 1
+    - name: many_copies
+      stdin: |
+        CREATE N
+        COPY N A
+        COPY N B
+        COPY N C
+        COPY N D
+        QUERY A
+        DROP A
+        DROP B
+        DROP C
+        DROP D
+        DROP N
+      expected_stdout: |
+        5
+        DESTROYED N
+      is_hidden: true
+      weight: 1
   - slug: quiz-smart-pointers
     title: 'Quiz: Smart Pointers'
     type: quiz
@@ -1062,6 +1386,118 @@ modules:
     type: reading
     duration_minutes: 10
     content_file: lessons/template-specialization.md
+  - slug: cpp-template-type-dispatch
+    title: 'Problem: Template Type Dispatcher'
+    type: exercise
+    duration_minutes: 25
+    order_index: 6
+    points: 150
+    difficulty: medium
+    prompt_file: lessons/cpp-template-type-dispatch.prompt.md
+    content_file: lessons/cpp-template-type-dispatch.md
+    supported_languages:
+    - python
+    starter_code:
+      python: |
+        import sys
+
+        n = int(input())
+        for _ in range(n):
+            parts = input().split(maxsplit=1)
+            tag, value = parts[0], parts[1]
+            # TODO: dispatch on tag and print the result
+    solution_code:
+      python: |
+        import sys
+
+        n = int(input())
+        for _ in range(n):
+            parts = input().split(maxsplit=1)
+            tag, value = parts[0], parts[1]
+            if tag == 'INT':
+                print(f'INT: {int(value) * 2}')
+            elif tag == 'FLOAT':
+                print(f'FLOAT: {float(value):.2f}')
+            elif tag == 'STR':
+                print(f'STR: {value[::-1]}')
+            elif tag == 'BOOL':
+                print(f'BOOL: {"true" if value == "1" else "false"}')
+    test_cases:
+    - name: basic_types
+      stdin: |
+        5
+        INT 21
+        FLOAT 3.14159
+        STR hello
+        BOOL 1
+        BOOL 0
+      expected_stdout: |
+        INT: 42
+        FLOAT: 3.14
+        STR: olleh
+        BOOL: true
+        BOOL: false
+      is_hidden: false
+      weight: 1
+    - name: negative_and_rounding
+      stdin: |
+        4
+        INT -5
+        FLOAT 2.5
+        STR racecar
+        INT 0
+      expected_stdout: |
+        INT: -10
+        FLOAT: 2.50
+        STR: racecar
+        INT: 0
+      is_hidden: false
+      weight: 1
+    - name: large_and_precision
+      stdin: |
+        6
+        STR abcde
+        INT 1000000
+        FLOAT 0.1
+        BOOL 0
+        STR Z
+        FLOAT 99.999
+      expected_stdout: |
+        STR: edcba
+        INT: 2000000
+        FLOAT: 0.10
+        BOOL: false
+        STR: Z
+        FLOAT: 100.00
+      is_hidden: false
+      weight: 1
+    - name: single_each
+      stdin: |
+        1
+        STR xyz
+      expected_stdout: |
+        STR: zyx
+      is_hidden: true
+      weight: 1
+    - name: all_bools
+      stdin: |
+        4
+        BOOL 0
+        BOOL 1
+        BOOL 1
+        BOOL 0
+      expected_stdout: |
+        BOOL: false
+        BOOL: true
+        BOOL: true
+        BOOL: false
+      is_hidden: true
+      weight: 1
+  - slug: quiz-templates-generics
+    title: 'Quiz: Templates and Generic Programming'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-templates-generics.md
 - title: STL Containers
   order_index: 19
   lessons:
@@ -1161,6 +1597,16 @@ modules:
 - title: Modern C++ Essentials
   order_index: 21
   lessons:
+  - slug: move-semantics-modern-cpp
+    title: Move Semantics, Value Categories, and Perfect Forwarding
+    type: reading
+    duration_minutes: 15
+    content_file: lessons/move-semantics-modern-cpp.md
+  - slug: constexpr-compile-time
+    title: 'constexpr and Compile-Time Evaluation'
+    type: reading
+    duration_minutes: 12
+    content_file: lessons/constexpr-compile-time.md
   - slug: quiz-modern-cpp-essentials
     title: 'Quiz: Modern C++ Essentials'
     type: quiz
@@ -1244,6 +1690,174 @@ modules:
     type: exercise
     duration_minutes: 20
     content_file: lessons/cpp-struct-size-calculation-exercise.prompt.md
+  - slug: cpp-free-list-allocator
+    title: 'Problem: Memory Allocator Free List Simulation'
+    type: exercise
+    duration_minutes: 35
+    order_index: 16
+    points: 225
+    difficulty: hard
+    prompt_file: lessons/cpp-free-list-allocator.prompt.md
+    content_file: lessons/cpp-free-list-allocator.md
+    supported_languages:
+    - python
+    starter_code:
+      python: |
+        import sys
+
+        lines = [l.strip() for l in sys.stdin if l.strip()]
+        heap_size = int(lines[0])
+
+        free_list = [(0, heap_size)]
+        allocated = {}
+
+        for line in lines[1:]:
+            parts = line.split()
+            cmd = parts[0]
+            # TODO: handle ALLOC and FREE commands
+    solution_code:
+      python: |
+        import sys
+
+        def main():
+            lines = [l.strip() for l in sys.stdin if l.strip()]
+            heap_size = int(lines[0])
+
+            free_list = [(0, heap_size)]
+            allocated = {}
+
+            def coalesce(fl):
+                fl.sort()
+                merged = []
+                for seg in fl:
+                    if merged and merged[-1][1] == seg[0]:
+                        merged[-1] = (merged[-1][0], seg[1])
+                    else:
+                        merged.append(list(seg))
+                return [tuple(s) for s in merged]
+
+            for line in lines[1:]:
+                parts = line.split()
+                cmd = parts[0]
+
+                if cmd == 'ALLOC':
+                    handle = parts[1]
+                    size = int(parts[2])
+                    placed = False
+                    for i, (start, end) in enumerate(free_list):
+                        if end - start >= size:
+                            alloc_start = start
+                            alloc_end = start + size
+                            allocated[handle] = (alloc_start, alloc_end)
+                            new_free = []
+                            for j, seg in enumerate(free_list):
+                                if j == i:
+                                    if alloc_end < seg[1]:
+                                        new_free.append((alloc_end, seg[1]))
+                                else:
+                                    new_free.append(seg)
+                            free_list = new_free
+                            print(f'{handle}: [{alloc_start}, {alloc_end})')
+                            placed = True
+                            break
+                    if not placed:
+                        print(f'{handle}: FAILED')
+
+                elif cmd == 'FREE':
+                    handle = parts[1]
+                    seg = allocated.pop(handle)
+                    free_list.append(seg)
+                    free_list = coalesce(free_list)
+                    print(f'FREE {handle}')
+
+        main()
+    test_cases:
+    - name: basic_first_fit
+      stdin: |
+        100
+        ALLOC A 30
+        ALLOC B 20
+        ALLOC C 40
+        FREE B
+        ALLOC D 15
+        ALLOC E 25
+      expected_stdout: |
+        A: [0, 30)
+        B: [30, 50)
+        C: [50, 90)
+        FREE B
+        D: [30, 45)
+        E: FAILED
+      is_hidden: false
+      weight: 1
+    - name: full_coalesce
+      stdin: |
+        50
+        ALLOC X 10
+        ALLOC Y 10
+        ALLOC Z 10
+        FREE X
+        FREE Z
+        FREE Y
+        ALLOC BIG 45
+      expected_stdout: |
+        X: [0, 10)
+        Y: [10, 20)
+        Z: [20, 30)
+        FREE X
+        FREE Z
+        FREE Y
+        BIG: [0, 45)
+      is_hidden: false
+      weight: 1
+    - name: fragmentation_failure
+      stdin: |
+        20
+        ALLOC A 8
+        ALLOC B 8
+        FREE A
+        ALLOC C 10
+        ALLOC D 5
+      expected_stdout: |
+        A: [0, 8)
+        B: [8, 16)
+        FREE A
+        C: FAILED
+        D: [0, 5)
+      is_hidden: false
+      weight: 1
+    - name: exact_fit
+      stdin: |
+        30
+        ALLOC A 10
+        ALLOC B 10
+        ALLOC C 10
+        FREE B
+        ALLOC D 10
+      expected_stdout: |
+        A: [0, 10)
+        B: [10, 20)
+        C: [20, 30)
+        FREE B
+        D: [10, 20)
+      is_hidden: true
+      weight: 1
+    - name: sequential_alloc_free
+      stdin: |
+        40
+        ALLOC P 15
+        ALLOC Q 15
+        FREE P
+        FREE Q
+        ALLOC R 35
+      expected_stdout: |
+        P: [0, 15)
+        Q: [15, 30)
+        FREE P
+        FREE Q
+        R: [0, 35)
+      is_hidden: true
+      weight: 1
   - slug: quiz-alignment-padding
     title: 'Quiz: Memory Layout, Alignment, and Padding'
     type: quiz
@@ -1544,6 +2158,171 @@ modules:
     type: reading
     duration_minutes: 10
     content_file: lessons/race-condition.md
+  - slug: cpp-raii-lock-trace
+    title: 'Problem: RAII Lock Manager Trace'
+    type: exercise
+    duration_minutes: 25
+    order_index: 11
+    points: 175
+    difficulty: medium
+    prompt_file: lessons/cpp-raii-lock-trace.prompt.md
+    content_file: lessons/cpp-raii-lock-trace.md
+    supported_languages:
+    - python
+    starter_code:
+      python: |
+        import sys
+        from collections import deque
+
+        mutex_holder = {}
+        mutex_waiters = {}
+
+        for line in sys.stdin:
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split()
+            cmd = parts[0]
+            # TODO: handle LOCK, UNLOCK, WORK
+    solution_code:
+      python: |
+        import sys
+        from collections import deque
+
+        def main():
+            mutex_holder = {}
+            mutex_waiters = {}
+
+            def is_blocked(tid):
+                return any(tid in waiters for waiters in mutex_waiters.values())
+
+            for line in sys.stdin:
+                line = line.strip()
+                if not line:
+                    continue
+                parts = line.split()
+                cmd = parts[0]
+
+                if cmd == 'LOCK':
+                    tid = parts[1]
+                    mid = parts[2]
+                    if mid not in mutex_holder:
+                        mutex_holder[mid] = None
+                        mutex_waiters[mid] = deque()
+                    if mutex_holder[mid] is None:
+                        mutex_holder[mid] = tid
+                        print(f'{tid} ACQUIRED {mid}')
+                    else:
+                        mutex_waiters[mid].append(tid)
+                        print(f'{tid} BLOCKED on {mid}')
+
+                elif cmd == 'UNLOCK':
+                    tid = parts[1]
+                    mid = parts[2]
+                    mutex_holder[mid] = None
+                    print(f'{tid} RELEASED {mid}')
+                    if mutex_waiters[mid]:
+                        next_tid = mutex_waiters[mid].popleft()
+                        mutex_holder[mid] = next_tid
+                        print(f'{next_tid} ACQUIRED {mid}')
+
+                elif cmd == 'WORK':
+                    tid = parts[1]
+                    if not is_blocked(tid):
+                        print(f'{tid} WORKING')
+
+        main()
+    test_cases:
+    - name: basic_block_and_wake
+      stdin: |
+        LOCK T1 M1
+        LOCK T2 M1
+        WORK T1
+        WORK T2
+        UNLOCK T1 M1
+        WORK T2
+      expected_stdout: |
+        T1 ACQUIRED M1
+        T2 BLOCKED on M1
+        T1 WORKING
+        T1 RELEASED M1
+        T2 ACQUIRED M1
+        T2 WORKING
+      is_hidden: false
+      weight: 1
+    - name: two_mutexes
+      stdin: |
+        LOCK T1 MA
+        LOCK T1 MB
+        LOCK T2 MA
+        LOCK T3 MB
+        WORK T2
+        WORK T3
+        UNLOCK T1 MA
+        UNLOCK T1 MB
+        WORK T2
+        WORK T3
+      expected_stdout: |
+        T1 ACQUIRED MA
+        T1 ACQUIRED MB
+        T2 BLOCKED on MA
+        T3 BLOCKED on MB
+        T1 RELEASED MA
+        T2 ACQUIRED MA
+        T1 RELEASED MB
+        T3 ACQUIRED MB
+        T2 WORKING
+        T3 WORKING
+      is_hidden: false
+      weight: 1
+    - name: fifo_queue
+      stdin: |
+        LOCK A M1
+        LOCK B M1
+        LOCK C M1
+        UNLOCK A M1
+        UNLOCK B M1
+        WORK C
+      expected_stdout: |
+        A ACQUIRED M1
+        B BLOCKED on M1
+        C BLOCKED on M1
+        A RELEASED M1
+        B ACQUIRED M1
+        B RELEASED M1
+        C ACQUIRED M1
+        C WORKING
+      is_hidden: false
+      weight: 1
+    - name: work_when_free
+      stdin: |
+        LOCK T1 M1
+        WORK T1
+        UNLOCK T1 M1
+        WORK T1
+      expected_stdout: |
+        T1 ACQUIRED M1
+        T1 WORKING
+        T1 RELEASED M1
+        T1 WORKING
+      is_hidden: true
+      weight: 1
+    - name: blocked_work_silent
+      stdin: |
+        LOCK T1 M1
+        LOCK T2 M1
+        WORK T2
+        WORK T2
+        UNLOCK T1 M1
+        WORK T2
+      expected_stdout: |
+        T1 ACQUIRED M1
+        T2 BLOCKED on M1
+        T2 ACQUIRED M1
+        T1 RELEASED M1
+        T2 WORKING
+      is_hidden: true
+      weight: 1
   - slug: quiz-concurrency
     title: 'Quiz: Concurrency: Threads and Synchronization'
     type: quiz

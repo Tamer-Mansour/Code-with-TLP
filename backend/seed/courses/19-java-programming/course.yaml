@@ -51,6 +51,170 @@ modules:
         type: quiz
         duration_minutes: 5
         content_file: lessons/java-basics-quiz.md
+      - slug: java-arithmetic-exercise
+        title: Variable Types and Arithmetic
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/java-arithmetic-exercise.md
+        exercises:
+          - slug: java-arithmetic
+            title: Variable Types and Arithmetic
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/java-arithmetic.prompt.md
+            supported_languages: [python]
+            tags: [types, operators, arithmetic]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                a = int(input())
+                b = int(input())
+                # TODO: print Sum, Difference, Product, Quotient
+            solution_code:
+              python: |
+                a = int(input())
+                b = int(input())
+                print(f"Sum: {a + b}")
+                print(f"Difference: {a - b}")
+                print(f"Product: {a * b}")
+                print(f"Quotient: {int(a / b)}")
+            test_cases:
+              - name: basic
+                stdin: "17\n5"
+                expected_stdout: "Sum: 22\nDifference: 12\nProduct: 85\nQuotient: 3"
+                is_hidden: false
+                weight: 1
+              - name: small-numbers
+                stdin: "4\n2"
+                expected_stdout: "Sum: 6\nDifference: 2\nProduct: 8\nQuotient: 2"
+                is_hidden: false
+                weight: 1
+              - name: negative-dividend
+                stdin: "-7\n3"
+                expected_stdout: "Sum: -4\nDifference: -10\nProduct: -21\nQuotient: -2"
+                is_hidden: true
+                weight: 1
+              - name: truncation
+                stdin: "7\n2"
+                expected_stdout: "Sum: 9\nDifference: 5\nProduct: 14\nQuotient: 3"
+                is_hidden: true
+                weight: 1
+              - name: large-numbers
+                stdin: "1000\n7"
+                expected_stdout: "Sum: 1007\nDifference: 993\nProduct: 7000\nQuotient: 142"
+                is_hidden: true
+                weight: 1
+      - slug: java-fizzbuzz-exercise
+        title: FizzBuzz with Configurable Range
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/java-fizzbuzz-exercise.md
+        exercises:
+          - slug: java-fizzbuzz
+            title: FizzBuzz with Configurable Range
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/java-fizzbuzz.prompt.md
+            supported_languages: [python]
+            tags: [control-flow, loops, modulus]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                n = int(input())
+                _ = int(input())
+                # TODO: print FizzBuzz sequence then Plain numbers count
+            solution_code:
+              python: |
+                n = int(input())
+                _ = int(input())
+                count = 0
+                for i in range(1, n + 1):
+                    if i % 15 == 0:
+                        print('FizzBuzz')
+                    elif i % 3 == 0:
+                        print('Fizz')
+                    elif i % 5 == 0:
+                        print('Buzz')
+                    else:
+                        print(i)
+                        count += 1
+                print(f'Plain numbers: {count}')
+            test_cases:
+              - name: n15
+                stdin: "15\n0"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\nPlain numbers: 8"
+                is_hidden: false
+                weight: 1
+              - name: n5
+                stdin: "5\n0"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nPlain numbers: 3"
+                is_hidden: false
+                weight: 1
+              - name: n1
+                stdin: "1\n0"
+                expected_stdout: "1\nPlain numbers: 1"
+                is_hidden: true
+                weight: 1
+              - name: n30
+                stdin: "30\n0"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz\nFizz\n22\n23\nFizz\nBuzz\n26\nFizz\n28\n29\nFizzBuzz\nPlain numbers: 16"
+                is_hidden: true
+                weight: 1
+      - slug: java-array-stats-exercise
+        title: Array Statistics
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/java-array-stats-exercise.md
+        exercises:
+          - slug: java-array-stats
+            title: Array Statistics
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/java-array-stats.prompt.md
+            supported_languages: [python]
+            tags: [arrays, loops, statistics]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                n = int(input())
+                nums = list(map(int, input().split()))
+                # TODO: print Min, Max, Average
+            solution_code:
+              python: |
+                n = int(input())
+                nums = list(map(int, input().split()))
+                print(f'Min: {min(nums)}')
+                print(f'Max: {max(nums)}')
+                print(f'Average: {sum(nums) / len(nums):.2f}')
+            test_cases:
+              - name: basic
+                stdin: "6\n3 7 1 9 4 6"
+                expected_stdout: "Min: 1\nMax: 9\nAverage: 5.00"
+                is_hidden: false
+                weight: 1
+              - name: single-element
+                stdin: "1\n42"
+                expected_stdout: "Min: 42\nMax: 42\nAverage: 42.00"
+                is_hidden: false
+                weight: 1
+              - name: all-same
+                stdin: "3\n5 5 5"
+                expected_stdout: "Min: 5\nMax: 5\nAverage: 5.00"
+                is_hidden: true
+                weight: 1
+              - name: negatives
+                stdin: "4\n-3 -1 -7 -2"
+                expected_stdout: "Min: -7\nMax: -1\nAverage: -3.25"
+                is_hidden: true
+                weight: 1
+              - name: two-decimal
+                stdin: "3\n1 2 3"
+                expected_stdout: "Min: 1\nMax: 3\nAverage: 2.00"
+                is_hidden: true
+                weight: 1
 
   - title: OOP in Java
     summary: Classes, interfaces, inheritance, and polymorphism.
@@ -71,6 +235,77 @@ modules:
         type: quiz
         duration_minutes: 8
         content_file: lessons/oop-quiz.md
+      - slug: java-bank-account-exercise
+        title: Bank Account Simulation
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/java-bank-account-exercise.md
+        exercises:
+          - slug: java-bank-account
+            title: Bank Account Simulation
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/java-bank-account.prompt.md
+            supported_languages: [python]
+            tags: [oop, encapsulation, state]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                balance = int(input())
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    # TODO: handle deposit, withdraw, balance commands
+            solution_code:
+              python: |
+                import sys
+                balance = int(input())
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    if parts[0] == 'deposit':
+                        balance += int(parts[1])
+                        print(balance)
+                    elif parts[0] == 'withdraw':
+                        amount = int(parts[1])
+                        if amount > balance:
+                            print('Insufficient funds')
+                        else:
+                            balance -= amount
+                            print(balance)
+                    elif parts[0] == 'balance':
+                        print(balance)
+            test_cases:
+              - name: basic
+                stdin: "100\ndeposit 50\nbalance\nwithdraw 200\nwithdraw 30\nbalance"
+                expected_stdout: "150\n150\nInsufficient funds\n120\n120"
+                is_hidden: false
+                weight: 1
+              - name: zero-balance-withdraw
+                stdin: "0\nwithdraw 1\nbalance"
+                expected_stdout: "Insufficient funds\n0"
+                is_hidden: false
+                weight: 1
+              - name: exact-withdraw
+                stdin: "50\nwithdraw 50\nbalance"
+                expected_stdout: "0\n0"
+                is_hidden: true
+                weight: 1
+              - name: multiple-deposits
+                stdin: "10\ndeposit 5\ndeposit 5\ndeposit 5\nbalance"
+                expected_stdout: "15\n20\n25\n25"
+                is_hidden: true
+                weight: 1
+              - name: withdraw-then-deposit
+                stdin: "200\nwithdraw 100\ndeposit 300\nwithdraw 400\nbalance"
+                expected_stdout: "100\n400\n0\n0"
+                is_hidden: true
+                weight: 1
 
   - title: Collections, Generics, Streams
     summary: List, Map, generics, and the Streams API.
@@ -91,6 +326,11 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/streams-and-lambdas.md
+      - slug: collections-generics-quiz
+        title: Quiz - Collections, Generics, and Streams
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/collections-generics-quiz.md
       - slug: word-count-exercise
         title: Word Count
         type: exercise
@@ -165,6 +405,80 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/file-io-and-nio.md
+      - slug: exception-io-quiz
+        title: Quiz - Exception Handling and I/O
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/exception-io-quiz.md
+      - slug: java-grade-classifier-exercise
+        title: Grade Classifier with Exception Handling
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/java-grade-classifier-exercise.md
+        exercises:
+          - slug: java-grade-classifier
+            title: Grade Classifier with Exception Handling
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/java-grade-classifier.prompt.md
+            supported_languages: [python]
+            tags: [exceptions, control-flow, parsing]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                n = int(input())
+                for _ in range(n):
+                    raw = input().strip()
+                    # TODO: classify grade or print error
+            solution_code:
+              python: |
+                n = int(input())
+                for _ in range(n):
+                    raw = input().strip()
+                    try:
+                        grade = int(raw)
+                    except ValueError:
+                        print('Invalid input')
+                        continue
+                    if grade < 0 or grade > 100:
+                        print('Out of range')
+                    elif grade >= 90:
+                        print('A')
+                    elif grade >= 80:
+                        print('B')
+                    elif grade >= 70:
+                        print('C')
+                    elif grade >= 60:
+                        print('D')
+                    else:
+                        print('F')
+            test_cases:
+              - name: basic
+                stdin: "6\n95\n82\nabc\n55\n-5\n101"
+                expected_stdout: "A\nB\nInvalid input\nF\nOut of range\nOut of range"
+                is_hidden: false
+                weight: 1
+              - name: all-valid
+                stdin: "5\n100\n90\n80\n70\n60"
+                expected_stdout: "A\nA\nB\nC\nD"
+                is_hidden: false
+                weight: 1
+              - name: zero-grade
+                stdin: "1\n0"
+                expected_stdout: "F"
+                is_hidden: true
+                weight: 1
+              - name: float-input
+                stdin: "2\n85.5\n70"
+                expected_stdout: "Invalid input\nC"
+                is_hidden: true
+                weight: 1
+              - name: boundary-grades
+                stdin: "4\n59\n60\n89\n90"
+                expected_stdout: "F\nD\nB\nA"
+                is_hidden: true
+                weight: 1
       - slug: io-exercise
         title: Line Number Filter
         type: exercise
@@ -255,6 +569,64 @@ modules:
         type: quiz
         duration_minutes: 8
         content_file: lessons/concurrency-quiz.md
+      - slug: java-concurrency-exercise
+        title: Task Scheduler Simulation
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/java-concurrency-exercise.md
+        exercises:
+          - slug: java-task-scheduler
+            title: Task Scheduler Simulation
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/java-concurrency.prompt.md
+            supported_languages: [python]
+            tags: [concurrency, simulation, scheduling]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                t = int(input())
+                n = int(input())
+                durations = list(map(int, input().split()))
+                # TODO: simulate fixed thread pool scheduling
+            solution_code:
+              python: |
+                t = int(input())
+                n = int(input())
+                durations = list(map(int, input().split()))
+                free = [0] * t
+                for i, d in enumerate(durations):
+                    min_time = min(free)
+                    thread = free.index(min_time)
+                    free[thread] = min_time + d
+                    print(f"Task {i}: thread {thread}, finishes at {free[thread]}")
+            test_cases:
+              - name: basic
+                stdin: "2\n4\n3 1 4 2"
+                expected_stdout: "Task 0: thread 0, finishes at 3\nTask 1: thread 1, finishes at 1\nTask 2: thread 1, finishes at 5\nTask 3: thread 0, finishes at 5"
+                is_hidden: false
+                weight: 1
+              - name: single-thread
+                stdin: "1\n3\n2 3 1"
+                expected_stdout: "Task 0: thread 0, finishes at 2\nTask 1: thread 0, finishes at 5\nTask 2: thread 0, finishes at 6"
+                is_hidden: false
+                weight: 1
+              - name: all-same-duration
+                stdin: "3\n3\n5 5 5"
+                expected_stdout: "Task 0: thread 0, finishes at 5\nTask 1: thread 1, finishes at 5\nTask 2: thread 2, finishes at 5"
+                is_hidden: true
+                weight: 1
+              - name: tie-pick-lowest
+                stdin: "2\n4\n5 5 1 1"
+                expected_stdout: "Task 0: thread 0, finishes at 5\nTask 1: thread 1, finishes at 5\nTask 2: thread 0, finishes at 6\nTask 3: thread 1, finishes at 6"
+                is_hidden: true
+                weight: 1
+              - name: more-tasks-than-threads
+                stdin: "2\n6\n1 1 1 1 1 1"
+                expected_stdout: "Task 0: thread 0, finishes at 1\nTask 1: thread 1, finishes at 1\nTask 2: thread 0, finishes at 2\nTask 3: thread 1, finishes at 2\nTask 4: thread 0, finishes at 3\nTask 5: thread 1, finishes at 3"
+                is_hidden: true
+                weight: 1
 
   - title: Modern Java and Tooling
     summary: Java 14-21 features, Optional, unit testing, and build tools.
@@ -281,3 +653,73 @@ modules:
         duration_minutes: 45
         video_url: "https://www.youtube.com/results?search_query=maven+gradle+java+build+tools+tutorial"
         content_file: lessons/java-build-tools-video.md
+      - slug: modern-java-quiz
+        title: Quiz - Modern Java and Tooling
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/modern-java-quiz.md
+      - slug: java-modern-exercise
+        title: Inventory Filter with Streams
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/java-modern-exercise.md
+        exercises:
+          - slug: java-inventory-filter
+            title: Inventory Filter with Streams
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/java-inventory-filter.prompt.md
+            supported_languages: [python]
+            tags: [streams, sorting, optional]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                n = int(input())
+                items = []
+                for _ in range(n):
+                    line = input().split()
+                    items.append((line[0], int(line[1])))
+                budget = int(input())
+                # TODO: filter and sort items
+            solution_code:
+              python: |
+                n = int(input())
+                items = []
+                for _ in range(n):
+                    line = input().split()
+                    items.append((line[0], int(line[1])))
+                budget = int(input())
+                filtered = [(name, price) for name, price in items if price <= budget]
+                filtered.sort(key=lambda x: (x[1], x[0]))
+                if not filtered:
+                    print('No items found')
+                else:
+                    for name, price in filtered:
+                        print(f'{name} {price}')
+            test_cases:
+              - name: basic
+                stdin: "5\napple 2\nbanana 1\ncherry 5\ndate 3\nelderberry 1\n3"
+                expected_stdout: "banana 1\nelderberry 1\napple 2\ndate 3"
+                is_hidden: false
+                weight: 1
+              - name: none-qualify
+                stdin: "3\naxe 10\nblade 20\nclub 30\n5"
+                expected_stdout: "No items found"
+                is_hidden: false
+                weight: 1
+              - name: all-qualify
+                stdin: "3\nzebra 1\nant 1\nbee 2\n5"
+                expected_stdout: "ant 1\nzebra 1\nbee 2"
+                is_hidden: true
+                weight: 1
+              - name: single-item
+                stdin: "1\nwidget 7\n7"
+                expected_stdout: "widget 7"
+                is_hidden: true
+                weight: 1
+              - name: exact-budget
+                stdin: "4\nalpha 5\nbeta 3\ngamma 5\ndelta 1\n5"
+                expected_stdout: "delta 1\nbeta 3\nalpha 5\ngamma 5"
+                is_hidden: true
+                weight: 1

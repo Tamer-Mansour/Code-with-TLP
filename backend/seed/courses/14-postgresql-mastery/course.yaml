@@ -143,6 +143,186 @@ modules:
                 expected_stdout: "7 1"
                 is_hidden: true
                 weight: 1
+      - slug: postgresql-window-dense-rank-lesson
+        title: "Exercise: Window Function Dense Rank"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/postgresql-window-dense-rank.md
+        exercises:
+          - slug: postgresql-window-dense-rank
+            title: "Window Function: Dense Rank by Salary"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/postgresql-window-dense-rank.prompt.md
+            supported_languages: [python]
+            tags: [postgres, window-functions, dense-rank]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    # TODO: simulate DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC)
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    employees = []
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        name, dept, salary = parts[0], parts[1], int(parts[2])
+                        employees.append((name, dept, salary))
+
+                    by_dept = defaultdict(list)
+                    for emp in employees:
+                        by_dept[emp[1]].append(emp)
+
+                    results = []
+                    for dept in sorted(by_dept.keys()):
+                        emps = by_dept[dept]
+                        sorted_emps = sorted(emps, key=lambda x: -x[2])
+                        rank = 0
+                        prev_salary = None
+                        for emp in sorted_emps:
+                            if emp[2] != prev_salary:
+                                rank += 1
+                                prev_salary = emp[2]
+                            results.append((emp[0], emp[1], emp[2], rank))
+
+                    results.sort(key=lambda x: (x[1], x[3], x[0]))
+                    for r in results:
+                        print(r[0], r[1], r[2], r[3])
+
+                solve()
+            test_cases:
+              - name: basic-two-depts
+                stdin: "6\nAlice Engineering 90000\nBob Engineering 90000\nCarol Engineering 80000\nDave Sales 70000\nEve Sales 70000\nFrank Sales 60000\n"
+                expected_stdout: "Alice Engineering 90000 1\nBob Engineering 90000 1\nCarol Engineering 80000 2\nDave Sales 70000 1\nEve Sales 70000 1\nFrank Sales 60000 2"
+                is_hidden: false
+                weight: 1
+              - name: single-employee
+                stdin: "1\nAlex HR 50000\n"
+                expected_stdout: "Alex HR 50000 1"
+                is_hidden: false
+                weight: 1
+              - name: all-same-salary
+                stdin: "3\nAna Dev 80000\nBen Dev 80000\nCat Dev 80000\n"
+                expected_stdout: "Ana Dev 80000 1\nBen Dev 80000 1\nCat Dev 80000 1"
+                is_hidden: false
+                weight: 1
+              - name: three-departments
+                stdin: "5\nZoe Finance 120000\nAmy Finance 100000\nBob Finance 100000\nCarl Marketing 90000\nDan Marketing 80000\n"
+                expected_stdout: "Zoe Finance 120000 1\nAmy Finance 100000 2\nBob Finance 100000 2\nCarl Marketing 90000 1\nDan Marketing 80000 2"
+                is_hidden: true
+                weight: 1
+              - name: all-unique-salaries
+                stdin: "4\nW Dev 60000\nX Dev 70000\nY Dev 80000\nZ Dev 90000\n"
+                expected_stdout: "Z Dev 90000 1\nY Dev 80000 2\nX Dev 70000 3\nW Dev 60000 4"
+                is_hidden: true
+                weight: 1
+      - slug: postgresql-recursive-org-chart-lesson
+        title: "Exercise: Recursive Org Chart Depth"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/postgresql-recursive-org-chart.md
+        exercises:
+          - slug: postgresql-recursive-org-chart
+            title: "CTE Chain: Recursive Org Chart Depth"
+            difficulty: hard
+            points: 40
+            prompt_file: lessons/postgresql-recursive-org-chart.prompt.md
+            supported_languages: [python]
+            tags: [postgres, cte, recursive, hierarchy]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                from collections import defaultdict, deque
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    # TODO: compute depth for each employee using BFS from roots
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import defaultdict, deque
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    manager = {}
+                    children = defaultdict(list)
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        emp, mgr = int(parts[0]), int(parts[1])
+                        manager[emp] = mgr
+                        if mgr != 0:
+                            children[mgr].append(emp)
+
+                    depth = {}
+                    queue = deque()
+                    for emp, mgr in manager.items():
+                        if mgr == 0:
+                            depth[emp] = 0
+                            queue.append(emp)
+
+                    while queue:
+                        node = queue.popleft()
+                        for child in children[node]:
+                            depth[child] = depth[node] + 1
+                            queue.append(child)
+
+                    for emp in sorted(depth.keys()):
+                        print(emp, depth[emp])
+
+                solve()
+            test_cases:
+              - name: basic-hierarchy
+                stdin: "6\n1 0\n2 1\n3 1\n4 2\n5 2\n6 3\n"
+                expected_stdout: "1 0\n2 1\n3 1\n4 2\n5 2\n6 2"
+                is_hidden: false
+                weight: 1
+              - name: single-root
+                stdin: "1\n1 0\n"
+                expected_stdout: "1 0"
+                is_hidden: false
+                weight: 1
+              - name: linear-chain
+                stdin: "4\n1 0\n2 1\n3 2\n4 3\n"
+                expected_stdout: "1 0\n2 1\n3 2\n4 3"
+                is_hidden: false
+                weight: 1
+              - name: two-roots
+                stdin: "4\n1 0\n2 0\n3 1\n4 2\n"
+                expected_stdout: "1 0\n2 0\n3 1\n4 1"
+                is_hidden: true
+                weight: 1
+              - name: deep-tree
+                stdin: "7\n10 0\n20 10\n30 10\n40 20\n50 30\n60 40\n70 50\n"
+                expected_stdout: "10 0\n20 1\n30 1\n40 2\n50 2\n60 3\n70 3"
+                is_hidden: true
+                weight: 2
+      - slug: advanced-sql-quiz
+        title: Quiz - Advanced SQL Features
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/advanced-sql-quiz.md
 
   - title: JSON, Arrays, and Full-Text Search
     summary: JSONB indexing, array types, and tsvector search.
@@ -248,6 +428,85 @@ modules:
         type: quiz
         duration_minutes: 8
         content_file: lessons/index-types-quiz.md
+      - slug: postgresql-index-advisor-lesson
+        title: "Exercise: Index Selection Advisor"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/postgresql-index-advisor.md
+        exercises:
+          - slug: postgresql-index-advisor
+            title: Index Selection Advisor
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/postgresql-index-advisor.prompt.md
+            supported_languages: [python]
+            tags: [postgres, indexes, performance]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    # TODO: for each line, print the recommended index type
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+
+                    rules = {
+                        ('jsonb', 'containment'): 'GIN',
+                        ('array', 'containment'): 'GIN',
+                        ('tsvector', 'fulltext'): 'GIN',
+                        ('tsvector', 'containment'): 'GIN',
+                        ('timestamp_sequential', 'range'): 'BRIN',
+                        ('geometry', 'geometric'): 'GIST',
+                        ('geometry', 'containment'): 'GIST',
+                    }
+
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        dtype, qpattern = parts[0], parts[1]
+                        key = (dtype, qpattern)
+                        if key in rules:
+                            print(rules[key])
+                        elif qpattern == 'equality':
+                            print('BTREE')
+                        elif qpattern == 'range':
+                            print('BTREE')
+                        else:
+                            print('BTREE')
+
+                solve()
+            test_cases:
+              - name: sample-six
+                stdin: "6\njsonb containment\ntimestamp_sequential range\ninteger equality\ntsvector fulltext\ngeometry geometric\ntext range\n"
+                expected_stdout: "GIN\nBRIN\nBTREE\nGIN\nGIST\nBTREE"
+                is_hidden: false
+                weight: 1
+              - name: array-containment
+                stdin: "2\narray containment\ninteger range\n"
+                expected_stdout: "GIN\nBTREE"
+                is_hidden: false
+                weight: 1
+              - name: text-equality
+                stdin: "3\ntext equality\ntext range\njsonb containment\n"
+                expected_stdout: "BTREE\nBTREE\nGIN"
+                is_hidden: true
+                weight: 1
+              - name: all-btree
+                stdin: "3\ninteger equality\ntext range\ntext equality\n"
+                expected_stdout: "BTREE\nBTREE\nBTREE"
+                is_hidden: true
+                weight: 1
 
   - title: MVCC, Transactions, and Vacuum
     summary: Why Postgres needs VACUUM, isolation levels, and dead tuples.
@@ -268,6 +527,177 @@ modules:
         type: reading
         duration_minutes: 13
         content_file: lessons/locking-and-deadlocks.md
+      - slug: postgresql-vacuum-bloat-lesson
+        title: "Exercise: Simulate VACUUM Bloat"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/postgresql-vacuum-bloat.md
+        exercises:
+          - slug: postgresql-vacuum-bloat
+            title: "Simulate VACUUM: Identify Dead Tuple Bloat"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/postgresql-vacuum-bloat.prompt.md
+            supported_languages: [python]
+            tags: [postgres, mvcc, vacuum, bloat]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    # TODO: simulate INSERT/UPDATE, track live and dead tuples
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    dead = 0
+                    live_keys = set()
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        op, key = parts[0], parts[1]
+                        if op == 'INSERT':
+                            live_keys.add(key)
+                        elif op == 'UPDATE':
+                            if key in live_keys:
+                                dead += 1
+                    live = len(live_keys)
+                    total = live + dead
+                    bloat = dead / total * 100 if total > 0 else 0.0
+                    print(f'live: {live}')
+                    print(f'dead: {dead}')
+                    print(f'bloat: {round(bloat, 1)}%')
+
+                solve()
+            test_cases:
+              - name: sample-seven-ops
+                stdin: "7\nINSERT 1\nINSERT 2\nINSERT 3\nUPDATE 1\nUPDATE 2\nUPDATE 1\nINSERT 4\n"
+                expected_stdout: "live: 4\ndead: 3\nbloat: 42.9%"
+                is_hidden: false
+                weight: 1
+              - name: no-updates
+                stdin: "3\nINSERT 1\nINSERT 2\nINSERT 3\n"
+                expected_stdout: "live: 3\ndead: 0\nbloat: 0.0%"
+                is_hidden: false
+                weight: 1
+              - name: single-key-many-updates
+                stdin: "4\nINSERT 1\nUPDATE 1\nUPDATE 1\nUPDATE 1\n"
+                expected_stdout: "live: 1\ndead: 3\nbloat: 75.0%"
+                is_hidden: false
+                weight: 1
+              - name: two-keys-one-update-each
+                stdin: "4\nINSERT 10\nINSERT 20\nUPDATE 10\nUPDATE 20\n"
+                expected_stdout: "live: 2\ndead: 2\nbloat: 50.0%"
+                is_hidden: true
+                weight: 1
+              - name: large-insert-heavy
+                stdin: "6\nINSERT 1\nINSERT 2\nINSERT 3\nINSERT 4\nINSERT 5\nUPDATE 1\n"
+                expected_stdout: "live: 5\ndead: 1\nbloat: 16.7%"
+                is_hidden: true
+                weight: 1
+      - slug: postgresql-phantom-read-lesson
+        title: "Exercise: Detect Phantom Read Scenarios"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/postgresql-phantom-read.md
+        exercises:
+          - slug: postgresql-phantom-read
+            title: "Transaction Isolation: Detect Phantom Read Scenario"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/postgresql-phantom-read.prompt.md
+            supported_languages: [python]
+            tags: [postgres, transactions, isolation, phantom-read]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    # TODO: detect phantom reads from the event log
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    txn_reads = {}
+                    phantoms = set()
+
+                    for i in range(1, n + 1):
+                        line = data[i]
+                        parts = {}
+                        for token in line.split():
+                            k, v = token.split('=')
+                            parts[k] = v
+
+                        txn_id = int(parts['T'])
+                        op = parts['OP']
+
+                        if op == 'READ':
+                            rows = frozenset(parts['ROWS'].split(','))
+                            if txn_id not in txn_reads:
+                                txn_reads[txn_id] = [rows]
+                            else:
+                                first_read = txn_reads[txn_id][0]
+                                if rows - first_read:
+                                    phantoms.add(txn_id)
+                                txn_reads[txn_id].append(rows)
+
+                    if phantoms:
+                        for txn in sorted(phantoms):
+                            print(f'PHANTOM {txn}')
+                    else:
+                        print('NONE')
+
+                solve()
+            test_cases:
+              - name: one-phantom
+                stdin: "6\nT=1 OP=READ ROWS=10,20\nT=2 OP=INSERT ROWS=30\nT=3 OP=READ ROWS=10,20\nT=1 OP=READ ROWS=10,20,30\nT=3 OP=READ ROWS=10,20\nT=4 OP=READ ROWS=10,20,30\n"
+                expected_stdout: "PHANTOM 1"
+                is_hidden: false
+                weight: 1
+              - name: no-phantom
+                stdin: "4\nT=1 OP=READ ROWS=5,10\nT=2 OP=INSERT ROWS=15\nT=3 OP=READ ROWS=5,10\nT=3 OP=READ ROWS=5,10\n"
+                expected_stdout: "NONE"
+                is_hidden: false
+                weight: 1
+              - name: two-phantoms
+                stdin: "6\nT=1 OP=READ ROWS=1\nT=2 OP=READ ROWS=1\nT=3 OP=INSERT ROWS=2\nT=1 OP=READ ROWS=1,2\nT=2 OP=READ ROWS=1,2\nT=4 OP=READ ROWS=1,2\n"
+                expected_stdout: "PHANTOM 1\nPHANTOM 2"
+                is_hidden: false
+                weight: 1
+              - name: single-read-only
+                stdin: "3\nT=1 OP=READ ROWS=10\nT=2 OP=INSERT ROWS=20\nT=3 OP=READ ROWS=10,20\n"
+                expected_stdout: "NONE"
+                is_hidden: true
+                weight: 1
+              - name: insert-then-phantom
+                stdin: "5\nT=5 OP=READ ROWS=100,200\nT=6 OP=INSERT ROWS=300\nT=6 OP=INSERT ROWS=400\nT=5 OP=READ ROWS=100,200,300,400\nT=7 OP=READ ROWS=100\n"
+                expected_stdout: "PHANTOM 5"
+                is_hidden: true
+                weight: 1
+      - slug: mvcc-vacuum-quiz
+        title: Quiz - MVCC, Transactions, and Vacuum
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/mvcc-vacuum-quiz.md
 
   - title: Operations
     summary: Backups, WAL, replication, and pooling.
@@ -283,6 +713,11 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/replication-and-pooling.md
+      - slug: operations-quiz
+        title: Quiz - Operations
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/operations-quiz.md
 
   - title: Schema Design and Partitioning
     summary: Practical schema patterns and table partitioning for scale.
@@ -298,6 +733,103 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/table-partitioning.md
+      - slug: postgresql-partition-pruning-lesson
+        title: "Exercise: Partition Pruning Simulator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/postgresql-partition-pruning.md
+        exercises:
+          - slug: postgresql-partition-pruning
+            title: Partition Pruning Simulator
+            difficulty: hard
+            points: 35
+            prompt_file: lessons/postgresql-partition-pruning.prompt.md
+            supported_languages: [python]
+            tags: [postgres, partitioning, query-planner]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    p = int(data[0])
+                    # TODO: parse partitions, then for each query determine which partitions to scan
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    p = int(data[0])
+                    partitions = []
+                    for i in range(1, p + 1):
+                        parts = data[i].split()
+                        name, low, high = parts[0], int(parts[1]), int(parts[2])
+                        partitions.append((name, low, high))
+
+                    q = int(data[p + 1])
+                    for j in range(p + 2, p + 2 + q):
+                        parts = data[j].split()
+                        op, val = parts[0], int(parts[1])
+                        matched = []
+                        for name, low, high in partitions:
+                            if op == '=':
+                                if low <= val < high:
+                                    matched.append(name)
+                            elif op == '<':
+                                if low < val:
+                                    matched.append(name)
+                            elif op == '>':
+                                if high - 1 > val:
+                                    matched.append(name)
+                            elif op == '<=':
+                                if low <= val:
+                                    matched.append(name)
+                            elif op == '>=':
+                                if high > val:
+                                    matched.append(name)
+                        if matched:
+                            print(' '.join(sorted(matched)))
+                        else:
+                            print('NONE')
+
+                solve()
+            test_cases:
+              - name: sample-three-queries
+                stdin: "4\np2020 0 1000\np2021 1000 2000\np2022 2000 3000\np2023 3000 4000\n3\n= 1500\n< 1000\n>= 2000\n"
+                expected_stdout: "p2021\np2020\np2022 p2023"
+                is_hidden: false
+                weight: 1
+              - name: equality-boundary
+                stdin: "2\npart_a 0 500\npart_b 500 1000\n2\n= 500\n= 499\n"
+                expected_stdout: "part_b\npart_a"
+                is_hidden: false
+                weight: 1
+              - name: less-than-none
+                stdin: "2\npart_a 100 200\npart_b 200 300\n1\n< 100\n"
+                expected_stdout: "NONE"
+                is_hidden: false
+                weight: 1
+              - name: greater-than-all
+                stdin: "3\np1 0 100\np2 100 200\np3 200 300\n1\n> 0\n"
+                expected_stdout: "p1 p2 p3"
+                is_hidden: true
+                weight: 1
+              - name: lte-single
+                stdin: "3\npa 0 10\npb 10 20\npc 20 30\n2\n<= 9\n<= 10\n"
+                expected_stdout: "pa\npa pb"
+                is_hidden: true
+                weight: 2
+      - slug: schema-partitioning-quiz
+        title: Quiz - Schema Design and Partitioning
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/schema-partitioning-quiz.md
 
   - title: Extensions and Ecosystem
     summary: The most useful Postgres extensions and when to reach for them.
@@ -308,3 +840,8 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/useful-extensions.md
+      - slug: extensions-quiz
+        title: Quiz - Extensions and Ecosystem
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/extensions-quiz.md

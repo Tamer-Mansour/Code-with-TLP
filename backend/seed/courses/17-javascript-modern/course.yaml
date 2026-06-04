@@ -55,6 +55,99 @@ modules:
         type: quiz
         duration_minutes: 5
         content_file: lessons/js-basics-quiz.md
+      - slug: js-type-coercion-oracle-exercise
+        title: "Type Coercion Oracle"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/javascript-type-coercion-exercise.md
+        exercises:
+          - slug: javascript-type-coercion-oracle
+            title: "Type Coercion Oracle"
+            difficulty: easy
+            points: 20
+            prompt_file: lessons/javascript-type-coercion-oracle.prompt.md
+            supported_languages: [python]
+            tags: [types, coercion, equality]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def js_typeof(val):
+                    mapping = {
+                        'null': 'object',
+                        'undefined': 'undefined',
+                        'NaN': 'number',
+                        '42': 'number',
+                        'hello': 'string',
+                        'true': 'boolean',
+                        'false': 'boolean',
+                        '[]': 'object',
+                        '{}': 'object',
+                    }
+                    return mapping.get(val, 'unknown')
+
+                def js_loose_eq(a, b):
+                    pair = frozenset([a, b])
+                    if pair == frozenset(['null', 'undefined']):
+                        return True
+                    if 'NaN' in pair:
+                        return False
+                    if pair.issubset({'0', 'false', "''"}):
+                        return True
+                    return a == b
+
+                def js_strict_eq(a, b):
+                    if 'NaN' in [a, b]:
+                        return False
+                    return a == b
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    n = int(data[0])
+                    for i in range(1, n + 1):
+                        expr = data[i].strip()
+                        if expr.startswith('typeof '):
+                            val = expr[7:].strip()
+                            print(js_typeof(val))
+                        elif ' === ' in expr:
+                            parts = expr.split(' === ')
+                            print(str(js_strict_eq(parts[0].strip(), parts[1].strip())).lower())
+                        elif ' == ' in expr:
+                            parts = expr.split(' == ')
+                            print(str(js_loose_eq(parts[0].strip(), parts[1].strip())).lower())
+
+                solve()
+            test_cases:
+              - name: typeof-quirks
+                stdin: "6\ntypeof null\ntypeof NaN\nNaN == NaN\nnull == undefined\nnull === undefined\n0 == false\n"
+                expected_stdout: "object\nnumber\nfalse\ntrue\nfalse\ntrue"
+                is_hidden: false
+                weight: 1
+              - name: typeof-basics
+                stdin: "4\ntypeof undefined\ntypeof []\nnull == 0\n0 == ''\n"
+                expected_stdout: "undefined\nobject\nfalse\ntrue"
+                is_hidden: false
+                weight: 1
+              - name: strict-vs-loose
+                stdin: "3\nnull === undefined\n0 === false\nNaN === NaN\n"
+                expected_stdout: "false\nfalse\nfalse"
+                is_hidden: true
+                weight: 1
+              - name: typeof-primitives
+                stdin: "4\ntypeof 42\ntypeof hello\ntypeof true\ntypeof false\n"
+                expected_stdout: "number\nstring\nboolean\nboolean"
+                is_hidden: true
+                weight: 1
 
   - title: Functions and Closures
     summary: First-class functions, arrows, closures, higher-order functions, this.
@@ -75,6 +168,159 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/higher-order-functions.md
+      - slug: js-scope-simulator-exercise
+        title: "Variable Scope Simulator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/javascript-scope-exercise.md
+        exercises:
+          - slug: javascript-scope-simulator
+            title: "Variable Scope Simulator"
+            difficulty: easy
+            points: 20
+            prompt_file: lessons/javascript-scope-simulator.prompt.md
+            supported_languages: [python]
+            tags: [scope, closures, var, let]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    input_data = sys.stdin.read().split('\n')
+                    idx = 0
+                    T = int(input_data[idx]); idx += 1
+                    for _ in range(T):
+                        parts = input_data[idx].split(); idx += 1
+                        keyword, varname, value, context = parts[0], parts[1], int(parts[2]), parts[3]
+                        if context == 'loop':
+                            if keyword == 'var':
+                                print('loop: ' + ' '.join([str(value)] * value))
+                            else:
+                                print('loop: ' + ' '.join(str(i) for i in range(value)))
+                        else:
+                            print(f'function: {value}')
+
+                solve()
+            test_cases:
+              - name: basic-three-cases
+                stdin: "3\nvar counter 3 loop\nlet counter 3 loop\nvar x 42 function\n"
+                expected_stdout: "loop: 3 3 3\nloop: 0 1 2\nfunction: 42"
+                is_hidden: false
+                weight: 1
+              - name: let-loop-five
+                stdin: "2\nlet i 5 loop\nvar n 1 loop\n"
+                expected_stdout: "loop: 0 1 2 3 4\nloop: 1"
+                is_hidden: false
+                weight: 1
+              - name: function-context
+                stdin: "2\nvar a 10 function\nlet b 7 function\n"
+                expected_stdout: "function: 10\nfunction: 7"
+                is_hidden: true
+                weight: 1
+              - name: var-loop-large
+                stdin: "1\nvar z 5 loop\n"
+                expected_stdout: "loop: 5 5 5 5 5"
+                is_hidden: true
+                weight: 1
+              - name: single-let-loop
+                stdin: "1\nlet k 1 loop\n"
+                expected_stdout: "loop: 0"
+                is_hidden: true
+                weight: 1
+      - slug: js-closure-counter-exercise
+        title: "Closure Counter Factory"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/javascript-closure-counter-exercise.md
+        exercises:
+          - slug: javascript-closure-counter-factory
+            title: "Closure Counter Factory"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/javascript-closure-counter-factory.prompt.md
+            supported_languages: [python]
+            tags: [closures, higher-order-functions, state]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    counters = {}
+                    for line in data:
+                        parts = line.strip().split()
+                        if not parts:
+                            continue
+                        cmd = parts[0]
+                        if cmd == 'CREATE':
+                            name = parts[1]
+                            start = int(parts[2])
+                            counters[name] = [start, start]
+                        elif cmd == 'INC':
+                            name = parts[1]
+                            counters[name][0] += 1
+                        elif cmd == 'DEC':
+                            name = parts[1]
+                            counters[name][0] -= 1
+                        elif cmd == 'GET':
+                            name = parts[1]
+                            print(counters[name][0])
+                        elif cmd == 'RESET':
+                            name = parts[1]
+                            counters[name][0] = counters[name][1]
+
+                solve()
+            test_cases:
+              - name: basic-inc-dec-get
+                stdin: "8\nCREATE a 0\nINC a\nINC a\nGET a\nDEC a\nGET a\nCREATE b 10\nGET b\n"
+                expected_stdout: "2\n1\n10"
+                is_hidden: false
+                weight: 1
+              - name: reset
+                stdin: "6\nCREATE x 5\nDEC x\nDEC x\nGET x\nRESET x\nGET x\n"
+                expected_stdout: "3\n5"
+                is_hidden: false
+                weight: 1
+              - name: triple-inc
+                stdin: "5\nCREATE c 100\nINC c\nINC c\nINC c\nGET c\n"
+                expected_stdout: "103"
+                is_hidden: false
+                weight: 1
+              - name: negative-start
+                stdin: "4\nCREATE n -5\nINC n\nINC n\nGET n\n"
+                expected_stdout: "-3"
+                is_hidden: true
+                weight: 1
+              - name: independent-counters
+                stdin: "6\nCREATE p 0\nCREATE q 0\nINC p\nINC p\nINC q\nGET p\n"
+                expected_stdout: "2"
+                is_hidden: true
+                weight: 1
+      - slug: js-functions-closures-quiz
+        title: "Quiz - Functions and Closures"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/js-functions-closures-quiz.md
 
   - title: Objects, Arrays, and Iteration
     summary: Prototypes, classes, array methods, destructuring, iterators, and generators.
@@ -95,6 +341,11 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/iterators-and-generators.md
+      - slug: js-objects-arrays-quiz
+        title: "Quiz - Objects and Arrays"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/js-objects-arrays-quiz.md
       - slug: array-pipeline-exercise
         title: Sum Squares of Evens
         type: exercise
@@ -162,6 +413,89 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/promises-and-async.md
+      - slug: js-promise-tracer-exercise
+        title: "Promise Chain Tracer"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/javascript-promise-tracer-exercise.md
+        exercises:
+          - slug: javascript-promise-chain-tracer
+            title: "Promise Chain Tracer"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/javascript-promise-chain-tracer.prompt.md
+            supported_languages: [python]
+            tags: [async, promises, event-loop]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    n = int(data[0])
+                    sync_tasks = []
+                    micro_tasks = []
+                    macro_tasks = []
+                    for i in range(1, n + 1):
+                        parts = data[i].strip().split()
+                        if len(parts) < 2:
+                            continue
+                        task_type, label = parts[0], parts[1]
+                        if task_type == 'SYNC':
+                            sync_tasks.append(label)
+                        elif task_type == 'MICRO':
+                            micro_tasks.append(label)
+                        elif task_type == 'MACRO':
+                            macro_tasks.append(label)
+                    for label in sync_tasks:
+                        print(label)
+                    for label in micro_tasks:
+                        print(label)
+                    for label in macro_tasks:
+                        print(label)
+
+                solve()
+            test_cases:
+              - name: basic-mixed
+                stdin: "5\nSYNC start\nMACRO timeout1\nMICRO promise1\nSYNC end\nMICRO promise2\n"
+                expected_stdout: "start\nend\npromise1\npromise2\ntimeout1"
+                is_hidden: false
+                weight: 1
+              - name: sync-first
+                stdin: "4\nMACRO timer\nSYNC alpha\nMICRO beta\nSYNC gamma\n"
+                expected_stdout: "alpha\ngamma\nbeta\ntimer"
+                is_hidden: false
+                weight: 1
+              - name: only-macro-and-micro
+                stdin: "3\nMACRO only-macro\nMACRO second-macro\nMICRO first-micro\n"
+                expected_stdout: "first-micro\nonly-macro\nsecond-macro"
+                is_hidden: false
+                weight: 1
+              - name: only-sync
+                stdin: "3\nSYNC a\nSYNC b\nSYNC c\n"
+                expected_stdout: "a\nb\nc"
+                is_hidden: true
+                weight: 1
+              - name: large-mixed
+                stdin: "6\nSYNC s1\nMACRO m1\nMICRO u1\nMACRO m2\nSYNC s2\nMICRO u2\n"
+                expected_stdout: "s1\ns2\nu1\nu2\nm1\nm2"
+                is_hidden: true
+                weight: 1
+      - slug: js-async-quiz
+        title: "Quiz - Async JavaScript"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/js-async-quiz.md
 
   - title: Modules and Tooling
     summary: ESM, CommonJS, bundlers, npm.

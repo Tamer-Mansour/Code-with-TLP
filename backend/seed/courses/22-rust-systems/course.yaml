@@ -13,10 +13,10 @@ course:
   description: |
     Rust gives you C++-level performance with memory safety enforced at compile
     time. This course covers ownership and borrowing (the unique mental model),
-    lifetimes, traits, generics, error handling with Result, and the cargo
-    ecosystem you'll work with daily.
+    lifetimes, traits, generics, error handling with Result, concurrency,
+    async/await, unsafe Rust, and the cargo ecosystem you'll work with daily.
   difficulty: advanced
-  estimated_hours: 24
+  estimated_hours: 32
   is_published: true
   order_index: 22
 
@@ -56,6 +56,151 @@ modules:
         duration_minutes: 14
         content_file: lessons/ownership-and-borrowing.md
 
+      - slug: rust-ownership-trace-exercise
+        title: Ownership Trace Simulator
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/rust-ownership-trace-exercise.md
+        exercises:
+          - slug: rust-ownership-trace
+            title: Ownership Trace Simulator
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/rust-ownership-trace.prompt.md
+            supported_languages: [python]
+            tags: [ownership, borrowing, borrow-checker]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def main():
+                    # Track ownership state and process each command
+                    pass
+
+                main()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    owners = set(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'])
+                    moved = set()
+                    imm_borrows = {}
+                    mut_borrowed = set()
+                    borrow_of = {}
+                    borrow_counter = [0]
+
+                    lines = sys.stdin.read().splitlines()
+                    for line in lines:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        cmd = parts[0]
+
+                        if cmd == 'MOVE':
+                            x, y = parts[1], parts[2]
+                            if x in moved:
+                                print(f'ERROR: {x} has been moved')
+                            elif x not in owners:
+                                print(f'ERROR: {x} is not a valid owner')
+                            else:
+                                moved.add(x)
+                                owners.discard(x)
+                                owners.add(y)
+                                imm_borrows.pop(x, None)
+                                mut_borrowed.discard(x)
+                                print('OK')
+
+                        elif cmd == 'BORROW':
+                            x = parts[1]
+                            if x in moved:
+                                print(f'ERROR: {x} has been moved')
+                            elif x not in owners:
+                                print(f'ERROR: {x} is not a valid owner')
+                            elif x in mut_borrowed:
+                                print(f'ERROR: cannot immutably borrow {x} while mutably borrowed')
+                            else:
+                                borrow_counter[0] += 1
+                                bname = f'borrow{borrow_counter[0]}'
+                                imm_borrows[x] = imm_borrows.get(x, 0) + 1
+                                borrow_of[bname] = (x, 'imm')
+                                print('OK')
+
+                        elif cmd == 'MUTBORROW':
+                            x = parts[1]
+                            if x in moved:
+                                print(f'ERROR: {x} has been moved')
+                            elif x not in owners:
+                                print(f'ERROR: {x} is not a valid owner')
+                            elif x in mut_borrowed:
+                                print(f'ERROR: cannot mutably borrow {x}: already mutably borrowed')
+                            elif imm_borrows.get(x, 0) > 0:
+                                print(f'ERROR: cannot mutably borrow {x} while immutable borrows exist')
+                            else:
+                                borrow_counter[0] += 1
+                                bname = f'borrow{borrow_counter[0]}'
+                                mut_borrowed.add(x)
+                                borrow_of[bname] = (x, 'mut')
+                                print('OK')
+
+                        elif cmd == 'DROP':
+                            x = parts[1]
+                            if x in borrow_of:
+                                var, kind = borrow_of.pop(x)
+                                if kind == 'imm':
+                                    imm_borrows[var] = imm_borrows.get(var, 1) - 1
+                                    if imm_borrows[var] <= 0:
+                                        del imm_borrows[var]
+                                else:
+                                    mut_borrowed.discard(var)
+                                print('OK')
+                            elif x in owners:
+                                owners.discard(x)
+                                moved.add(x)
+                                print('OK')
+                            else:
+                                print(f'ERROR: {x} does not exist')
+
+                        elif cmd == 'READ':
+                            x = parts[1]
+                            if x in moved:
+                                print(f'ERROR: {x} has been moved')
+                            elif x not in owners:
+                                print(f'ERROR: {x} is not a valid owner')
+                            else:
+                                print('OK')
+
+                main()
+            test_cases:
+              - name: basic-move-and-read
+                stdin: "MOVE a b\nREAD b\nREAD a\nBORROW b\nBORROW b\nMUTBORROW b\nDROP borrow1\nDROP borrow2\nMUTBORROW b\nREAD b\n"
+                expected_stdout: "OK\nOK\nERROR: a has been moved\nOK\nOK\nERROR: cannot mutably borrow b while immutable borrows exist\nOK\nOK\nOK\nOK"
+                is_hidden: false
+                weight: 1
+              - name: mutable-borrow-exclusive
+                stdin: "MUTBORROW c\nMUTBORROW c\nDROP borrow1\nMUTBORROW c\n"
+                expected_stdout: "OK\nERROR: cannot mutably borrow c: already mutably borrowed\nOK\nOK"
+                is_hidden: false
+                weight: 1
+              - name: move-chain
+                stdin: "MOVE d e\nMOVE e f\nREAD f\nREAD e\nREAD d\n"
+                expected_stdout: "OK\nOK\nOK\nERROR: e has been moved\nERROR: d has been moved"
+                is_hidden: true
+                weight: 1
+              - name: borrow-then-mutborrow-blocked
+                stdin: "BORROW g\nMUTBORROW g\nDROP borrow1\nMUTBORROW g\n"
+                expected_stdout: "OK\nERROR: cannot mutably borrow g while immutable borrows exist\nOK\nOK"
+                is_hidden: true
+                weight: 1
+              - name: drop-owner
+                stdin: "READ h\nDROP h\nREAD h\n"
+                expected_stdout: "OK\nOK\nERROR: h has been moved"
+                is_hidden: true
+                weight: 1
+
       - slug: rust-quiz
         title: Quiz - Rust Basics
         type: quiz
@@ -63,7 +208,7 @@ modules:
         content_file: lessons/rust-quiz.md
 
   - title: Types and Traits
-    summary: Structs, enums, traits, generics.
+    summary: Structs, enums, traits, generics, and dispatch.
     order_index: 2
     lessons:
       - slug: structs-enums
@@ -84,8 +229,99 @@ modules:
         duration_minutes: 14
         content_file: lessons/trait-objects.md
 
+      - slug: trait-dispatch-exercise
+        title: Trait Dispatch Resolver
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/trait-dispatch-exercise.md
+        exercises:
+          - slug: rust-trait-dispatch
+            title: Trait Dispatch Resolver
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/rust-trait-dispatch.prompt.md
+            supported_languages: [python]
+            tags: [traits, generics, dispatch, monomorphization]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def main():
+                    pass
+
+                main()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    lines = sys.stdin.read().splitlines()
+                    idx = 0
+                    t = int(lines[idx]); idx += 1
+                    impl_map = {}
+                    for _ in range(t):
+                        parts = lines[idx].split(); idx += 1
+                        type_name = parts[0]
+                        trait_name = parts[2]
+                        impl_map[(type_name, trait_name)] = True
+
+                    c = int(lines[idx]); idx += 1
+                    for _ in range(c):
+                        parts = lines[idx].split(); idx += 1
+                        dispatch = parts[0]
+                        if dispatch == 'STATIC':
+                            trait_name = parts[1]
+                            type_name = parts[2]
+                            if (type_name, trait_name) in impl_map:
+                                print(f'{type_name}::{trait_name}_method')
+                            else:
+                                print(f'ERROR: {type_name} does not implement {trait_name}')
+                        elif dispatch == 'DYNAMIC':
+                            trait_name = parts[1]
+                            types_list = parts[2].split(',')
+                            error_found = None
+                            for type_name in types_list:
+                                if (type_name, trait_name) not in impl_map:
+                                    error_found = type_name
+                                    break
+                            if error_found:
+                                print(f'ERROR: {error_found} does not implement {trait_name}')
+                            else:
+                                print(f'OK: dyn {trait_name}')
+
+                main()
+            test_cases:
+              - name: basic-dispatch
+                stdin: "5\nDog implements Animal\nCat implements Animal\nDog implements Pet\nFish implements Animal\nRobot implements Machine\n6\nSTATIC Animal Dog\nSTATIC Animal Cat\nSTATIC Pet Fish\nDYNAMIC Animal Dog,Cat,Fish\nDYNAMIC Pet Dog,Cat\nSTATIC Machine Robot\n"
+                expected_stdout: "Dog::Animal_method\nCat::Animal_method\nERROR: Fish does not implement Pet\nOK: dyn Animal\nERROR: Cat does not implement Pet\nRobot::Machine_method"
+                is_hidden: false
+                weight: 1
+              - name: all-static
+                stdin: "3\nCircle implements Shape\nRect implements Shape\nTriangle implements Shape\n3\nSTATIC Shape Circle\nSTATIC Shape Rect\nSTATIC Shape Triangle\n"
+                expected_stdout: "Circle::Shape_method\nRect::Shape_method\nTriangle::Shape_method"
+                is_hidden: false
+                weight: 1
+              - name: dynamic-partial-fail
+                stdin: "2\nDog implements Drawable\nCat implements Drawable\n2\nDYNAMIC Drawable Dog,Cat\nDYNAMIC Drawable Dog,Cat,Fish\n"
+                expected_stdout: "OK: dyn Drawable\nERROR: Fish does not implement Drawable"
+                is_hidden: true
+                weight: 1
+              - name: unregistered-static
+                stdin: "1\nFoo implements Bar\n2\nSTATIC Bar Foo\nSTATIC Bar Baz\n"
+                expected_stdout: "Foo::Bar_method\nERROR: Baz does not implement Bar"
+                is_hidden: true
+                weight: 1
+
+      - slug: types-traits-quiz
+        title: Quiz - Types, Traits, and Generics
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/types-traits-quiz.md
+
   - title: Error Handling and Lifetimes
-    summary: Result, Option, lifetimes.
+    summary: Result, Option, lifetimes, and robust error types.
     order_index: 3
     lessons:
       - slug: result-and-option
@@ -159,9 +395,105 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: error-handling-quiz
+        title: Quiz - Error Handling and Lifetimes
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/error-handling-quiz.md
+
+  - title: Lifetimes Deep Dive
+    summary: Lifetime annotations, elision rules, subtyping, variance, and the static lifetime.
+    order_index: 4
+    lessons:
+      - slug: lifetimes-deep-dive
+        title: Lifetimes Deep Dive
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/lifetimes-deep-dive.md
+
+      - slug: lifetime-checker-exercise
+        title: Lifetime Region Checker
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/lifetime-checker-exercise.md
+        exercises:
+          - slug: rust-lifetime-checker
+            title: Lifetime Region Checker
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/rust-lifetime-checker.prompt.md
+            supported_languages: [python]
+            tags: [lifetimes, references, borrow-checker]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def main():
+                    pass
+
+                main()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    vars_lifetime = {}
+                    for _ in range(n):
+                        name = data[idx]; idx += 1
+                        start = int(data[idx]); idx += 1
+                        end = int(data[idx]); idx += 1
+                        vars_lifetime[name] = (start, end)
+
+                    m = int(data[idx]); idx += 1
+                    for _ in range(m):
+                        ref_name = data[idx]; idx += 1
+                        idx += 1  # 'borrows' keyword
+                        var_name = data[idx]; idx += 1
+                        ref_start = int(data[idx]); idx += 1
+                        ref_end = int(data[idx]); idx += 1
+
+                        var_start, var_end = vars_lifetime[var_name]
+                        if var_start <= ref_start and var_end >= ref_end:
+                            print('VALID')
+                        else:
+                            print(f'DANGLING: {ref_name} outlives {var_name}')
+
+                main()
+            test_cases:
+              - name: basic-mixed
+                stdin: "3\nx 1 10\ny 3 7\nz 5 15\n4\nref1 borrows x 2 9\nref2 borrows y 4 8\nref3 borrows z 6 14\nref4 borrows y 3 7\n"
+                expected_stdout: "VALID\nDANGLING: ref2 outlives y\nVALID\nVALID"
+                is_hidden: false
+                weight: 1
+              - name: all-valid
+                stdin: "2\na 1 20\nb 5 15\n3\nr1 borrows a 1 20\nr2 borrows a 5 15\nr3 borrows b 6 14\n"
+                expected_stdout: "VALID\nVALID\nVALID"
+                is_hidden: false
+                weight: 1
+              - name: all-dangling
+                stdin: "2\np 3 6\nq 1 4\n2\nrp borrows p 3 8\nrq borrows q 2 5\n"
+                expected_stdout: "DANGLING: rp outlives p\nDANGLING: rq outlives q"
+                is_hidden: true
+                weight: 1
+              - name: exact-boundary
+                stdin: "1\nv 5 10\n3\nra borrows v 5 10\nrb borrows v 4 10\nrc borrows v 5 11\n"
+                expected_stdout: "VALID\nDANGLING: rb outlives v\nDANGLING: rc outlives v"
+                is_hidden: true
+                weight: 1
+              - name: single-line-refs
+                stdin: "1\nm 1 100\n3\nrf1 borrows m 1 1\nrf2 borrows m 50 50\nrf3 borrows m 100 100\n"
+                expected_stdout: "VALID\nVALID\nVALID"
+                is_hidden: true
+                weight: 1
+
   - title: Collections and Iterators
     summary: Vec, HashMap, HashSet, and lazy iterator chains.
-    order_index: 4
+    order_index: 5
     lessons:
       - slug: strings-in-rust
         title: "Strings: String vs &str"
@@ -189,7 +521,7 @@ modules:
 
   - title: Closures and Functional Style
     summary: Closures, Fn traits, and functional programming patterns.
-    order_index: 5
+    order_index: 6
     lessons:
       - slug: closures
         title: Closures in Rust
@@ -255,8 +587,8 @@ modules:
                 weight: 1
 
   - title: Concurrency
-    summary: Threads, channels, and shared state with Arc and Mutex.
-    order_index: 6
+    summary: Threads, channels, shared state with Arc and Mutex, and Send/Sync traits.
+    order_index: 7
     lessons:
       - slug: concurrency-threads
         title: Concurrency with Threads
@@ -271,9 +603,115 @@ modules:
         video_url: "https://www.youtube.com/results?search_query=rust+concurrency+threads+channels+mutex+tutorial"
         content_file: lessons/concurrency-video.md
 
+      - slug: concurrency-scheduler-exercise
+        title: Concurrent Task Scheduler Simulator
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/concurrency-scheduler-exercise.md
+        exercises:
+          - slug: rust-concurrency-scheduler
+            title: Concurrent Task Scheduler Simulator
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/rust-concurrency-scheduler.prompt.md
+            supported_languages: [python]
+            tags: [concurrency, send, sync, threads]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def main():
+                    pass
+
+                main()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    vars_props = {}
+
+                    for line in sys.stdin:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        cmd = parts[0]
+
+                        if cmd == 'DECLARE':
+                            var = parts[1]
+                            prop = parts[3].upper()
+                            is_send = 'SEND' in prop
+                            is_sync = 'SYNC' in prop
+                            vars_props[var] = {'send': is_send, 'sync': is_sync}
+
+                        elif cmd == 'SPAWN_MOVE':
+                            var = parts[2]
+                            if var not in vars_props:
+                                print(f'ERROR: {var} not declared')
+                            elif not vars_props[var]['send']:
+                                print(f'ERROR: {var} is not Send')
+                            else:
+                                print('OK')
+
+                        elif cmd == 'SPAWN_SHARE':
+                            var = parts[2]
+                            if var not in vars_props:
+                                print(f'ERROR: {var} not declared')
+                            elif not vars_props[var]['sync']:
+                                print(f'ERROR: {var} is not Sync')
+                            else:
+                                print('OK')
+
+                main()
+            test_cases:
+              - name: basic-send-sync
+                stdin: "DECLARE data ArcMutex SEND_SYNC\nDECLARE counter Rc NEITHER\nDECLARE msg String SEND_SYNC\nDECLARE raw RawPtr SEND\nSPAWN_MOVE t1 data\nSPAWN_MOVE t2 counter\nSPAWN_SHARE t3 msg\nSPAWN_SHARE t4 raw\n"
+                expected_stdout: "OK\nERROR: counter is not Send\nOK\nERROR: raw is not Sync"
+                is_hidden: false
+                weight: 1
+              - name: all-send-sync
+                stdin: "DECLARE a TypeA SEND_SYNC\nDECLARE b TypeB SEND_SYNC\nSPAWN_MOVE t1 a\nSPAWN_SHARE t2 b\n"
+                expected_stdout: "OK\nOK"
+                is_hidden: false
+                weight: 1
+              - name: neither-fails-both
+                stdin: "DECLARE x BadType NEITHER\nSPAWN_MOVE t1 x\nSPAWN_SHARE t2 x\n"
+                expected_stdout: "ERROR: x is not Send\nERROR: x is not Sync"
+                is_hidden: true
+                weight: 1
+              - name: send-only
+                stdin: "DECLARE p PtrType SEND\nSPAWN_MOVE t1 p\nSPAWN_SHARE t2 p\n"
+                expected_stdout: "OK\nERROR: p is not Sync"
+                is_hidden: true
+                weight: 1
+              - name: sync-only
+                stdin: "DECLARE s SharedRef SYNC\nSPAWN_MOVE t1 s\nSPAWN_SHARE t2 s\n"
+                expected_stdout: "ERROR: s is not Send\nOK"
+                is_hidden: true
+                weight: 1
+
+      - slug: concurrency-quiz
+        title: Quiz - Concurrency and Parallelism
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/concurrency-quiz.md
+
+  - title: Asynchronous Programming
+    summary: Futures, async/await, the Tokio runtime, Pin, and async I/O.
+    order_index: 8
+    lessons:
+      - slug: async-programming
+        title: Asynchronous Programming in Rust
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/async-programming.md
+
   - title: Modules, I/O, and the Ecosystem
     summary: Module system, file I/O, and navigating crates.io.
-    order_index: 7
+    order_index: 9
     lessons:
       - slug: modules-and-crates
         title: Modules and Crates
@@ -287,9 +725,117 @@ modules:
         duration_minutes: 12
         content_file: lessons/file-io.md
 
+  - title: Unsafe Rust and Memory Layout
+    summary: The five unsafe powers, FFI, repr(C), memory layout, and inline assembly.
+    order_index: 10
+    lessons:
+      - slug: unsafe-rust
+        title: Unsafe Rust and Systems Interfaces
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/unsafe-rust.md
+
+      - slug: memory-layout-exercise
+        title: Memory Layout Calculator
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/memory-layout-exercise.md
+        exercises:
+          - slug: rust-memory-layout
+            title: Memory Layout Calculator
+            difficulty: hard
+            points: 35
+            prompt_file: lessons/rust-memory-layout.prompt.md
+            supported_languages: [python]
+            tags: [unsafe, memory-layout, alignment, repr-c, systems]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def main():
+                    pass
+
+                main()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    type_info = {
+                        'u8': (1,1), 'i8': (1,1),
+                        'u16': (2,2), 'i16': (2,2),
+                        'u32': (4,4), 'i32': (4,4),
+                        'u64': (8,8), 'i64': (8,8),
+                        'f32': (4,4), 'f64': (8,8),
+                        'bool': (1,1), 'usize': (8,8)
+                    }
+
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0].strip())
+                    fields = []
+                    for i in range(1, n + 1):
+                        parts = lines[i].strip().split()
+                        fname, ftype = parts[0], parts[1]
+                        size, align = type_info[ftype]
+                        fields.append((fname, size, align))
+
+                    current_offset = 0
+                    max_align = 1
+                    offsets = []
+
+                    for fname, size, align in fields:
+                        if current_offset % align != 0:
+                            current_offset += align - (current_offset % align)
+                        offsets.append(current_offset)
+                        current_offset += size
+                        if align > max_align:
+                            max_align = align
+
+                    if current_offset % max_align != 0:
+                        current_offset += max_align - (current_offset % max_align)
+
+                    for i, (fname, size, align) in enumerate(fields):
+                        print(f'{fname}: offset={offsets[i]}')
+                    print(f'total_size={current_offset}')
+
+                main()
+            test_cases:
+              - name: basic-struct
+                stdin: "4\nflag bool\nvalue u32\ncount u64\nshort u16\n"
+                expected_stdout: "flag: offset=0\nvalue: offset=4\ncount: offset=8\nshort: offset=16\ntotal_size=24"
+                is_hidden: false
+                weight: 1
+              - name: all-same-alignment
+                stdin: "3\nx u32\ny u32\nz u32\n"
+                expected_stdout: "x: offset=0\ny: offset=4\nz: offset=8\ntotal_size=12"
+                is_hidden: false
+                weight: 1
+              - name: mixed-alignment-padding
+                stdin: "3\na u8\nb u64\nc u8\n"
+                expected_stdout: "a: offset=0\nb: offset=8\nc: offset=16\ntotal_size=24"
+                is_hidden: true
+                weight: 1
+              - name: smallest-types
+                stdin: "4\nw bool\nx u8\ny i8\nz u8\n"
+                expected_stdout: "w: offset=0\nx: offset=1\ny: offset=2\nz: offset=3\ntotal_size=4"
+                is_hidden: true
+                weight: 1
+              - name: f64-alignment
+                stdin: "3\nid u32\npad u8\nval f64\n"
+                expected_stdout: "id: offset=0\npad: offset=4\nval: offset=8\ntotal_size=16"
+                is_hidden: true
+                weight: 1
+              - name: usize-field
+                stdin: "2\nptr usize\nlen u32\n"
+                expected_stdout: "ptr: offset=0\nlen: offset=8\ntotal_size=16"
+                is_hidden: true
+                weight: 1
+
   - title: Advanced Concepts
     summary: Smart pointers, trait objects, and putting it all together.
-    order_index: 8
+    order_index: 11
     lessons:
       - slug: smart-pointers
         title: "Smart Pointers: Box, Rc, and RefCell"

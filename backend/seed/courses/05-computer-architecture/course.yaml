@@ -238,6 +238,94 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: twos-complement-overflow
+        title: "Two's Complement Overflow Detection"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/twos-complement-overflow.md
+
+      - slug: overflow-detector-exercise
+        title: "Exercise: Two's Complement Overflow Detector"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/overflow-detector-exercise.md
+        exercises:
+          - slug: computer-overflow-detector
+            title: "Two's Complement Overflow Detector"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/computer-overflow-detector.prompt.md
+            supported_languages: [python]
+            tags: [twos-complement, overflow, arithmetic, number-representation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    a = int(input())
+                    b = int(input())
+                    # TODO: determine if a + b overflows N-bit two's complement
+                    print("")
+
+                solve()
+            solution_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    a = int(input())
+                    b = int(input())
+                    min_val = -(2 ** (n - 1))
+                    max_val = 2 ** (n - 1) - 1
+                    result = a + b
+                    if result < min_val or result > max_val:
+                        print('OVERFLOW')
+                    else:
+                        print(f'OK {result}')
+
+                solve()
+            test_cases:
+              - name: case-1
+                stdin: "8\n100\n50\n"
+                expected_stdout: "OVERFLOW"
+                is_hidden: false
+                weight: 1
+              - name: case-2
+                stdin: "8\n100\n27\n"
+                expected_stdout: "OK 127"
+                is_hidden: false
+                weight: 1
+              - name: case-3
+                stdin: "8\n100\n-50\n"
+                expected_stdout: "OK 50"
+                is_hidden: false
+                weight: 1
+              - name: case-4
+                stdin: "8\n-64\n-65\n"
+                expected_stdout: "OVERFLOW"
+                is_hidden: true
+                weight: 1
+              - name: case-5
+                stdin: "8\n-64\n-64\n"
+                expected_stdout: "OK -128"
+                is_hidden: true
+                weight: 1
+              - name: case-6
+                stdin: "16\n-10000\n5000\n"
+                expected_stdout: "OK -5000"
+                is_hidden: true
+                weight: 1
+              - name: case-7
+                stdin: "4\n7\n1\n"
+                expected_stdout: "OVERFLOW"
+                is_hidden: true
+                weight: 1
+              - name: case-8
+                stdin: "32\n2147483647\n1\n"
+                expected_stdout: "OVERFLOW"
+                is_hidden: true
+                weight: 1
+
       - slug: data-representation-quiz
         title: "Quiz: Data and Number Representation"
         type: quiz
@@ -467,6 +555,89 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/addressing-modes.md
+
+      - slug: riscv-decoder-exercise
+        title: "Exercise: RISC-V R-Type Instruction Decoder"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/riscv-decoder-exercise.md
+        exercises:
+          - slug: computer-riscv-decoder
+            title: "RISC-V R-Type Instruction Decoder"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/computer-riscv-decoder.prompt.md
+            supported_languages: [python]
+            tags: [risc-v, isa, instruction-encoding, bit-manipulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                def solve():
+                    t = int(input())
+                    for i in range(t):
+                        hex_str = input().strip()
+                        # TODO: decode R-type fields from 32-bit hex instruction
+                        v = int(hex_str, 16)
+                        print(f"opcode: 0")
+                        print(f"rd: 0")
+                        print(f"funct3: 0")
+                        print(f"rs1: 0")
+                        print(f"rs2: 0")
+                        print(f"funct7: 0")
+                        if i < t - 1:
+                            print()
+
+                solve()
+            solution_code:
+              python: |
+                def solve():
+                    t = int(input())
+                    for i in range(t):
+                        hex_str = input().strip()
+                        v = int(hex_str, 16)
+                        opcode = v & 0x7F
+                        rd = (v >> 7) & 0x1F
+                        funct3 = (v >> 12) & 0x7
+                        rs1 = (v >> 15) & 0x1F
+                        rs2 = (v >> 20) & 0x1F
+                        funct7 = (v >> 25) & 0x7F
+                        print(f"opcode: {opcode}")
+                        print(f"rd: {rd}")
+                        print(f"funct3: {funct3}")
+                        print(f"rs1: {rs1}")
+                        print(f"rs2: {rs2}")
+                        print(f"funct7: {funct7}")
+                        if i < t - 1:
+                            print()
+
+                solve()
+            test_cases:
+              - name: case-1-add
+                stdin: "1\n003100B3\n"
+                expected_stdout: "opcode: 51\nrd: 1\nfunct3: 0\nrs1: 2\nrs2: 3\nfunct7: 0"
+                is_hidden: false
+                weight: 1
+              - name: case-2-sub
+                stdin: "1\n407302B3\n"
+                expected_stdout: "opcode: 51\nrd: 5\nfunct3: 0\nrs1: 6\nrs2: 7\nfunct7: 32"
+                is_hidden: false
+                weight: 1
+              - name: case-3-or
+                stdin: "1\n00A4E433\n"
+                expected_stdout: "opcode: 51\nrd: 8\nfunct3: 6\nrs1: 9\nrs2: 10\nfunct7: 0"
+                is_hidden: false
+                weight: 1
+              - name: case-4-and
+                stdin: "1\n00D675B3\n"
+                expected_stdout: "opcode: 51\nrd: 11\nfunct3: 7\nrs1: 12\nrs2: 13\nfunct7: 0"
+                is_hidden: true
+                weight: 1
+              - name: case-5-multi
+                stdin: "2\n003100B3\n407302B3\n"
+                expected_stdout: "opcode: 51\nrd: 1\nfunct3: 0\nrs1: 2\nrs2: 3\nfunct7: 0\n\nopcode: 51\nrd: 5\nfunct3: 0\nrs1: 6\nrs2: 7\nfunct7: 32"
+                is_hidden: true
+                weight: 1
 
       - slug: isa-quiz
         title: "Quiz: Instruction Set Architecture"
@@ -702,6 +873,197 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: virtual-memory-paging
+        title: Virtual Memory and Page Replacement
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/virtual-memory-paging.md
+
+      - slug: direct-cache-sim-exercise
+        title: "Exercise: Direct-Mapped Cache Simulator (Hex Addresses)"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/direct-cache-sim-exercise.md
+        exercises:
+          - slug: computer-direct-cache-sim
+            title: "Direct-Mapped Cache Simulator"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/computer-direct-cache-sim.prompt.md
+            supported_languages: [python]
+            tags: [cache, direct-mapped, memory-hierarchy, simulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import math
+
+                def solve():
+                    params = input().split()
+                    cache_size = int(params[0])
+                    block_size = int(params[1])
+                    m = int(input())
+                    hits = 0
+                    for _ in range(m):
+                        addr_str = input().strip()
+                        # TODO: simulate direct-mapped cache with hex addresses
+                        print("MISS")
+                    print(f"Hit rate: {0:.2f}%")
+
+                solve()
+            solution_code:
+              python: |
+                import math
+
+                def solve():
+                    params = input().split()
+                    cache_size = int(params[0])
+                    block_size = int(params[1])
+                    # address_bits = int(params[2])  # not needed for simulation
+
+                    num_lines = cache_size // block_size
+                    offset_bits = int(math.log2(block_size))
+                    index_bits = int(math.log2(num_lines))
+
+                    cache = [None] * num_lines
+                    m = int(input())
+                    hits = 0
+
+                    for _ in range(m):
+                        addr_str = input().strip()
+                        addr = int(addr_str, 16)
+                        index = (addr >> offset_bits) & (num_lines - 1)
+                        tag = addr >> (offset_bits + index_bits)
+
+                        if cache[index] == tag:
+                            print('HIT')
+                            hits += 1
+                        else:
+                            print('MISS')
+                            cache[index] = tag
+
+                    hit_rate = (hits / m) * 100
+                    print(f'Hit rate: {hit_rate:.2f}%')
+
+                solve()
+            test_cases:
+              - name: case-1-basic
+                stdin: "16 4 8\n6\n0x00\n0x04\n0x08\n0x00\n0x04\n0x10\n"
+                expected_stdout: "MISS\nMISS\nMISS\nHIT\nHIT\nMISS\nHit rate: 33.33%"
+                is_hidden: false
+                weight: 1
+              - name: case-2-all-misses
+                stdin: "16 4 8\n4\n0x00\n0x04\n0x08\n0x0C\n"
+                expected_stdout: "MISS\nMISS\nMISS\nMISS\nHit rate: 0.00%"
+                is_hidden: false
+                weight: 1
+              - name: case-3-conflict
+                stdin: "16 4 8\n5\n0x00\n0x10\n0x00\n0x10\n0x00\n"
+                expected_stdout: "MISS\nMISS\nMISS\nMISS\nMISS\nHit rate: 0.00%"
+                is_hidden: false
+                weight: 1
+              - name: case-4-larger-cache
+                stdin: "32 8 8\n6\n0x00\n0x08\n0x10\n0x18\n0x00\n0x08\n"
+                expected_stdout: "MISS\nMISS\nMISS\nMISS\nHIT\nHIT\nHit rate: 33.33%"
+                is_hidden: true
+                weight: 1
+              - name: case-5-perfect-hit
+                stdin: "16 4 8\n6\n0x00\n0x04\n0x08\n0x0C\n0x00\n0x04\n"
+                expected_stdout: "MISS\nMISS\nMISS\nMISS\nHIT\nHIT\nHit rate: 33.33%"
+                is_hidden: true
+                weight: 1
+              - name: case-6-two-lines
+                stdin: "8 4 8\n4\n0x00\n0x04\n0x00\n0x04\n"
+                expected_stdout: "MISS\nMISS\nHIT\nHIT\nHit rate: 50.00%"
+                is_hidden: true
+                weight: 1
+
+      - slug: lru-page-replacement-exercise
+        title: "Exercise: LRU Page Replacement Simulator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/lru-page-replacement-exercise.md
+        exercises:
+          - slug: computer-lru-page-replacement
+            title: "LRU Page Replacement Simulator"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/computer-lru-page-replacement.prompt.md
+            supported_languages: [python]
+            tags: [virtual-memory, LRU, page-replacement, simulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                from collections import OrderedDict
+
+                def solve():
+                    f = int(input())
+                    pages = list(map(int, input().split()))
+                    frames = OrderedDict()
+                    faults = 0
+                    for page in pages:
+                        # TODO: implement LRU page replacement
+                        print("FAULT")
+                    print(f"Total page faults: {faults}")
+
+                solve()
+            solution_code:
+              python: |
+                from collections import OrderedDict
+
+                def solve():
+                    f = int(input())
+                    pages = list(map(int, input().split()))
+                    frames = OrderedDict()
+                    faults = 0
+
+                    for page in pages:
+                        if page in frames:
+                            frames.move_to_end(page)
+                            print('HIT')
+                        else:
+                            faults += 1
+                            print('FAULT')
+                            if len(frames) == f:
+                                frames.popitem(last=False)
+                            frames[page] = True
+
+                    print(f'Total page faults: {faults}')
+
+                solve()
+            test_cases:
+              - name: case-1-fits-in-frames
+                stdin: "3\n1 2 3 1 2 3\n"
+                expected_stdout: "FAULT\nFAULT\nFAULT\nHIT\nHIT\nHIT\nTotal page faults: 3"
+                is_hidden: false
+                weight: 1
+              - name: case-2-thrashing
+                stdin: "2\n1 2 3 1 2 3\n"
+                expected_stdout: "FAULT\nFAULT\nFAULT\nFAULT\nFAULT\nFAULT\nTotal page faults: 6"
+                is_hidden: false
+                weight: 1
+              - name: case-3-single-frame
+                stdin: "1\n1 2 3 1\n"
+                expected_stdout: "FAULT\nFAULT\nFAULT\nFAULT\nTotal page faults: 4"
+                is_hidden: false
+                weight: 1
+              - name: case-4-lru-eviction
+                stdin: "3\n1 2 3 4 1 2 3 4\n"
+                expected_stdout: "FAULT\nFAULT\nFAULT\nFAULT\nFAULT\nFAULT\nFAULT\nFAULT\nTotal page faults: 8"
+                is_hidden: true
+                weight: 1
+              - name: case-5-fits-with-4-frames
+                stdin: "4\n1 2 3 4 1 2 3 4\n"
+                expected_stdout: "FAULT\nFAULT\nFAULT\nFAULT\nHIT\nHIT\nHIT\nHIT\nTotal page faults: 4"
+                is_hidden: true
+                weight: 1
+              - name: case-6-lru-recency
+                stdin: "2\n1 2 1 3 2 1\n"
+                expected_stdout: "FAULT\nFAULT\nHIT\nFAULT\nFAULT\nFAULT\nTotal page faults: 5"
+                is_hidden: true
+                weight: 1
+
       - slug: memory-quiz
         title: "Quiz: Memory Hierarchy and Caches"
         type: quiz
@@ -730,6 +1092,125 @@ modules:
         type: reading
         duration_minutes: 20
         content_file: lessons/pipeline-hazards.md
+
+      - slug: pipeline-stall-analysis
+        title: Pipeline Stall Analysis
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/pipeline-stall-analysis.md
+
+      - slug: pipeline-hazard-exercise
+        title: "Exercise: Pipeline Hazard Detector"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/pipeline-hazard-exercise.md
+        exercises:
+          - slug: computer-pipeline-hazard-detector
+            title: "Pipeline Hazard Detector"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/computer-pipeline-hazard-detector.prompt.md
+            supported_languages: [python]
+            tags: [pipeline, hazards, RAW, stalls, pipelining]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    instructions = []
+                    for _ in range(n):
+                        instructions.append(input().split())
+                    # TODO: count total stall cycles from RAW hazards (no forwarding)
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    instructions = []
+                    for _ in range(n):
+                        instructions.append(input().split())
+
+                    def get_dst(instr):
+                        op = instr[0]
+                        if op in ('ADD', 'SUB', 'LOAD'):
+                            return instr[1]
+                        return None
+
+                    def get_srcs(instr):
+                        op = instr[0]
+                        if op in ('ADD', 'SUB'):
+                            return [instr[2], instr[3]]
+                        if op == 'LOAD':
+                            return [instr[2]]
+                        if op == 'STORE':
+                            return [instr[1]]
+                        return []
+
+                    IF_cycle = [0] * n
+                    total_stalls = 0
+
+                    for i in range(n):
+                        if i == 0:
+                            IF_cycle[i] = 1
+                        else:
+                            IF_cycle[i] = IF_cycle[i - 1] + 1
+
+                        ID_cycle = IF_cycle[i] + 1
+                        srcs = get_srcs(instructions[i])
+                        stalls_needed = 0
+
+                        for j in range(i):
+                            dst_j = get_dst(instructions[j])
+                            if dst_j is not None and dst_j in srcs:
+                                WB_cycle = IF_cycle[j] + 4
+                                if WB_cycle > ID_cycle:
+                                    stalls_needed = max(stalls_needed, WB_cycle - ID_cycle)
+
+                        IF_cycle[i] += stalls_needed
+                        total_stalls += stalls_needed
+
+                    print(total_stalls)
+
+                solve()
+            test_cases:
+              - name: case-1-no-hazards
+                stdin: "3\nADD r1 r2 r3\nADD r4 r5 r6\nADD r7 r8 r9\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: case-2-adjacent-raw
+                stdin: "2\nADD r1 r2 r3\nADD r4 r1 r5\n"
+                expected_stdout: "2"
+                is_hidden: false
+                weight: 1
+              - name: case-3-nop-gap
+                stdin: "3\nADD r1 r2 r3\nNOP\nADD r4 r1 r5\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: case-4-two-nops
+                stdin: "4\nADD r1 r2 r3\nNOP\nNOP\nADD r4 r1 r5\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: case-5-chain-hazards
+                stdin: "3\nADD r1 r2 r3\nADD r4 r1 r5\nADD r6 r4 r7\n"
+                expected_stdout: "4"
+                is_hidden: true
+                weight: 1
+              - name: case-6-load-use
+                stdin: "2\nLOAD r1 r2\nADD r3 r1 r4\n"
+                expected_stdout: "2"
+                is_hidden: true
+                weight: 1
+              - name: case-7-store-no-dst
+                stdin: "3\nADD r1 r2 r3\nSTORE r1 r4\nADD r5 r1 r6\n"
+                expected_stdout: "2"
+                is_hidden: true
+                weight: 1
 
       - slug: pipelining-quiz
         title: "Quiz: Pipelining"
@@ -927,6 +1408,92 @@ modules:
               - name: case-8
                 stdin: "1.0 2\n"
                 expected_stdout: "2.0"
+                is_hidden: true
+                weight: 1
+
+      - slug: amdahl-advanced-exercise
+        title: "Exercise: Amdahl's Law Speedup Calculator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/amdahl-advanced-exercise.md
+        exercises:
+          - slug: computer-amdahl-advanced
+            title: "Amdahl's Law Speedup Calculator"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/computer-amdahl-advanced.prompt.md
+            supported_languages: [python]
+            tags: [performance, amdahl, parallel-computing, speedup]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                def solve():
+                    t = int(input())
+                    for case in range(t):
+                        parts = input().split()
+                        p = float(parts[0])
+                        n = int(parts[1])
+                        # TODO: compute Speedup and Max Speedup
+                        print(f"Speedup: 0.000")
+                        print(f"Max Speedup: 0.000")
+                        if case < t - 1:
+                            print()
+
+                solve()
+            solution_code:
+              python: |
+                def solve():
+                    t = int(input())
+                    for case in range(t):
+                        parts = input().split()
+                        p = float(parts[0])
+                        n = int(parts[1])
+
+                        speedup = 1.0 / ((1.0 - p) + p / n)
+
+                        if p == 1.0:
+                            max_speedup_str = 'Infinite'
+                        else:
+                            max_speedup = 1.0 / (1.0 - p)
+                            max_speedup_str = f'{max_speedup:.3f}'
+
+                        print(f'Speedup: {speedup:.3f}')
+                        print(f'Max Speedup: {max_speedup_str}')
+
+                        if case < t - 1:
+                            print()
+
+                solve()
+            test_cases:
+              - name: case-1-three-tests
+                stdin: "3\n0.9 10\n0.5 100\n1.0 8\n"
+                expected_stdout: "Speedup: 5.263\nMax Speedup: 10.000\n\nSpeedup: 1.980\nMax Speedup: 2.000\n\nSpeedup: 8.000\nMax Speedup: Infinite"
+                is_hidden: false
+                weight: 1
+              - name: case-2-serial-only
+                stdin: "1\n0.0 100\n"
+                expected_stdout: "Speedup: 1.000\nMax Speedup: 1.000"
+                is_hidden: false
+                weight: 1
+              - name: case-3-fully-parallel
+                stdin: "1\n1.0 4\n"
+                expected_stdout: "Speedup: 4.000\nMax Speedup: Infinite"
+                is_hidden: false
+                weight: 1
+              - name: case-4-typical
+                stdin: "1\n0.75 4\n"
+                expected_stdout: "Speedup: 2.286\nMax Speedup: 4.000"
+                is_hidden: true
+                weight: 1
+              - name: case-5-high-parallelism
+                stdin: "1\n0.95 20\n"
+                expected_stdout: "Speedup: 10.256\nMax Speedup: 20.000"
+                is_hidden: true
+                weight: 1
+              - name: case-6-multi-cases
+                stdin: "2\n0.8 8\n0.5 2\n"
+                expected_stdout: "Speedup: 3.333\nMax Speedup: 5.000\n\nSpeedup: 1.333\nMax Speedup: 2.000"
                 is_hidden: true
                 weight: 1
 

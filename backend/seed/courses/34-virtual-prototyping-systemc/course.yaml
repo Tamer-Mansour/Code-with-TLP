@@ -891,6 +891,73 @@ modules:
     type: exercise
     duration_minutes: 20
     content_file: lessons/vp-event-queue-simulation-exercise.prompt.md
+  - slug: virtual-delta-event-ordering
+    title: Delta-Cycle Event Ordering Simulator
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/virtual-delta-event-ordering.prompt.md
+    exercises:
+      - slug: virtual-delta-event-ordering
+        title: Delta-Cycle Event Ordering Simulator
+        difficulty: medium
+        points: 30
+        prompt_file: lessons/virtual-delta-event-ordering.prompt.md
+        supported_languages: [python]
+        tags: [systemc, delta-cycle, scheduler, simulation-kernel]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            n = int(input())
+            events = []
+            for _ in range(n):
+                parts = input().split()
+                ts, delta, name = int(parts[0]), int(parts[1]), parts[2]
+                events.append((ts, delta, name))
+            # TODO: sort events by (timestamp, delta, name) and print each as
+            # T=<timestamp>d<delta>: <name>
+        solution_code:
+          python: |
+            n = int(input())
+            events = []
+            for _ in range(n):
+                parts = input().split()
+                ts, delta, name = int(parts[0]), int(parts[1]), parts[2]
+                events.append((ts, delta, name))
+            events.sort(key=lambda e: (e[0], e[1], e[2]))
+            for ts, delta, name in events:
+                print(f'T={ts}d{delta}: {name}')
+        test_cases:
+          - name: sample-five-events
+            stdin: "5\n10 1 process_B\n10 0 process_A\n5 0 process_C\n10 0 process_D\n5 1 process_E\n"
+            expected_stdout: "T=5d0: process_C\nT=5d1: process_E\nT=10d0: process_A\nT=10d0: process_D\nT=10d1: process_B"
+            is_hidden: false
+            weight: 1
+          - name: single-event
+            stdin: "1\n0 0 only_proc\n"
+            expected_stdout: "T=0d0: only_proc"
+            is_hidden: false
+            weight: 1
+          - name: same-timestamp-same-delta-alphabetical
+            stdin: "3\n50 0 zeta\n50 0 alpha\n50 0 mu\n"
+            expected_stdout: "T=50d0: alpha\nT=50d0: mu\nT=50d0: zeta"
+            is_hidden: false
+            weight: 1
+          - name: mixed-timestamps-and-deltas
+            stdin: "4\n20 0 proc_x\n20 3 proc_y\n10 1 proc_a\n10 0 proc_b\n"
+            expected_stdout: "T=10d0: proc_b\nT=10d1: proc_a\nT=20d0: proc_x\nT=20d3: proc_y"
+            is_hidden: true
+            weight: 1
+          - name: already-sorted
+            stdin: "3\n1 0 aa\n2 0 bb\n3 0 cc\n"
+            expected_stdout: "T=1d0: aa\nT=2d0: bb\nT=3d0: cc"
+            is_hidden: true
+            weight: 1
+          - name: three-events-same-timestamp-different-deltas
+            stdin: "3\n100 2 alpha\n100 0 beta\n100 1 gamma\n"
+            expected_stdout: "T=100d0: beta\nT=100d1: gamma\nT=100d2: alpha"
+            is_hidden: true
+            weight: 1
   - slug: quiz-simulation-kernel
     title: 'Quiz: The SystemC Simulation Kernel'
     type: quiz
@@ -939,6 +1006,84 @@ modules:
     type: reading
     duration_minutes: 10
     content_file: lessons/what-is-systemc.md
+  - slug: virtual-sc-fifo-simulation-reading
+    title: 'SC_FIFO: Bounded Queue Simulation'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-sc-fifo-simulation.md
+  - slug: virtual-sc-fifo-simulation
+    title: SC_FIFO Bounded Queue Simulation
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/virtual-sc-fifo-simulation.prompt.md
+    exercises:
+      - slug: virtual-sc-fifo-simulation
+        title: SC_FIFO Bounded Queue Simulation
+        difficulty: medium
+        points: 30
+        prompt_file: lessons/virtual-sc-fifo-simulation.prompt.md
+        supported_languages: [python]
+        tags: [systemc, sc-fifo, channels, producer-consumer]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            from collections import deque
+            capacity = int(input())
+            n = int(input())
+            fifo = deque()
+            for _ in range(n):
+                line = input().split()
+                # TODO: handle W <value> and R operations
+                # Print WRITE <value> -> fifo_size=<new>, BLOCKED_WRITE, READ <value> -> fifo_size=<new>, or BLOCKED_READ
+                pass
+        solution_code:
+          python: |
+            from collections import deque
+            capacity = int(input())
+            n = int(input())
+            fifo = deque()
+            for _ in range(n):
+                line = input().split()
+                if line[0] == 'W':
+                    value = int(line[1])
+                    if len(fifo) < capacity:
+                        fifo.append(value)
+                        print(f'WRITE {value} -> fifo_size={len(fifo)}')
+                    else:
+                        print('BLOCKED_WRITE')
+                else:
+                    if fifo:
+                        value = fifo.popleft()
+                        print(f'READ {value} -> fifo_size={len(fifo)}')
+                    else:
+                        print('BLOCKED_READ')
+        test_cases:
+          - name: sample-capacity-2
+            stdin: "2\n6\nW 10\nW 20\nW 30\nR\nR\nR\n"
+            expected_stdout: "WRITE 10 -> fifo_size=1\nWRITE 20 -> fifo_size=2\nBLOCKED_WRITE\nREAD 10 -> fifo_size=1\nREAD 20 -> fifo_size=0\nBLOCKED_READ"
+            is_hidden: false
+            weight: 1
+          - name: read-from-empty-then-fill
+            stdin: "3\n5\nR\nW 1\nW 2\nW 3\nW 4\n"
+            expected_stdout: "BLOCKED_READ\nWRITE 1 -> fifo_size=1\nWRITE 2 -> fifo_size=2\nWRITE 3 -> fifo_size=3\nBLOCKED_WRITE"
+            is_hidden: false
+            weight: 1
+          - name: capacity-1-alternating
+            stdin: "1\n4\nW 5\nR\nW 6\nR\n"
+            expected_stdout: "WRITE 5 -> fifo_size=1\nREAD 5 -> fifo_size=0\nWRITE 6 -> fifo_size=1\nREAD 6 -> fifo_size=0"
+            is_hidden: false
+            weight: 1
+          - name: capacity-3-fill-then-drain
+            stdin: "3\n8\nW 1\nW 2\nW 3\nW 4\nR\nR\nR\nR\n"
+            expected_stdout: "WRITE 1 -> fifo_size=1\nWRITE 2 -> fifo_size=2\nWRITE 3 -> fifo_size=3\nBLOCKED_WRITE\nREAD 1 -> fifo_size=2\nREAD 2 -> fifo_size=1\nREAD 3 -> fifo_size=0\nBLOCKED_READ"
+            is_hidden: true
+            weight: 1
+          - name: empty-reads
+            stdin: "2\n3\nR\nR\nW 99\n"
+            expected_stdout: "BLOCKED_READ\nBLOCKED_READ\nWRITE 99 -> fifo_size=1"
+            is_hidden: true
+            weight: 1
   - slug: quiz-systemc-fundamentals
     title: 'Quiz: SystemC Fundamentals'
     type: quiz
@@ -1012,6 +1157,101 @@ modules:
     type: reading
     duration_minutes: 10
     content_file: lessons/what-is-sc-signal.md
+  - slug: virtual-port-binding-validator-reading
+    title: Module Hierarchy Port Binding Rules
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-port-binding-validator.md
+  - slug: virtual-port-binding-validator
+    title: Module Hierarchy Port Binding Validator
+    type: exercise
+    duration_minutes: 30
+    content_file: lessons/virtual-port-binding-validator.prompt.md
+    exercises:
+      - slug: virtual-port-binding-validator
+        title: Module Hierarchy Port Binding Validator
+        difficulty: hard
+        points: 40
+        prompt_file: lessons/virtual-port-binding-validator.prompt.md
+        supported_languages: [python]
+        tags: [systemc, ports, elaboration, hierarchy, binding]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            m = int(input())
+            for _ in range(m):
+                header = input().split()
+                mod_name = header[0]
+                p, b = int(header[1]), int(header[2])
+                declared = [input().strip() for _ in range(p)]
+                bindings = [input().strip() for _ in range(b)]
+                # TODO: validate bindings and print MODULE <name>: OK
+                # or list UNDECLARED_PORT, DOUBLE_BOUND, UNBOUND_PORT errors
+        solution_code:
+          python: |
+            m = int(input())
+            for _ in range(m):
+                header = input().split()
+                mod_name = header[0]
+                p, b = int(header[1]), int(header[2])
+                declared = []
+                for _ in range(p):
+                    declared.append(input().strip())
+                bindings = []
+                for _ in range(b):
+                    bindings.append(input().strip())
+                declared_set = set(declared)
+                bind_count = {}
+                undeclared = []
+                double_bound = []
+                seen_double = set()
+                for port in bindings:
+                    if port not in declared_set:
+                        undeclared.append(port)
+                    else:
+                        bind_count[port] = bind_count.get(port, 0) + 1
+                        if bind_count[port] == 2 and port not in seen_double:
+                            double_bound.append(port)
+                            seen_double.add(port)
+                unbound = [p for p in declared if bind_count.get(p, 0) == 0]
+                errors = undeclared + double_bound + unbound
+                if not errors:
+                    print(f'MODULE {mod_name}: OK')
+                else:
+                    print(f'MODULE {mod_name}:')
+                    for e in undeclared:
+                        print(f'UNDECLARED_PORT: {e}')
+                    for e in double_bound:
+                        print(f'DOUBLE_BOUND: {e}')
+                    for e in unbound:
+                        print(f'UNBOUND_PORT: {e}')
+        test_cases:
+          - name: sample-two-modules
+            stdin: "2\ncpu_core 3 3\nclk_port\nreset_port\ndata_port\nclk_port\ndata_port\ndata_port\nbus_bridge 2 1\nreq_port\nack_port\nreq_port\n"
+            expected_stdout: "MODULE cpu_core:\nDOUBLE_BOUND: data_port\nUNBOUND_PORT: reset_port\nMODULE bus_bridge:\nUNBOUND_PORT: ack_port"
+            is_hidden: false
+            weight: 1
+          - name: ok-module
+            stdin: "1\ntimer 2 2\nclk_in\nirq_out\nclk_in\nirq_out\n"
+            expected_stdout: "MODULE timer: OK"
+            is_hidden: false
+            weight: 1
+          - name: all-unbound
+            stdin: "1\ngpio 3 0\npin_a\npin_b\npin_c\n"
+            expected_stdout: "MODULE gpio:\nUNBOUND_PORT: pin_a\nUNBOUND_PORT: pin_b\nUNBOUND_PORT: pin_c"
+            is_hidden: false
+            weight: 1
+          - name: undeclared-port-binding
+            stdin: "1\nuart 1 2\ntx_port\ntx_port\nrx_port\n"
+            expected_stdout: "MODULE uart:\nUNDECLARED_PORT: rx_port"
+            is_hidden: true
+            weight: 1
+          - name: ok-single-port
+            stdin: "1\nmem 2 2\naddr_port\ndata_port\naddr_port\ndata_port\n"
+            expected_stdout: "MODULE mem: OK"
+            is_hidden: true
+            weight: 1
   - slug: quiz-systemc-modules
     title: 'Quiz: SystemC Modules and Structure'
     type: quiz
@@ -1204,6 +1444,164 @@ modules:
     type: exercise
     duration_minutes: 20
     content_file: lessons/vp-transaction-routing-exercise.prompt.md
+  - slug: virtual-tlm-gp-decoder-reading
+    title: 'TLM Generic Payload: Fields and Validation'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-tlm-generic-payload-decoder.md
+  - slug: virtual-tlm-generic-payload-decoder
+    title: TLM Generic Payload Decoder
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/virtual-tlm-generic-payload-decoder.prompt.md
+    exercises:
+      - slug: virtual-tlm-generic-payload-decoder
+        title: TLM Generic Payload Decoder
+        difficulty: easy
+        points: 20
+        prompt_file: lessons/virtual-tlm-generic-payload-decoder.prompt.md
+        supported_languages: [python]
+        tags: [tlm, generic-payload, tLM-2.0, validation]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            n = int(input())
+            for _ in range(n):
+                parts = input().split()
+                cmd, addr_str, length_str = parts[0], parts[1], parts[2]
+                # TODO: validate command, address, data_length
+                # Print VALID: <cmd> @ 0x<ADDR_HEX_UPPER> len=<len>
+                # or ERROR: COMMAND_ERROR / ADDRESS_ERROR / BURST_ERROR
+        solution_code:
+          python: |
+            n = int(input())
+            for _ in range(n):
+                parts = input().split()
+                cmd, addr_str, length_str = parts[0], parts[1], parts[2]
+                if cmd not in ('READ', 'WRITE'):
+                    print('ERROR: COMMAND_ERROR')
+                    continue
+                addr = int(addr_str)
+                if addr < 0:
+                    print('ERROR: ADDRESS_ERROR')
+                    continue
+                length = int(length_str)
+                if length < 1 or length > 64:
+                    print('ERROR: BURST_ERROR')
+                    continue
+                print(f'VALID: {cmd} @ 0x{addr:X} len={length}')
+        test_cases:
+          - name: sample-four-transactions
+            stdin: "4\nREAD 256 4\nWRITE 4096 8\nINVALID 0 4\nREAD 128 0\n"
+            expected_stdout: "VALID: READ @ 0x100 len=4\nVALID: WRITE @ 0x1000 len=8\nERROR: COMMAND_ERROR\nERROR: BURST_ERROR"
+            is_hidden: false
+            weight: 1
+          - name: address-error
+            stdin: "1\nREAD -1 4\n"
+            expected_stdout: "ERROR: ADDRESS_ERROR"
+            is_hidden: false
+            weight: 1
+          - name: boundary-valid-and-burst-error
+            stdin: "3\nWRITE 0 64\nREAD 255 1\nWRITE 1000 65\n"
+            expected_stdout: "VALID: WRITE @ 0x0 len=64\nVALID: READ @ 0xFF len=1\nERROR: BURST_ERROR"
+            is_hidden: false
+            weight: 1
+          - name: command-takes-priority
+            stdin: "2\nWRITE -5 4\nREAD 100 0\n"
+            expected_stdout: "ERROR: ADDRESS_ERROR\nERROR: BURST_ERROR"
+            is_hidden: true
+            weight: 1
+          - name: extra-valid-cases
+            stdin: "3\nWRITE 65536 16\nREAD 0 65\nREAD 0 1\n"
+            expected_stdout: "VALID: WRITE @ 0x10000 len=16\nERROR: BURST_ERROR\nVALID: READ @ 0x0 len=1"
+            is_hidden: true
+            weight: 1
+  - slug: virtual-dmi-region-cache-reading
+    title: 'DMI Region Cache: Fast Memory Access'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-dmi-region-cache.md
+  - slug: virtual-dmi-region-cache
+    title: Direct Memory Interface (DMI) Region Cache Lookup
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/virtual-dmi-region-cache.prompt.md
+    exercises:
+      - slug: virtual-dmi-region-cache
+        title: Direct Memory Interface (DMI) Region Cache Lookup
+        difficulty: hard
+        points: 40
+        prompt_file: lessons/virtual-dmi-region-cache.prompt.md
+        supported_languages: [python]
+        tags: [tlm, dmi, cache, memory-access, tLM-2.0]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            e = int(input())
+            cache = []
+            for _ in range(e):
+                parts = input().split()
+                start, end, atype = int(parts[0]), int(parts[1]), parts[2]
+                cache.append((start, end, atype))
+            n = int(input())
+            for _ in range(n):
+                parts = input().split()
+                addr, op = int(parts[0]), parts[1]
+                # TODO: check DMI cache for a hit
+                # Print HIT: DMI region [<start>-<end>] <atype> or MISS
+        solution_code:
+          python: |
+            e = int(input())
+            cache = []
+            for _ in range(e):
+                parts = input().split()
+                start, end, atype = int(parts[0]), int(parts[1]), parts[2]
+                cache.append((start, end, atype))
+            n = int(input())
+            for _ in range(n):
+                parts = input().split()
+                addr, op = int(parts[0]), parts[1]
+                found = False
+                for start, end, atype in cache:
+                    if start <= addr <= end:
+                        if op == 'READ' and atype in ('R', 'RW'):
+                            print(f'HIT: DMI region [{start}-{end}] {atype}')
+                            found = True
+                            break
+                        elif op == 'WRITE' and atype in ('W', 'RW'):
+                            print(f'HIT: DMI region [{start}-{end}] {atype}')
+                            found = True
+                            break
+                if not found:
+                    print('MISS')
+        test_cases:
+          - name: sample-three-regions
+            stdin: "3\n0 1023 R\n1024 2047 RW\n2048 4095 W\n5\n512 READ\n512 WRITE\n1500 READ\n1500 WRITE\n3000 READ\n"
+            expected_stdout: "HIT: DMI region [0-1023] R\nMISS\nHIT: DMI region [1024-2047] RW\nHIT: DMI region [1024-2047] RW\nMISS"
+            is_hidden: false
+            weight: 1
+          - name: write-only-region
+            stdin: "1\n0 1023 W\n2\n512 READ\n512 WRITE\n"
+            expected_stdout: "MISS\nHIT: DMI region [0-1023] W"
+            is_hidden: false
+            weight: 1
+          - name: no-matching-region
+            stdin: "1\n0 100 RW\n2\n200 READ\n300 WRITE\n"
+            expected_stdout: "MISS\nMISS"
+            is_hidden: false
+            weight: 1
+          - name: rw-region-both-access
+            stdin: "2\n0 255 RW\n256 511 R\n4\n0 READ\n0 WRITE\n300 READ\n300 WRITE\n"
+            expected_stdout: "HIT: DMI region [0-255] RW\nHIT: DMI region [0-255] RW\nHIT: DMI region [256-511] R\nMISS"
+            is_hidden: true
+            weight: 1
+          - name: first-entry-wins-overlap
+            stdin: "2\n0 1023 R\n0 2047 RW\n2\n500 READ\n500 WRITE\n"
+            expected_stdout: "HIT: DMI region [0-1023] R\nHIT: DMI region [0-2047] RW"
+            is_hidden: true
+            weight: 1
   - slug: quiz-tlm2-fundamentals
     title: 'Quiz: TLM-2.0 Fundamentals'
     type: quiz
@@ -1262,6 +1660,81 @@ modules:
     type: exercise
     duration_minutes: 20
     content_file: lessons/vp-quantum-budget-exercise.prompt.md
+  - slug: virtual-lt-at-latency-reading
+    title: 'LT vs AT: Latency Models and Simulation Speed'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/virtual-lt-at-latency-calculator.md
+  - slug: virtual-lt-at-latency-calculator
+    title: Loosely-Timed vs Approximately-Timed Latency Calculator
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/virtual-lt-at-latency-calculator.prompt.md
+    exercises:
+      - slug: virtual-lt-at-latency-calculator
+        title: Loosely-Timed vs Approximately-Timed Latency Calculator
+        difficulty: medium
+        points: 30
+        prompt_file: lessons/virtual-lt-at-latency-calculator.prompt.md
+        supported_languages: [python]
+        tags: [tlm, lt, at, temporal-decoupling, quantum, timing]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import math
+            t = int(input())
+            bus_latency = int(input())
+            quantum = int(input())
+            phases = int(input())
+            # TODO: compute LT_TOTAL_NS, AT_TOTAL_NS, SPEEDUP
+            # LT: ceil(t * bus_latency / quantum) * quantum
+            # AT: t * bus_latency
+            # SPEEDUP: AT / LT, 2 decimal places
+        solution_code:
+          python: |
+            import math
+            t = int(input())
+            bus_latency = int(input())
+            quantum = int(input())
+            phases = int(input())
+            at_total = t * bus_latency
+            lt_total = math.ceil(t * bus_latency / quantum) * quantum
+            speedup = at_total / lt_total
+            print(f'LT_TOTAL_NS={lt_total}')
+            print(f'AT_TOTAL_NS={at_total}')
+            print(f'SPEEDUP={speedup:.2f}')
+        test_cases:
+          - name: sample-even-quantum
+            stdin: "100\n10\n50\n4\n"
+            expected_stdout: "LT_TOTAL_NS=1000\nAT_TOTAL_NS=1000\nSPEEDUP=1.00"
+            is_hidden: false
+            weight: 1
+          - name: lt-rounds-up
+            stdin: "150\n10\n1000\n4\n"
+            expected_stdout: "LT_TOTAL_NS=2000\nAT_TOTAL_NS=1500\nSPEEDUP=0.75"
+            is_hidden: false
+            weight: 1
+          - name: large-quantum-small-work
+            stdin: "5\n10\n1000\n4\n"
+            expected_stdout: "LT_TOTAL_NS=1000\nAT_TOTAL_NS=50\nSPEEDUP=0.05"
+            is_hidden: false
+            weight: 1
+          - name: perfect-alignment-200
+            stdin: "50\n20\n1000\n4\n"
+            expected_stdout: "LT_TOTAL_NS=1000\nAT_TOTAL_NS=1000\nSPEEDUP=1.00"
+            is_hidden: true
+            weight: 1
+          - name: lt-rounds-up-two
+            stdin: "10\n15\n100\n4\n"
+            expected_stdout: "LT_TOTAL_NS=200\nAT_TOTAL_NS=150\nSPEEDUP=0.75"
+            is_hidden: true
+            weight: 1
+          - name: even-split
+            stdin: "200\n5\n100\n4\n"
+            expected_stdout: "LT_TOTAL_NS=1000\nAT_TOTAL_NS=1000\nSPEEDUP=1.00"
+            is_hidden: true
+            weight: 1
   - slug: quiz-tlm-coding-styles
     title: 'Quiz: TLM Coding Styles and Timing'
     type: quiz

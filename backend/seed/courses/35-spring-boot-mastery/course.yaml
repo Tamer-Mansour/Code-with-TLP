@@ -92,6 +92,155 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/configuration-and-profiles.md
+      - slug: spring-di-container-simulator
+        title: "Exercise: Dependency Injection Container Simulator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/spring-di-container-simulator.md
+        prompt_file: lessons/spring-di-container-simulator.prompt.md
+        difficulty: medium
+        points: 150
+        supported_languages: [python]
+        starter_code:
+          python: |
+            import sys
+            from collections import defaultdict, deque
+
+            def solve():
+                n = int(input())
+                beans = {}
+                for _ in range(n):
+                    parts = input().split()
+                    name = parts[0]
+                    class_name = parts[1]
+                    deps = parts[2:]
+                    beans[name] = (class_name, deps)
+                target = input().strip()
+
+                # TODO: collect all beans reachable from target
+                # TODO: topological sort (Kahn's algorithm)
+                # TODO: print class names in instantiation order
+                # TODO: print 'CIRCULAR DEPENDENCY' if cycle detected
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+            from collections import defaultdict, deque
+
+            def solve():
+                n = int(input())
+                beans = {}
+                for _ in range(n):
+                    parts = input().split()
+                    name = parts[0]
+                    class_name = parts[1]
+                    deps = parts[2:]
+                    beans[name] = (class_name, deps)
+                target = input().strip()
+
+                visited = set()
+                def collect(b):
+                    if b in visited:
+                        return
+                    visited.add(b)
+                    if b in beans:
+                        for dep in beans[b][1]:
+                            collect(dep)
+                collect(target)
+
+                in_degree = defaultdict(int)
+                adj = defaultdict(list)
+                for b in visited:
+                    if b in beans:
+                        for dep in beans[b][1]:
+                            if dep in visited:
+                                adj[dep].append(b)
+                                in_degree[b] += 1
+
+                queue = deque()
+                for b in sorted(visited):
+                    if in_degree[b] == 0:
+                        queue.append(b)
+
+                order = []
+                while queue:
+                    node = queue.popleft()
+                    order.append(node)
+                    for neighbor in sorted(adj[node]):
+                        in_degree[neighbor] -= 1
+                        if in_degree[neighbor] == 0:
+                            queue.append(neighbor)
+
+                if len(order) != len(visited):
+                    print('CIRCULAR DEPENDENCY')
+                else:
+                    for b in order:
+                        print(beans[b][0] if b in beans else b)
+
+            solve()
+        test_cases:
+          - name: "Linear chain of three beans"
+            stdin: |
+              3
+              c C b
+              b B a
+              a A
+              c
+            expected_stdout: |
+              A
+              B
+              C
+            is_hidden: false
+            weight: 1
+          - name: "Circular dependency detected"
+            stdin: |
+              2
+              serviceA ServiceA serviceB
+              serviceB ServiceB serviceA
+              serviceA
+            expected_stdout: |
+              CIRCULAR DEPENDENCY
+            is_hidden: false
+            weight: 1
+          - name: "Single bean with no dependencies"
+            stdin: |
+              1
+              myRepo MyRepository
+              myRepo
+            expected_stdout: |
+              MyRepository
+            is_hidden: false
+            weight: 1
+          - name: "Diamond dependency graph"
+            stdin: |
+              4
+              dService DService bService cService
+              bService BService aRepo
+              cService CService aRepo
+              aRepo ARepository
+              dService
+            expected_stdout: |
+              ARepository
+              BService
+              CService
+              DService
+            is_hidden: true
+            weight: 2
+          - name: "Partial graph: only reachable beans instantiated"
+            stdin: |
+              4
+              controller WebController service
+              service BusinessService repo
+              repo JpaRepository
+              unrelated UnrelatedService
+              service
+            expected_stdout: |
+              JpaRepository
+              BusinessService
+            is_hidden: true
+            weight: 2
+
       - slug: quiz-spring-core
         title: "Quiz: Spring Core & DI"
         type: quiz
@@ -138,6 +287,129 @@ modules:
         type: reading
         duration_minutes: 45
         content_file: lessons/project-product-catalog-api.md
+      - slug: spring-http-request-router
+        title: "Exercise: HTTP Request Router"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/spring-http-request-router.md
+        prompt_file: lessons/spring-http-request-router.prompt.md
+        difficulty: easy
+        points: 75
+        supported_languages: [python]
+        starter_code:
+          python: |
+            def solve():
+                m = int(input())
+                routes = {}
+                for _ in range(m):
+                    parts = input().split()
+                    # parts[0]=METHOD, parts[1]=path, parts[2]=handler
+                    # TODO: register the route (last registration wins)
+                    pass
+
+                q = int(input())
+                for _ in range(q):
+                    parts = input().split()
+                    # TODO: look up the route and print handler or '404 Not Found'
+                    pass
+
+            solve()
+        solution_code:
+          python: |
+            def solve():
+                m = int(input())
+                routes = {}
+                for _ in range(m):
+                    parts = input().split()
+                    method, path, handler = parts[0], parts[1], parts[2]
+                    routes[(method, path)] = handler
+
+                q = int(input())
+                for _ in range(q):
+                    parts = input().split()
+                    method, path = parts[0], parts[1]
+                    print(routes.get((method, path), '404 Not Found'))
+
+            solve()
+        test_cases:
+          - name: "Standard CRUD routes"
+            stdin: |
+              5
+              GET /users listUsers
+              POST /users createUser
+              GET /users/1 getUser
+              DELETE /users/1 deleteUser
+              GET /health healthCheck
+              4
+              GET /users
+              POST /users
+              GET /products
+              DELETE /users/1
+            expected_stdout: |
+              listUsers
+              createUser
+              404 Not Found
+              deleteUser
+            is_hidden: false
+            weight: 1
+          - name: "Last registration wins on duplicate routes"
+            stdin: |
+              3
+              GET /api v1Handler
+              GET /api v2Handler
+              PUT /api updateHandler
+              2
+              GET /api
+              PUT /api
+            expected_stdout: |
+              v2Handler
+              updateHandler
+            is_hidden: false
+            weight: 1
+          - name: "No routes registered"
+            stdin: |
+              0
+              2
+              GET /anything
+              POST /other
+            expected_stdout: |
+              404 Not Found
+              404 Not Found
+            is_hidden: false
+            weight: 1
+          - name: "Method mismatch returns 404"
+            stdin: |
+              3
+              GET /items listItems
+              POST /items createItem
+              DELETE /items/5 deleteItem
+              4
+              GET /items
+              POST /items
+              PATCH /items/5
+              DELETE /items/5
+            expected_stdout: |
+              listItems
+              createItem
+              404 Not Found
+              deleteItem
+            is_hidden: true
+            weight: 2
+          - name: "Single route with multiple miss queries"
+            stdin: |
+              1
+              GET /ping pong
+              3
+              GET /ping
+              POST /ping
+              GET /pong
+            expected_stdout: |
+              pong
+              404 Not Found
+              404 Not Found
+            is_hidden: true
+            weight: 1
+
       - slug: quiz-rest-apis
         title: "Quiz: REST APIs"
         type: quiz
@@ -184,6 +456,160 @@ modules:
         type: reading
         duration_minutes: 50
         content_file: lessons/project-book-library-api.md
+      - slug: spring-transaction-rollback-sim
+        title: "Exercise: Transaction Rollback Simulator"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/spring-transaction-rollback-sim.md
+        prompt_file: lessons/spring-transaction-rollback-sim.prompt.md
+        difficulty: hard
+        points: 200
+        supported_languages: [python]
+        starter_code:
+          python: |
+            def solve():
+                t = int(input())
+                committed = {}
+
+                for _ in range(t):
+                    header = input().split()
+                    propagation = header[1]
+                    local_writes = {}
+                    exception_type = None
+
+                    line = input()
+                    while line.strip() != 'END':
+                        op = line.split()
+                        if op[0] == 'WRITE':
+                            local_writes[op[1]] = op[2]
+                        elif op[0] == 'THROW':
+                            exception_type = op[1]
+                        line = input()
+
+                    # TODO: apply rollback rules based on propagation and exception_type
+
+                if not committed:
+                    print('EMPTY')
+                else:
+                    for k in sorted(committed):
+                        print(f'{k}={committed[k]}')
+
+            solve()
+        solution_code:
+          python: |
+            def solve():
+                t = int(input())
+                committed = {}
+
+                for _ in range(t):
+                    header = input().split()
+                    propagation = header[1]
+                    local_writes = {}
+                    exception_type = None
+
+                    line = input()
+                    while line.strip() != 'END':
+                        op = line.split()
+                        if op[0] == 'WRITE':
+                            local_writes[op[1]] = op[2]
+                        elif op[0] == 'THROW':
+                            exception_type = op[1]
+                        line = input()
+
+                    if exception_type == 'RUNTIME':
+                        pass  # rollback: discard local_writes
+                    else:
+                        committed.update(local_writes)
+
+                if not committed:
+                    print('EMPTY')
+                else:
+                    for k in sorted(committed):
+                        print(f'{k}={committed[k]}')
+
+            solve()
+        test_cases:
+          - name: "REQUIRED rolls back, REQUIRES_NEW commits on CHECKED"
+            stdin: |
+              2
+              TRANSACTION REQUIRED
+              WRITE balance 500
+              WRITE name Alice
+              THROW RUNTIME
+              END
+              TRANSACTION REQUIRES_NEW
+              WRITE balance 200
+              WRITE city London
+              THROW CHECKED
+              END
+            expected_stdout: |
+              balance=200
+              city=London
+            is_hidden: false
+            weight: 1
+          - name: "Two commits then one rollback"
+            stdin: |
+              3
+              TRANSACTION REQUIRED
+              WRITE x 10
+              END
+              TRANSACTION REQUIRED
+              WRITE y 20
+              END
+              TRANSACTION REQUIRES_NEW
+              WRITE z 30
+              THROW RUNTIME
+              END
+            expected_stdout: |
+              x=10
+              y=20
+            is_hidden: false
+            weight: 1
+          - name: "All transactions roll back — EMPTY result"
+            stdin: |
+              1
+              TRANSACTION REQUIRED
+              WRITE a hello
+              THROW RUNTIME
+              END
+            expected_stdout: |
+              EMPTY
+            is_hidden: false
+            weight: 1
+          - name: "REQUIRES_NEW commits first, subsequent REQUIRED rolls back same key"
+            stdin: |
+              2
+              TRANSACTION REQUIRES_NEW
+              WRITE token abc123
+              END
+              TRANSACTION REQUIRED
+              WRITE token xyz789
+              THROW RUNTIME
+              END
+            expected_stdout: |
+              token=abc123
+            is_hidden: true
+            weight: 2
+          - name: "Multiple REQUIRES_NEW with CHECKED exceptions all commit"
+            stdin: |
+              3
+              TRANSACTION REQUIRES_NEW
+              WRITE audit_1 created
+              THROW CHECKED
+              END
+              TRANSACTION REQUIRED
+              WRITE order_1 pending
+              END
+              TRANSACTION REQUIRES_NEW
+              WRITE audit_2 completed
+              END
+            expected_stdout: |
+              audit_1=created
+              audit_2=completed
+              order_1=pending
+            is_hidden: true
+            weight: 2
+
       - slug: quiz-jpa
         title: "Quiz: Spring Data JPA"
         type: quiz
@@ -219,6 +645,187 @@ modules:
         type: reading
         duration_minutes: 50
         content_file: lessons/project-task-management-api.md
+      - slug: spring-bean-validation-checker
+        title: "Exercise: Bean Validation Rule Checker"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/spring-bean-validation-checker.md
+        prompt_file: lessons/spring-bean-validation-checker.prompt.md
+        difficulty: medium
+        points: 125
+        supported_languages: [python]
+        starter_code:
+          python: |
+            def solve():
+                n = int(input())
+                rules = []
+                seen_fields = []
+                seen_set = set()
+                for _ in range(n):
+                    parts = input().split()
+                    field = parts[0]
+                    constraint = parts[1]
+                    value = parts[2] if len(parts) > 2 else '-'
+                    rules.append((field, constraint, value))
+                    if field not in seen_set:
+                        seen_fields.append(field)
+                        seen_set.add(field)
+
+                t = int(input())
+                for _ in range(t):
+                    fields = {}
+                    for fname in seen_fields:
+                        parts = input().split()
+                        fvalue = parts[1] if len(parts) > 1 else ''
+                        fields[fname] = fvalue
+
+                    errors = []
+                    for (field, constraint, value) in rules:
+                        fval = fields.get(field, '')
+                        # TODO: check each constraint and append to errors if violated
+                        pass
+
+                    if not errors:
+                        print('VALID')
+                    else:
+                        for e in errors:
+                            print(e)
+
+            solve()
+        solution_code:
+          python: |
+            def solve():
+                n = int(input())
+                rules = []
+                seen_fields = []
+                seen_set = set()
+                for _ in range(n):
+                    parts = input().split()
+                    field = parts[0]
+                    constraint = parts[1]
+                    value = parts[2] if len(parts) > 2 else '-'
+                    rules.append((field, constraint, value))
+                    if field not in seen_set:
+                        seen_fields.append(field)
+                        seen_set.add(field)
+
+                t = int(input())
+                for _ in range(t):
+                    fields = {}
+                    for fname in seen_fields:
+                        parts = input().split()
+                        fvalue = parts[1] if len(parts) > 1 else ''
+                        fields[fname] = fvalue
+
+                    errors = []
+                    for (field, constraint, value) in rules:
+                        fval = fields.get(field, '')
+                        failed = False
+                        if constraint == 'NOT_BLANK':
+                            failed = fval.strip() == ''
+                        elif constraint == 'MIN':
+                            try:
+                                failed = int(fval) < int(value)
+                            except ValueError:
+                                failed = True
+                        elif constraint == 'MAX':
+                            try:
+                                failed = int(fval) > int(value)
+                            except ValueError:
+                                failed = True
+                        elif constraint == 'SIZE_MIN':
+                            failed = len(fval) < int(value)
+                        elif constraint == 'SIZE_MAX':
+                            failed = len(fval) > int(value)
+                        if failed:
+                            errors.append(f'{field}: {constraint} violated')
+
+                    if not errors:
+                        print('VALID')
+                    else:
+                        for e in errors:
+                            print(e)
+
+            solve()
+        test_cases:
+          - name: "Mixed results: valid, size violation, blank and size violations"
+            stdin: |
+              4
+              username NOT_BLANK -
+              username SIZE_MIN 3
+              username SIZE_MAX 20
+              age MIN 18
+              3
+              username alice
+              age 25
+              username ab
+              age 15
+              username
+              age 20
+            expected_stdout: |
+              VALID
+              username: SIZE_MIN violated
+              age: MIN violated
+              username: NOT_BLANK violated
+              username: SIZE_MIN violated
+            is_hidden: false
+            weight: 1
+          - name: "All fields valid"
+            stdin: |
+              2
+              name NOT_BLANK -
+              score MAX 100
+              1
+              name Bob
+              score 95
+            expected_stdout: |
+              VALID
+            is_hidden: false
+            weight: 1
+          - name: "MAX constraint violation"
+            stdin: |
+              2
+              price MIN 0
+              price MAX 9999
+              2
+              price 5000
+              price 10000
+            expected_stdout: |
+              VALID
+              price: MAX violated
+            is_hidden: false
+            weight: 1
+          - name: "SIZE_MAX violation"
+            stdin: |
+              2
+              tag NOT_BLANK -
+              tag SIZE_MAX 5
+              2
+              tag hello
+              tag toolongvalue
+            expected_stdout: |
+              VALID
+              tag: SIZE_MAX violated
+            is_hidden: true
+            weight: 2
+          - name: "Multiple field violations in one object"
+            stdin: |
+              4
+              email NOT_BLANK -
+              age MIN 18
+              age MAX 120
+              username SIZE_MIN 3
+              1
+              email
+              age 200
+              username ab
+            expected_stdout: |
+              email: NOT_BLANK violated
+              age: MAX violated
+              username: SIZE_MIN violated
+            is_hidden: true
+            weight: 2
+
       - slug: quiz-validation-errors
         title: "Quiz: Validation & Error Handling"
         type: quiz

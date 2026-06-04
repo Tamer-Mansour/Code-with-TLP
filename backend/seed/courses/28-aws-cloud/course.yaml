@@ -32,6 +32,12 @@ modules:
         video_url: "https://www.youtube.com/results?search_query=aws+cloud+practitioner+essentials+full+course+freecodecamp"
         content_file: lessons/aws-intro-video.md
 
+      - slug: cloud-computing-foundations
+        title: "Cloud Computing Foundations - NIST Definitions and AWS Global Infrastructure"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/cloud-computing-foundations.md
+
       - slug: aws-overview
         title: "AWS Overview - Regions, Accounts, Console, CLI"
         type: reading
@@ -49,6 +55,94 @@ modules:
         type: reading
         duration_minutes: 15
         content_file: lessons/iam-advanced.md
+
+      - slug: iam-policy-exercise
+        title: IAM Policy Evaluator
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/iam-policy-exercise.md
+        exercises:
+          - slug: aws-iam-policy-eval
+            title: IAM Policy Evaluator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/aws-iam-policy-eval.prompt.md
+            supported_languages: [python]
+            tags: [iam, security, policies]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    # TODO: parse statements and evaluate action
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def matches(pattern, action):
+                    if pattern == '*':
+                        return True
+                    if pattern.endswith('*'):
+                        return action.startswith(pattern[:-1])
+                    return pattern == action
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0])
+                    statements = []
+                    for i in range(1, n + 1):
+                        parts = lines[i].split()
+                        statements.append((parts[0], parts[1]))
+                    action = lines[n + 1].strip()
+
+                    explicit_deny = any(e == 'Deny' and matches(a, action) for e, a in statements)
+                    explicit_allow = any(e == 'Allow' and matches(a, action) for e, a in statements)
+
+                    if explicit_deny:
+                        print('DENY')
+                    elif explicit_allow:
+                        print('ALLOW')
+                    else:
+                        print('DENY')
+
+                solve()
+            test_cases:
+              - name: explicit-deny-wins
+                stdin: "4\nAllow s3:GetObject\nAllow s3:PutObject\nDeny s3:DeleteObject\nAllow ec2:DescribeInstances\ns3:DeleteObject\n"
+                expected_stdout: "DENY"
+                is_hidden: false
+                weight: 1
+              - name: explicit-allow
+                stdin: "4\nAllow s3:GetObject\nAllow s3:PutObject\nDeny s3:DeleteObject\nAllow ec2:DescribeInstances\ns3:GetObject\n"
+                expected_stdout: "ALLOW"
+                is_hidden: false
+                weight: 1
+              - name: wildcard-allow
+                stdin: "1\nAllow s3:*\ns3:PutObject\n"
+                expected_stdout: "ALLOW"
+                is_hidden: false
+                weight: 1
+              - name: wildcard-deny-overrides-allow
+                stdin: "2\nAllow s3:*\nDeny s3:DeleteObject\ns3:DeleteObject\n"
+                expected_stdout: "DENY"
+                is_hidden: true
+                weight: 1
+              - name: implicit-deny-no-match
+                stdin: "1\nAllow ec2:DescribeInstances\ns3:GetObject\n"
+                expected_stdout: "DENY"
+                is_hidden: true
+                weight: 1
+              - name: global-wildcard-deny-specific
+                stdin: "2\nAllow *\nDeny iam:DeleteUser\niam:DeleteUser\n"
+                expected_stdout: "DENY"
+                is_hidden: true
+                weight: 1
 
       - slug: aws-quiz
         title: "Quiz - AWS Basics"
@@ -91,17 +185,17 @@ modules:
         duration_minutes: 12
         content_file: lessons/cloudfront-and-cdn.md
 
-      - slug: s3-lifecycle-exercise
+      - slug: s3-storage-cost-exercise
         title: S3 Storage Class Cost Calculator
         type: exercise
         duration_minutes: 20
-        content_file: lessons/s3-lifecycle-exercise.md
+        content_file: lessons/s3-storage-cost-exercise.md
         exercises:
-          - slug: aws-s3-cost-calc
+          - slug: aws-s3-storage-cost
             title: S3 Storage Class Cost Calculator
             difficulty: easy
             points: 15
-            prompt_file: lessons/aws-s3-cost-calc.prompt.md
+            prompt_file: lessons/aws-s3-storage-cost.prompt.md
             supported_languages: [python]
             tags: [s3, storage, cost]
             time_limit_ms: 2000
@@ -111,8 +205,8 @@ modules:
                 import sys
 
                 def solve():
-                    data = sys.stdin.read().split()
-                    # TODO
+                    lines = sys.stdin.read().splitlines()
+                    # TODO: compute total monthly cost
                     pass
 
                 solve()
@@ -121,51 +215,132 @@ modules:
                 import sys
 
                 def solve():
-                    tokens = sys.stdin.read().split()
-                    idx = 0
-                    n = int(tokens[idx]); idx += 1
+                    prices = {
+                        'STANDARD': 0.023,
+                        'STANDARD_IA': 0.0125,
+                        'GLACIER': 0.004,
+                        'DEEP_ARCHIVE': 0.00099,
+                    }
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0])
                     total = 0.0
-                    for _ in range(n):
-                        size = int(tokens[idx]); idx += 1
-                        age = int(tokens[idx]); idx += 1
-                        if age >= 365:
-                            rate = 0.00099
-                        elif age >= 90:
-                            rate = 0.004
-                        elif age >= 30:
-                            rate = 0.0125
-                        else:
-                            rate = 0.023
-                        total += size * rate
-                    print(f"{total:.4f}")
+                    for i in range(1, n + 1):
+                        parts = lines[i].split()
+                        size = float(parts[0])
+                        cls = parts[1]
+                        total += size * prices[cls]
+                    print(f'{total:.4f}')
 
                 solve()
             test_cases:
-              - name: mixed-classes
-                stdin: "3\n10 15\n50 45\n100 400\n"
-                expected_stdout: "0.9540"
+              - name: all-four-classes
+                stdin: "5\n100 STANDARD\n500 STANDARD_IA\n1000 GLACIER\n2000 DEEP_ARCHIVE\n50 STANDARD\n"
+                expected_stdout: "15.6800"
                 is_hidden: false
                 weight: 1
-              - name: all-standard
-                stdin: "2\n5 0\n20 29\n"
-                expected_stdout: "0.5750"
+              - name: standard-and-ia
+                stdin: "2\n10 STANDARD\n20 STANDARD_IA\n"
+                expected_stdout: "0.4800"
                 is_hidden: false
                 weight: 1
-              - name: single-deep-archive
-                stdin: "1\n1000 365\n"
-                expected_stdout: "0.9900"
+              - name: glacier-only
+                stdin: "1\n500 GLACIER\n"
+                expected_stdout: "2.0000"
                 is_hidden: true
                 weight: 1
-              - name: glacier-instant-boundary
-                stdin: "1\n100 90\n"
-                expected_stdout: "0.4000"
+              - name: deep-archive-mixed
+                stdin: "2\n1000 DEEP_ARCHIVE\n200 STANDARD\n"
+                expected_stdout: "5.5900"
                 is_hidden: true
                 weight: 1
-              - name: standard-ia-boundary
-                stdin: "1\n80 30\n"
-                expected_stdout: "1.0000"
+              - name: three-classes
+                stdin: "3\n50 STANDARD_IA\n50 GLACIER\n50 STANDARD\n"
+                expected_stdout: "1.9750"
                 is_hidden: true
                 weight: 1
+
+      - slug: autoscaling-exercise
+        title: EC2 Auto Scaling Policy Simulator
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/autoscaling-exercise.md
+        exercises:
+          - slug: aws-autoscaling-sim
+            title: Auto Scaling Policy Simulator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/aws-autoscaling-sim.prompt.md
+            supported_languages: [python]
+            tags: [ec2, autoscaling, compute]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                import math
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    # TODO: simulate auto scaling
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import math
+
+                def solve():
+                    first_line = sys.stdin.read().splitlines()
+                    parts = first_line[0].split()
+                    min_cap = int(parts[0])
+                    max_cap = int(parts[1])
+                    desired = int(parts[2])
+                    target = float(parts[3])
+                    n = int(first_line[1])
+                    for i in range(2, 2 + n):
+                        cpu = float(first_line[i])
+                        if cpu > target:
+                            new_desired = math.ceil(desired * (cpu / target))
+                            desired = min(new_desired, max_cap)
+                        elif cpu < target * 0.9:
+                            new_desired = math.floor(desired * (cpu / target))
+                            desired = max(new_desired, min_cap)
+                        print(desired)
+
+                solve()
+            test_cases:
+              - name: research-spec-trace
+                stdin: "2 10 3 60.0\n5\n45.0\n75.0\n90.0\n30.0\n20.0\n"
+                expected_stdout: "2\n3\n5\n2\n2"
+                is_hidden: false
+                weight: 1
+              - name: no-change-at-target
+                stdin: "2 10 5 60.0\n1\n60.0\n"
+                expected_stdout: "5"
+                is_hidden: false
+                weight: 1
+              - name: scale-out-hits-max
+                stdin: "1 5 4 70.0\n2\n100.0\n100.0\n"
+                expected_stdout: "5\n5"
+                is_hidden: true
+                weight: 1
+              - name: scale-in-hits-min
+                stdin: "2 8 6 50.0\n2\n10.0\n10.0\n"
+                expected_stdout: "2\n2"
+                is_hidden: true
+                weight: 1
+              - name: single-scale-out
+                stdin: "1 10 3 80.0\n1\n90.0\n"
+                expected_stdout: "4"
+                is_hidden: true
+                weight: 1
+
+      - slug: compute-quiz
+        title: "Quiz - Compute and Storage"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/compute-quiz.md
 
   - title: Networking and Databases
     summary: VPC, RDS, DynamoDB.
@@ -257,6 +432,79 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: vpc-subnet-exercise
+        title: VPC CIDR Subnet Allocator
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/vpc-subnet-exercise.md
+        exercises:
+          - slug: aws-vpc-subnet-alloc
+            title: VPC CIDR Subnet Allocator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/aws-vpc-subnet-alloc.prompt.md
+            supported_languages: [python]
+            tags: [networking, vpc, cidr]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    # TODO: find smallest prefix for each requirement
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    # lines[0] is VPC CIDR (context only)
+                    n = int(lines[1])
+                    for i in range(2, 2 + n):
+                        required = int(lines[i])
+                        found = False
+                        for prefix in range(28, 0, -1):
+                            usable = (2 ** (32 - prefix)) - 5
+                            if usable >= required:
+                                print(f'/{prefix}')
+                                found = True
+                                break
+                        if not found:
+                            print('IMPOSSIBLE')
+
+                solve()
+            test_cases:
+              - name: research-spec-four-cases
+                stdin: "10.0.0.0/16\n4\n251\n11\n500\n4090\n"
+                expected_stdout: "/24\n/28\n/23\n/20"
+                is_hidden: false
+                weight: 1
+              - name: minimum-requirement
+                stdin: "10.0.0.0/16\n1\n1\n"
+                expected_stdout: "/28"
+                is_hidden: false
+                weight: 1
+              - name: just-over-slash28
+                stdin: "10.0.0.0/16\n1\n12\n"
+                expected_stdout: "/27"
+                is_hidden: true
+                weight: 1
+              - name: multiple-mixed
+                stdin: "172.16.0.0/16\n3\n1000\n250\n27\n"
+                expected_stdout: "/22\n/24\n/27"
+                is_hidden: true
+                weight: 1
+              - name: slash24-boundary
+                stdin: "10.0.0.0/16\n2\n251\n252\n"
+                expected_stdout: "/24\n/23"
+                is_hidden: true
+                weight: 1
+
   - title: Security and Observability
     summary: Secrets Manager, KMS, CloudWatch, SQS, SNS.
     order_index: 4
@@ -286,9 +534,15 @@ modules:
         content_file: lessons/security-quiz.md
 
   - title: Deploying and Architecting
-    summary: "CI/CD, the Well-Architected Framework, and putting it all together."
+    summary: "CI/CD, IaC, the Well-Architected Framework, and putting it all together."
     order_index: 5
     lessons:
+      - slug: cloudformation-and-iac
+        title: "CloudFormation and Infrastructure as Code"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/cloudformation-and-iac.md
+
       - slug: cicd-on-aws
         title: "CI/CD on AWS - CodePipeline, CodeBuild, and GitHub Actions"
         type: reading
@@ -307,3 +561,9 @@ modules:
         duration_minutes: 50
         video_url: "https://www.youtube.com/results?search_query=aws+full+stack+application+architecture+tutorial+production"
         content_file: lessons/architecture-video.md
+
+      - slug: architecture-quiz
+        title: "Quiz - Deploying and Architecting"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/architecture-quiz.md

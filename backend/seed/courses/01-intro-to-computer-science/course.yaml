@@ -531,6 +531,75 @@ modules:
         video_url: "https://www.youtube.com/results?search_query=fetch+decode+execute+cycle+CPU+compilers+interpreters+computer+science"
         content_file: lessons/video-how-programs-run.md
 
+      - slug: caesar-cipher-exercise
+        title: "Caesar Cipher"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/caesar-cipher-exercise.md
+        exercises:
+          - slug: intro-caesar-cipher
+            title: "Caesar Cipher"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/intro-caesar-cipher.prompt.md
+            supported_languages: [python]
+            tags: [strings, encoding, ascii, programs]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                k = int(input())
+                message = input()
+                # TODO: shift each letter by k positions, wrap around,
+                # preserve case, leave non-letters unchanged
+                pass
+            solution_code:
+              python: |
+                k = int(input())
+                message = input()
+                result = []
+                for c in message:
+                    if c.isupper():
+                        shifted = (ord(c) - ord('A') + k) % 26 + ord('A')
+                        result.append(chr(shifted))
+                    elif c.islower():
+                        shifted = (ord(c) - ord('a') + k) % 26 + ord('a')
+                        result.append(chr(shifted))
+                    else:
+                        result.append(c)
+                print(''.join(result))
+            test_cases:
+              - name: "shift-3-hello-world"
+                stdin: "3\nHello, World!"
+                expected_stdout: "Khoor, Zruog!"
+                is_hidden: false
+                weight: 1
+              - name: "shift-13-rot13"
+                stdin: "13\nThe Quick Brown Fox"
+                expected_stdout: "Gur Dhvpx Oebja Sbk"
+                is_hidden: false
+                weight: 1
+              - name: "shift-0-no-change"
+                stdin: "0\nNo change here."
+                expected_stdout: "No change here."
+                is_hidden: false
+                weight: 1
+              - name: "shift-25-wrap"
+                stdin: "25\nABC"
+                expected_stdout: "ZAB"
+                is_hidden: true
+                weight: 1
+              - name: "shift-1-wrap-z"
+                stdin: "1\nxyz XYZ"
+                expected_stdout: "yza YZA"
+                is_hidden: true
+                weight: 1
+              - name: "mixed-punctuation"
+                stdin: "5\nHello! 123 World?"
+                expected_stdout: "Mjqqt! 123 Btwqi?"
+                is_hidden: true
+                weight: 1
+
       - slug: quiz-how-programs-run
         title: "Quiz: How Programs Run"
         type: quiz
@@ -853,8 +922,433 @@ modules:
         video_url: "https://www.youtube.com/results?search_query=how+the+internet+works+IP+DNS+TCP+HTTP+freeCodeCamp"
         content_file: lessons/video-internet-fundamentals.md
 
+      - slug: ip-validator-exercise
+        title: "IPv4 Address Validator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/ip-validator-exercise.md
+        exercises:
+          - slug: intro-ip-validator
+            title: "IPv4 Address Validator"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/intro-ip-validator.prompt.md
+            supported_languages: [python]
+            tags: [strings, networking, validation, internet]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def is_valid_ipv4(s):
+                    # TODO: return True if s is a valid IPv4 address, False otherwise
+                    pass
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if line:
+                        print('VALID' if is_valid_ipv4(line) else 'INVALID')
+            solution_code:
+              python: |
+                import sys
+
+                def is_valid_ipv4(s):
+                    parts = s.split('.')
+                    if len(parts) != 4:
+                        return False
+                    for part in parts:
+                        if not part.isdigit():
+                            return False
+                        if len(part) > 1 and part[0] == '0':
+                            return False
+                        if not (0 <= int(part) <= 255):
+                            return False
+                    return True
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if line:
+                        print('VALID' if is_valid_ipv4(line) else 'INVALID')
+            test_cases:
+              - name: "valid-private-ip"
+                stdin: "192.168.1.1\n"
+                expected_stdout: "VALID"
+                is_hidden: false
+                weight: 1
+              - name: "invalid-octet-256"
+                stdin: "256.0.0.1\n"
+                expected_stdout: "INVALID"
+                is_hidden: false
+                weight: 1
+              - name: "valid-all-zeros"
+                stdin: "0.0.0.0\n"
+                expected_stdout: "VALID"
+                is_hidden: false
+                weight: 1
+              - name: "invalid-leading-zero"
+                stdin: "01.02.03.04\n"
+                expected_stdout: "INVALID"
+                is_hidden: false
+                weight: 1
+              - name: "invalid-too-few-parts"
+                stdin: "10.0.0\n"
+                expected_stdout: "INVALID"
+                is_hidden: false
+                weight: 1
+              - name: "valid-max-value"
+                stdin: "255.255.255.255\n"
+                expected_stdout: "VALID"
+                is_hidden: true
+                weight: 1
+              - name: "invalid-non-numeric"
+                stdin: "192.168.a.1\n"
+                expected_stdout: "INVALID"
+                is_hidden: true
+                weight: 1
+              - name: "multi-line-mixed"
+                stdin: "8.8.8.8\n999.0.0.1\n10.0.0.1\n"
+                expected_stdout: "VALID\nINVALID\nVALID"
+                is_hidden: true
+                weight: 2
+
       - slug: quiz-internet-and-web
         title: "Quiz: The Internet & The Web"
         type: quiz
         duration_minutes: 10
         content_file: lessons/quiz-internet-and-web.md
+
+  - title: "Control Flow and Iteration"
+    summary: "Conditionals, while loops, for loops, break/continue, and nested loops — the logic that drives every program."
+    order_index: 8
+    lessons:
+      - slug: control-flow-and-iteration
+        title: "Control Flow and Iteration"
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/control-flow-and-iteration.md
+
+      - slug: fizzbuzz-exercise
+        title: "FizzBuzz Classic"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/fizzbuzz-exercise.md
+        exercises:
+          - slug: intro-fizzbuzz
+            title: "FizzBuzz Classic"
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/intro-fizzbuzz.prompt.md
+            supported_languages: [python]
+            tags: [control-flow, loops, conditionals, modulo]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                n = int(input())
+                for i in range(1, n + 1):
+                    # TODO: print FizzBuzz, Fizz, Buzz, or i
+                    pass
+            solution_code:
+              python: |
+                n = int(input())
+                for i in range(1, n + 1):
+                    if i % 15 == 0:
+                        print('FizzBuzz')
+                    elif i % 3 == 0:
+                        print('Fizz')
+                    elif i % 5 == 0:
+                        print('Buzz')
+                    else:
+                        print(i)
+            test_cases:
+              - name: "n-15-full-sequence"
+                stdin: "15"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"
+                is_hidden: false
+                weight: 2
+              - name: "n-1-just-one"
+                stdin: "1"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: "n-3-first-fizz"
+                stdin: "3"
+                expected_stdout: "1\n2\nFizz"
+                is_hidden: false
+                weight: 1
+              - name: "n-5-first-buzz"
+                stdin: "5"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz"
+                is_hidden: true
+                weight: 1
+              - name: "n-30-double-cycle"
+                stdin: "30"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz\nFizz\n22\n23\nFizz\nBuzz\n26\nFizz\n28\n29\nFizzBuzz"
+                is_hidden: true
+                weight: 2
+
+      - slug: quiz-control-flow
+        title: "Quiz: Control Flow and Iteration"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-control-flow.md
+
+  - title: "Functions and Recursion"
+    summary: "Defining functions, scope, abstraction, higher-order functions, and recursive problem solving."
+    order_index: 9
+    lessons:
+      - slug: functions-and-abstraction
+        title: "Functions and Abstraction"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/functions-and-abstraction.md
+
+      - slug: recursion-and-problem-solving
+        title: "Recursion and Problem Solving"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/recursion-and-problem-solving.md
+
+      - slug: factorial-recursion-exercise
+        title: "Factorial via Recursion"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/factorial-recursion-exercise.md
+        exercises:
+          - slug: intro-factorial-recursion
+            title: "Factorial via Recursion"
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/intro-factorial-recursion.prompt.md
+            supported_languages: [python]
+            tags: [recursion, functions, factorial]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                def factorial(n):
+                    # TODO: implement recursively
+                    pass
+
+                n = int(input())
+                print(factorial(n))
+            solution_code:
+              python: |
+                def factorial(n):
+                    if n == 0:
+                        return 1
+                    return n * factorial(n - 1)
+
+                n = int(input())
+                print(factorial(n))
+            test_cases:
+              - name: "factorial-6"
+                stdin: "6"
+                expected_stdout: "720"
+                is_hidden: false
+                weight: 1
+              - name: "factorial-0"
+                stdin: "0"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: "factorial-1"
+                stdin: "1"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: "factorial-5"
+                stdin: "5"
+                expected_stdout: "120"
+                is_hidden: true
+                weight: 1
+              - name: "factorial-10"
+                stdin: "10"
+                expected_stdout: "3628800"
+                is_hidden: true
+                weight: 1
+              - name: "factorial-12"
+                stdin: "12"
+                expected_stdout: "479001600"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-recursion
+        title: "Quiz: Recursion and Problem Solving"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-recursion.md
+
+  - title: "Data Structures: Lists, Tuples, and Dictionaries"
+    summary: "Python's built-in data structures — mutability, aliasing pitfalls, and practical patterns."
+    order_index: 10
+    lessons:
+      - slug: data-structures-python
+        title: "Strings, Lists, Tuples, and Dictionaries"
+        type: reading
+        duration_minutes: 25
+        content_file: lessons/data-structures-python.md
+
+      - slug: word-frequency-exercise
+        title: "Word Frequency Counter"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/word-frequency-exercise.md
+        exercises:
+          - slug: intro-word-frequency
+            title: "Word Frequency Counter"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/intro-word-frequency.prompt.md
+            supported_languages: [python]
+            tags: [strings, dictionaries, sorting, text-processing]
+            time_limit_ms: 5000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                freq = {}
+                for line in sys.stdin:
+                    for word in line.split():
+                        # TODO: normalise word and count it
+                        pass
+
+                for word in sorted(freq):
+                    print(f'{word}: {freq[word]}')
+            solution_code:
+              python: |
+                import sys
+
+                freq = {}
+                for line in sys.stdin:
+                    for word in line.split():
+                        cleaned = ''.join(c for c in word if c.isalnum()).lower()
+                        if cleaned:
+                            freq[cleaned] = freq.get(cleaned, 0) + 1
+
+                for word in sorted(freq):
+                    print(f'{word}: {freq[word]}')
+            test_cases:
+              - name: "basic-three-lines"
+                stdin: "Hello world\nhello Python\nworld is great"
+                expected_stdout: "great: 1\nhello: 2\nis: 1\npython: 1\nworld: 2"
+                is_hidden: false
+                weight: 2
+              - name: "single-word"
+                stdin: "apple"
+                expected_stdout: "apple: 1"
+                is_hidden: false
+                weight: 1
+              - name: "case-insensitive"
+                stdin: "Cat cat CAT"
+                expected_stdout: "cat: 3"
+                is_hidden: false
+                weight: 1
+              - name: "punctuation-stripped"
+                stdin: "Hello, world! Hello."
+                expected_stdout: "hello: 2\nworld: 1"
+                is_hidden: true
+                weight: 2
+              - name: "numbers-and-words"
+                stdin: "abc 123 abc"
+                expected_stdout: "123: 1\nabc: 2"
+                is_hidden: true
+                weight: 1
+              - name: "blank-lines-ignored"
+                stdin: "one two\n\nthree one"
+                expected_stdout: "one: 2\nthree: 1\ntwo: 1"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-data-structures
+        title: "Quiz: Data Structures"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-data-structures.md
+
+  - title: "Algorithms and Complexity"
+    summary: "Big-O notation, binary search, and understanding algorithmic efficiency."
+    order_index: 11
+    lessons:
+      - slug: binary-search-exercise
+        title: "Binary Search"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/binary-search-exercise.md
+        exercises:
+          - slug: intro-binary-search
+            title: "Binary Search"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/intro-binary-search.prompt.md
+            supported_languages: [python]
+            tags: [algorithms, binary-search, complexity, searching]
+            time_limit_ms: 3000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                n = int(input())
+                nums = list(map(int, input().split()))
+                target = int(input())
+
+                lo, hi = 0, n - 1
+                result = -1
+                # TODO: implement binary search
+                print(result)
+            solution_code:
+              python: |
+                n = int(input())
+                nums = list(map(int, input().split()))
+                target = int(input())
+
+                lo, hi = 0, n - 1
+                result = -1
+                while lo <= hi:
+                    mid = (lo + hi) // 2
+                    if nums[mid] == target:
+                        result = mid
+                        break
+                    elif nums[mid] < target:
+                        lo = mid + 1
+                    else:
+                        hi = mid - 1
+
+                print(result)
+            test_cases:
+              - name: "found-in-middle"
+                stdin: "7\n2 5 8 12 16 23 38\n23"
+                expected_stdout: "5"
+                is_hidden: false
+                weight: 1
+              - name: "not-found"
+                stdin: "5\n1 3 5 7 9\n4"
+                expected_stdout: "-1"
+                is_hidden: false
+                weight: 1
+              - name: "found-at-start"
+                stdin: "4\n1 2 3 4\n1"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: "found-at-end"
+                stdin: "4\n1 2 3 4\n4"
+                expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+              - name: "single-element-found"
+                stdin: "1\n42\n42"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: "single-element-not-found"
+                stdin: "1\n42\n7"
+                expected_stdout: "-1"
+                is_hidden: true
+                weight: 1
+              - name: "large-sorted-list"
+                stdin: "10\n10 20 30 40 50 60 70 80 90 100\n70"
+                expected_stdout: "6"
+                is_hidden: true
+                weight: 1

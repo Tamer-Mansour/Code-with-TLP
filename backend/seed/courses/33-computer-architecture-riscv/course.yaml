@@ -279,6 +279,80 @@ modules:
     type: exercise
     duration_minutes: 20
     content_file: lessons/arch-alu-flag-simulator.prompt.md
+  - slug: computer-twos-complement-overflow-reading
+    title: 'Two''s Complement Overflow Detection in RISC-V'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/computer-twos-complement-overflow-detector.md
+  - slug: computer-twos-complement-overflow-detector
+    title: 'Two''s Complement Overflow Detector'
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/computer-twos-complement-overflow-detector.prompt.md
+    prompt_file: lessons/computer-twos-complement-overflow-detector.prompt.md
+    difficulty: easy
+    points: 50
+    supported_languages:
+    - python
+    starter_code:
+      python: |
+        import sys
+
+        lines = [l.strip() for l in sys.stdin if l.strip()]
+        for i in range(0, len(lines) - 1, 2):
+            a = int(lines[i])
+            b = int(lines[i + 1])
+            # TODO: compute result, signed_overflow, unsigned_carry
+    solution_code:
+      python: |
+        import sys
+
+        def process_pair(a, b):
+            INT32_MIN = -(1 << 31)
+            INT32_MAX = (1 << 31) - 1
+            UINT32_MAX = (1 << 32) - 1
+
+            unsigned_sum = (a + b) & UINT32_MAX
+            if unsigned_sum >= (1 << 31):
+                result = unsigned_sum - (1 << 32)
+            else:
+                result = unsigned_sum
+
+            signed_overflow = (a > 0 and b > 0 and result < 0) or \
+                              (a < 0 and b < 0 and result >= 0)
+
+            ua = a & UINT32_MAX
+            ub = b & UINT32_MAX
+            unsigned_carry = (ua + ub) > UINT32_MAX
+
+            so = 'YES' if signed_overflow else 'NO'
+            uc = 'YES' if unsigned_carry else 'NO'
+            print(f'result={result} signed_overflow={so} unsigned_carry={uc}')
+
+        lines = [l.strip() for l in sys.stdin if l.strip()]
+        for i in range(0, len(lines) - 1, 2):
+            process_pair(int(lines[i]), int(lines[i + 1]))
+    test_cases:
+    - name: Basic overflow cases
+      stdin: "2147483647\n1\n-2147483648\n-1\n100\n200\n2000000000\n2000000000"
+      expected_stdout: "result=-2147483648 signed_overflow=YES unsigned_carry=NO\nresult=2147483647 signed_overflow=YES unsigned_carry=YES\nresult=300 signed_overflow=NO unsigned_carry=NO\nresult=-294967296 signed_overflow=YES unsigned_carry=NO"
+      is_hidden: false
+      weight: 1
+    - name: Zero sum
+      stdin: "0\n0\n1\n-1"
+      expected_stdout: "result=0 signed_overflow=NO unsigned_carry=NO\nresult=0 signed_overflow=NO unsigned_carry=YES"
+      is_hidden: false
+      weight: 1
+    - name: Max unsigned
+      stdin: "-1\n-1\n-1\n1"
+      expected_stdout: "result=-2 signed_overflow=NO unsigned_carry=YES\nresult=0 signed_overflow=NO unsigned_carry=YES"
+      is_hidden: true
+      weight: 1
+    - name: Same sign no overflow
+      stdin: "1000000000\n-1000000000\n500\n-500"
+      expected_stdout: "result=0 signed_overflow=NO unsigned_carry=NO\nresult=0 signed_overflow=NO unsigned_carry=NO"
+      is_hidden: true
+      weight: 1
   - slug: quiz-alu
     title: 'Quiz: The Arithmetic Logic Unit'
     type: quiz
@@ -637,6 +711,112 @@ modules:
     type: exercise
     duration_minutes: 20
     content_file: lessons/arch-rv32i-instruction-simulator.prompt.md
+  - slug: computer-riscv-instr-decoder-reading
+    title: 'RISC-V Instruction Decoder: Full Field Extraction'
+    type: reading
+    duration_minutes: 12
+    content_file: lessons/computer-riscv-instr-decoder.md
+  - slug: computer-riscv-instr-decoder
+    title: 'RISC-V Full Instruction Decoder'
+    type: exercise
+    duration_minutes: 30
+    content_file: lessons/computer-riscv-instr-decoder.prompt.md
+    prompt_file: lessons/computer-riscv-instr-decoder.prompt.md
+    difficulty: medium
+    points: 100
+    supported_languages:
+    - python
+    starter_code:
+      python: |
+        import sys
+
+        def sign_extend(value, bits):
+            sign_bit = 1 << (bits - 1)
+            return (value & (sign_bit - 1)) - (value & sign_bit)
+
+        for line in sys.stdin:
+            line = line.strip()
+            if not line:
+                continue
+            instr = int(line, 16)
+            opcode = instr & 0x7F
+            opcode_bin = format(opcode, '07b')
+            # TODO: decode based on opcode_bin
+    solution_code:
+      python: |
+        import sys
+
+        def sign_extend(value, bits):
+            sign_bit = 1 << (bits - 1)
+            return (value & (sign_bit - 1)) - (value & sign_bit)
+
+        def decode(hex_str):
+            instr = int(hex_str, 16)
+            opcode = instr & 0x7F
+            ob = format(opcode, '07b')
+
+            rd     = (instr >> 7)  & 0x1F
+            funct3 = (instr >> 12) & 0x07
+            rs1    = (instr >> 15) & 0x1F
+            rs2    = (instr >> 20) & 0x1F
+            funct7 = (instr >> 25) & 0x7F
+
+            if ob == '0110011':
+                f7 = format(funct7, '07b')
+                print(f'Type=R opcode={ob} rd={rd} rs1={rs1} rs2={rs2} funct3={funct3} funct7={f7}')
+            elif ob in ('0010011', '0000011', '1100111'):
+                imm = sign_extend((instr >> 20) & 0xFFF, 12)
+                print(f'Type=I opcode={ob} rd={rd} rs1={rs1} funct3={funct3} imm={imm}')
+            elif ob == '0100011':
+                raw = ((instr >> 25) & 0x7F) << 5 | ((instr >> 7) & 0x1F)
+                imm = sign_extend(raw, 12)
+                print(f'Type=S opcode={ob} rs1={rs1} rs2={rs2} funct3={funct3} imm={imm}')
+            elif ob == '1100011':
+                raw = (((instr >> 31) & 1) << 12 | ((instr >> 7) & 1) << 11 |
+                       ((instr >> 25) & 0x3F) << 5 | ((instr >> 8) & 0xF) << 1)
+                imm = sign_extend(raw, 13)
+                print(f'Type=B opcode={ob} rs1={rs1} rs2={rs2} funct3={funct3} imm={imm}')
+            elif ob in ('0110111', '0010111'):
+                imm = sign_extend((instr >> 12) & 0xFFFFF, 20)
+                print(f'Type=U opcode={ob} rd={rd} imm={imm}')
+            elif ob == '1101111':
+                raw = (((instr >> 31) & 1) << 20 | ((instr >> 12) & 0xFF) << 12 |
+                       ((instr >> 20) & 1) << 11 | ((instr >> 21) & 0x3FF) << 1)
+                imm = sign_extend(raw, 21)
+                print(f'Type=J opcode={ob} rd={rd} imm={imm}')
+            else:
+                print('UNKNOWN')
+
+        for line in sys.stdin:
+            line = line.strip()
+            if line:
+                decode(line)
+    test_cases:
+    - name: Sample decode set
+      stdin: "00A58533\n00050513\nFE112E23\nFE208CE3\n000052B7\nFF5FF06F"
+      expected_stdout: "Type=R opcode=0110011 rd=10 rs1=11 rs2=10 funct3=0 funct7=0000000\nType=I opcode=0010011 rd=10 rs1=10 funct3=0 imm=0\nType=S opcode=0100011 rs1=2 rs2=1 funct3=2 imm=-4\nType=B opcode=1100011 rs1=1 rs2=2 funct3=0 imm=-8\nType=U opcode=0110111 rd=5 imm=5\nType=J opcode=1101111 rd=0 imm=-12"
+      is_hidden: false
+      weight: 2
+    - name: R-type ADD and XOR
+      stdin: "00208233\n00C0C433"
+      expected_stdout: "Type=R opcode=0110011 rd=4 rs1=1 rs2=2 funct3=0 funct7=0000000\nType=R opcode=0110011 rd=8 rs1=1 rs2=12 funct3=4 funct7=0000000"
+      is_hidden: false
+      weight: 1
+    - name: Load and store
+      stdin: "00C12283\n00512A23"
+      expected_stdout: "Type=I opcode=0000011 rd=5 rs1=2 funct3=2 imm=12\nType=S opcode=0100011 rs1=2 rs2=5 funct3=2 imm=20"
+      is_hidden: false
+      weight: 1
+    - name: Unknown opcode
+      stdin: "0000007F"
+      expected_stdout: "UNKNOWN"
+      is_hidden: true
+      weight: 1
+    - name: JAL with positive offset
+      stdin: "064000EF"
+      expected_stdout: "Type=J opcode=1101111 rd=1 imm=100"
+      is_hidden: true
+      weight: 1
   - slug: arch-riscv-instruction-decoder
     title: 'Prompt: Decode a 32-Bit RISC-V Instruction'
     type: exercise
@@ -974,6 +1154,96 @@ modules:
     type: reading
     duration_minutes: 10
     content_file: lessons/write-policies.md
+  - slug: computer-direct-mapped-cache-reading
+    title: 'Direct-Mapped Cache: Simulation and Analysis'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/computer-direct-mapped-cache-simulator.md
+  - slug: computer-direct-mapped-cache-simulator
+    title: Direct-Mapped Cache Simulator
+    type: exercise
+    duration_minutes: 35
+    content_file: lessons/computer-direct-mapped-cache-simulator.prompt.md
+    prompt_file: lessons/computer-direct-mapped-cache-simulator.prompt.md
+    difficulty: hard
+    points: 150
+    supported_languages:
+    - python
+    starter_code:
+      python: |
+        import sys
+
+        lines = [l.rstrip() for l in sys.stdin if l.strip()]
+        header = lines[0].split()
+        cache_size = int(header[1])
+        block_size = int(header[2])
+        # TODO: compute num_sets, simulate accesses
+    solution_code:
+      python: |
+        import sys
+
+        def simulate_cache(lines):
+            header = lines[0].split()
+            cache_size = int(header[1])
+            block_size = int(header[2])
+
+            num_sets = cache_size // block_size
+            index_bits = num_sets.bit_length() - 1
+            offset_bits = block_size.bit_length() - 1
+
+            cache = [None] * num_sets
+            hits = 0
+            misses = 0
+
+            for line in lines[1:]:
+                parts = line.split()
+                if not parts:
+                    continue
+                rw, addr_hex = parts[0], parts[1]
+                addr = int(addr_hex, 16)
+                set_index = (addr >> offset_bits) & (num_sets - 1)
+                tag = addr >> (offset_bits + index_bits)
+
+                if cache[set_index] == tag:
+                    print('HIT')
+                    hits += 1
+                else:
+                    print('MISS')
+                    misses += 1
+                    cache[set_index] = tag
+
+            total = hits + misses
+            hit_rate = (hits / total * 100) if total > 0 else 0.0
+            print(f'hits={hits} misses={misses} hit_rate={hit_rate:.2f}%')
+
+        lines = [l.rstrip() for l in sys.stdin if l.strip()]
+        simulate_cache(lines)
+    test_cases:
+    - name: Basic conflict and hit pattern
+      stdin: "CACHE 64 16\nR 00000000\nR 00000004\nR 00000010\nR 00000000\nW 00000040\nR 00000000\nR 00000010"
+      expected_stdout: "MISS\nHIT\nMISS\nHIT\nMISS\nMISS\nHIT\nhits=3 misses=4 hit_rate=42.86%"
+      is_hidden: false
+      weight: 2
+    - name: Larger cache no conflicts
+      stdin: "CACHE 256 32\nR 00000000\nR 00000020\nR 00000100\nR 00000000\nW 00000020\nR 00000100"
+      expected_stdout: "MISS\nMISS\nMISS\nHIT\nHIT\nHIT\nhits=3 misses=3 hit_rate=50.00%"
+      is_hidden: false
+      weight: 1
+    - name: All misses cold start
+      stdin: "CACHE 32 8\nR 00000000\nR 00000008\nR 00000010\nR 00000018"
+      expected_stdout: "MISS\nMISS\nMISS\nMISS\nhits=0 misses=4 hit_rate=0.00%"
+      is_hidden: false
+      weight: 1
+    - name: Write-allocate on write miss
+      stdin: "CACHE 64 16\nW 00000000\nR 00000000\nW 00000001\nR 00000008"
+      expected_stdout: "MISS\nHIT\nHIT\nHIT\nhits=3 misses=1 hit_rate=75.00%"
+      is_hidden: true
+      weight: 1
+    - name: Conflict thrashing
+      stdin: "CACHE 64 16\nR 00000000\nR 00000040\nR 00000000\nR 00000040"
+      expected_stdout: "MISS\nMISS\nMISS\nMISS\nhits=0 misses=4 hit_rate=0.00%"
+      is_hidden: true
+      weight: 1
   - slug: arch-cache-address-decoder
     title: 'Prompt: Cache Address Decoder'
     type: exercise
@@ -1072,6 +1342,122 @@ modules:
     type: reading
     duration_minutes: 10
     content_file: lessons/what-is-pipelining.md
+  - slug: computer-pipeline-hazard-classifier-reading
+    title: 'Pipeline Hazard Classifier: Forwarding vs Stalls'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/computer-pipeline-hazard-classifier.md
+  - slug: computer-pipeline-hazard-classifier
+    title: Pipeline Hazard Classifier
+    type: exercise
+    duration_minutes: 30
+    content_file: lessons/computer-pipeline-hazard-classifier.prompt.md
+    prompt_file: lessons/computer-pipeline-hazard-classifier.prompt.md
+    difficulty: medium
+    points: 100
+    supported_languages:
+    - python
+    starter_code:
+      python: |
+        import sys
+        import re
+
+        def parse_regs(line):
+            line = line.strip().lower()
+            parts = re.split(r'[\s,]+', line)
+            mnemonic = parts[0]
+            is_load = mnemonic in ('lw','lh','lb','ld','lhu','lbu','lwu')
+            is_store = mnemonic in ('sw','sh','sb','sd')
+            is_branch = mnemonic in ('beq','bne','blt','bge','bltu','bgeu')
+            regs = re.findall(r'x\d+', line)
+            if is_store or is_branch:
+                return None, regs, False
+            elif regs:
+                return regs[0], regs[1:], is_load
+            return None, [], False
+
+        n = int(input())
+        instrs = [parse_regs(input()) for _ in range(n)]
+        # TODO: classify hazards for instr2..instrN
+    solution_code:
+      python: |
+        import sys
+        import re
+
+        def parse_regs(line):
+            line = line.strip().lower()
+            parts = re.split(r'[\s,]+', line)
+            mnemonic = parts[0]
+            is_load = mnemonic in ('lw','lh','lb','ld','lhu','lbu','lwu')
+            is_store = mnemonic in ('sw','sh','sb','sd')
+            is_branch = mnemonic in ('beq','bne','blt','bge','bltu','bgeu')
+            regs = re.findall(r'x\d+', line)
+            if is_store or is_branch:
+                return None, regs, False
+            elif regs:
+                return regs[0], regs[1:], is_load
+            return None, [], False
+
+        def norm(r):
+            return r.lower().strip() if r else None
+
+        n = int(input())
+        instrs = [parse_regs(input()) for _ in range(n)]
+
+        for i in range(1, n):
+            dest_cur, srcs_cur, _ = instrs[i]
+            hazard = None
+            hazard_from = None
+
+            for j in range(max(0, i - 2), i):
+                dest_prev, _, is_load_prev = instrs[j]
+                if dest_prev is None:
+                    continue
+                d = norm(dest_prev)
+                if d == 'x0':
+                    continue
+                if d in [norm(s) for s in srcs_cur]:
+                    if j == i - 1 and is_load_prev:
+                        hazard = 'STALL'
+                        hazard_from = j + 1
+                        break
+                    else:
+                        if hazard != 'STALL':
+                            hazard = 'FORWARD'
+                            hazard_from = j + 1
+
+            if hazard == 'STALL':
+                print(f'instr{i+1}: STALL_REQUIRED (load-use from instr{hazard_from})')
+            elif hazard == 'FORWARD':
+                print(f'instr{i+1}: FORWARDING (from instr{hazard_from})')
+            else:
+                print(f'instr{i+1}: NO_HAZARD')
+    test_cases:
+    - name: Mixed load-use and forwarding
+      stdin: "6\nlw x1, 0(x2)\nadd x3, x1, x4\nsub x5, x3, x6\nlw x7, 4(x5)\nsw x7, 8(x5)\nadd x0, x1, x2"
+      expected_stdout: "instr2: STALL_REQUIRED (load-use from instr1)\ninstr3: FORWARDING (from instr2)\ninstr4: FORWARDING (from instr3)\ninstr5: STALL_REQUIRED (load-use from instr4)\ninstr6: NO_HAZARD"
+      is_hidden: false
+      weight: 2
+    - name: ALU forwarding chain
+      stdin: "4\nadd x1, x2, x3\nadd x4, x1, x5\nlw x6, 0(x4)\nadd x7, x6, x1"
+      expected_stdout: "instr2: FORWARDING (from instr1)\ninstr3: FORWARDING (from instr2)\ninstr4: STALL_REQUIRED (load-use from instr3)"
+      is_hidden: false
+      weight: 1
+    - name: No hazards
+      stdin: "3\nadd x1, x2, x3\nadd x4, x5, x6\nsub x7, x8, x9"
+      expected_stdout: "instr2: NO_HAZARD\ninstr3: NO_HAZARD"
+      is_hidden: false
+      weight: 1
+    - name: x0 write never hazard
+      stdin: "3\nadd x0, x1, x2\nadd x3, x0, x4\nxor x5, x0, x6"
+      expected_stdout: "instr2: NO_HAZARD\ninstr3: NO_HAZARD"
+      is_hidden: true
+      weight: 1
+    - name: Gap-2 forwarding from load
+      stdin: "4\nlw x1, 0(x2)\nadd x3, x4, x5\nsub x6, x1, x7\nbne x6, x0, done"
+      expected_stdout: "instr2: NO_HAZARD\ninstr3: FORWARDING (from instr1)\ninstr4: FORWARDING (from instr3)"
+      is_hidden: true
+      weight: 1
   - slug: arch-hazard-detector
     title: 'Prompt: Detect Data Hazards in an Instruction Stream'
     type: exercise

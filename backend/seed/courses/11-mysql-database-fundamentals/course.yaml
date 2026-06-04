@@ -16,7 +16,7 @@ course:
     rot, and the operational concepts (transactions, replication, backups) that
     keep production databases alive.
   difficulty: intermediate
-  estimated_hours: 22
+  estimated_hours: 28
   is_published: true
   order_index: 11
 
@@ -132,6 +132,81 @@ modules:
                 expected_stdout: "id,name,age\n2,B,31"
                 is_hidden: true
                 weight: 1
+      - slug: group-by-aggregation-exercise
+        title: GROUP BY Aggregation
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/group-by-aggregation-exercise.md
+        exercises:
+          - slug: mysql-group-by-aggregation
+            title: GROUP BY Aggregation Simulator
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/mysql-group-by-aggregation.prompt.md
+            supported_languages: [python]
+            tags: [sql, aggregation, group-by]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                def solve():
+                    data = sys.stdin.read().strip().split('\n')
+                    n = int(data[0])
+                    # TODO: group sales by product, compute COUNT and AVG(amount)
+                    # Output: product count avg (sorted by product ascending)
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                def main():
+                    data = sys.stdin.read().strip().split('\n')
+                    n = int(data[0])
+                    groups = defaultdict(list)
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        product = parts[0]
+                        amount = float(parts[1])
+                        groups[product].append(amount)
+                    for product in sorted(groups.keys()):
+                        amounts = groups[product]
+                        cnt = len(amounts)
+                        avg = round(sum(amounts) / cnt, 2)
+                        print(f'{product} {cnt} {avg:.2f}')
+
+                main()
+            test_cases:
+              - name: three-products
+                stdin: "6\nApple 3.50\nBanana 2.00\nApple 4.50\nBanana 3.00\nApple 2.00\nCherry 5.00"
+                expected_stdout: "Apple 3 3.33\nBanana 2 2.50\nCherry 1 5.00"
+                is_hidden: false
+                weight: 1
+              - name: single-product
+                stdin: "3\nWidget 10.00\nWidget 20.00\nWidget 30.00"
+                expected_stdout: "Widget 3 20.00"
+                is_hidden: false
+                weight: 1
+              - name: one-sale-each
+                stdin: "2\nZebra 7.50\nAlpha 3.00"
+                expected_stdout: "Alpha 1 3.00\nZebra 1 7.50"
+                is_hidden: false
+                weight: 1
+              - name: rounding-check
+                stdin: "3\nItem 1.00\nItem 2.00\nItem 3.00"
+                expected_stdout: "Item 3 2.00"
+                is_hidden: true
+                weight: 1
+              - name: many-products
+                stdin: "5\nC 9.00\nA 1.00\nB 5.00\nA 3.00\nC 3.00"
+                expected_stdout: "A 2 2.00\nB 1 5.00\nC 2 6.00"
+                is_hidden: true
+                weight: 1
 
   - title: Joins and Subqueries
     summary: INNER, LEFT, RIGHT, and CROSS joins; correlated and uncorrelated subqueries.
@@ -224,6 +299,83 @@ modules:
                 expected_stdout: "user_id,name,amount"
                 is_hidden: true
                 weight: 1
+      - slug: left-join-simulation-exercise
+        title: LEFT JOIN Simulation
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/left-join-simulation-exercise.md
+        exercises:
+          - slug: mysql-left-join-sim
+            title: LEFT JOIN Simulator
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/mysql-left-join-sim.prompt.md
+            supported_languages: [python]
+            tags: [sql, joins, left-join]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().strip().split('\n')
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    # TODO: read table A, read table B, perform LEFT JOIN on id
+                    # Output each A row with matching B value or NULL, sorted by id
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().strip().split('\n')
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    table_a = []
+                    for _ in range(n):
+                        parts = data[idx].split(); idx += 1
+                        table_a.append((int(parts[0]), parts[1]))
+                    m = int(data[idx]); idx += 1
+                    table_b = {}
+                    for _ in range(m):
+                        parts = data[idx].split(); idx += 1
+                        table_b[int(parts[0])] = parts[1]
+                    table_a.sort(key=lambda x: x[0])
+                    for aid, aval in table_a:
+                        bval = table_b.get(aid, 'NULL')
+                        print(aid, aval, bval)
+
+                main()
+            test_cases:
+              - name: basic-with-nulls
+                stdin: "4\n1 Apple\n2 Banana\n3 Cherry\n5 Date\n3\n1 Red\n3 Green\n4 Blue"
+                expected_stdout: "1 Apple Red\n2 Banana NULL\n3 Cherry Green\n5 Date NULL"
+                is_hidden: false
+                weight: 1
+              - name: all-matched
+                stdin: "3\n1 X\n2 Y\n3 Z\n3\n1 A\n2 B\n3 C"
+                expected_stdout: "1 X A\n2 Y B\n3 Z C"
+                is_hidden: false
+                weight: 1
+              - name: none-matched
+                stdin: "2\n1 Foo\n2 Bar\n2\n10 X\n20 Y"
+                expected_stdout: "1 Foo NULL\n2 Bar NULL"
+                is_hidden: false
+                weight: 1
+              - name: unsorted-input
+                stdin: "3\n5 Five\n1 One\n3 Three\n2\n3 Three-B\n5 Five-B"
+                expected_stdout: "1 One NULL\n3 Three Three-B\n5 Five Five-B"
+                is_hidden: true
+                weight: 1
+              - name: single-row
+                stdin: "1\n7 Solo\n1\n7 Match"
+                expected_stdout: "7 Solo Match"
+                is_hidden: true
+                weight: 1
       - slug: joins-subqueries-quiz
         title: "Quiz: Joins and Subqueries"
         type: quiz
@@ -249,6 +401,164 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/alter-table-migrations.md
+      - slug: relational-schema-validator-exercise
+        title: Relational Schema Validator
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/relational-schema-validator-exercise.md
+        exercises:
+          - slug: mysql-relational-schema-validator
+            title: Referential Integrity Checker
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/mysql-relational-schema-validator.prompt.md
+            supported_languages: [python]
+            tags: [sql, schema-design, foreign-keys, normalization]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    # TODO: read N student rows, then M enrollment rows
+                    # Output VALID or INVALID + orphaned student_ids sorted ascending
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    students = set()
+                    for _ in range(n):
+                        parts = data[idx].split(); idx += 1
+                        students.add(int(parts[0]))
+                    m = int(data[idx]); idx += 1
+                    orphans = set()
+                    for _ in range(m):
+                        parts = data[idx].split(); idx += 1
+                        sid = int(parts[0])
+                        if sid not in students:
+                            orphans.add(sid)
+                    if not orphans:
+                        print('VALID')
+                    else:
+                        print('INVALID')
+                        for oid in sorted(orphans):
+                            print(oid)
+
+                main()
+            test_cases:
+              - name: one-orphan
+                stdin: "3\n1 Alice\n2 Bob\n3 Carol\n4\n1 Math\n2 Science\n4 History\n2 Art"
+                expected_stdout: "INVALID\n4"
+                is_hidden: false
+                weight: 1
+              - name: all-valid
+                stdin: "2\n1 Alice\n2 Bob\n3\n1 Math\n2 Science\n1 Art"
+                expected_stdout: "VALID"
+                is_hidden: false
+                weight: 1
+              - name: multiple-orphans
+                stdin: "2\n1 Alice\n2 Bob\n4\n1 Math\n5 History\n3 Science\n2 Art"
+                expected_stdout: "INVALID\n3\n5"
+                is_hidden: false
+                weight: 1
+              - name: repeated-orphan-once
+                stdin: "1\n1 Alice\n3\n2 Math\n2 Science\n2 Art"
+                expected_stdout: "INVALID\n2"
+                is_hidden: true
+                weight: 1
+              - name: no-enrollments
+                stdin: "2\n1 Alice\n2 Bob\n0"
+                expected_stdout: "VALID"
+                is_hidden: true
+                weight: 1
+      - slug: normalize-1nf-exercise
+        title: Normalize to First Normal Form
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/normalize-1nf-exercise.md
+        exercises:
+          - slug: mysql-normalize-1nf
+            title: Normalize Multi-Valued Column to 1NF
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/mysql-normalize-1nf.prompt.md
+            supported_languages: [python]
+            tags: [sql, normalization, schema-design, 1nf]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().strip().split('\n')
+                    n = int(data[0])
+                    # TODO: split each row's semicolon-separated courses into individual rows
+                    # Output: student_id course, sorted by student_id then course ascending
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().strip().split('\n')
+                    n = int(data[0])
+                    rows = []
+                    for i in range(1, n + 1):
+                        parts = data[i].split(' ', 1)
+                        sid = int(parts[0])
+                        courses = parts[1].split(';')
+                        for course in courses:
+                            rows.append((sid, course.strip()))
+                    rows.sort(key=lambda x: (x[0], x[1]))
+                    for sid, course in rows:
+                        print(sid, course)
+
+                main()
+            test_cases:
+              - name: three-students
+                stdin: "3\n101 Math;Science;Art\n102 Science\n103 Math;Art"
+                expected_stdout: "101 Art\n101 Math\n101 Science\n102 Science\n103 Art\n103 Math"
+                is_hidden: false
+                weight: 1
+              - name: single-student-single-course
+                stdin: "1\n1 History"
+                expected_stdout: "1 History"
+                is_hidden: false
+                weight: 1
+              - name: alphabetical-ordering
+                stdin: "2\n5 Zebra;Alpha;Mango\n3 Beta;Alpha"
+                expected_stdout: "3 Alpha\n3 Beta\n5 Alpha\n5 Mango\n5 Zebra"
+                is_hidden: false
+                weight: 1
+              - name: many-courses
+                stdin: "1\n200 E;D;C;B;A"
+                expected_stdout: "200 A\n200 B\n200 C\n200 D\n200 E"
+                is_hidden: true
+                weight: 1
+              - name: two-students-same-courses
+                stdin: "2\n10 Math;English\n20 English;Math"
+                expected_stdout: "10 English\n10 Math\n20 English\n20 Math"
+                is_hidden: true
+                weight: 1
+      - slug: schema-design-quiz
+        title: "Quiz: Schema Design and Normalization"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/schema-design-quiz.md
 
   - title: Indexes and Query Optimization
     summary: How B-tree indexes work in InnoDB and how to read EXPLAIN.
@@ -269,6 +579,91 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/slow-query-log.md
+      - slug: index-lookup-exercise
+        title: Index Lookup Simulation
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/index-lookup-exercise.md
+        exercises:
+          - slug: mysql-index-lookup
+            title: B-tree Index Lookup Simulator
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/mysql-index-lookup.prompt.md
+            supported_languages: [python]
+            tags: [sql, indexes, binary-search, performance]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                import bisect
+
+                def solve():
+                    data = sys.stdin.read().strip().split('\n')
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    # TODO: read N (key, value) pairs (sorted by key)
+                    # Then read Q queries; for each query key, binary search and print value or NOT FOUND
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import bisect
+
+                def main():
+                    data = sys.stdin.read().strip().split('\n')
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    keys = []
+                    values = []
+                    for _ in range(n):
+                        parts = data[idx].split(); idx += 1
+                        keys.append(int(parts[0]))
+                        values.append(parts[1])
+                    q = int(data[idx]); idx += 1
+                    for _ in range(q):
+                        query_key = int(data[idx]); idx += 1
+                        pos = bisect.bisect_left(keys, query_key)
+                        if pos < len(keys) and keys[pos] == query_key:
+                            print(values[pos])
+                        else:
+                            print('NOT FOUND')
+
+                main()
+            test_cases:
+              - name: mixed-found-not-found
+                stdin: "5\n10 Alice\n20 Bob\n30 Carol\n40 Dave\n50 Eve\n4\n20\n35\n10\n99"
+                expected_stdout: "Bob\nNOT FOUND\nAlice\nNOT FOUND"
+                is_hidden: false
+                weight: 1
+              - name: all-found
+                stdin: "3\n1 X\n2 Y\n3 Z\n3\n1\n2\n3"
+                expected_stdout: "X\nY\nZ"
+                is_hidden: false
+                weight: 1
+              - name: none-found
+                stdin: "2\n5 Foo\n10 Bar\n3\n1\n3\n7"
+                expected_stdout: "NOT FOUND\nNOT FOUND\nNOT FOUND"
+                is_hidden: false
+                weight: 1
+              - name: boundary-keys
+                stdin: "3\n1 First\n500 Middle\n1000 Last\n3\n1\n1000\n501"
+                expected_stdout: "First\nLast\nNOT FOUND"
+                is_hidden: true
+                weight: 1
+              - name: single-entry
+                stdin: "1\n42 Answer\n2\n42\n43"
+                expected_stdout: "Answer\nNOT FOUND"
+                is_hidden: true
+                weight: 1
+      - slug: indexes-optimization-quiz
+        title: "Quiz: Indexes and Query Optimization"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/indexes-optimization-quiz.md
 
   - title: Transactions and Concurrency
     summary: ACID, isolation levels, locks, and deadlocks in InnoDB.
@@ -279,6 +674,108 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/acid-and-isolation.md
+      - slug: transaction-rollback-exercise
+        title: Transaction Rollback Simulator
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/transaction-rollback-exercise.md
+        exercises:
+          - slug: mysql-transaction-rollback
+            title: Transaction Log Interpreter
+            difficulty: medium
+            points: 30
+            prompt_file: lessons/mysql-transaction-rollback.prompt.md
+            supported_languages: [python]
+            tags: [sql, transactions, acid, savepoint]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().strip().split('\n')
+                    table = {}
+                    savepoint = None
+                    for line in lines:
+                        parts = line.split()
+                        cmd = parts[0]
+                        # TODO: handle BEGIN, INSERT, DELETE, SAVEPOINT,
+                        # ROLLBACK_TO_SAVEPOINT, COMMIT, ROLLBACK
+                        pass
+                    # TODO: print sorted table contents or EMPTY
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    lines = sys.stdin.read().strip().split('\n')
+                    table = {}
+                    savepoint = None
+                    for line in lines:
+                        parts = line.split()
+                        cmd = parts[0]
+                        if cmd == 'BEGIN':
+                            table = {}
+                            savepoint = None
+                        elif cmd == 'INSERT':
+                            name, amount = parts[1], int(parts[2])
+                            table[name] = amount
+                        elif cmd == 'DELETE':
+                            name = parts[1]
+                            table.pop(name, None)
+                        elif cmd == 'SAVEPOINT':
+                            savepoint = dict(table)
+                        elif cmd == 'ROLLBACK_TO_SAVEPOINT':
+                            if savepoint is not None:
+                                table = dict(savepoint)
+                            else:
+                                table = {}
+                        elif cmd == 'COMMIT':
+                            savepoint = None
+                        elif cmd == 'ROLLBACK':
+                            table = {}
+                            savepoint = None
+                    if not table:
+                        print('EMPTY')
+                    else:
+                        for name in sorted(table.keys()):
+                            print(name, table[name])
+
+                main()
+            test_cases:
+              - name: savepoint-and-commit
+                stdin: "BEGIN\nINSERT Alice 1000\nINSERT Bob 2000\nSAVEPOINT\nINSERT Carol 3000\nDELETE Bob\nROLLBACK_TO_SAVEPOINT\nINSERT Dave 4000\nCOMMIT"
+                expected_stdout: "Alice 1000\nBob 2000\nDave 4000"
+                is_hidden: false
+                weight: 1
+              - name: full-rollback
+                stdin: "BEGIN\nINSERT Alice 500\nINSERT Bob 300\nROLLBACK"
+                expected_stdout: "EMPTY"
+                is_hidden: false
+                weight: 1
+              - name: commit-no-savepoint
+                stdin: "BEGIN\nINSERT Alice 100\nINSERT Bob 200\nCOMMIT"
+                expected_stdout: "Alice 100\nBob 200"
+                is_hidden: false
+                weight: 1
+              - name: rollback-to-savepoint-no-prior-savepoint
+                stdin: "BEGIN\nINSERT Alice 999\nROLLBACK_TO_SAVEPOINT"
+                expected_stdout: "EMPTY"
+                is_hidden: true
+                weight: 1
+              - name: delete-then-commit
+                stdin: "BEGIN\nINSERT Alice 100\nINSERT Bob 200\nINSERT Carol 300\nSAVEPOINT\nDELETE Alice\nDELETE Carol\nCOMMIT"
+                expected_stdout: "Bob 200"
+                is_hidden: true
+                weight: 1
+              - name: overwrite-insert
+                stdin: "BEGIN\nINSERT Alice 100\nINSERT Alice 999\nCOMMIT"
+                expected_stdout: "Alice 999"
+                is_hidden: true
+                weight: 1
       - slug: transactions-quiz
         title: "Quiz: Transactions and Concurrency"
         type: quiz
@@ -299,6 +796,11 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/backups-and-replication.md
+      - slug: operations-admin-quiz
+        title: "Quiz: Operations and Administration"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/operations-admin-quiz.md
 
   - title: Stored Procedures and Views
     summary: Encapsulate logic server-side with stored procedures and simplify access with views.
@@ -314,3 +816,8 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/views.md
+      - slug: stored-procedures-views-quiz
+        title: "Quiz: Stored Procedures and Views"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/stored-procedures-views-quiz.md

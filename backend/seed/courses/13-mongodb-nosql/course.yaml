@@ -41,6 +41,11 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/documents-and-bson.md
+      - slug: nosql-ecosystem-cap
+        title: "The NoSQL Ecosystem and CAP Theory"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/nosql-ecosystem-cap.md
       - slug: mongo-basics-quiz
         title: "Quiz - Mongo Basics"
         type: quiz
@@ -52,6 +57,103 @@ modules:
         duration_minutes: 120
         video_url: "https://www.youtube.com/results?search_query=mongodb+full+course+freeCodeCamp"
         content_file: lessons/mongodb-full-course-video.md
+      - slug: mongodb-document-validator-lesson
+        title: "Exercise - Document Validator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/mongodb-document-validator.md
+        exercises:
+          - slug: mongodb-document-validator
+            title: Document Validator
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/mongodb-document-validator.prompt.md
+            supported_languages: [python]
+            tags: [mongodb, schema, validation]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                REQUIRED = {'name', 'age', 'email'}
+
+                def check_document(lines):
+                    # TODO: collect field names and check against REQUIRED
+                    pass
+
+                current = []
+                for line in sys.stdin:
+                    line_stripped = line.strip()
+                    if line_stripped == '---':
+                        print(check_document(current))
+                        current = []
+                    else:
+                        current.append(line)
+
+                if current:
+                    print(check_document(current))
+            solution_code:
+              python: |
+                import sys
+
+                REQUIRED = {'name', 'age', 'email'}
+
+                def check_document(lines):
+                    fields = set()
+                    for line in lines:
+                        line = line.strip()
+                        if ':' in line:
+                            key = line.split(':', 1)[0].strip()
+                            fields.add(key)
+                    missing = REQUIRED - fields
+                    if not missing:
+                        return 'VALID'
+                    else:
+                        return 'MISSING: ' + ','.join(sorted(missing))
+
+                current = []
+                for line in sys.stdin:
+                    line_stripped = line.strip()
+                    if line_stripped == '---':
+                        print(check_document(current))
+                        current = []
+                    else:
+                        current.append(line)
+
+                if current:
+                    print(check_document(current))
+            test_cases:
+              - name: all-fields-present
+                stdin: "name:Alice\nage:30\nemail:alice@example.com\n"
+                expected_stdout: "VALID"
+                is_hidden: false
+                weight: 1
+              - name: missing-age
+                stdin: "name:Bob\nemail:bob@example.com\n"
+                expected_stdout: "MISSING: age"
+                is_hidden: false
+                weight: 1
+              - name: missing-email-and-name
+                stdin: "age:25\n"
+                expected_stdout: "MISSING: email,name"
+                is_hidden: false
+                weight: 1
+              - name: multi-record-mixed
+                stdin: "name:Alice\nage:30\nemail:alice@example.com\n---\nname:Bob\nemail:bob@example.com\n---\nage:25\n"
+                expected_stdout: "VALID\nMISSING: age\nMISSING: email,name"
+                is_hidden: false
+                weight: 1
+              - name: missing-all-three
+                stdin: "city:London\ncountry:UK\n"
+                expected_stdout: "MISSING: age,email,name"
+                is_hidden: true
+                weight: 1
+              - name: extra-fields-still-valid
+                stdin: "name:Carol\nage:28\nemail:carol@test.com\ncity:Paris\nrole:admin\n"
+                expected_stdout: "VALID"
+                is_hidden: true
+                weight: 1
 
   - title: CRUD Operations
     summary: "insert, find, update, delete with operators."
@@ -223,6 +325,83 @@ modules:
                 expected_stdout: "c,6\nb,4\na,2"
                 is_hidden: true
                 weight: 1
+      - slug: mongodb-aggregation-sim-lesson
+        title: "Exercise - Aggregation Pipeline Simulator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/mongodb-aggregation-sim.md
+        exercises:
+          - slug: mongodb-aggregation-pipeline-sim
+            title: Aggregation Pipeline Simulator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/mongodb-aggregation-sim.prompt.md
+            supported_languages: [python]
+            tags: [mongodb, aggregation, match, group]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                lines = [line.strip() for line in sys.stdin if line.strip()]
+                idx = 0
+
+                n = int(lines[idx]); idx += 1
+                records = []
+                for _ in range(n):
+                    # TODO: parse category:value records
+                    idx += 1
+
+                # TODO: parse $match and $group stages, then compute count and sum
+            solution_code:
+              python: |
+                import sys
+
+                lines = [line.strip() for line in sys.stdin if line.strip()]
+                idx = 0
+
+                n = int(lines[idx]); idx += 1
+                records = []
+                for _ in range(n):
+                    cat, val = lines[idx].split(':')
+                    records.append((cat.strip(), int(val.strip())))
+                    idx += 1
+
+                match_line = lines[idx]; idx += 1
+                match_cat = match_line.split('=', 1)[1].strip()
+
+                idx += 1  # consume $group line
+
+                matched = [v for cat, v in records if cat == match_cat]
+                print(f'count:{len(matched)}')
+                print(f'sum:{sum(matched)}')
+            test_cases:
+              - name: basic-fruit
+                stdin: "5\nfruit:10\nvegetable:20\nfruit:30\nfruit:5\nvegetable:15\n$match category=fruit\n$group\n"
+                expected_stdout: "count:3\nsum:45"
+                is_hidden: false
+                weight: 1
+              - name: no-match
+                stdin: "3\nfruit:10\nfruit:20\nfruit:30\n$match category=vegetable\n$group\n"
+                expected_stdout: "count:0\nsum:0"
+                is_hidden: false
+                weight: 1
+              - name: single-match
+                stdin: "3\na:100\nb:200\na:300\n$match category=b\n$group\n"
+                expected_stdout: "count:1\nsum:200"
+                is_hidden: false
+                weight: 1
+              - name: all-match
+                stdin: "4\nx:5\nx:5\nx:5\nx:5\n$match category=x\n$group\n"
+                expected_stdout: "count:4\nsum:20"
+                is_hidden: true
+                weight: 1
+              - name: large-values
+                stdin: "3\norders:1000\norders:2500\nreturns:500\n$match category=orders\n$group\n"
+                expected_stdout: "count:2\nsum:3500"
+                is_hidden: true
+                weight: 1
 
   - title: Indexes in MongoDB
     summary: Single field, compound, and the ESR rule.
@@ -243,6 +422,88 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/query-optimization.md
+      - slug: indexes-quiz
+        title: "Quiz - Indexes and Query Performance"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/indexes-quiz.md
+      - slug: mongodb-index-selectivity-lesson
+        title: "Exercise - Index Selectivity Analyzer"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/mongodb-index-selectivity.md
+        exercises:
+          - slug: mongodb-index-selectivity
+            title: Index Selectivity Analyzer
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/mongodb-index-selectivity.prompt.md
+            supported_languages: [python]
+            tags: [mongodb, indexes, performance, selectivity]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                lines = [line.strip() for line in sys.stdin if line.strip()]
+                n = int(lines[0])
+                values = lines[1:n+1]
+
+                # TODO: compute selectivity = unique / total
+                # Classify as HIGH (>=0.8), MEDIUM (>=0.5), or LOW (<0.5)
+                # Print: selectivity:<ratio> quality:<LEVEL>
+            solution_code:
+              python: |
+                import sys
+
+                lines = [line.strip() for line in sys.stdin if line.strip()]
+                n = int(lines[0])
+                values = lines[1:n+1]
+
+                total = len(values)
+                unique = len(set(values))
+                ratio = unique / total if total > 0 else 0
+
+                if ratio >= 0.8:
+                    quality = 'HIGH'
+                elif ratio >= 0.5:
+                    quality = 'MEDIUM'
+                else:
+                    quality = 'LOW'
+
+                print(f'selectivity:{ratio:.2f} quality:{quality}')
+            test_cases:
+              - name: medium-selectivity
+                stdin: "10\nAlice\nBob\nAlice\nCharlie\nAlice\nBob\nDave\nEve\nAlice\nBob\n"
+                expected_stdout: "selectivity:0.50 quality:MEDIUM"
+                is_hidden: false
+                weight: 1
+              - name: high-selectivity-all-unique
+                stdin: "5\napple\nbanana\ncherry\ndate\nelderberry\n"
+                expected_stdout: "selectivity:1.00 quality:HIGH"
+                is_hidden: false
+                weight: 1
+              - name: low-selectivity-boolean
+                stdin: "6\ntrue\nfalse\ntrue\ntrue\nfalse\ntrue\n"
+                expected_stdout: "selectivity:0.33 quality:LOW"
+                is_hidden: false
+                weight: 1
+              - name: high-selectivity-partial
+                stdin: "5\nA\nB\nC\nA\nD\n"
+                expected_stdout: "selectivity:0.80 quality:HIGH"
+                is_hidden: true
+                weight: 1
+              - name: low-all-same
+                stdin: "4\nactive\nactive\nactive\nactive\n"
+                expected_stdout: "selectivity:0.25 quality:LOW"
+                is_hidden: true
+                weight: 1
+              - name: medium-boundary
+                stdin: "4\nx\ny\nx\nz\n"
+                expected_stdout: "selectivity:0.75 quality:MEDIUM"
+                is_hidden: true
+                weight: 1
 
   - title: "Schema Design - Embed vs Reference"
     summary: When to nest documents and when to use references.
@@ -253,6 +514,100 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/embed-vs-reference.md
+      - slug: schema-design-quiz
+        title: "Quiz - Schema Design and Data Modeling"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/schema-design-quiz.md
+      - slug: mongodb-relationship-resolver-lesson
+        title: "Exercise - Embedded vs Referenced Relationship Resolver"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/mongodb-relationship-resolver.md
+        exercises:
+          - slug: mongodb-relationship-resolver
+            title: Embedded vs Referenced Relationship Resolver
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/mongodb-relationship-resolver.prompt.md
+            supported_languages: [python]
+            tags: [mongodb, schema-design, embed, reference, lookup]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                lines = [line.strip() for line in sys.stdin if line.strip()]
+                idx = 0
+
+                num_users = int(lines[idx]); idx += 1
+                users = []
+                for _ in range(num_users):
+                    # TODO: parse userId:name
+                    idx += 1
+
+                num_orders = int(lines[idx]); idx += 1
+                order_map = defaultdict(list)
+                for _ in range(num_orders):
+                    # TODO: parse orderId:userId:amount and group by userId
+                    idx += 1
+
+                # TODO: for each user, print "<name>: <count> orders, total: <sum>"
+            solution_code:
+              python: |
+                import sys
+                from collections import defaultdict
+
+                lines = [line.strip() for line in sys.stdin if line.strip()]
+                idx = 0
+
+                num_users = int(lines[idx]); idx += 1
+                users = []
+                for _ in range(num_users):
+                    uid, name = lines[idx].split(':', 1)
+                    users.append((uid.strip(), name.strip()))
+                    idx += 1
+
+                num_orders = int(lines[idx]); idx += 1
+                order_map = defaultdict(list)
+                for _ in range(num_orders):
+                    parts = lines[idx].split(':')
+                    uid = parts[1].strip()
+                    amount = int(parts[2].strip())
+                    order_map[uid].append(amount)
+                    idx += 1
+
+                for uid, name in users:
+                    orders = order_map[uid]
+                    print(f'{name}: {len(orders)} orders, total: {sum(orders)}')
+            test_cases:
+              - name: basic-three-users
+                stdin: "3\nu1:Alice\nu2:Bob\nu3:Carol\n4\no1:u1:100\no2:u2:200\no3:u1:150\no4:u2:50\n"
+                expected_stdout: "Alice: 2 orders, total: 250\nBob: 2 orders, total: 250\nCarol: 0 orders, total: 0"
+                is_hidden: false
+                weight: 1
+              - name: single-user-single-order
+                stdin: "1\nu1:Dave\n1\no1:u1:500\n"
+                expected_stdout: "Dave: 1 orders, total: 500"
+                is_hidden: false
+                weight: 1
+              - name: all-users-no-orders
+                stdin: "2\nu1:Alice\nu2:Bob\n0\n"
+                expected_stdout: "Alice: 0 orders, total: 0\nBob: 0 orders, total: 0"
+                is_hidden: false
+                weight: 1
+              - name: many-orders-one-user
+                stdin: "2\nu1:Alice\nu2:Bob\n5\no1:u1:10\no2:u1:20\no3:u1:30\no4:u1:40\no5:u2:100\n"
+                expected_stdout: "Alice: 4 orders, total: 100\nBob: 1 orders, total: 100"
+                is_hidden: true
+                weight: 1
+              - name: output-order-matches-input
+                stdin: "3\nu3:Zara\nu1:Alice\nu2:Bob\n2\no1:u1:50\no2:u3:75\n"
+                expected_stdout: "Zara: 1 orders, total: 75\nAlice: 1 orders, total: 50\nBob: 0 orders, total: 0"
+                is_hidden: true
+                weight: 1
 
   - title: Transactions and Atomicity
     summary: Multi-document ACID transactions and retry patterns.
@@ -313,3 +668,8 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/sharding.md
+      - slug: replication-sharding-quiz
+        title: "Quiz - Replication, Sharding, and Distributed Operations"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/replication-sharding-quiz.md

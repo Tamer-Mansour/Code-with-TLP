@@ -16,7 +16,7 @@ course:
     decorators, generators, async/await, typing, dataclasses, and the standard
     library tools they reach for daily.
   difficulty: beginner
-  estimated_hours: 22
+  estimated_hours: 28
   is_published: true
   order_index: 16
 
@@ -41,10 +41,65 @@ modules:
         duration_minutes: 10
         content_file: lessons/control-flow.md
       - slug: python-basics-quiz
-        title: Quiz - Python Basics
+        title: "Quiz: Python Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/python-basics-quiz.md
+      - slug: temperature-converter-exercise
+        title: Temperature Converter
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/temperature-converter-exercise.md
+        exercises:
+          - slug: python-temperature-converter
+            title: Temperature Converter
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/python-temperature-converter.prompt.md
+            supported_languages: [python]
+            tags: [arithmetic, input-output, formatting]
+            time_limit_ms: 2000
+            memory_limit_mb: 64
+            starter_code:
+              python: |
+                celsius = float(input())
+                # TODO: convert to Fahrenheit and print rounded to 2 decimal places followed by F
+            solution_code:
+              python: |
+                celsius = float(input())
+                fahrenheit = celsius * 9 / 5 + 32
+                print(f"{fahrenheit:.2f}F")
+            test_cases:
+              - name: boiling-point
+                stdin: "100\n"
+                expected_stdout: "212.00F"
+                is_hidden: false
+                weight: 1
+              - name: freezing-point
+                stdin: "0\n"
+                expected_stdout: "32.00F"
+                is_hidden: false
+                weight: 1
+              - name: crossover
+                stdin: "-40\n"
+                expected_stdout: "-40.00F"
+                is_hidden: false
+                weight: 1
+              - name: body-temp
+                stdin: "37\n"
+                expected_stdout: "98.60F"
+                is_hidden: true
+                weight: 1
+              - name: negative
+                stdin: "-10\n"
+                expected_stdout: "14.00F"
+                is_hidden: true
+                weight: 1
+              - name: decimal-input
+                stdin: "21.5\n"
+                expected_stdout: "70.70F"
+                is_hidden: true
+                weight: 1
 
   - title: Data Structures
     summary: Lists, tuples, dicts, sets, comprehensions.
@@ -124,9 +179,14 @@ modules:
                 weight: 1
               - name: longer
                 stdin: "listen silent enlist hello world\n"
-                expected_stdout: "enlist listen silent\nhello\ndlorw"
+                expected_stdout: "enlist listen silent\nhello\nworld"
                 is_hidden: true
                 weight: 1
+      - slug: data-structures-quiz
+        title: "Quiz: Data Structures"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/data-structures-quiz.md
 
   - title: Functions and OOP
     summary: Definitions, closures, classes, dataclasses, exceptions, and context managers.
@@ -152,6 +212,185 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/context-managers.md
+      - slug: fizzbuzz-exercise
+        title: FizzBuzz Classic
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/fizzbuzz-exercise.md
+        exercises:
+          - slug: python-fizzbuzz
+            title: FizzBuzz Classic
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/python-fizzbuzz.prompt.md
+            supported_languages: [python]
+            tags: [loops, conditionals, modulo]
+            time_limit_ms: 2000
+            memory_limit_mb: 64
+            starter_code:
+              python: |
+                n = int(input())
+                for i in range(1, n + 1):
+                    # TODO: print Fizz, Buzz, FizzBuzz, or the number
+                    pass
+            solution_code:
+              python: |
+                n = int(input())
+                for i in range(1, n + 1):
+                    if i % 15 == 0:
+                        print('FizzBuzz')
+                    elif i % 3 == 0:
+                        print('Fizz')
+                    elif i % 5 == 0:
+                        print('Buzz')
+                    else:
+                        print(i)
+            test_cases:
+              - name: n-15
+                stdin: "15\n"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"
+                is_hidden: false
+                weight: 1
+              - name: n-5
+                stdin: "5\n"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz"
+                is_hidden: false
+                weight: 1
+              - name: n-1
+                stdin: "1\n"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: n-30
+                stdin: "30\n"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz\nFizz\n22\n23\nFizz\nBuzz\n26\nFizz\n28\n29\nFizzBuzz"
+                is_hidden: true
+                weight: 1
+              - name: n-3
+                stdin: "3\n"
+                expected_stdout: "1\n2\nFizz"
+                is_hidden: true
+                weight: 1
+      - slug: functions-oop-quiz
+        title: "Quiz: Functions and OOP"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/functions-oop-quiz.md
+      - slug: stack-ops-exercise
+        title: Stack Operations
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/stack-ops-exercise.md
+        exercises:
+          - slug: python-stack-ops
+            title: Stack Operations
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/python-stack-ops.prompt.md
+            supported_languages: [python]
+            tags: [oop, classes, data-structures]
+            time_limit_ms: 2000
+            memory_limit_mb: 64
+            starter_code:
+              python: |
+                import sys
+
+                class Stack:
+                    def __init__(self):
+                        self._data = []
+
+                    def push(self, value):
+                        pass  # TODO
+
+                    def pop(self):
+                        pass  # TODO
+
+                    def peek(self):
+                        pass  # TODO
+
+                    def size(self):
+                        pass  # TODO
+
+                stack = Stack()
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    cmd = parts[0]
+                    if cmd == 'PUSH':
+                        stack.push(int(parts[1]))
+                    elif cmd == 'POP':
+                        print(stack.pop())
+                    elif cmd == 'PEEK':
+                        print(stack.peek())
+                    elif cmd == 'SIZE':
+                        print(stack.size())
+            solution_code:
+              python: |
+                import sys
+
+                class Stack:
+                    def __init__(self):
+                        self._data = []
+
+                    def push(self, value):
+                        self._data.append(value)
+
+                    def pop(self):
+                        if not self._data:
+                            return 'Empty'
+                        return self._data.pop()
+
+                    def peek(self):
+                        if not self._data:
+                            return 'Empty'
+                        return self._data[-1]
+
+                    def size(self):
+                        return len(self._data)
+
+                stack = Stack()
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    cmd = parts[0]
+                    if cmd == 'PUSH':
+                        stack.push(int(parts[1]))
+                    elif cmd == 'POP':
+                        print(stack.pop())
+                    elif cmd == 'PEEK':
+                        print(stack.peek())
+                    elif cmd == 'SIZE':
+                        print(stack.size())
+            test_cases:
+              - name: basic-sequence
+                stdin: "PUSH 5\nPUSH 3\nPEEK\nPOP\nSIZE\nPOP\nPOP\n"
+                expected_stdout: "3\n3\n1\n5\nEmpty"
+                is_hidden: false
+                weight: 1
+              - name: empty-stack
+                stdin: "POP\nPEEK\nSIZE\n"
+                expected_stdout: "Empty\nEmpty\n0"
+                is_hidden: false
+                weight: 1
+              - name: size-tracking
+                stdin: "PUSH 1\nPUSH 2\nPUSH 3\nSIZE\nPOP\nSIZE\n"
+                expected_stdout: "3\n3\n2"
+                is_hidden: false
+                weight: 1
+              - name: single-element
+                stdin: "PUSH 42\nPEEK\nPOP\nPEEK\n"
+                expected_stdout: "42\n42\nEmpty"
+                is_hidden: true
+                weight: 1
+              - name: multiple-pushes
+                stdin: "PUSH 10\nPUSH 20\nPUSH 30\nPOP\nPOP\nPOP\nPOP\n"
+                expected_stdout: "30\n20\n10\nEmpty"
+                is_hidden: true
+                weight: 1
 
   - title: Iterators, Generators, Decorators
     summary: Pythonic patterns for lazy evaluation and metaprogramming.
@@ -167,6 +406,68 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/decorators.md
+      - slug: fibonacci-exercise
+        title: Fibonacci Sequence
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/fibonacci-exercise.md
+        exercises:
+          - slug: python-fibonacci
+            title: Fibonacci Sequence
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/python-fibonacci.prompt.md
+            supported_languages: [python]
+            tags: [loops, sequences, iteration]
+            time_limit_ms: 2000
+            memory_limit_mb: 64
+            starter_code:
+              python: |
+                n = int(input())
+                # TODO: print the first n Fibonacci numbers separated by spaces
+            solution_code:
+              python: |
+                def fibonacci(n):
+                    result = []
+                    a, b = 0, 1
+                    for _ in range(n):
+                        result.append(a)
+                        a, b = b, a + b
+                    return result
+
+                n = int(input())
+                print(' '.join(map(str, fibonacci(n))))
+            test_cases:
+              - name: eight-numbers
+                stdin: "8\n"
+                expected_stdout: "0 1 1 2 3 5 8 13"
+                is_hidden: false
+                weight: 1
+              - name: one-number
+                stdin: "1\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: zero
+                stdin: "0\n"
+                expected_stdout: ""
+                is_hidden: false
+                weight: 1
+              - name: ten-numbers
+                stdin: "10\n"
+                expected_stdout: "0 1 1 2 3 5 8 13 21 34"
+                is_hidden: true
+                weight: 1
+              - name: two-numbers
+                stdin: "2\n"
+                expected_stdout: "0 1"
+                is_hidden: true
+                weight: 1
+      - slug: iterators-generators-quiz
+        title: "Quiz: Iterators, Generators, and Decorators"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/iterators-generators-quiz.md
 
   - title: Modern Python
     summary: Typing, async, packaging, and testing.
@@ -187,6 +488,94 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/packaging-and-venv.md
+      - slug: student-grades-exercise
+        title: Student Grade Classifier
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/student-grades-exercise.md
+        exercises:
+          - slug: python-student-grades
+            title: Student Grade Classifier
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/python-student-grades.prompt.md
+            supported_languages: [python]
+            tags: [functions, sorting, conditionals, input-parsing]
+            time_limit_ms: 2000
+            memory_limit_mb: 64
+            starter_code:
+              python: |
+                def classify(score):
+                    pass  # TODO: return 'A', 'B', 'C', 'D', or 'F'
+
+                n = int(input())
+                students = []
+                for _ in range(n):
+                    parts = input().split()
+                    name, score = parts[0], int(parts[1])
+                    students.append((name, score))
+
+                for name, score in sorted(students):
+                    print(f"{name}: {classify(score)}")
+            solution_code:
+              python: |
+                def classify(score):
+                    if score >= 90:
+                        return 'A'
+                    elif score >= 80:
+                        return 'B'
+                    elif score >= 70:
+                        return 'C'
+                    elif score >= 60:
+                        return 'D'
+                    else:
+                        return 'F'
+
+                n = int(input())
+                students = []
+                for _ in range(n):
+                    parts = input().split()
+                    name, score = parts[0], int(parts[1])
+                    students.append((name, score))
+
+                for name, score in sorted(students):
+                    print(f"{name}: {classify(score)}")
+            test_cases:
+              - name: four-students
+                stdin: "4\nAlice 92\nBob 73\nCarol 58\nDave 85\n"
+                expected_stdout: "Alice: A\nBob: C\nCarol: F\nDave: B"
+                is_hidden: false
+                weight: 1
+              - name: three-students
+                stdin: "3\nZara 60\nAna 100\nBen 79\n"
+                expected_stdout: "Ana: A\nBen: C\nZara: D"
+                is_hidden: false
+                weight: 1
+              - name: boundary-scores
+                stdin: "5\nE1 90\nE2 80\nE3 70\nE4 60\nE5 59\n"
+                expected_stdout: "E1: A\nE2: B\nE3: C\nE4: D\nE5: F"
+                is_hidden: false
+                weight: 1
+              - name: single-student
+                stdin: "1\nMia 45\n"
+                expected_stdout: "Mia: F"
+                is_hidden: true
+                weight: 1
+              - name: all-same-grade
+                stdin: "3\nTom 88\nSam 82\nAlex 87\n"
+                expected_stdout: "Alex: B\nSam: B\nTom: B"
+                is_hidden: true
+                weight: 1
+              - name: perfect-score
+                stdin: "2\nZoe 100\nAdam 0\n"
+                expected_stdout: "Adam: F\nZoe: A"
+                is_hidden: true
+                weight: 1
+      - slug: modern-python-quiz
+        title: "Quiz: Modern Python"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/modern-python-quiz.md
 
   - title: Standard Library Deep Dive
     summary: "collections, pathlib, and the broader standard library."
@@ -208,6 +597,11 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/pathlib-and-os.md
+      - slug: stdlib-quiz
+        title: "Quiz: Standard Library"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/stdlib-quiz.md
 
   - title: Testing and Debugging
     summary: Write reliable tests and track down bugs quickly.
@@ -288,3 +682,8 @@ modules:
                 expected_stdout: "yes: 4"
                 is_hidden: true
                 weight: 1
+      - slug: testing-debugging-quiz
+        title: "Quiz: Testing and Debugging"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/testing-debugging-quiz.md

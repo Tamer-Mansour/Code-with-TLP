@@ -1,10 +1,17 @@
 # Decorators in TypeScript
 
-Decorators are a stage-3 ECMAScript proposal (enabled with `"experimentalDecorators": true` in older TS, or natively in TS 5.0+ with the new standard decorator syntax). They add metadata or behaviour to classes, methods, properties, and parameters with a clean `@` syntax.
+TypeScript has **two incompatible decorator systems** that cannot coexist in the same project. Knowing which one you are using matters because the APIs are different and tooling support varies.
 
-## Enabling decorators
+| System | How to enable | Status |
+|---|---|---|
+| **Legacy decorators** | `"experimentalDecorators": true` in tsconfig | Stable in Angular, NestJS, TypeORM |
+| **TC39 Stage 3 decorators** | No flag needed (TypeScript 5.0+) | ECMAScript standard; different API |
 
-For **legacy decorators** (most Angular / NestJS projects):
+> **Key difference:** Legacy decorators pre-date the TC39 standard. A legacy class decorator receives the constructor alone. A Stage 3 class decorator receives the constructor **and a context object** with metadata about the decorated element. The two systems are mutually exclusive — enabling `experimentalDecorators` disables Stage 3 support.
+
+This lesson covers **legacy decorators** first (the system used by most real-world frameworks today), then shows the Stage 3 API.
+
+## Enabling legacy decorators
 
 ```json
 // tsconfig.json
@@ -16,7 +23,9 @@ For **legacy decorators** (most Angular / NestJS projects):
 }
 ```
 
-For **TC39 stage-3 decorators** (TS 5.0+, no flag needed):
+`emitDecoratorMetadata` is optional but required by dependency injection frameworks that introspect constructor parameter types via `Reflect.metadata`.
+
+## Using TC39 Stage 3 decorators (TypeScript 5.0+, no flag)
 
 ```json
 {
@@ -25,8 +34,6 @@ For **TC39 stage-3 decorators** (TS 5.0+, no flag needed):
   }
 }
 ```
-
-This lesson uses the legacy syntax (most common in real codebases today).
 
 ## Class decorators
 
@@ -177,9 +184,55 @@ class ApiService {
 | `@Column`, `@Entity` | TypeORM | Database ORM mapping |
 | `@IsEmail` | class-validator | Runtime validation |
 
+## Stage 3 class decorator API (TypeScript 5.0+)
+
+The new standard decorator receives two arguments: the value being decorated and a context object:
+
+```ts
+// Stage 3 — no experimentalDecorators flag
+function sealed(target: Function, context: ClassDecoratorContext) {
+  context.addInitializer(function () {
+    Object.seal(this);
+  });
+}
+
+@sealed
+class Config {
+  apiUrl = "https://api.example.com";
+}
+```
+
+Stage 3 method decorators:
+
+```ts
+function logged(
+  target: (this: unknown, ...args: unknown[]) => unknown,
+  context: ClassMethodDecoratorContext
+) {
+  return function (this: unknown, ...args: unknown[]) {
+    console.log(`[${String(context.name)}] called`);
+    return target.apply(this, args);
+  };
+}
+
+class Service {
+  @logged
+  fetchData(url: string) { /* ... */ }
+}
+```
+
+> The context object provides `context.name`, `context.kind` (`"class"`, `"method"`, `"field"`, etc.), `context.static`, and `context.private`. This is fundamentally different from the legacy three-argument `(target, propertyKey, descriptor)` API.
+
+## Further reading
+
+- [TypeScript Handbook — Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html) — covers legacy decorators in depth
+- [TypeScript 5.0 release notes](https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/) — Stage 3 decorator introduction
+- *TypeScript Deep Dive* by Basarat Ali Syed ([basarat.gitbook.io/typescript](https://basarat.gitbook.io/typescript)) — practical decorator patterns
+
 ## Key takeaways
 
-- Decorators are syntactic sugar for wrapping or annotating class-related constructs.
-- Legacy decorators (`experimentalDecorators`) are stable in real frameworks today.
+- TypeScript has **two incompatible decorator systems**: legacy (`experimentalDecorators`) and TC39 Stage 3 (TypeScript 5.0+, no flag).
+- Legacy decorators are what Angular, NestJS, TypeORM, and class-validator use today.
+- Stage 3 decorators use a new API: `(target, context)` instead of `(target, key, descriptor)`.
 - Method decorators are the most flexible — they can fully replace a method.
 - Avoid overusing decorators for business logic; prefer them for cross-cutting concerns (logging, retry, auth).

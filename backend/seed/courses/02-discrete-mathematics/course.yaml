@@ -16,7 +16,7 @@ course:
     number theory, the Chinese Remainder Theorem, and asymptotic analysis. Builds the formal reasoning
     skills required for algorithms, cryptography, and advanced CS coursework.
   difficulty: intermediate
-  estimated_hours: 26
+  estimated_hours: 30
   is_published: true
   order_index: 2
 
@@ -56,6 +56,65 @@ modules:
         duration_minutes: 20
         content_file: lessons/mathematical-induction.md
 
+      - slug: discrete-truth-table-exercise-lesson
+        title: "Exercise: Truth Table Generator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/discrete-truth-table-exercise.md
+        exercises:
+          - slug: discrete-truth-table
+            title: "Truth Table Generator"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/discrete-truth-table.prompt.md
+            supported_languages: [python]
+            tags: [logic, propositional-calculus, truth-tables]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                p, q = map(int, input().split())
+                # TODO: compute each connective and print five lines
+                print(f'p AND q: 0')
+                print(f'p OR q: 0')
+                print(f'NOT p: 0')
+                print(f'p IMPLIES q: 0')
+                print(f'p IFF q: 0')
+            solution_code:
+              python: |
+                p, q = map(int, input().split())
+                and_val = p & q
+                or_val = p | q
+                not_p = 1 - p
+                implies_val = (1 - p) | q
+                iff_val = implies_val & ((1 - q) | p)
+                print(f'p AND q: {and_val}')
+                print(f'p OR q: {or_val}')
+                print(f'NOT p: {not_p}')
+                print(f'p IMPLIES q: {implies_val}')
+                print(f'p IFF q: {iff_val}')
+            test_cases:
+              - name: "p1-q0"
+                stdin: "1 0\n"
+                expected_stdout: "p AND q: 0\np OR q: 1\nNOT p: 0\np IMPLIES q: 0\np IFF q: 0"
+                is_hidden: false
+                weight: 1
+              - name: "p0-q0"
+                stdin: "0 0\n"
+                expected_stdout: "p AND q: 0\np OR q: 0\nNOT p: 1\np IMPLIES q: 1\np IFF q: 1"
+                is_hidden: false
+                weight: 1
+              - name: "p1-q1"
+                stdin: "1 1\n"
+                expected_stdout: "p AND q: 1\np OR q: 1\nNOT p: 0\np IMPLIES q: 1\np IFF q: 1"
+                is_hidden: false
+                weight: 1
+              - name: "p0-q1"
+                stdin: "0 1\n"
+                expected_stdout: "p AND q: 0\np OR q: 1\nNOT p: 1\np IMPLIES q: 1\np IFF q: 0"
+                is_hidden: true
+                weight: 2
+
       - slug: logic-proofs-quiz
         title: "Quiz: Logic and Proofs"
         type: quiz
@@ -90,6 +149,77 @@ modules:
         type: reading
         duration_minutes: 18
         content_file: lessons/functions-and-cardinality.md
+
+      - slug: discrete-inclusion-exclusion-exercise-lesson
+        title: "Exercise: Inclusion-Exclusion Counter"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/discrete-inclusion-exclusion-exercise.md
+        exercises:
+          - slug: discrete-inclusion-exclusion
+            title: "Inclusion-Exclusion Counter"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/discrete-inclusion-exclusion.prompt.md
+            supported_languages: [python]
+            tags: [set-theory, combinatorics, inclusion-exclusion]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import math
+                n, a, b = map(int, input().split())
+                # TODO: use inclusion-exclusion to count multiples
+                print(f'Divisible by {a} only: 0')
+                print(f'Divisible by {b} only: 0')
+                print(f'Divisible by both: 0')
+                print(f'Divisible by at least one: 0')
+            solution_code:
+              python: |
+                import math
+                n, a, b = map(int, input().split())
+                lcm = a * b // math.gcd(a, b)
+                count_a = n // a
+                count_b = n // b
+                count_both = n // lcm
+                count_a_only = count_a - count_both
+                count_b_only = count_b - count_both
+                count_either = count_a + count_b - count_both
+                print(f'Divisible by {a} only: {count_a_only}')
+                print(f'Divisible by {b} only: {count_b_only}')
+                print(f'Divisible by both: {count_both}')
+                print(f'Divisible by at least one: {count_either}')
+            test_cases:
+              - name: "thirty-3-5"
+                stdin: "30 3 5\n"
+                expected_stdout: "Divisible by 3 only: 8\nDivisible by 5 only: 4\nDivisible by both: 2\nDivisible by at least one: 14"
+                is_hidden: false
+                weight: 1
+              - name: "twenty-2-4"
+                stdin: "20 2 4\n"
+                expected_stdout: "Divisible by 2 only: 5\nDivisible by 4 only: 0\nDivisible by both: 5\nDivisible by at least one: 10"
+                is_hidden: false
+                weight: 1
+              - name: "hundred-7-11"
+                stdin: "100 7 11\n"
+                expected_stdout: "Divisible by 7 only: 13\nDivisible by 11 only: 8\nDivisible by both: 1\nDivisible by at least one: 22"
+                is_hidden: false
+                weight: 1
+              - name: "fifty-6-10"
+                stdin: "50 6 10\n"
+                expected_stdout: "Divisible by 6 only: 7\nDivisible by 10 only: 4\nDivisible by both: 1\nDivisible by at least one: 12"
+                is_hidden: true
+                weight: 1
+              - name: "large-3-7"
+                stdin: "1000000000 3 7\n"
+                expected_stdout: "Divisible by 3 only: 285714286\nDivisible by 7 only: 95238095\nDivisible by both: 47619047\nDivisible by at least one: 428571428"
+                is_hidden: true
+                weight: 2
+              - name: "coprime-small"
+                stdin: "12 4 6\n"
+                expected_stdout: "Divisible by 4 only: 2\nDivisible by 6 only: 1\nDivisible by both: 1\nDivisible by at least one: 4"
+                is_hidden: true
+                weight: 1
 
       - slug: sets-relations-quiz
         title: "Quiz: Sets, Relations, and Functions"
@@ -212,6 +342,71 @@ modules:
                 expected_stdout: "4950"
                 is_hidden: true
                 weight: 1
+
+      - slug: discrete-pigeonhole-exercise-lesson
+        title: "Exercise: Pigeonhole Checker"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/discrete-pigeonhole-exercise.md
+        exercises:
+          - slug: discrete-pigeonhole
+            title: "Pigeonhole Checker"
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/discrete-pigeonhole.prompt.md
+            supported_languages: [python]
+            tags: [combinatorics, pigeonhole-principle, counting]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import math
+                n, k, m = map(int, input().split())
+                # TODO: compute the three pigeonhole quantities
+                print(f'Guaranteed max in one bin: 0')
+                print(f'At least one bin has more than 1 item: no')
+                print(f'Items needed to guarantee at least {m} per bin: 0')
+            solution_code:
+              python: |
+                import math
+                n, k, m = map(int, input().split())
+                guaranteed_max = math.ceil(n / k)
+                more_than_one = 'yes' if n > k else 'no'
+                min_for_m = (m - 1) * k + 1
+                print(f'Guaranteed max in one bin: {guaranteed_max}')
+                print(f'At least one bin has more than 1 item: {more_than_one}')
+                print(f'Items needed to guarantee at least {m} per bin: {min_for_m}')
+            test_cases:
+              - name: "ten-3bins-3"
+                stdin: "10 3 3\n"
+                expected_stdout: "Guaranteed max in one bin: 4\nAt least one bin has more than 1 item: yes\nItems needed to guarantee at least 3 per bin: 7"
+                is_hidden: false
+                weight: 1
+              - name: "five-5bins-2"
+                stdin: "5 5 2\n"
+                expected_stdout: "Guaranteed max in one bin: 1\nAt least one bin has more than 1 item: no\nItems needed to guarantee at least 2 per bin: 6"
+                is_hidden: false
+                weight: 1
+              - name: "hundred-12bins-9"
+                stdin: "100 12 9\n"
+                expected_stdout: "Guaranteed max in one bin: 9\nAt least one bin has more than 1 item: yes\nItems needed to guarantee at least 9 per bin: 97"
+                is_hidden: false
+                weight: 1
+              - name: "one-1bin-1"
+                stdin: "1 1 1\n"
+                expected_stdout: "Guaranteed max in one bin: 1\nAt least one bin has more than 1 item: no\nItems needed to guarantee at least 1 per bin: 1"
+                is_hidden: true
+                weight: 1
+              - name: "seven-3bins-4"
+                stdin: "7 3 4\n"
+                expected_stdout: "Guaranteed max in one bin: 3\nAt least one bin has more than 1 item: yes\nItems needed to guarantee at least 4 per bin: 10"
+                is_hidden: true
+                weight: 1
+              - name: "large"
+                stdin: "1000000000 1000000 5\n"
+                expected_stdout: "Guaranteed max in one bin: 1000\nAt least one bin has more than 1 item: yes\nItems needed to guarantee at least 5 per bin: 4000001"
+                is_hidden: true
+                weight: 2
 
       - slug: combinatorics-quiz
         title: "Quiz: Combinatorics and Counting"
@@ -592,6 +787,75 @@ modules:
               - name: very-large
                 stdin: "1000000000000 999999999999\n"
                 expected_stdout: "1"
+                is_hidden: true
+                weight: 2
+
+      - slug: discrete-extended-gcd-exercise-lesson
+        title: "Exercise: Extended Euclidean Algorithm"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/discrete-extended-gcd-exercise.md
+        exercises:
+          - slug: discrete-extended-gcd
+            title: "Extended Euclidean GCD"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/discrete-extended-gcd.prompt.md
+            supported_languages: [python]
+            tags: [number-theory, gcd, bezout, cryptography]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                def extended_gcd(a, b):
+                    # TODO: return (gcd, x, y) such that a*x + b*y == gcd
+                    return a, 1, 0
+
+                a, b = map(int, input().split())
+                g, x, y = extended_gcd(a, b)
+                print(g)
+                print(x, y)
+            solution_code:
+              python: |
+                def extended_gcd(a, b):
+                    if b == 0:
+                        return a, 1, 0
+                    g, x1, y1 = extended_gcd(b, a % b)
+                    return g, y1, x1 - (a // b) * y1
+
+                a, b = map(int, input().split())
+                g, x, y = extended_gcd(a, b)
+                print(g)
+                print(x, y)
+            test_cases:
+              - name: "35-15"
+                stdin: "35 15\n"
+                expected_stdout: "5\n1 -2"
+                is_hidden: false
+                weight: 1
+              - name: "48-18"
+                stdin: "48 18\n"
+                expected_stdout: "6\n-1 3"
+                is_hidden: false
+                weight: 1
+              - name: "7-13"
+                stdin: "7 13\n"
+                expected_stdout: "1\n2 -1"
+                is_hidden: false
+                weight: 1
+              - name: "100-60"
+                stdin: "100 60\n"
+                expected_stdout: "20\n-1 2"
+                is_hidden: true
+                weight: 1
+              - name: "same-value"
+                stdin: "1 1\n"
+                expected_stdout: "1\n0 1"
+                is_hidden: true
+                weight: 1
+              - name: "large-coprime"
+                stdin: "1000000007 998244353\n"
+                expected_stdout: "1\n-4915446 4924091"
                 is_hidden: true
                 weight: 2
 

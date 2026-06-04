@@ -62,6 +62,140 @@ modules:
         duration_minutes: 5
         content_file: lessons/git-quiz.md
 
+      - slug: git-log-simulate-exercise
+        title: "Exercise: Simulate git log --oneline"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/git-log-simulate-exercise.md
+        exercises:
+          - slug: git-log-oneline
+            title: Simulate git log --oneline
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/git-log-oneline.prompt.md
+            supported_languages: [python]
+            tags: [git, strings, parsing]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                for line in sys.stdin:
+                    line = line.rstrip('\n')
+                    if line == '':
+                        break
+                    # TODO: print the abbreviated hash and message
+            solution_code:
+              python: |
+                import sys
+
+                for line in sys.stdin:
+                    line = line.rstrip('\n')
+                    if line == '':
+                        break
+                    parts = line.split(' ', 1)
+                    if len(parts) == 2:
+                        short_hash = parts[0][:7]
+                        message = parts[1]
+                        print(f'{short_hash} {message}')
+            test_cases:
+              - name: three-commits
+                stdin: "a3f9d1e2b4c7f8910abc1234def56789ab123456 Add user authentication\nb1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c Fix login redirect bug\n9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2b1c0 Initial commit\n\n"
+                expected_stdout: "a3f9d1e Add user authentication\nb1c2d3e Fix login redirect bug\n9e8d7c6 Initial commit"
+                is_hidden: false
+                weight: 1
+              - name: single-commit
+                stdin: "deadbeef1234567890abcdef1234567890abcdef Fix critical null pointer\n\n"
+                expected_stdout: "deadbee Fix critical null pointer"
+                is_hidden: false
+                weight: 1
+              - name: five-commits
+                stdin: "aaaaaaa1234567890abcdef1234567890abcdef1 Merge feature into main\nbbbbbbbb234567890abcdef1234567890abcdef2 Add pagination to user list\ncccccccc34567890abcdef1234567890abcdef3 Refactor auth middleware\ndddddddd4567890abcdef1234567890abcdef4 Update dependencies\neeeeeeee567890abcdef1234567890abcdef55 Initial project scaffold\n\n"
+                expected_stdout: "aaaaaaa Merge feature into main\nbbbbbbb Add pagination to user list\nccccccc Refactor auth middleware\nddddddd Update dependencies\neeeeeee Initial project scaffold"
+                is_hidden: true
+                weight: 1
+              - name: stops-at-blank-line
+                stdin: "f1e2d3c4b5a6789012345678901234567890abc Remove deprecated endpoint\n\nthis-should-not-appear Should be ignored\n"
+                expected_stdout: "f1e2d3c Remove deprecated endpoint"
+                is_hidden: true
+                weight: 1
+
+      - slug: git-gitignore-matcher-exercise
+        title: "Exercise: Build a .gitignore Matcher"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/git-gitignore-matcher-exercise.md
+        exercises:
+          - slug: git-gitignore-matcher
+            title: Build a .gitignore Matcher
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/git-gitignore-matcher.prompt.md
+            supported_languages: [python]
+            tags: [git, strings, pattern-matching]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                lines = sys.stdin.read().splitlines()
+                # Split on the blank separator line
+                # TODO: parse patterns and file paths, then print ignored files
+            solution_code:
+              python: |
+                import sys
+
+                lines = sys.stdin.read().splitlines()
+
+                blank_idx = lines.index('')
+                pattern_lines = lines[:blank_idx]
+                file_lines = lines[blank_idx + 1:]
+
+                patterns = []
+                for p in pattern_lines:
+                    p = p.strip()
+                    if p and not p.startswith('#'):
+                        patterns.append(p)
+
+                def is_ignored(filepath, patterns):
+                    basename = filepath.split('/')[-1]
+                    for pattern in patterns:
+                        if pattern.startswith('*.'):
+                            ext = pattern[1:]
+                            if basename.endswith(ext):
+                                return True
+                        else:
+                            if basename == pattern or filepath == pattern:
+                                return True
+                    return False
+
+                for f in file_lines:
+                    if f and is_ignored(f, patterns):
+                        print(f)
+            test_cases:
+              - name: basic-python-project
+                stdin: "# Python cache\n*.pyc\n*.log\n__pycache__\n.env\n\nsrc/main.py\nsrc/app.pyc\nlogs/error.log\nsrc/__pycache__\nREADME.md\n.env\nbuild/output.log\n"
+                expected_stdout: "src/app.pyc\nlogs/error.log\nsrc/__pycache__\n.env\nbuild/output.log"
+                is_hidden: false
+                weight: 1
+              - name: no-matches
+                stdin: "*.tmp\n\nsrc/main.py\nREADME.md\nsetup.py\n"
+                expected_stdout: ""
+                is_hidden: false
+                weight: 1
+              - name: node-project
+                stdin: "node_modules\n*.log\n.DS_Store\ndist\n\nsrc/index.js\nnode_modules\npackage.json\nbuild.log\n.DS_Store\ndist\nsrc/utils.js\n"
+                expected_stdout: "node_modules\nbuild.log\n.DS_Store\ndist"
+                is_hidden: true
+                weight: 1
+              - name: comments-ignored
+                stdin: "# This is a comment\n# Another comment\n*.tmp\n\nfile.tmp\nfile.py\n# not-a-file\n"
+                expected_stdout: "file.tmp"
+                is_hidden: true
+                weight: 1
+
   - title: Branching, Merging, Rebasing
     summary: How to use branches effectively and keep a clean history.
     order_index: 2
@@ -102,6 +236,63 @@ modules:
         type: quiz
         duration_minutes: 8
         content_file: lessons/branching-quiz.md
+
+      - slug: git-conflict-detect-exercise
+        title: "Exercise: Detect Merge Conflicts"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/git-conflict-detect-exercise.md
+        exercises:
+          - slug: git-detect-conflicts
+            title: Detect Merge Conflicts
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/git-detect-conflicts.prompt.md
+            supported_languages: [python]
+            tags: [git, strings, merging]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                count = 0
+                for line in sys.stdin:
+                    # TODO: detect conflict markers
+                    pass
+
+                print(f'Conflicts: {count}')
+            solution_code:
+              python: |
+                import sys
+
+                count = 0
+                for line in sys.stdin:
+                    if line.startswith('<<<<<<<'):
+                        count += 1
+
+                print(f'Conflicts: {count}')
+            test_cases:
+              - name: two-conflicts
+                stdin: "def greet():\n<<<<<<< HEAD\n    return 'Hello, world'\n=======\n    return 'Hi there'\n>>>>>>> feature-branch\n\ndef farewell():\n<<<<<<< HEAD\n    return 'Goodbye'\n=======\n    return 'See you later'\n>>>>>>> feature-branch\n"
+                expected_stdout: "Conflicts: 2"
+                is_hidden: false
+                weight: 1
+              - name: no-conflicts
+                stdin: "def greet():\n    return 'Hello'\n\ndef farewell():\n    return 'Goodbye'\n"
+                expected_stdout: "Conflicts: 0"
+                is_hidden: false
+                weight: 1
+              - name: single-conflict
+                stdin: "# config.py\n<<<<<<< HEAD\nDEBUG = True\n=======\nDEBUG = False\n>>>>>>> production\n"
+                expected_stdout: "Conflicts: 1"
+                is_hidden: true
+                weight: 1
+              - name: four-conflicts
+                stdin: "<<<<<<< HEAD\nline a1\n=======\nline b1\n>>>>>>> branch\n<<<<<<< HEAD\nline a2\n=======\nline b2\n>>>>>>> branch\n<<<<<<< HEAD\nline a3\n=======\nline b3\n>>>>>>> branch\n<<<<<<< HEAD\nline a4\n=======\nline b4\n>>>>>>> branch\n"
+                expected_stdout: "Conflicts: 4"
+                is_hidden: true
+                weight: 1
 
   - title: Remotes and Collaboration
     summary: Working with GitHub, PRs, fetch, and push.
@@ -199,6 +390,12 @@ modules:
         duration_minutes: 40
         video_url: "https://www.youtube.com/results?search_query=git+team+workflows+github+flow+trunk+based+development"
         content_file: lessons/git-workflow-video.md
+
+      - slug: remotes-quiz
+        title: "Quiz: Remotes and Collaboration"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/remotes-quiz.md
 
   - title: Advanced Git Techniques
     summary: Power-user commands for debugging, recovery, and automation.
@@ -326,6 +523,73 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/trunk-based-dev.md
+
+      - slug: git-commit-validator-exercise
+        title: "Exercise: Commit Message Validator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/git-commit-validator-exercise.md
+        exercises:
+          - slug: git-commit-validator
+            title: Commit Message Validator
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/git-commit-validator.prompt.md
+            supported_languages: [python]
+            tags: [git, strings, best-practices]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                for line in sys.stdin:
+                    msg = line.rstrip('\n')
+                    if not msg:
+                        continue
+                    # TODO: validate msg and print OK or ERROR: ...
+            solution_code:
+              python: |
+                import sys
+
+                for line in sys.stdin:
+                    msg = line.rstrip('\n')
+                    if not msg:
+                        continue
+                    if len(msg) > 72:
+                        print('ERROR: subject line must be 72 characters or fewer')
+                    elif msg.endswith('.'):
+                        print('ERROR: subject line must not end with a period')
+                    elif not msg[0].isupper():
+                        print('ERROR: subject line must start with a capital letter')
+                    else:
+                        print('OK')
+            test_cases:
+              - name: mixed-messages
+                stdin: "Add user authentication module\nfix login bug.\nadd new feature for the dashboard that handles all the user interactions and navigation throughout the entire application\nUpdate README\nrefactored database connection pooling logic\n"
+                expected_stdout: "OK\nERROR: subject line must not end with a period\nERROR: subject line must be 72 characters or fewer\nOK\nERROR: subject line must start with a capital letter"
+                is_hidden: false
+                weight: 1
+              - name: all-valid
+                stdin: "Fix null pointer exception in login\nAdd unit tests for auth module\nUpdate Docker base image to Python 3.12\n"
+                expected_stdout: "OK\nOK\nOK"
+                is_hidden: false
+                weight: 1
+              - name: length-takes-priority
+                stdin: "this message is way too long and also ends with a period so it has two violations but we only report the first one found.\n"
+                expected_stdout: "ERROR: subject line must be 72 characters or fewer"
+                is_hidden: true
+                weight: 1
+              - name: period-before-caps
+                stdin: "Fix the issue.\nrewrite authentication\n"
+                expected_stdout: "ERROR: subject line must not end with a period\nERROR: subject line must start with a capital letter"
+                is_hidden: true
+                weight: 1
+              - name: exactly-72-chars
+                stdin: "Abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqr\n"
+                expected_stdout: "OK"
+                is_hidden: true
+                weight: 1
 
       - slug: git-advanced-quiz
         title: "Quiz: Advanced Git and Team Workflows"

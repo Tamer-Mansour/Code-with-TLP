@@ -16,7 +16,7 @@ course:
     conditional and mapped types, decorators, and patterns that pay off in
     production codebases.
   difficulty: intermediate
-  estimated_hours: 22
+  estimated_hours: 26
   is_published: true
   order_index: 18
 
@@ -53,7 +53,7 @@ modules:
         content_file: lessons/ts-basics-quiz.md
 
   - title: Narrowing and Unions
-    summary: Discriminated unions, type guards, and exhaustiveness.
+    summary: Discriminated unions, type guards, exhaustiveness, and control flow analysis.
     order_index: 2
     lessons:
       - slug: unions-and-narrowing
@@ -71,6 +71,11 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/type-guards-advanced.md
+      - slug: ts-narrowing-quiz
+        title: "Quiz: Narrowing and Unions"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/ts-narrowing-quiz.md
       - slug: ts-narrowing-exercise
         title: Union Type Discriminator
         type: exercise
@@ -150,6 +155,200 @@ modules:
               - name: square-rectangle
                 stdin: "1\n{\"kind\":\"rectangle\",\"width\":7,\"height\":7}\n"
                 expected_stdout: "rectangle area=49.00"
+                is_hidden: true
+                weight: 1
+      - slug: typescript-shape-dispatcher-exercise
+        title: "Type-Safe Shape Dispatcher"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/typescript-shape-dispatcher.md
+        exercises:
+          - slug: typescript-shape-dispatcher
+            title: Type-Safe Shape Dispatcher
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/typescript-shape-dispatcher.prompt.md
+            supported_languages: [python]
+            tags: [typescript, discriminated-unions, narrowing]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys, math
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    shape = parts[0]
+                    # TODO: compute area for circle, rectangle, triangle
+            solution_code:
+              python: |
+                import sys, math
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    shape = parts[0]
+                    if shape == 'circle':
+                        r = float(parts[1])
+                        area = math.pi * r * r
+                    elif shape == 'rectangle':
+                        w, h = float(parts[1]), float(parts[2])
+                        area = w * h
+                    elif shape == 'triangle':
+                        b, h = float(parts[1]), float(parts[2])
+                        area = 0.5 * b * h
+                    else:
+                        continue
+                    print(f"{area:.2f}")
+            test_cases:
+              - name: three-shapes
+                stdin: "circle 5\nrectangle 4 6\ntriangle 3 8\n"
+                expected_stdout: "78.54\n24.00\n12.00"
+                is_hidden: false
+                weight: 1
+              - name: decimal-radius
+                stdin: "circle 2.5\nrectangle 10 3\n"
+                expected_stdout: "19.63\n30.00"
+                is_hidden: false
+                weight: 1
+              - name: unit-shapes
+                stdin: "circle 1\nrectangle 1 1\ntriangle 2 2\n"
+                expected_stdout: "3.14\n1.00\n2.00"
+                is_hidden: false
+                weight: 1
+              - name: large-rectangle
+                stdin: "rectangle 100 50\ncircle 7\n"
+                expected_stdout: "5000.00\n153.94"
+                is_hidden: true
+                weight: 1
+              - name: fractional-triangle
+                stdin: "triangle 5.5 4.0\ncircle 3\n"
+                expected_stdout: "11.00\n28.27"
+                is_hidden: true
+                weight: 1
+              - name: single-circle
+                stdin: "circle 10\n"
+                expected_stdout: "314.16"
+                is_hidden: true
+                weight: 1
+      - slug: typescript-narrowing-machine-exercise
+        title: "Type Narrowing State Machine"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/typescript-narrowing-machine.md
+        exercises:
+          - slug: typescript-narrowing-machine
+            title: Type Narrowing State Machine
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/typescript-narrowing-machine.prompt.md
+            supported_languages: [python]
+            tags: [typescript, narrowing, type-guards, control-flow]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def parse_value(token):
+                    # Return (type_name, value)
+                    pass
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    # TODO: parse value and guards, apply each guard
+            solution_code:
+              python: |
+                import sys
+
+                def parse_value(token):
+                    if token == 'null':
+                        return ('null', None)
+                    if token == 'undefined':
+                        return ('undefined', None)
+                    if token in ('true', 'false'):
+                        return ('boolean', token == 'true')
+                    if token.startswith('"') and token.endswith('"'):
+                        return ('string', token[1:-1])
+                    try:
+                        if '.' in token:
+                            return ('number', float(token))
+                        return ('number', int(token))
+                    except ValueError:
+                        return ('string', token)
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split('|')
+                    val_token = parts[0].strip()
+                    guards = parts[1].strip().split() if len(parts) > 1 else []
+                    current_type, current_val = parse_value(val_token)
+                    narrowed_to_never = False
+                    for guard in guards:
+                        if narrowed_to_never:
+                            break
+                        if guard == 'typeof_string':
+                            if current_type != 'string':
+                                narrowed_to_never = True
+                        elif guard == 'typeof_number':
+                            if current_type != 'number':
+                                narrowed_to_never = True
+                        elif guard == 'typeof_boolean':
+                            if current_type != 'boolean':
+                                narrowed_to_never = True
+                        elif guard == 'not_null':
+                            if current_type == 'null':
+                                narrowed_to_never = True
+                        elif guard == 'not_undefined':
+                            if current_type == 'undefined':
+                                narrowed_to_never = True
+                        elif guard == 'is_finite':
+                            if current_type != 'number':
+                                narrowed_to_never = True
+                            elif current_val is not None and (current_val != current_val or abs(current_val) == float('inf')):
+                                narrowed_to_never = True
+                    if narrowed_to_never:
+                        print('never')
+                    else:
+                        print(current_type)
+            test_cases:
+              - name: basic-guards
+                stdin: "42 | typeof_number\n\"hello\" | typeof_string\nnull | not_null\ntrue | typeof_boolean\n"
+                expected_stdout: "number\nstring\nnever\nboolean"
+                is_hidden: false
+                weight: 1
+              - name: chained-guards
+                stdin: "3.14 | typeof_number is_finite\n\"world\" | typeof_number\nundefined | not_undefined\n99 | typeof_number is_finite\n"
+                expected_stdout: "number\nnever\nnever\nnumber"
+                is_hidden: false
+                weight: 1
+              - name: boolean-and-null
+                stdin: "false | typeof_boolean\nnull | not_null\nundefined | not_undefined\nnull | not_undefined\n"
+                expected_stdout: "boolean\nnever\nnever\nnull"
+                is_hidden: false
+                weight: 1
+              - name: string-type-mismatch
+                stdin: "\"test\" | typeof_number\n42 | typeof_string\ntrue | typeof_number\n"
+                expected_stdout: "never\nnever\nnever"
+                is_hidden: true
+                weight: 1
+              - name: no-guards
+                stdin: "42 | \n\"hi\" | \nnull | \n"
+                expected_stdout: "number\nstring\nnull"
+                is_hidden: true
+                weight: 1
+              - name: multiple-chained
+                stdin: "5 | typeof_number is_finite\n\"text\" | typeof_string\nundefined | not_null not_undefined\n"
+                expected_stdout: "number\nstring\nnever"
                 is_hidden: true
                 weight: 1
 
@@ -242,6 +441,181 @@ modules:
                 expected_stdout: "MISSING b,c"
                 is_hidden: true
                 weight: 1
+      - slug: typescript-generic-stack-exercise
+        title: "Generic Stack Simulator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/typescript-generic-stack.md
+        exercises:
+          - slug: typescript-generic-stack
+            title: Generic Stack Simulator
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/typescript-generic-stack.prompt.md
+            supported_languages: [python]
+            tags: [typescript, generics, data-structures]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                stack = []
+                for line in sys.stdin:
+                    cmd = line.strip().split()
+                    if not cmd:
+                        continue
+                    op = cmd[0]
+                    # TODO: implement PUSH, POP, PEEK, SIZE
+            solution_code:
+              python: |
+                import sys
+
+                stack = []
+                for line in sys.stdin:
+                    cmd = line.strip().split()
+                    if not cmd:
+                        continue
+                    op = cmd[0]
+                    if op == 'PUSH':
+                        stack.append(int(cmd[1]))
+                    elif op == 'POP':
+                        if stack:
+                            print(stack.pop())
+                        else:
+                            print('EMPTY')
+                    elif op == 'PEEK':
+                        if stack:
+                            print(stack[-1])
+                        else:
+                            print('EMPTY')
+                    elif op == 'SIZE':
+                        print(len(stack))
+            test_cases:
+              - name: push-peek-pop
+                stdin: "PUSH 10\nPUSH 20\nPUSH 30\nPEEK\nSIZE\nPOP\nPOP\nSIZE\nPOP\nPOP\n"
+                expected_stdout: "30\n3\n30\n20\n1\n10\nEMPTY"
+                is_hidden: false
+                weight: 1
+              - name: empty-stack
+                stdin: "POP\nPEEK\nSIZE\n"
+                expected_stdout: "EMPTY\nEMPTY\n0"
+                is_hidden: false
+                weight: 1
+              - name: single-element
+                stdin: "PUSH 42\nPEEK\nPOP\nSIZE\n"
+                expected_stdout: "42\n42\n0"
+                is_hidden: false
+                weight: 1
+              - name: size-tracking
+                stdin: "PUSH 1\nPUSH 2\nPUSH 3\nSIZE\nPOP\nSIZE\nPOP\nSIZE\nPOP\nSIZE\n"
+                expected_stdout: "3\n3\n2\n2\n1\n1\n0"
+                is_hidden: true
+                weight: 1
+              - name: lifo-order
+                stdin: "PUSH 5\nPUSH 10\nPUSH 15\nPOP\nPOP\nPOP\n"
+                expected_stdout: "15\n10\n5"
+                is_hidden: true
+                weight: 1
+              - name: interleaved
+                stdin: "PUSH 7\nPOP\nPUSH 3\nPUSH 9\nPEEK\nSIZE\n"
+                expected_stdout: "7\n9\n2"
+                is_hidden: true
+                weight: 1
+      - slug: typescript-utility-transformer-exercise
+        title: "Utility Type Transformer"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/typescript-utility-transformer.md
+        exercises:
+          - slug: typescript-utility-transformer
+            title: Utility Type Transformer
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/typescript-utility-transformer.prompt.md
+            supported_languages: [python]
+            tags: [typescript, utility-types, mapped-types]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                lines = [l.strip() for l in sys.stdin if l.strip()]
+                schema_line = lines[0]
+                fields = []
+                required_set = set()
+                for token in schema_line.split(','):
+                    name, status = token.split(':')
+                    fields.append(name)
+                    if status == 'required':
+                        required_set.add(name)
+
+                for line in lines[1:]:
+                    parts = line.split()
+                    op = parts[0]
+                    # TODO: implement PARTIAL, REQUIRED, PICK, OMIT
+            solution_code:
+              python: |
+                import sys
+
+                lines = [l.strip() for l in sys.stdin if l.strip()]
+                schema_line = lines[0]
+                fields = []
+                required_set = set()
+                for token in schema_line.split(','):
+                    name, status = token.split(':')
+                    fields.append(name)
+                    if status == 'required':
+                        required_set.add(name)
+
+                for line in lines[1:]:
+                    parts = line.split()
+                    op = parts[0]
+                    if op == 'PARTIAL':
+                        print(','.join(fields))
+                    elif op == 'REQUIRED':
+                        result = [f for f in fields if f in required_set]
+                        print(','.join(result))
+                    elif op == 'PICK':
+                        picked = set(parts[1:])
+                        result = [f for f in fields if f in picked]
+                        print(','.join(result))
+                    elif op == 'OMIT':
+                        omitted = set(parts[1:])
+                        result = [f for f in fields if f not in omitted]
+                        print(','.join(result))
+            test_cases:
+              - name: all-four-commands
+                stdin: "name:required,age:required,email:optional,role:optional\nPARTIAL\nREQUIRED\nPICK name role\nOMIT age email\n"
+                expected_stdout: "name,age,email,role\nname,age\nname,role\nname,role"
+                is_hidden: false
+                weight: 1
+              - name: all-required
+                stdin: "id:required,name:required,email:required\nPARTIAL\nREQUIRED\nOMIT id\n"
+                expected_stdout: "id,name,email\nid,name,email\nname,email"
+                is_hidden: false
+                weight: 1
+              - name: all-optional
+                stdin: "bio:optional,avatar:optional,website:optional\nPARTIAL\nREQUIRED\nPICK bio website\n"
+                expected_stdout: "bio,avatar,website\n\nbio,website"
+                is_hidden: false
+                weight: 1
+              - name: pick-order-preserved
+                stdin: "a:required,b:required,c:optional,d:required\nPICK d a\nOMIT b c\n"
+                expected_stdout: "a,d\na,d"
+                is_hidden: true
+                weight: 1
+              - name: single-field
+                stdin: "token:required\nPARTIAL\nREQUIRED\nPICK token\nOMIT token\n"
+                expected_stdout: "token\ntoken\ntoken\n"
+                is_hidden: true
+                weight: 1
+              - name: omit-all
+                stdin: "x:required,y:optional\nOMIT x y\n"
+                expected_stdout: ""
+                is_hidden: true
+                weight: 1
 
   - title: Functions and Classes
     summary: Function type annotations, overloads, class access modifiers, and abstract classes.
@@ -257,6 +631,11 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/classes-in-typescript.md
+      - slug: ts-functions-classes-quiz
+        title: "Quiz: Functions and Classes"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/ts-functions-classes-quiz.md
 
   - title: Async TypeScript
     summary: Typing Promises, async/await, and async iterators.
@@ -267,6 +646,11 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/async-typescript.md
+      - slug: ts-async-quiz
+        title: "Quiz: Async TypeScript"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/ts-async-quiz.md
 
   - title: Decorators and Metadata
     summary: Class, method, property, and parameter decorators in real codebases.
@@ -275,8 +659,13 @@ modules:
       - slug: decorators
         title: Decorators in TypeScript
         type: reading
-        duration_minutes: 14
+        duration_minutes: 16
         content_file: lessons/decorators.md
+      - slug: ts-decorators-quiz
+        title: "Quiz: Decorators and Metadata"
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/ts-decorators-quiz.md
 
   - title: TypeScript in Practice
     summary: tsconfig flags, modules, gradual adoption, React integration, and common patterns.

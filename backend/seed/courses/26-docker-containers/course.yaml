@@ -22,7 +22,7 @@ course:
 
 modules:
   - title: Container Fundamentals
-    summary: What containers are and how to use them.
+    summary: What containers are, how the kernel enables them, and basic Docker operations.
     order_index: 1
     lessons:
       - slug: docker-intro-video
@@ -44,6 +44,92 @@ modules:
         duration_minutes: 10
         content_file: lessons/docker-cli.md
 
+      - slug: cgroups-resource-limits
+        title: "Linux Namespaces, cgroups, and Union Filesystems"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/cgroups-resource-limits.md
+
+      - slug: docker-resource-limit-exercise
+        title: Container Resource Limit Checker
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/docker-resource-limit-exercise.md
+        exercises:
+          - slug: docker-resource-limit-checker
+            title: Container Resource Limit Checker
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/docker-resource-limit-checker.prompt.md
+            supported_languages: [python]
+            tags: [docker, cgroups, resources]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    # Read all input
+                    lines = sys.stdin.read().strip().splitlines()
+                    # TODO: parse containers and requests
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().strip().splitlines()
+                    idx = 0
+                    n = int(lines[idx]); idx += 1
+                    containers = {}
+                    total_shares = 0
+                    for _ in range(n):
+                        parts = lines[idx].split(); idx += 1
+                        name, mem_limit, cpu_shares = parts[0], int(parts[1]), int(parts[2])
+                        containers[name] = {'mem': mem_limit, 'cpu': cpu_shares}
+                        total_shares += cpu_shares
+                    m = int(lines[idx]); idx += 1
+                    for _ in range(m):
+                        parts = lines[idx].split(); idx += 1
+                        cname, req_mem, req_cpu = parts[0], int(parts[1]), int(parts[2])
+                        c = containers[cname]
+                        max_cpu_pct = (c['cpu'] * 100) // total_shares
+                        if req_mem > c['mem'] or req_cpu > max_cpu_pct:
+                            print('DENIED')
+                        else:
+                            print('ALLOWED')
+
+                solve()
+            test_cases:
+              - name: mixed-allowed-denied
+                stdin: "3\nweb 512 1024\ndb 2048 2048\ncache 256 512\n4\nweb 400 28\ndb 1000 57\nweb 600 10\ncache 100 15\n"
+                expected_stdout: "ALLOWED\nALLOWED\nDENIED\nDENIED"
+                is_hidden: false
+                weight: 1
+              - name: all-allowed
+                stdin: "2\napp 1024 512\ndb 4096 512\n3\napp 512 50\ndb 2048 50\napp 100 10\n"
+                expected_stdout: "ALLOWED\nALLOWED\nALLOWED"
+                is_hidden: false
+                weight: 1
+              - name: single-container
+                stdin: "1\nworker 2048 1024\n2\nworker 2000 99\nworker 2049 10\n"
+                expected_stdout: "ALLOWED\nDENIED"
+                is_hidden: true
+                weight: 1
+              - name: cpu-boundary
+                stdin: "2\nfast 1024 3000\nslow 1024 1000\n2\nfast 512 75\nslow 512 26\n"
+                expected_stdout: "ALLOWED\nDENIED"
+                is_hidden: true
+                weight: 1
+              - name: exact-limits
+                stdin: "2\na 500 1000\nb 500 1000\n2\na 500 50\nb 500 51\n"
+                expected_stdout: "ALLOWED\nDENIED"
+                is_hidden: true
+                weight: 1
+
       - slug: docker-quiz
         title: "Quiz: Docker Basics"
         type: quiz
@@ -51,7 +137,7 @@ modules:
         content_file: lessons/docker-quiz.md
 
   - title: Writing Dockerfiles
-    summary: Layers, caching, and multi-stage builds.
+    summary: Layers, caching, multi-stage builds, and common instructions.
     order_index: 2
     lessons:
       - slug: dockerfile-basics
@@ -128,8 +214,103 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: dockerfile-layer-order-exercise
+        title: Dockerfile Layer Order Analyzer
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/dockerfile-layer-order-exercise.md
+        exercises:
+          - slug: docker-dockerfile-layer-analyzer
+            title: Dockerfile Layer Order Analyzer
+            difficulty: easy
+            points: 20
+            prompt_file: lessons/docker-dockerfile-layer-analyzer.prompt.md
+            supported_languages: [python]
+            tags: [docker, dockerfile, cache, layers]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read()
+                    parts = data.split('---')
+                    dockerfile_lines = [l.strip() for l in parts[0].strip().splitlines() if l.strip()]
+                    changed_files = []
+                    if len(parts) > 1:
+                        changed_files = [l.strip() for l in parts[1].strip().splitlines() if l.strip()]
+                    # TODO: determine which instruction numbers must re-run
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read()
+                    parts = data.split('---')
+                    dockerfile_lines = [l.strip() for l in parts[0].strip().splitlines() if l.strip()]
+                    changed_files = []
+                    if len(parts) > 1:
+                        changed_files = [l.strip() for l in parts[1].strip().splitlines() if l.strip()]
+
+                    invalidated = False
+                    result = []
+                    for i, line in enumerate(dockerfile_lines, 1):
+                        instruction = line.split()[0].upper() if line.split() else ''
+                        if not invalidated:
+                            if instruction in ('COPY', 'ADD'):
+                                tokens = line.split()
+                                sources = tokens[1:-1]
+                                for src in sources:
+                                    for changed in changed_files:
+                                        if src in changed or changed in src:
+                                            invalidated = True
+                                            break
+                                    if invalidated:
+                                        break
+                        if invalidated:
+                            result.append(str(i))
+                    print(' '.join(result))
+
+                solve()
+            test_cases:
+              - name: copy-src-changed
+                stdin: "FROM python:3.11-slim\nRUN apt-get update && apt-get install -y curl\nCOPY requirements.txt /app/\nRUN pip install -r /app/requirements.txt\nCOPY src/ /app/src/\nCMD [\"python\", \"/app/src/main.py\"]\n---\nsrc/main.py"
+                expected_stdout: "5 6"
+                is_hidden: false
+                weight: 1
+              - name: first-copy-invalidated
+                stdin: "FROM node:20-alpine\nCOPY package.json /app/\nRUN npm ci\nCOPY . /app/\nCMD [\"node\", \"app.js\"]\n---\npackage.json"
+                expected_stdout: "2 3 4 5"
+                is_hidden: false
+                weight: 1
+              - name: golang-internal-change
+                stdin: "FROM golang:1.22\nCOPY go.mod go.sum ./\nRUN go mod download\nCOPY . .\nRUN go build -o /app .\n---\ninternal/handler.go"
+                expected_stdout: "4 5"
+                is_hidden: false
+                weight: 1
+              - name: no-changes
+                stdin: "FROM python:3.11\nRUN pip install flask\nCMD [\"python\", \"app.py\"]\n---\n"
+                expected_stdout: ""
+                is_hidden: true
+                weight: 1
+              - name: multiple-changed-files
+                stdin: "FROM node:20\nCOPY package.json ./\nRUN npm install\nCOPY . .\nCMD [\"node\", \"server.js\"]\n---\npackage.json\nsrc/index.js"
+                expected_stdout: "2 3 4 5"
+                is_hidden: true
+                weight: 1
+
+      - slug: dockerfile-quiz
+        title: "Quiz: Writing Dockerfiles"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/dockerfile-quiz.md
+
   - title: Compose and Networking
-    summary: Multi-container apps, networking, and volumes in Compose.
+    summary: Multi-container apps, networking, volumes, and startup ordering in Compose.
     order_index: 3
     lessons:
       - slug: compose
@@ -150,6 +331,186 @@ modules:
         duration_minutes: 12
         content_file: lessons/compose-networks-volumes.md
 
+      - slug: docker-network-reachability-exercise
+        title: Docker Network Reachability Simulator
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/docker-network-reachability-exercise.md
+        exercises:
+          - slug: docker-network-reachability
+            title: Docker Network Reachability Simulator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/docker-network-reachability.prompt.md
+            supported_languages: [python]
+            tags: [docker, networking, bridge]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().strip().splitlines()
+                    # TODO: parse containers and networks, answer reachability queries
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().strip().splitlines()
+                    idx = 0
+                    n = int(lines[idx]); idx += 1
+                    container_networks = {}
+                    for _ in range(n):
+                        parts = lines[idx].split(); idx += 1
+                        name = parts[0]
+                        networks = set(parts[1:])
+                        container_networks[name] = networks
+                    q = int(lines[idx]); idx += 1
+                    for _ in range(q):
+                        parts = lines[idx].split(); idx += 1
+                        a, b = parts[0], parts[1]
+                        shared = container_networks[a] & container_networks[b]
+                        print('YES' if shared else 'NO')
+
+                solve()
+            test_cases:
+              - name: mixed-reachability
+                stdin: "4\nweb frontend default\napi frontend backend\ndb backend\nlogs monitoring\n5\nweb api\napi db\nweb db\ndb logs\nweb logs\n"
+                expected_stdout: "YES\nYES\nNO\nNO\nNO"
+                is_hidden: false
+                weight: 1
+              - name: bridge-container
+                stdin: "3\nproxy frontend backend\napp backend\ndb backend\n2\nproxy db\napp proxy\n"
+                expected_stdout: "YES\nYES"
+                is_hidden: false
+                weight: 1
+              - name: single-shared-network
+                stdin: "2\na mynet\nb mynet\n1\na b\n"
+                expected_stdout: "YES"
+                is_hidden: true
+                weight: 1
+              - name: all-isolated
+                stdin: "3\nsvc1 net1\nsvc2 net2\nsvc3 net3\n3\nsvc1 svc2\nsvc2 svc3\nsvc1 svc3\n"
+                expected_stdout: "NO\nNO\nNO"
+                is_hidden: true
+                weight: 1
+              - name: multi-network-container
+                stdin: "4\ngateway net1 net2 net3\nalpha net1\nbeta net2\ngamma net3\n4\ngateway alpha\ngateway beta\ngateway gamma\nalpha beta\n"
+                expected_stdout: "YES\nYES\nYES\nNO"
+                is_hidden: true
+                weight: 1
+
+      - slug: compose-dependency-exercise
+        title: Docker Compose Dependency Resolver
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/compose-dependency-exercise.md
+        exercises:
+          - slug: docker-compose-dependency-resolver
+            title: Docker Compose Dependency Resolver
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/docker-compose-dependency-resolver.prompt.md
+            supported_languages: [python]
+            tags: [docker, compose, topological-sort, depends-on]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                from collections import defaultdict, deque
+
+                def solve():
+                    lines = sys.stdin.read().strip().splitlines()
+                    # TODO: parse services + deps, output topological order
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import defaultdict, deque
+
+                def solve():
+                    lines = sys.stdin.read().strip().splitlines()
+                    idx = 0
+                    n = int(lines[idx]); idx += 1
+                    deps = {}
+                    all_services = set()
+                    for _ in range(n):
+                        parts = lines[idx].split(); idx += 1
+                        service = parts[0]
+                        dependencies = parts[1:]
+                        deps[service] = dependencies
+                        all_services.add(service)
+
+                    in_degree = {s: 0 for s in all_services}
+                    dependents = defaultdict(list)
+
+                    for service, dependencies in deps.items():
+                        for d in dependencies:
+                            in_degree[service] += 1
+                            dependents[d].append(service)
+
+                    queue = deque(sorted([s for s in all_services if in_degree[s] == 0]))
+                    result = []
+
+                    while queue:
+                        node = queue.popleft()
+                        result.append(node)
+                        newly_free = []
+                        for dependent in dependents[node]:
+                            in_degree[dependent] -= 1
+                            if in_degree[dependent] == 0:
+                                newly_free.append(dependent)
+                        for s in sorted(newly_free):
+                            inserted = False
+                            for i in range(len(queue)):
+                                if s < queue[i]:
+                                    queue.insert(i, s)
+                                    inserted = True
+                                    break
+                            if not inserted:
+                                queue.append(s)
+
+                    if len(result) != n:
+                        print('CIRCULAR DEPENDENCY DETECTED')
+                    else:
+                        print('\n'.join(result))
+
+                solve()
+            test_cases:
+              - name: five-services
+                stdin: "5\nnginx app\napp api db\ndb\nredis\napi redis db\n"
+                expected_stdout: "db\nredis\napi\napp\nnginx"
+                is_hidden: false
+                weight: 1
+              - name: circular-dependency
+                stdin: "3\na b\nb c\nc a\n"
+                expected_stdout: "CIRCULAR DEPENDENCY DETECTED"
+                is_hidden: false
+                weight: 1
+              - name: independent-first
+                stdin: "4\nworker queue db\nqueue db\ndb\ncache\n"
+                expected_stdout: "cache\ndb\nqueue\nworker"
+                is_hidden: false
+                weight: 1
+              - name: all-independent
+                stdin: "3\nbeta\nalpha\ngamma\n"
+                expected_stdout: "alpha\nbeta\ngamma"
+                is_hidden: true
+                weight: 1
+              - name: single-chain
+                stdin: "4\nd c\nc b\nb a\na\n"
+                expected_stdout: "a\nb\nc\nd"
+                is_hidden: true
+                weight: 1
+
       - slug: compose-quiz
         title: "Quiz: Docker Compose and Networking"
         type: quiz
@@ -157,7 +518,7 @@ modules:
         content_file: lessons/compose-quiz.md
 
   - title: Volumes and Persistent Storage
-    summary: Named volumes, bind mounts, and data lifecycle management.
+    summary: Named volumes, bind mounts, copy-on-write, and data lifecycle management.
     order_index: 4
     lessons:
       - slug: volumes-intro
@@ -171,6 +532,110 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/bind-mounts-vs-volumes.md
+
+      - slug: image-layer-size-exercise
+        title: Image Layer Size Calculator
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/image-layer-size-exercise.md
+        exercises:
+          - slug: docker-image-layer-size
+            title: Image Layer Size Calculator
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/docker-image-layer-size.prompt.md
+            supported_languages: [python]
+            tags: [docker, layers, union-filesystem, copy-on-write]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    content = sys.stdin.read()
+                    # TODO: parse layers and compute image size vs effective size
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    content = sys.stdin.read()
+                    lines = content.strip().splitlines()
+                    idx = 0
+                    n = int(lines[idx]); idx += 1
+
+                    layers = []
+                    current_layer = []
+                    i = idx
+                    while i < len(lines):
+                        line = lines[i].strip()
+                        if not line:
+                            if current_layer:
+                                layers.append(current_layer)
+                                current_layer = []
+                            i += 1
+                            continue
+                        parts = line.split()
+                        if len(parts) == 1:
+                            i += 1
+                            continue
+                        op, filename, size = parts[0], parts[1], int(parts[2])
+                        current_layer.append((op, filename, size))
+                        i += 1
+                    if current_layer:
+                        layers.append(current_layer)
+
+                    total_image_size = 0
+                    file_state = {}
+
+                    for layer in layers:
+                        layer_size = 0
+                        for op, filename, size in layer:
+                            if op == 'ADD':
+                                layer_size += size
+                                file_state[filename] = (size, False)
+                            elif op == 'MODIFY':
+                                layer_size += size
+                                file_state[filename] = (size, False)
+                            elif op == 'DELETE':
+                                file_state[filename] = (0, True)
+                        total_image_size += layer_size
+
+                    effective_size = sum(sz for sz, deleted in file_state.values() if not deleted)
+                    print(f'Total image size: {total_image_size} bytes')
+                    print(f'Effective filesystem size: {effective_size} bytes')
+
+                solve()
+            test_cases:
+              - name: modify-and-delete
+                stdin: "3\n1\nADD /app/base.py 1000\nADD /app/utils.py 500\n\n2\nMODIFY /app/base.py 1200\nADD /app/new.py 800\n\n3\nDELETE /app/utils.py 0\nMODIFY /app/new.py 900\n"
+                expected_stdout: "Total image size: 4400 bytes\nEffective filesystem size: 2100 bytes"
+                is_hidden: false
+                weight: 1
+              - name: only-adds
+                stdin: "2\n1\nADD /etc/config 200\nADD /app/main 5000\n\n2\nADD /app/extra 300\n"
+                expected_stdout: "Total image size: 5500 bytes\nEffective filesystem size: 5500 bytes"
+                is_hidden: false
+                weight: 1
+              - name: delete-leaves-disk-waste
+                stdin: "3\n1\nADD /app/a 1000\nADD /app/b 2000\n\n2\nADD /app/c 500\n\n3\nDELETE /app/a 0\nDELETE /app/b 0\n"
+                expected_stdout: "Total image size: 3500 bytes\nEffective filesystem size: 500 bytes"
+                is_hidden: false
+                weight: 1
+              - name: single-layer
+                stdin: "1\n1\nADD /bin/app 10000\nADD /etc/config 200\n"
+                expected_stdout: "Total image size: 10200 bytes\nEffective filesystem size: 10200 bytes"
+                is_hidden: true
+                weight: 1
+              - name: modify-grows-disk
+                stdin: "3\n1\nADD /app/data 1000\n\n2\nMODIFY /app/data 2000\n\n3\nMODIFY /app/data 3000\n"
+                expected_stdout: "Total image size: 6000 bytes\nEffective filesystem size: 3000 bytes"
+                is_hidden: true
+                weight: 1
 
       - slug: volume-mount-exercise
         title: Parse Docker Volume Mounts
@@ -210,7 +675,6 @@ modules:
                     anonymous = 0
                     for m in mounts:
                         if m.startswith('/') or m.startswith('./') or m.startswith('../'):
-                            # bind or anonymous
                             if ':' in m:
                                 bind += 1
                             else:
@@ -266,7 +730,7 @@ modules:
         content_file: lessons/docker-security-quiz.md
 
   - title: Registries and CI/CD
-    summary: Storing images and automating builds and deployments.
+    summary: Storing images, automating builds, and deployment patterns.
     order_index: 6
     lessons:
       - slug: docker-registry
@@ -287,6 +751,12 @@ modules:
         duration_minutes: 45
         video_url: "https://www.youtube.com/results?search_query=docker+cicd+pipeline+github+actions+tutorial"
         content_file: lessons/docker-cicd-video.md
+
+      - slug: registry-cicd-quiz
+        title: "Quiz: Registries and CI/CD"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/registry-cicd-quiz.md
 
   - title: Production Operations
     summary: Health checks, restart policies, and resource management.

@@ -16,7 +16,7 @@ course:
     LINQ, async/await, and the ASP.NET Core web framework you'll reach for
     in production.
   difficulty: intermediate
-  estimated_hours: 22
+  estimated_hours: 28
   is_published: true
   order_index: 20
 
@@ -61,15 +61,147 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/strings-in-csharp.md
+      - slug: csharp-fizzbuzz-exercise
+        title: "Exercise: FizzBuzz .NET Style"
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/csharp-fizzbuzz-exercise.md
+        exercises:
+          - slug: csharp-fizzbuzz
+            title: FizzBuzz .NET Style
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/csharp-fizzbuzz.prompt.md
+            supported_languages: [python]
+            tags: [loops, conditionals, modulo]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                n = int(input())
+                # your code here
+            solution_code:
+              python: |
+                n = int(input())
+                for i in range(1, n + 1):
+                    if i % 15 == 0:
+                        print('FizzBuzz')
+                    elif i % 3 == 0:
+                        print('Fizz')
+                    elif i % 5 == 0:
+                        print('Buzz')
+                    else:
+                        print(i)
+            test_cases:
+              - name: n_equals_15
+                stdin: "15"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"
+                is_hidden: false
+                weight: 1
+              - name: n_equals_1
+                stdin: "1"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: n_equals_5
+                stdin: "5"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz"
+                is_hidden: false
+                weight: 1
+              - name: n_equals_30
+                stdin: "30"
+                expected_stdout: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz\nFizz\n22\n23\nFizz\nBuzz\n26\nFizz\n28\n29\nFizzBuzz"
+                is_hidden: true
+                weight: 1
+              - name: n_equals_3
+                stdin: "3"
+                expected_stdout: "1\n2\nFizz"
+                is_hidden: true
+                weight: 1
+      - slug: csharp-grade-classifier-exercise
+        title: "Exercise: Grade Classifier"
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/csharp-grade-classifier-exercise.md
+        exercises:
+          - slug: csharp-grade-classifier
+            title: Grade Classifier
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/csharp-grade-classifier.prompt.md
+            supported_languages: [python]
+            tags: [conditionals, type-conversion, input-parsing]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                score = int(input())
+                # your code here
+            solution_code:
+              python: |
+                score = int(input())
+                if 90 <= score <= 100:
+                    grade = 'A'
+                elif 80 <= score <= 89:
+                    grade = 'B'
+                elif 70 <= score <= 79:
+                    grade = 'C'
+                elif 60 <= score <= 69:
+                    grade = 'D'
+                else:
+                    grade = 'F'
+                print(grade)
+                print('Pass' if grade != 'F' else 'Fail')
+            test_cases:
+              - name: b_grade
+                stdin: "85"
+                expected_stdout: "B\nPass"
+                is_hidden: false
+                weight: 1
+              - name: f_grade
+                stdin: "55"
+                expected_stdout: "F\nFail"
+                is_hidden: false
+                weight: 1
+              - name: a_grade
+                stdin: "95"
+                expected_stdout: "A\nPass"
+                is_hidden: false
+                weight: 1
+              - name: d_grade_boundary
+                stdin: "60"
+                expected_stdout: "D\nPass"
+                is_hidden: true
+                weight: 1
+              - name: c_grade
+                stdin: "73"
+                expected_stdout: "C\nPass"
+                is_hidden: true
+                weight: 1
+              - name: perfect_score
+                stdin: "100"
+                expected_stdout: "A\nPass"
+                is_hidden: true
+                weight: 1
       - slug: csharp-quiz
         title: "Quiz: C# Basics"
         type: quiz
         duration_minutes: 5
         content_file: lessons/csharp-quiz.md
 
+  - title: Methods and Program Structure
+    summary: Static methods, parameter modes, overloading, optional args, and recursion.
+    order_index: 3
+    lessons:
+      - slug: csharp-methods-structure
+        title: Methods and Program Structure
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/csharp-methods-structure.md
+
   - title: OOP and Records
     summary: Classes, records, structs, interfaces, generics, and polymorphism.
-    order_index: 3
+    order_index: 4
     lessons:
       - slug: classes-records-structs
         title: Classes, Records, Structs
@@ -86,15 +218,143 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/interfaces-and-generics.md
+      - slug: csharp-class-instance-counter-exercise
+        title: "Exercise: Class Instance Counter"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/csharp-class-instance-counter-exercise.md
+        exercises:
+          - slug: csharp-class-instance-counter
+            title: Class Instance Counter
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/csharp-class-instance-counter.prompt.md
+            supported_languages: [python]
+            tags: [oop, classes, static-members]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                n = int(input())
+                # your code here
+            solution_code:
+              python: |
+                n = int(input())
+                students = []
+                for _ in range(n):
+                    parts = input().split()
+                    students.append((parts[0], int(parts[1])))
+                for name, age in students:
+                    print(f'Name: {name}, Age: {age}')
+                print(f'Total students: {len(students)}')
+            test_cases:
+              - name: three_students
+                stdin: "3\nAlice 20\nBob 22\nCarol 19"
+                expected_stdout: "Name: Alice, Age: 20\nName: Bob, Age: 22\nName: Carol, Age: 19\nTotal students: 3"
+                is_hidden: false
+                weight: 1
+              - name: one_student
+                stdin: "1\nDave 25"
+                expected_stdout: "Name: Dave, Age: 25\nTotal students: 1"
+                is_hidden: false
+                weight: 1
+              - name: five_students
+                stdin: "5\nEve 18\nFrank 21\nGrace 20\nHank 22\nIvy 19"
+                expected_stdout: "Name: Eve, Age: 18\nName: Frank, Age: 21\nName: Grace, Age: 20\nName: Hank, Age: 22\nName: Ivy, Age: 19\nTotal students: 5"
+                is_hidden: true
+                weight: 1
+              - name: two_students
+                stdin: "2\nJack 30\nJill 28"
+                expected_stdout: "Name: Jack, Age: 30\nName: Jill, Age: 28\nTotal students: 2"
+                is_hidden: true
+                weight: 1
       - slug: oop-quiz
         title: "Quiz: OOP in C#"
         type: quiz
         duration_minutes: 5
         content_file: lessons/oop-quiz.md
 
+  - title: Collections and Generics
+    summary: List, Dictionary, HashSet, Stack, Queue, generic constraints, and LINQ basics.
+    order_index: 5
+    lessons:
+      - slug: csharp-collections-generics
+        title: Collections and Generics
+        type: reading
+        duration_minutes: 16
+        content_file: lessons/csharp-collections-generics.md
+      - slug: csharp-dict-word-freq-exercise
+        title: "Exercise: Dictionary Word Frequency"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/csharp-dict-word-freq-exercise.md
+        exercises:
+          - slug: csharp-dict-word-freq
+            title: Dictionary Word Frequency
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/csharp-dict-word-freq.prompt.md
+            supported_languages: [python]
+            tags: [collections, dictionary, sorting]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                words = input().lower().split()
+                # your code here
+            solution_code:
+              python: |
+                words = input().lower().split()
+                freq = {}
+                for w in words:
+                    freq[w] = freq.get(w, 0) + 1
+                for word in sorted(freq):
+                    print(f'{word}: {freq[word]}')
+            test_cases:
+              - name: classic_sentence
+                stdin: "the quick brown fox jumps over the lazy dog the fox"
+                expected_stdout: "brown: 1\ndog: 1\nfox: 2\njumps: 1\nlazy: 1\nover: 1\nquick: 1\nthe: 3"
+                is_hidden: false
+                weight: 1
+              - name: single_word
+                stdin: "hello"
+                expected_stdout: "hello: 1"
+                is_hidden: false
+                weight: 1
+              - name: repeated_word
+                stdin: "go go go"
+                expected_stdout: "go: 3"
+                is_hidden: false
+                weight: 1
+              - name: case_insensitive
+                stdin: "Apple apple APPLE"
+                expected_stdout: "apple: 3"
+                is_hidden: true
+                weight: 1
+              - name: alphabetical_order
+                stdin: "zebra ant bear ant zebra ant"
+                expected_stdout: "ant: 3\nbear: 1\nzebra: 2"
+                is_hidden: true
+                weight: 1
+      - slug: csharp-collections-quiz
+        title: "Quiz: Collections and Generics"
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/csharp-collections-quiz.md
+
+  - title: Exception Handling and File I/O
+    summary: try/catch/finally, custom exceptions, IDisposable, and basic file operations.
+    order_index: 6
+    lessons:
+      - slug: csharp-exception-handling
+        title: Exception Handling and the IDisposable Pattern
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/csharp-exception-handling.md
+
   - title: LINQ and Async
     summary: Querying collections and async/await.
-    order_index: 4
+    order_index: 7
     lessons:
       - slug: linq
         title: LINQ
@@ -181,7 +441,7 @@ modules:
 
   - title: ASP.NET Core
     summary: Minimal APIs, dependency injection, middleware, and controllers.
-    order_index: 5
+    order_index: 8
     lessons:
       - slug: aspnet-core-minimal
         title: ASP.NET Core Minimal APIs
@@ -211,7 +471,7 @@ modules:
 
   - title: Testing and Quality
     summary: Unit testing with xUnit and Moq, plus a string-processing exercise.
-    order_index: 6
+    order_index: 9
     lessons:
       - slug: unit-testing-csharp
         title: Unit Testing with xUnit and Moq

@@ -511,15 +511,381 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: linear-models-perceptron
+        title: "Linear Models and the Perceptron"
+        type: reading
+        duration_minutes: 15
+        content_file: lessons/linear-models-perceptron.md
+
+      - slug: intro-gradient-descent-full
+        title: "Exercise: Gradient Descent from Scratch"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/intro-gradient-descent-full.md
+        exercises:
+          - slug: intro-gradient-descent-full
+            title: "Gradient Descent from Scratch"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/intro-gradient-descent-full.prompt.md
+            supported_languages: [python]
+            tags: [gradient-descent, optimization, linear-regression]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    xs, ys = [], []
+                    for _ in range(n):
+                        xs.append(float(data[idx])); idx += 1
+                        ys.append(float(data[idx])); idx += 1
+
+                    w, b = 0.0, 0.0
+                    lr = 0.01
+                    iterations = 1000
+
+                    # TODO: implement batch gradient descent for 1000 iterations
+                    # Update rule each iteration:
+                    #   dw = (1/n) * sum((w*x + b - y) * x for each point)
+                    #   db = (1/n) * sum(w*x + b - y for each point)
+                    #   w = w - lr * dw
+                    #   b = b - lr * db
+
+                    print(f'w={w:.4f}')
+                    print(f'b={b:.4f}')
+
+                main()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    xs, ys = [], []
+                    for _ in range(n):
+                        xs.append(float(data[idx])); idx += 1
+                        ys.append(float(data[idx])); idx += 1
+
+                    w, b = 0.0, 0.0
+                    lr = 0.01
+                    iterations = 1000
+
+                    for _ in range(iterations):
+                        dw, db = 0.0, 0.0
+                        for x, y in zip(xs, ys):
+                            pred = w * x + b
+                            err = pred - y
+                            dw += err * x
+                            db += err
+                        w -= lr * (dw / n)
+                        b -= lr * (db / n)
+
+                    print(f'w={w:.4f}')
+                    print(f'b={b:.4f}')
+
+                main()
+            test_cases:
+              - name: "y-equals-2x"
+                stdin: "5\n1.0 2.0\n2.0 4.0\n3.0 6.0\n4.0 8.0\n5.0 10.0\n"
+                expected_stdout: "w=1.9738\nb=0.0948"
+                is_hidden: false
+                weight: 1
+              - name: "slope-3-intercept-1"
+                stdin: "4\n1.0 4.0\n2.0 7.0\n3.0 10.0\n4.0 13.0\n"
+                expected_stdout: "w=2.9986\nb=1.0041"
+                is_hidden: false
+                weight: 1
+              - name: "three-points-y-x"
+                stdin: "3\n1.0 1.0\n2.0 2.0\n3.0 3.0\n"
+                expected_stdout: "w=0.9513\nb=0.1107"
+                is_hidden: false
+                weight: 1
+              - name: "two-points-y-half-x"
+                stdin: "2\n2.0 1.0\n4.0 2.0\n"
+                expected_stdout: "w=0.4832\nb=0.0554"
+                is_hidden: true
+                weight: 1
+              - name: "negative-slope"
+                stdin: "4\n1.0 8.0\n2.0 6.0\n3.0 4.0\n4.0 2.0\n"
+                expected_stdout: "w=-1.2721\nb=7.8599"
+                is_hidden: true
+                weight: 1
+              - name: "y-equals-5x"
+                stdin: "3\n1.0 5.0\n2.0 10.0\n3.0 15.0\n"
+                expected_stdout: "w=4.7565\nb=0.5536"
+                is_hidden: true
+                weight: 1
+
+      - slug: intro-perceptron
+        title: "Exercise: Perceptron Learning Algorithm"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/intro-perceptron.md
+        exercises:
+          - slug: intro-perceptron
+            title: "Perceptron Learning Algorithm"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/intro-perceptron.prompt.md
+            supported_languages: [python]
+            tags: [perceptron, linear-classifier, classification]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def dot(w, x):
+                    return sum(wi * xi for wi, xi in zip(w, x))
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n, d, m = int(data[idx]), int(data[idx+1]), int(data[idx+2]); idx += 3
+
+                    X_train, y_train = [], []
+                    for _ in range(n):
+                        x = [float(data[idx + j]) for j in range(d)]; idx += d
+                        y = int(data[idx]); idx += 1
+                        X_train.append(x)
+                        y_train.append(y)
+
+                    X_test = []
+                    for _ in range(m):
+                        x = [float(data[idx + j]) for j in range(d)]; idx += d
+                        X_test.append(x)
+
+                    w = [0.0] * d
+                    b = 0.0
+
+                    # TODO: train perceptron for up to 100 epochs
+                    # Update rule: if y * (dot(w, x) + b) <= 0:
+                    #     w = w + y*x, b = b + y
+                    # Stop early if no mistakes in an epoch
+
+                    for x in X_test:
+                        pred = 1 if dot(w, x) + b > 0 else -1
+                        print(pred)
+
+                main()
+            solution_code:
+              python: |
+                import sys
+
+                def dot(w, x):
+                    return sum(wi * xi for wi, xi in zip(w, x))
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n, d, m = int(data[idx]), int(data[idx+1]), int(data[idx+2]); idx += 3
+
+                    X_train, y_train = [], []
+                    for _ in range(n):
+                        x = [float(data[idx + j]) for j in range(d)]; idx += d
+                        y = int(data[idx]); idx += 1
+                        X_train.append(x)
+                        y_train.append(y)
+
+                    X_test = []
+                    for _ in range(m):
+                        x = [float(data[idx + j]) for j in range(d)]; idx += d
+                        X_test.append(x)
+
+                    w = [0.0] * d
+                    b = 0.0
+
+                    for _ in range(100):
+                        mistakes = 0
+                        for x, y in zip(X_train, y_train):
+                            if y * (dot(w, x) + b) <= 0:
+                                w = [wi + y * xi for wi, xi in zip(w, x)]
+                                b += y
+                                mistakes += 1
+                        if mistakes == 0:
+                            break
+
+                    for x in X_test:
+                        pred = 1 if dot(w, x) + b > 0 else -1
+                        print(pred)
+
+                main()
+            test_cases:
+              - name: "sample-2d"
+                stdin: "4 2 2\n1.0 1.0 1\n-1.0 -1.0 -1\n1.0 -0.5 1\n-0.5 1.0 -1\n2.0 2.0\n-2.0 -2.0\n"
+                expected_stdout: "1\n-1"
+                is_hidden: false
+                weight: 1
+              - name: "axis-aligned"
+                stdin: "4 2 3\n1.0 0.0 1\n2.0 0.0 1\n-1.0 0.0 -1\n-2.0 0.0 -1\n3.0 5.0\n-3.0 1.0\n0.5 -2.0\n"
+                expected_stdout: "1\n-1\n1"
+                is_hidden: false
+                weight: 1
+              - name: "single-feature"
+                stdin: "2 1 2\n5.0 1\n-5.0 -1\n3.0\n-3.0\n"
+                expected_stdout: "1\n-1"
+                is_hidden: false
+                weight: 1
+              - name: "three-training-points-1d"
+                stdin: "4 1 2\n1.0 1\n2.0 1\n-1.0 -1\n-2.0 -1\n0.5\n-0.5\n"
+                expected_stdout: "1\n-1"
+                is_hidden: true
+                weight: 1
+              - name: "3d-features"
+                stdin: "4 3 2\n1.0 2.0 3.0 1\n-1.0 -2.0 -3.0 -1\n2.0 1.0 0.0 1\n-2.0 -1.0 0.0 -1\n1.0 1.0 1.0\n-1.0 -1.0 -1.0\n"
+                expected_stdout: "1\n-1"
+                is_hidden: true
+                weight: 1
+
       - slug: quiz-supervised-learning
         title: "Quiz: Supervised Learning"
         type: quiz
         duration_minutes: 8
         content_file: lessons/quiz-supervised-learning.md
 
+  - title: "Non-Linear Models and Ensemble Methods"
+    summary: "Decision trees, random forests, boosting (AdaBoost, gradient boosting), SVMs, k-NN, and Naive Bayes."
+    order_index: 5
+    lessons:
+      - slug: ensemble-methods
+        title: "Ensemble Methods and Support Vector Machines"
+        type: reading
+        duration_minutes: 18
+        content_file: lessons/ensemble-methods.md
+
+      - slug: intro-naive-bayes
+        title: "Exercise: Naive Bayes Classifier"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/intro-naive-bayes.md
+        exercises:
+          - slug: intro-naive-bayes
+            title: "Naive Bayes Classifier (Discrete Features)"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/intro-naive-bayes.prompt.md
+            supported_languages: [python]
+            tags: [naive-bayes, probabilistic, classification]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                import math
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n, d, m = int(data[idx]), int(data[idx+1]), int(data[idx+2]); idx += 3
+
+                    X_train, y_train = [], []
+                    for _ in range(n):
+                        x = [int(data[idx + j]) for j in range(d)]; idx += d
+                        y = int(data[idx]); idx += 1
+                        X_train.append(x)
+                        y_train.append(y)
+
+                    X_test = []
+                    for _ in range(m):
+                        x = [int(data[idx + j]) for j in range(d)]; idx += d
+                        X_test.append(x)
+
+                    # TODO: compute class priors P(y) with Laplace smoothing
+                    # TODO: compute feature likelihoods P(x_j=v | y) with Laplace smoothing
+                    # TODO: for each test point predict the class with higher log posterior
+
+                    for x in X_test:
+                        print(0)  # placeholder
+
+                main()
+            solution_code:
+              python: |
+                import sys
+                import math
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n, d, m = int(data[idx]), int(data[idx+1]), int(data[idx+2]); idx += 3
+
+                    X_train, y_train = [], []
+                    for _ in range(n):
+                        x = [int(data[idx + j]) for j in range(d)]; idx += d
+                        y = int(data[idx]); idx += 1
+                        X_train.append(x)
+                        y_train.append(y)
+
+                    X_test = []
+                    for _ in range(m):
+                        x = [int(data[idx + j]) for j in range(d)]; idx += d
+                        X_test.append(x)
+
+                    classes = [0, 1]
+                    num_classes = 2
+
+                    class_count = {c: sum(1 for y in y_train if y == c) for c in classes}
+                    log_prior = {c: math.log((class_count[c] + 1) / (n + num_classes)) for c in classes}
+
+                    feat_count = {c: [[0, 0] for _ in range(d)] for c in classes}
+                    for x, y in zip(X_train, y_train):
+                        for j in range(d):
+                            feat_count[y][j][x[j]] += 1
+
+                    for x in X_test:
+                        best_class, best_score = None, float('-inf')
+                        for c in classes:
+                            score = log_prior[c]
+                            for j in range(d):
+                                p = (feat_count[c][j][x[j]] + 1) / (class_count[c] + 2)
+                                score += math.log(p)
+                            if score > best_score:
+                                best_score = score
+                                best_class = c
+                        print(best_class)
+
+                main()
+            test_cases:
+              - name: "sample-6-train-2-test"
+                stdin: "6 3 2\n1 1 0 1\n1 0 1 1\n0 0 0 0\n0 1 0 0\n1 1 1 1\n0 0 1 0\n1 1 0\n0 0 1\n"
+                expected_stdout: "1\n0"
+                is_hidden: false
+                weight: 1
+              - name: "all-positive-class"
+                stdin: "4 2 2\n1 1 1\n1 0 1\n1 1 1\n0 1 1\n1 1\n0 0\n"
+                expected_stdout: "1\n1"
+                is_hidden: false
+                weight: 1
+              - name: "single-feature"
+                stdin: "4 1 2\n1 1\n1 1\n0 0\n0 0\n1\n0\n"
+                expected_stdout: "1\n0"
+                is_hidden: false
+                weight: 1
+              - name: "balanced-2d"
+                stdin: "6 2 3\n1 0 1\n0 1 1\n1 1 1\n0 0 0\n1 0 0\n0 1 0\n1 0\n0 1\n1 1\n"
+                expected_stdout: "0\n0\n1"
+                is_hidden: true
+                weight: 1
+              - name: "majority-class-0"
+                stdin: "3 2 1\n1 1 0\n0 0 0\n1 0 0\n1 1\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: "larger-6-train-3-test"
+                stdin: "6 3 3\n1 1 1 1\n1 0 1 1\n0 0 0 0\n0 1 0 0\n1 1 0 1\n0 0 1 0\n0 0 0\n1 1 1\n1 0 1\n"
+                expected_stdout: "0\n1\n1"
+                is_hidden: true
+                weight: 1
+
   - title: "Unsupervised Learning"
     summary: "k-Means clustering, the elbow method, and dimensionality reduction with PCA and t-SNE."
-    order_index: 5
+    order_index: 6
     lessons:
       - slug: video-unsupervised-learning
         title: "Video: Unsupervised Learning — Clustering and Dimensionality Reduction"
@@ -742,6 +1108,110 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: intro-kmeans-1d
+        title: "Exercise: K-Means Clustering (1D)"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/intro-kmeans-1d.md
+        exercises:
+          - slug: intro-kmeans-1d
+            title: "K-Means Clustering (1D)"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/intro-kmeans-1d.prompt.md
+            supported_languages: [python]
+            tags: [kmeans, clustering, unsupervised]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n, k = int(data[idx]), int(data[idx+1]); idx += 2
+                    points = [float(data[idx + i]) for i in range(n)]
+
+                    centroids = points[:k]
+
+                    # TODO: run K-Means for up to 100 iterations
+                    # Each iteration:
+                    #   1. Assign each point to nearest centroid (by absolute distance)
+                    #   2. Recompute each centroid as mean of its assigned points
+                    #   3. If centroids unchanged, break
+                    # Print sorted centroids, one per line, 4 decimal places
+
+                    for c in sorted(centroids):
+                        print(f'{c:.4f}')
+
+                main()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n, k = int(data[idx]), int(data[idx+1]); idx += 2
+                    points = [float(data[idx + i]) for i in range(n)]
+
+                    centroids = points[:k]
+
+                    for _ in range(100):
+                        clusters = [[] for _ in range(k)]
+                        for p in points:
+                            dists = [abs(p - c) for c in centroids]
+                            closest = dists.index(min(dists))
+                            clusters[closest].append(p)
+
+                        new_centroids = []
+                        for i in range(k):
+                            if clusters[i]:
+                                new_centroids.append(sum(clusters[i]) / len(clusters[i]))
+                            else:
+                                new_centroids.append(centroids[i])
+
+                        if new_centroids == centroids:
+                            break
+                        centroids = new_centroids
+
+                    for c in sorted(centroids):
+                        print(f'{c:.4f}')
+
+                main()
+            test_cases:
+              - name: "two-natural-clusters"
+                stdin: "6 2\n1.0 1.5 1.2 9.0 8.5 9.5\n"
+                expected_stdout: "1.2333\n9.0000"
+                is_hidden: false
+                weight: 1
+              - name: "three-clusters-separated"
+                stdin: "9 3\n1.0 10.0 20.0 1.5 2.0 9.5 10.5 19.5 21.0\n"
+                expected_stdout: "1.5000\n10.0000\n20.1667"
+                is_hidden: false
+                weight: 1
+              - name: "single-cluster"
+                stdin: "5 1\n2.0 4.0 6.0 8.0 10.0\n"
+                expected_stdout: "6.0000"
+                is_hidden: false
+                weight: 1
+              - name: "already-converged"
+                stdin: "4 2\n1.0 9.0 1.0 9.0\n"
+                expected_stdout: "1.0000\n9.0000"
+                is_hidden: true
+                weight: 1
+              - name: "two-points-two-clusters"
+                stdin: "2 2\n0.0 10.0\n"
+                expected_stdout: "0.0000\n10.0000"
+                is_hidden: true
+                weight: 1
+              - name: "uneven-clusters"
+                stdin: "5 2\n1.0 2.0 3.0 100.0 200.0\n"
+                expected_stdout: "2.0000\n150.0000"
+                is_hidden: true
+                weight: 1
+
       - slug: ai-cosine-similarity
         title: "Exercise: Cosine Similarity"
         type: exercise
@@ -836,7 +1306,7 @@ modules:
 
   - title: "Neural Networks & Deep Learning"
     summary: "Artificial neurons, layers, activation functions, gradient descent variants, and backpropagation."
-    order_index: 6
+    order_index: 7
     lessons:
       - slug: video-neural-networks
         title: "Video: Neural Networks and Deep Learning"
@@ -958,7 +1428,7 @@ modules:
 
   - title: "Modern AI: NLP & LLMs"
     summary: "Word embeddings, the Transformer architecture, attention mechanism, prompting techniques, and AI ethics."
-    order_index: 7
+    order_index: 8
     lessons:
       - slug: video-transformers-llms
         title: "Video: Transformers, Attention, and Large Language Models"

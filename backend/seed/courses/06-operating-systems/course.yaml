@@ -972,3 +972,394 @@ modules:
         type: quiz
         duration_minutes: 8
         content_file: lessons/quiz-file-systems-io.md
+
+  - title: Virtualization and Containerization
+    summary: "Type 1 vs. Type 2 hypervisors, Intel VT-x, EPT, Linux containers, namespaces, and cgroups."
+    order_index: 8
+    lessons:
+      - slug: video-virtualization
+        title: "Video: Virtualization, Hypervisors, and Containers"
+        type: video
+        duration_minutes: 80
+        video_url: "https://www.youtube.com/results?search_query=hypervisor+virtualization+KVM+docker+containers+vs+VMs+explained"
+        content_file: lessons/video-virtualization.md
+
+      - slug: virtualization-and-hypervisors
+        title: Virtualization and Hypervisors
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/virtualization-and-hypervisors.md
+
+      - slug: quiz-virtualization
+        title: "Quiz: Virtualization and Containerization"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-virtualization.md
+
+  - title: OS Security and Protection
+    summary: "Protection rings, access control, buffer overflows, ROP chains, ASLR, stack canaries, and NX/DEP."
+    order_index: 9
+    lessons:
+      - slug: video-security
+        title: "Video: OS Security — Attacks and Defenses"
+        type: video
+        duration_minutes: 70
+        video_url: "https://www.youtube.com/results?search_query=operating+system+security+buffer+overflow+ASLR+NX+stack+canary+explained"
+        content_file: lessons/video-security.md
+
+      - slug: os-security-and-protection
+        title: OS Security and Protection
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/os-security-and-protection.md
+
+      - slug: quiz-security
+        title: "Quiz: OS Security and Protection"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-security.md
+
+  - title: Distributed Systems and Advanced Topics
+    summary: "RPC semantics, NFS, AFS, consistency models, distributed locking, scalable locking, and DVFS."
+    order_index: 10
+    lessons:
+      - slug: video-distributed-systems
+        title: "Video: Distributed Systems and OS Scalability"
+        type: video
+        duration_minutes: 75
+        video_url: "https://www.youtube.com/results?search_query=distributed+systems+NFS+AFS+RPC+consistency+models+operating+systems"
+        content_file: lessons/video-distributed-systems.md
+
+      - slug: distributed-os-concepts
+        title: "Distributed Systems: RPC, NFS, AFS, and Consistency"
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/distributed-os-concepts.md
+
+      - slug: round-robin-arrival-practice
+        title: "Practice: Round-Robin Scheduler with Arrival Times"
+        type: exercise
+        duration_minutes: 35
+        content_file: lessons/round-robin-arrival-practice.md
+        exercises:
+          - slug: os-round-robin-arrival
+            title: Round-Robin Scheduler with Arrival Times
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/os-round-robin-arrival.prompt.md
+            supported_languages: [python]
+            tags: [scheduling, round-robin, simulation, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    lines = sys.stdin.read().strip().split('\n')
+                    line1 = lines[0].split()
+                    n, q = int(line1[0]), int(line1[1])
+                    processes = []
+                    for i in range(n):
+                        a, b = map(int, lines[i + 1].split())
+                        processes.append((a, b, i + 1))
+                    # TODO: simulate Round-Robin with arrival times
+                    # Print per-process finish lines then averages
+                    print("Average TAT: 0.00")
+                    print("Average WT: 0.00")
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    lines = sys.stdin.read().strip().split('\n')
+                    line1 = lines[0].split()
+                    n, q = int(line1[0]), int(line1[1])
+                    processes = []
+                    for i in range(n):
+                        a, b = map(int, lines[i + 1].split())
+                        processes.append((a, b, i + 1))
+
+                    processes.sort(key=lambda x: (x[0], x[2]))
+                    remaining = [p[1] for p in processes]
+                    arrival = [p[0] for p in processes]
+                    pid = [p[2] for p in processes]
+
+                    ready_queue = deque()
+                    time = 0
+                    idx = 0
+                    finished = 0
+                    completion = [0] * n
+                    finish_order = []
+
+                    while idx < n and arrival[idx] <= time:
+                        ready_queue.append(idx)
+                        idx += 1
+
+                    while finished < n:
+                        if not ready_queue:
+                            time = arrival[idx]
+                            while idx < n and arrival[idx] <= time:
+                                ready_queue.append(idx)
+                                idx += 1
+
+                        i = ready_queue.popleft()
+                        run = min(q, remaining[i])
+                        time += run
+                        remaining[i] -= run
+
+                        while idx < n and arrival[idx] <= time:
+                            ready_queue.append(idx)
+                            idx += 1
+
+                        if remaining[i] == 0:
+                            completion[i] = time
+                            finish_order.append(i)
+                            finished += 1
+                        else:
+                            ready_queue.append(i)
+
+                    total_tat = 0
+                    total_wt = 0
+                    for i in finish_order:
+                        tat = completion[i] - arrival[i]
+                        wt = tat - processes[i][1]
+                        total_tat += tat
+                        total_wt += wt
+                        print(f'P{pid[i]} finishes at t={completion[i]}, TAT={tat}, WT={wt}')
+
+                    print(f'Average TAT: {total_tat / n:.2f}')
+                    print(f'Average WT: {total_wt / n:.2f}')
+
+                solve()
+            test_cases:
+              - name: case-four-processes-q2
+                stdin: "4 2\n0 5\n1 3\n2 1\n4 2\n"
+                expected_stdout: "P3 finishes at t=5, TAT=3, WT=2\nP4 finishes at t=9, TAT=5, WT=3\nP2 finishes at t=10, TAT=9, WT=6\nP1 finishes at t=11, TAT=11, WT=6\nAverage TAT: 7.00\nAverage WT: 4.25"
+                is_hidden: false
+                weight: 1
+              - name: case-single-process
+                stdin: "1 5\n0 10\n"
+                expected_stdout: "P1 finishes at t=10, TAT=10, WT=0\nAverage TAT: 10.00\nAverage WT: 0.00"
+                is_hidden: false
+                weight: 1
+              - name: case-same-arrival-q4
+                stdin: "3 4\n0 6\n0 4\n0 2\n"
+                expected_stdout: "P2 finishes at t=8, TAT=8, WT=4\nP3 finishes at t=10, TAT=10, WT=8\nP1 finishes at t=12, TAT=12, WT=6\nAverage TAT: 10.00\nAverage WT: 6.00"
+                is_hidden: false
+                weight: 1
+              - name: case-staggered-arrivals
+                stdin: "3 3\n0 8\n5 4\n7 2\n"
+                expected_stdout: "P1 finishes at t=11, TAT=11, WT=3\nP3 finishes at t=13, TAT=6, WT=4\nP2 finishes at t=14, TAT=9, WT=5\nAverage TAT: 8.67\nAverage WT: 4.00"
+                is_hidden: true
+                weight: 1
+              - name: case-cpu-idle-gap
+                stdin: "2 2\n0 3\n10 4\n"
+                expected_stdout: "P1 finishes at t=3, TAT=3, WT=0\nP2 finishes at t=14, TAT=4, WT=0\nAverage TAT: 3.50\nAverage WT: 0.00"
+                is_hidden: true
+                weight: 1
+              - name: case-five-processes-mixed
+                stdin: "5 3\n0 7\n2 4\n4 1\n5 4\n7 2\n"
+                expected_stdout: "P3 finishes at t=10, TAT=6, WT=5\nP2 finishes at t=14, TAT=12, WT=8\nP5 finishes at t=16, TAT=9, WT=7\nP1 finishes at t=17, TAT=17, WT=10\nP4 finishes at t=18, TAT=13, WT=9\nAverage TAT: 11.40\nAverage WT: 7.80"
+                is_hidden: true
+                weight: 1
+
+      - slug: producer-consumer-trace-practice
+        title: "Practice: Producer-Consumer with Semaphore Trace"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/producer-consumer-trace-practice.md
+        exercises:
+          - slug: os-producer-consumer-trace
+            title: Producer-Consumer with Semaphore Trace
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/os-producer-consumer-trace.prompt.md
+            supported_languages: [python]
+            tags: [synchronization, producer-consumer, semaphore, simulation, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    lines = sys.stdin.read().strip().split('\n')
+                    capacity = int(lines[0])
+                    events = lines[1:]
+                    buf = deque()
+                    for event in events:
+                        parts = event.split()
+                        if parts[0] == 'P':
+                            item = parts[1]
+                            # TODO: check capacity, produce or print BLOCKS
+                            pass
+                        elif parts[0] == 'C':
+                            # TODO: check empty, consume or print BLOCKS
+                            pass
+                    print(f'Final buffer: {list(buf)}')
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import deque
+
+                def solve():
+                    lines = sys.stdin.read().strip().split('\n')
+                    capacity = int(lines[0])
+                    events = lines[1:]
+                    buf = deque()
+
+                    for event in events:
+                        parts = event.split()
+                        if parts[0] == 'P':
+                            item = parts[1]
+                            if len(buf) >= capacity:
+                                print(f'PRODUCER BLOCKS (buffer full, dropped: {item})')
+                            else:
+                                buf.append(item)
+                                print(f'PRODUCE {item:<10} -> buffer={list(buf)}')
+                        elif parts[0] == 'C':
+                            if len(buf) == 0:
+                                print('CONSUMER BLOCKS (buffer empty)')
+                            else:
+                                item = buf.popleft()
+                                print(f'CONSUME {item:<10} -> buffer={list(buf)}')
+
+                    print(f'Final buffer: {list(buf)}')
+
+                solve()
+            test_cases:
+              - name: case-full-buffer-and-drain
+                stdin: "3\nP apple\nP banana\nP cherry\nP date\nC\nC\nP elderberry\nC\nC\nC\n"
+                expected_stdout: "PRODUCE apple      -> buffer=['apple']\nPRODUCE banana     -> buffer=['apple', 'banana']\nPRODUCE cherry     -> buffer=['apple', 'banana', 'cherry']\nPRODUCER BLOCKS (buffer full, dropped: date)\nCONSUME apple      -> buffer=['banana', 'cherry']\nCONSUME banana     -> buffer=['cherry']\nPRODUCE elderberry -> buffer=['cherry', 'elderberry']\nCONSUME cherry     -> buffer=['elderberry']\nCONSUME elderberry -> buffer=[]\nCONSUMER BLOCKS (buffer empty)\nFinal buffer: []"
+                is_hidden: false
+                weight: 1
+              - name: case-consume-before-produce
+                stdin: "1\nC\nP alpha\nC\n"
+                expected_stdout: "CONSUMER BLOCKS (buffer empty)\nPRODUCE alpha      -> buffer=['alpha']\nCONSUME alpha      -> buffer=[]\nFinal buffer: []"
+                is_hidden: false
+                weight: 1
+              - name: case-overflow-then-drain
+                stdin: "2\nP x\nP y\nP z\nC\nC\nC\n"
+                expected_stdout: "PRODUCE x          -> buffer=['x']\nPRODUCE y          -> buffer=['x', 'y']\nPRODUCER BLOCKS (buffer full, dropped: z)\nCONSUME x          -> buffer=['y']\nCONSUME y          -> buffer=[]\nCONSUMER BLOCKS (buffer empty)\nFinal buffer: []"
+                is_hidden: false
+                weight: 1
+              - name: case-interleaved
+                stdin: "3\nP one\nC\nP two\nC\nP three\nP four\nP five\n"
+                expected_stdout: "PRODUCE one        -> buffer=['one']\nCONSUME one        -> buffer=[]\nPRODUCE two        -> buffer=['two']\nCONSUME two        -> buffer=[]\nPRODUCE three      -> buffer=['three']\nPRODUCE four       -> buffer=['three', 'four']\nPRODUCE five       -> buffer=['three', 'four', 'five']\nFinal buffer: ['three', 'four', 'five']"
+                is_hidden: true
+                weight: 1
+              - name: case-capacity-four-overflow
+                stdin: "4\nP a\nP b\nP c\nP d\nP e\nC\nC\nC\nC\nC\n"
+                expected_stdout: "PRODUCE a          -> buffer=['a']\nPRODUCE b          -> buffer=['a', 'b']\nPRODUCE c          -> buffer=['a', 'b', 'c']\nPRODUCE d          -> buffer=['a', 'b', 'c', 'd']\nPRODUCER BLOCKS (buffer full, dropped: e)\nCONSUME a          -> buffer=['b', 'c', 'd']\nCONSUME b          -> buffer=['c', 'd']\nCONSUME c          -> buffer=['d']\nCONSUME d          -> buffer=[]\nCONSUMER BLOCKS (buffer empty)\nFinal buffer: []"
+                is_hidden: true
+                weight: 1
+
+      - slug: lru-trace-practice
+        title: "Practice: LRU Page Replacement — Detailed Trace"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/lru-trace-practice.md
+        exercises:
+          - slug: os-lru-trace
+            title: LRU Page Replacement — Detailed Trace
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/os-lru-trace.prompt.md
+            supported_languages: [python]
+            tags: [memory, lru, page-replacement, simulation, os]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().strip().split('\n')
+                    frames = int(lines[0])
+                    pages = list(map(int, lines[1].split()))
+                    memory = []
+                    lru_order = []
+                    faults = 0
+                    for page in pages:
+                        # TODO: check HIT or FAULT, update lru_order, print trace
+                        pass
+                    print(f'Total page faults: {faults}')
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().strip().split('\n')
+                    frames = int(lines[0])
+                    pages = list(map(int, lines[1].split()))
+                    memory = []
+                    lru_order = []
+                    faults = 0
+
+                    for page in pages:
+                        if page in memory:
+                            status = 'HIT'
+                            lru_order.remove(page)
+                            lru_order.append(page)
+                        else:
+                            status = 'FAULT'
+                            faults += 1
+                            if len(memory) < frames:
+                                memory.append(page)
+                            else:
+                                lru_page = lru_order.pop(0)
+                                memory[memory.index(lru_page)] = page
+                            lru_order.append(page)
+
+                        print(f'Access {page}: {status:<6} frames={sorted(memory)}')
+
+                    print(f'Total page faults: {faults}')
+
+                solve()
+            test_cases:
+              - name: case-classic-3frames
+                stdin: "3\n1 2 3 4 1 2 5 1 2 3 4 5\n"
+                expected_stdout: "Access 1: FAULT  frames=[1]\nAccess 2: FAULT  frames=[1, 2]\nAccess 3: FAULT  frames=[1, 2, 3]\nAccess 4: FAULT  frames=[2, 3, 4]\nAccess 1: FAULT  frames=[1, 3, 4]\nAccess 2: FAULT  frames=[1, 2, 4]\nAccess 5: FAULT  frames=[1, 2, 5]\nAccess 1: HIT    frames=[1, 2, 5]\nAccess 2: HIT    frames=[1, 2, 5]\nAccess 3: FAULT  frames=[1, 2, 3]\nAccess 4: FAULT  frames=[2, 3, 4]\nAccess 5: FAULT  frames=[3, 4, 5]\nTotal page faults: 10"
+                is_hidden: false
+                weight: 1
+              - name: case-2frames-hits
+                stdin: "2\n1 2 1 3 1 2\n"
+                expected_stdout: "Access 1: FAULT  frames=[1]\nAccess 2: FAULT  frames=[1, 2]\nAccess 1: HIT    frames=[1, 2]\nAccess 3: FAULT  frames=[1, 3]\nAccess 1: HIT    frames=[1, 3]\nAccess 2: FAULT  frames=[1, 2]\nTotal page faults: 4"
+                is_hidden: false
+                weight: 1
+              - name: case-single-frame
+                stdin: "1\n1 2 3\n"
+                expected_stdout: "Access 1: FAULT  frames=[1]\nAccess 2: FAULT  frames=[2]\nAccess 3: FAULT  frames=[3]\nTotal page faults: 3"
+                is_hidden: false
+                weight: 1
+              - name: case-all-fit-no-eviction
+                stdin: "4\n1 2 3 4 1 2 3 4\n"
+                expected_stdout: "Access 1: FAULT  frames=[1]\nAccess 2: FAULT  frames=[1, 2]\nAccess 3: FAULT  frames=[1, 2, 3]\nAccess 4: FAULT  frames=[1, 2, 3, 4]\nAccess 1: HIT    frames=[1, 2, 3, 4]\nAccess 2: HIT    frames=[1, 2, 3, 4]\nAccess 3: HIT    frames=[1, 2, 3, 4]\nAccess 4: HIT    frames=[1, 2, 3, 4]\nTotal page faults: 4"
+                is_hidden: true
+                weight: 1
+              - name: case-repeated-page
+                stdin: "2\n7 7 7 7\n"
+                expected_stdout: "Access 7: FAULT  frames=[7]\nAccess 7: HIT    frames=[7]\nAccess 7: HIT    frames=[7]\nAccess 7: HIT    frames=[7]\nTotal page faults: 1"
+                is_hidden: true
+                weight: 1
+              - name: case-eviction-order-check
+                stdin: "3\n1 2 3 4 2 1 5\n"
+                expected_stdout: "Access 1: FAULT  frames=[1]\nAccess 2: FAULT  frames=[1, 2]\nAccess 3: FAULT  frames=[1, 2, 3]\nAccess 4: FAULT  frames=[2, 3, 4]\nAccess 2: HIT    frames=[2, 3, 4]\nAccess 1: FAULT  frames=[1, 2, 4]\nAccess 5: FAULT  frames=[1, 2, 5]\nTotal page faults: 6"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-distributed-systems
+        title: "Quiz: Distributed Systems and Advanced Topics"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/quiz-distributed-systems.md

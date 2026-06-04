@@ -57,6 +57,131 @@ modules:
         duration_minutes: 18
         content_file: lessons/dunder-methods.md
 
+      - slug: vector-dunder-exercise
+        title: "Exercise: Vector Class with Dunder Methods"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/vector-dunder-exercise.md
+        exercises:
+          - slug: object-vector-dunder
+            title: Vector Class with Dunder Methods
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/object-vector-dunder.prompt.md
+            supported_languages: [python]
+            tags: [oop, dunder, operator-overloading]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import math
+                import sys
+
+                class Vector:
+                    def __init__(self, x, y):
+                        self.x = x
+                        self.y = y
+
+                    def __repr__(self):
+                        # TODO: return "Vector(x, y)"
+                        pass
+
+                    def __add__(self, other):
+                        # TODO: return new Vector with summed components
+                        pass
+
+                    def __eq__(self, other):
+                        # TODO: return True if components match
+                        pass
+
+                    def magnitude(self):
+                        # TODO: return sqrt(x^2 + y^2) rounded to 4 decimal places
+                        pass
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    cmd = parts[0]
+                    # TODO: handle add, eq, mag
+            solution_code:
+              python: |
+                import math
+                import sys
+
+                class Vector:
+                    def __init__(self, x, y):
+                        self.x = x
+                        self.y = y
+
+                    def __repr__(self):
+                        return f"Vector({self.x}, {self.y})"
+
+                    def __add__(self, other):
+                        return Vector(self.x + other.x, self.y + other.y)
+
+                    def __eq__(self, other):
+                        return self.x == other.x and self.y == other.y
+
+                    def magnitude(self):
+                        return round(math.sqrt(self.x ** 2 + self.y ** 2), 4)
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    cmd = parts[0]
+                    if cmd == "add":
+                        v1 = Vector(int(parts[1]), int(parts[2]))
+                        v2 = Vector(int(parts[3]), int(parts[4]))
+                        print(repr(v1 + v2))
+                    elif cmd == "eq":
+                        v1 = Vector(int(parts[1]), int(parts[2]))
+                        v2 = Vector(int(parts[3]), int(parts[4]))
+                        print(v1 == v2)
+                    elif cmd == "mag":
+                        v = Vector(int(parts[1]), int(parts[2]))
+                        print(v.magnitude())
+            test_cases:
+              - name: basic-ops
+                stdin: "add 1 2 3 4\neq 1 2 1 2\neq 1 2 3 4\nmag 3 4\n"
+                expected_stdout: "Vector(4, 6)\nTrue\nFalse\n5.0"
+                is_hidden: false
+                weight: 1
+              - name: zero-vector
+                stdin: "add 0 0 0 0\neq 0 0 0 0\nmag 0 0\n"
+                expected_stdout: "Vector(0, 0)\nTrue\n0.0"
+                is_hidden: false
+                weight: 1
+              - name: magnitude-irrational
+                stdin: "mag 1 1\n"
+                expected_stdout: "1.4142"
+                is_hidden: false
+                weight: 1
+              - name: large-add
+                stdin: "add 10 20 30 40\n"
+                expected_stdout: "Vector(40, 60)"
+                is_hidden: true
+                weight: 1
+              - name: eq-false
+                stdin: "eq 3 4 4 3\n"
+                expected_stdout: "False"
+                is_hidden: true
+                weight: 1
+              - name: mag-5-12
+                stdin: "mag 5 12\n"
+                expected_stdout: "13.0"
+                is_hidden: true
+                weight: 1
+
+      - slug: classes-objects-quiz
+        title: "Quiz: Classes and Objects"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/classes-objects-quiz.md
+
       - slug: bank-account-exercise
         title: "Exercise: Bank Account Command Processor"
         type: exercise
@@ -191,6 +316,251 @@ modules:
         duration_minutes: 16
         content_file: lessons/properties-and-invariants.md
 
+      - slug: property-account-exercise
+        title: "Exercise: Property-Validated Account"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/property-account-exercise.md
+        exercises:
+          - slug: object-property-account
+            title: Property-Validated Account
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/object-property-account.prompt.md
+            supported_languages: [python]
+            tags: [oop, encapsulation, property]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class BankAccount:
+                    def __init__(self, owner):
+                        self.owner = owner
+                        self._balance = 0
+
+                    @property
+                    def balance(self):
+                        # TODO: return internal balance
+                        pass
+
+                    def deposit(self, amount):
+                        # TODO: add amount, print message
+                        pass
+
+                    def withdraw(self, amount):
+                        # TODO: subtract or print insufficient funds
+                        pass
+
+                    def get_balance(self):
+                        # TODO: print balance
+                        pass
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    account = BankAccount("User")
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        # TODO: dispatch DEPOSIT, WITHDRAW, BALANCE
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                class BankAccount:
+                    def __init__(self, owner):
+                        self.owner = owner
+                        self._balance = 0
+
+                    @property
+                    def balance(self):
+                        return self._balance
+
+                    def deposit(self, amount):
+                        self._balance += amount
+                        print(f"Deposited {amount}. Balance: {self._balance}")
+
+                    def withdraw(self, amount):
+                        if amount > self._balance:
+                            print(f"Insufficient funds. Balance: {self._balance}")
+                        else:
+                            self._balance -= amount
+                            print(f"Withdrew {amount}. Balance: {self._balance}")
+
+                    def get_balance(self):
+                        print(f"Balance: {self._balance}")
+
+                def solve():
+                    data = sys.stdin.read().splitlines()
+                    n = int(data[0])
+                    account = BankAccount("User")
+                    for i in range(1, n + 1):
+                        parts = data[i].split()
+                        cmd = parts[0]
+                        if cmd == "DEPOSIT":
+                            account.deposit(int(parts[1]))
+                        elif cmd == "WITHDRAW":
+                            account.withdraw(int(parts[1]))
+                        elif cmd == "BALANCE":
+                            account.get_balance()
+                solve()
+            test_cases:
+              - name: deposit-withdraw-balance
+                stdin: "5\nDEPOSIT 500\nDEPOSIT 200\nWITHDRAW 100\nWITHDRAW 1000\nBALANCE\n"
+                expected_stdout: "Deposited 500. Balance: 500\nDeposited 200. Balance: 700\nWithdrew 100. Balance: 600\nInsufficient funds. Balance: 600\nBalance: 600"
+                is_hidden: false
+                weight: 1
+              - name: only-balance
+                stdin: "1\nBALANCE\n"
+                expected_stdout: "Balance: 0"
+                is_hidden: false
+                weight: 1
+              - name: exact-withdraw
+                stdin: "3\nDEPOSIT 50\nWITHDRAW 50\nBALANCE\n"
+                expected_stdout: "Deposited 50. Balance: 50\nWithdrew 50. Balance: 0\nBalance: 0"
+                is_hidden: false
+                weight: 1
+              - name: all-fail-withdrawals
+                stdin: "3\nWITHDRAW 10\nWITHDRAW 1\nBALANCE\n"
+                expected_stdout: "Insufficient funds. Balance: 0\nInsufficient funds. Balance: 0\nBalance: 0"
+                is_hidden: true
+                weight: 1
+              - name: interleaved-ops
+                stdin: "6\nDEPOSIT 500\nWITHDRAW 100\nBALANCE\nDEPOSIT 50\nWITHDRAW 600\nBALANCE\n"
+                expected_stdout: "Deposited 500. Balance: 500\nWithdrew 100. Balance: 400\nBalance: 400\nDeposited 50. Balance: 450\nInsufficient funds. Balance: 450\nBalance: 450"
+                is_hidden: true
+                weight: 1
+              - name: multiple-deposits
+                stdin: "4\nDEPOSIT 200\nDEPOSIT 300\nWITHDRAW 100\nBALANCE\n"
+                expected_stdout: "Deposited 200. Balance: 200\nDeposited 300. Balance: 500\nWithdrew 100. Balance: 400\nBalance: 400"
+                is_hidden: true
+                weight: 1
+
+      - slug: student-gradebook-exercise
+        title: "Exercise: Student Grade Book"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/student-gradebook-exercise.md
+        exercises:
+          - slug: object-student-gradebook
+            title: Student Grade Book
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/object-student-gradebook.prompt.md
+            supported_languages: [python]
+            tags: [oop, class-variables, class-methods, encapsulation]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class Student:
+                    _count = 0
+
+                    def __init__(self, name):
+                        self.name = name
+                        self._grades = []
+                        # TODO: increment class-level counter
+
+                    def add_grade(self, score):
+                        # TODO
+                        pass
+
+                    def average(self):
+                        # TODO: return 0.0 if no grades
+                        pass
+
+                    @classmethod
+                    def student_count(cls):
+                        # TODO
+                        pass
+
+                students = {}
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    cmd = parts[0]
+                    # TODO: handle new, grade, avg, count
+            solution_code:
+              python: |
+                import sys
+
+                class Student:
+                    _count = 0
+
+                    def __init__(self, name):
+                        self.name = name
+                        self._grades = []
+                        Student._count += 1
+
+                    def add_grade(self, score):
+                        self._grades.append(score)
+
+                    def average(self):
+                        if not self._grades:
+                            return 0.0
+                        return sum(self._grades) / len(self._grades)
+
+                    @classmethod
+                    def student_count(cls):
+                        return cls._count
+
+                students = {}
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    cmd = parts[0]
+                    if cmd == "new":
+                        name = parts[1]
+                        students[name] = Student(name)
+                    elif cmd == "grade":
+                        name, score = parts[1], float(parts[2])
+                        students[name].add_grade(score)
+                    elif cmd == "avg":
+                        name = parts[1]
+                        print(f"{students[name].average():.2f}")
+                    elif cmd == "count":
+                        print(Student.student_count())
+            test_cases:
+              - name: basic-grades
+                stdin: "new Alice\nnew Bob\ngrade Alice 85\ngrade Alice 90\ngrade Alice 78\ngrade Bob 70\navg Alice\navg Bob\ncount\n"
+                expected_stdout: "84.33\n70.00\n2"
+                is_hidden: false
+                weight: 1
+              - name: no-grades
+                stdin: "new Zara\navg Zara\ncount\n"
+                expected_stdout: "0.00\n1"
+                is_hidden: false
+                weight: 1
+              - name: three-students
+                stdin: "new X\nnew Y\nnew Z\ngrade X 100\ngrade X 100\navg X\ncount\n"
+                expected_stdout: "100.00\n3"
+                is_hidden: false
+                weight: 1
+              - name: single-grade
+                stdin: "new Solo\ngrade Solo 77\navg Solo\ncount\n"
+                expected_stdout: "77.00\n1"
+                is_hidden: true
+                weight: 1
+              - name: many-students-count
+                stdin: "new A\nnew B\nnew C\nnew D\ncount\n"
+                expected_stdout: "4"
+                is_hidden: true
+                weight: 1
+              - name: float-average
+                stdin: "new P\ngrade P 1\ngrade P 2\navg P\n"
+                expected_stdout: "1.50"
+                is_hidden: true
+                weight: 1
+
       - slug: encapsulation-quiz
         title: "Quiz: Encapsulation"
         type: quiz
@@ -225,6 +595,144 @@ modules:
         type: reading
         duration_minutes: 18
         content_file: lessons/multiple-inheritance-mro.md
+
+      - slug: animal-hierarchy-exercise
+        title: "Exercise: Animal Hierarchy with super()"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/animal-hierarchy-exercise.md
+        exercises:
+          - slug: object-animal-hierarchy
+            title: Animal Hierarchy with super()
+            difficulty: easy
+            points: 15
+            prompt_file: lessons/object-animal-hierarchy.prompt.md
+            supported_languages: [python]
+            tags: [oop, inheritance, super]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class Animal:
+                    def __init__(self, name):
+                        self.name = name
+
+                    def speak(self):
+                        return "Some sound"
+
+                class Dog(Animal):
+                    def __init__(self, name):
+                        # TODO: call super().__init__
+                        pass
+
+                    def speak(self):
+                        # TODO
+                        pass
+
+                class GuideDog(Dog):
+                    def __init__(self, name, owner):
+                        # TODO: call super().__init__ and store owner
+                        pass
+
+                    def speak(self):
+                        # TODO
+                        pass
+
+                    def __str__(self):
+                        # TODO: return "<name> guides <owner>"
+                        pass
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    cmd = parts[0]
+                    # TODO: handle animal, dog, guidedog
+            solution_code:
+              python: |
+                import sys
+
+                class Animal:
+                    def __init__(self, name):
+                        self.name = name
+
+                    def speak(self):
+                        return "Some sound"
+
+                class Dog(Animal):
+                    def __init__(self, name):
+                        super().__init__(name)
+
+                    def speak(self):
+                        return "Woof"
+
+                class GuideDog(Dog):
+                    def __init__(self, name, owner):
+                        super().__init__(name)
+                        self.owner = owner
+
+                    def speak(self):
+                        return "Woof woof"
+
+                    def __str__(self):
+                        return f"{self.name} guides {self.owner}"
+
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    cmd = parts[0]
+                    if cmd == "animal":
+                        obj = Animal(parts[1])
+                        print(obj.speak())
+                    elif cmd == "dog":
+                        obj = Dog(parts[1])
+                        print(obj.speak())
+                    elif cmd == "guidedog":
+                        obj = GuideDog(parts[1], parts[2])
+                        print(obj.speak())
+                        print(str(obj))
+            test_cases:
+              - name: all-three-types
+                stdin: "animal Cat\ndog Rex\nguidedog Buddy Alice\n"
+                expected_stdout: "Some sound\nWoof\nWoof woof\nBuddy guides Alice"
+                is_hidden: false
+                weight: 1
+              - name: dog-only
+                stdin: "dog Lassie\n"
+                expected_stdout: "Woof"
+                is_hidden: false
+                weight: 1
+              - name: guidedog-only
+                stdin: "guidedog Halo Bob\n"
+                expected_stdout: "Woof woof\nHalo guides Bob"
+                is_hidden: false
+                weight: 1
+              - name: multiple-guidedogs
+                stdin: "guidedog Max Eve\nguidedog Luna Sam\n"
+                expected_stdout: "Woof woof\nMax guides Eve\nWoof woof\nLuna guides Sam"
+                is_hidden: true
+                weight: 1
+              - name: mixed-order
+                stdin: "dog Lassie\nguidedog Halo Bob\nanimal Parrot\n"
+                expected_stdout: "Woof\nWoof woof\nHalo guides Bob\nSome sound"
+                is_hidden: true
+                weight: 1
+              - name: animal-sound
+                stdin: "animal Fish\nanimal Bird\n"
+                expected_stdout: "Some sound\nSome sound"
+                is_hidden: true
+                weight: 1
+
+      - slug: inheritance-quiz
+        title: "Quiz: Inheritance"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/inheritance-quiz.md
 
       - slug: shape-area-exercise
         title: "Exercise: Shape Area Calculator"
@@ -510,6 +1018,12 @@ modules:
         duration_minutes: 16
         content_file: lessons/abstract-methods.md
 
+      - slug: polymorphism-quiz
+        title: "Quiz: Polymorphism and Abstraction"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/polymorphism-quiz.md
+
       - slug: animal-sounds-exercise
         title: "Exercise: Animal Sounds via Polymorphism"
         type: exercise
@@ -785,6 +1299,12 @@ modules:
         duration_minutes: 16
         content_file: lessons/contracts-and-protocols.md
 
+      - slug: abstraction-quiz
+        title: "Quiz: Abstraction and Interfaces"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/abstraction-quiz.md
+
       - slug: event-system-exercise
         title: "Exercise: Simple Event System"
         type: exercise
@@ -926,6 +1446,103 @@ modules:
         type: reading
         duration_minutes: 20
         content_file: lessons/solid-lsp-isp-dip.md
+
+      - slug: solid-exercise
+        title: "Exercise: Custom Exception Hierarchy"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/solid-exercise.md
+        exercises:
+          - slug: object-custom-exceptions
+            title: Custom Exception Hierarchy
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/object-custom-exceptions.prompt.md
+            supported_languages: [python]
+            tags: [oop, exceptions, class-hierarchy]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                class AppError(Exception):
+                    pass
+
+                class ValidationError(AppError):
+                    # TODO: subclass of AppError
+                    pass
+
+                class NotFoundError(AppError):
+                    # TODO: subclass of AppError
+                    pass
+
+                VALID_CMDS = {"start", "stop", "status"}
+
+                def process(cmd):
+                    # TODO: raise ValidationError or NotFoundError, or return OK string
+                    pass
+
+                for line in sys.stdin:
+                    cmd = line.rstrip("\n")
+                    try:
+                        print(process(cmd))
+                    except AppError as e:
+                        print(f"{type(e).__name__}: {e}")
+            solution_code:
+              python: |
+                import sys
+
+                class AppError(Exception):
+                    pass
+
+                class ValidationError(AppError):
+                    pass
+
+                class NotFoundError(AppError):
+                    pass
+
+                VALID_CMDS = {"start", "stop", "status"}
+
+                def process(cmd):
+                    if not cmd:
+                        raise ValidationError("empty input")
+                    if cmd not in VALID_CMDS:
+                        raise NotFoundError(f"unknown: {cmd}")
+                    return f"OK: {cmd}"
+
+                for line in sys.stdin:
+                    cmd = line.rstrip("\n")
+                    try:
+                        print(process(cmd))
+                    except AppError as e:
+                        print(f"{type(e).__name__}: {e}")
+            test_cases:
+              - name: valid-and-invalid-commands
+                stdin: "start\nhello\n\nstop\nstatus\n"
+                expected_stdout: "OK: start\nNotFoundError: unknown: hello\nValidationError: empty input\nOK: stop\nOK: status"
+                is_hidden: false
+                weight: 1
+              - name: all-valid
+                stdin: "status\nstop\nstart\n"
+                expected_stdout: "OK: status\nOK: stop\nOK: start"
+                is_hidden: false
+                weight: 1
+              - name: empty-only
+                stdin: "\n"
+                expected_stdout: "ValidationError: empty input"
+                is_hidden: false
+                weight: 1
+              - name: all-invalid
+                stdin: "run\njump\nfly\n"
+                expected_stdout: "NotFoundError: unknown: run\nNotFoundError: unknown: jump\nNotFoundError: unknown: fly"
+                is_hidden: true
+                weight: 1
+              - name: mixed-errors
+                stdin: "start\n\nstop\nhello\nstatus\n"
+                expected_stdout: "OK: start\nValidationError: empty input\nOK: stop\nNotFoundError: unknown: hello\nOK: status"
+                is_hidden: true
+                weight: 1
 
       - slug: solid-quiz
         title: "Quiz: SOLID Principles"

@@ -50,6 +50,87 @@ modules:
         duration_minutes: 5
         content_file: lessons/node-quiz.md
 
+      - slug: nodejs-event-loop-exercise
+        title: Event Loop Execution Order Simulator
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/nodejs-event-loop-exercise.md
+        exercises:
+          - slug: nodejs-event-loop-simulator
+            title: Event Loop Execution Order Simulator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/nodejs-event-loop-simulator.prompt.md
+            supported_languages: [python]
+            tags: [event-loop, async, node-internals]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    # TODO: categorize and print tasks in event loop order
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    sync_tasks = []
+                    nexttick_tasks = []
+                    microtasks = []
+                    macrotasks = []
+                    for _ in range(n):
+                        task_type = data[idx]; idx += 1
+                        label = data[idx]; idx += 1
+                        if task_type == 'SYNC':
+                            sync_tasks.append(label)
+                        elif task_type == 'NEXTTICK':
+                            nexttick_tasks.append(label)
+                        elif task_type == 'MICROTASK':
+                            microtasks.append(label)
+                        elif task_type == 'MACROTASK':
+                            macrotasks.append(label)
+                    for label in sync_tasks + nexttick_tasks + microtasks + macrotasks:
+                        print(label)
+
+                solve()
+            test_cases:
+              - name: mixed-all-types
+                stdin: "7\nSYNC A\nMACROTASK B\nMICROTASK C\nSYNC D\nNEXTTICK E\nMICROTASK F\nNEXTTICK G\n"
+                expected_stdout: "A\nD\nE\nG\nC\nF\nB"
+                is_hidden: false
+                weight: 1
+              - name: only-sync
+                stdin: "3\nSYNC X\nSYNC Y\nSYNC Z\n"
+                expected_stdout: "X\nY\nZ"
+                is_hidden: false
+                weight: 1
+              - name: only-macrotasks
+                stdin: "2\nMACROTASK timer1\nMACROTASK timer2\n"
+                expected_stdout: "timer1\ntimer2"
+                is_hidden: false
+                weight: 1
+              - name: nexttick-before-microtask
+                stdin: "4\nMICROTASK promise1\nNEXTTICK tick1\nMICROTASK promise2\nNEXTTICK tick2\n"
+                expected_stdout: "tick1\ntick2\npromise1\npromise2"
+                is_hidden: true
+                weight: 1
+              - name: all-four-ordering
+                stdin: "8\nMACROTASK io-callback\nSYNC setup\nNEXTTICK nextA\nMICROTASK promiseA\nSYNC main\nNEXTTICK nextB\nMICROTASK promiseB\nMACROTASK setTimeout-cb\n"
+                expected_stdout: "setup\nmain\nnextA\nnextB\npromiseA\npromiseB\nio-callback\nsetTimeout-cb"
+                is_hidden: true
+                weight: 2
+
   - title: HTTP and Express
     summary: Building REST APIs with native http and Express.
     order_index: 2
@@ -78,6 +159,117 @@ modules:
         duration_minutes: 12
         content_file: lessons/fastify-intro.md
 
+      - slug: express-http-quiz
+        title: "Quiz: HTTP and Express"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/express-http-quiz.md
+
+      - slug: nodejs-middleware-pipeline-exercise
+        title: Middleware Pipeline Executor
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/nodejs-middleware-pipeline-exercise.md
+        exercises:
+          - slug: nodejs-middleware-pipeline
+            title: Middleware Pipeline Executor
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/nodejs-middleware-pipeline.prompt.md
+            supported_languages: [python]
+            tags: [express, middleware, request-lifecycle]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0])
+                    # TODO: simulate the middleware pipeline
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0])
+                    middlewares = []
+                    for i in range(1, n + 1):
+                        parts = lines[i].split(' ', 2)
+                        middlewares.append(parts)
+
+                    log = []
+                    response = None
+                    error_mode = False
+                    i = 0
+                    while i < len(middlewares):
+                        mw = middlewares[i]
+                        mtype = mw[0]
+                        if error_mode:
+                            if mtype == 'ERROR_HANDLER':
+                                log.append(mw[1])
+                                error_mode = False
+                                i += 1
+                            elif mtype == 'RESPOND':
+                                response = 'RESPONSE ' + mw[1] + ' ' + mw[2]
+                                break
+                            else:
+                                i += 1
+                        else:
+                            if mtype == 'NEXT':
+                                log.append(mw[1])
+                                i += 1
+                            elif mtype == 'RESPOND':
+                                response = 'RESPONSE ' + mw[1] + ' ' + mw[2]
+                                break
+                            elif mtype == 'ERROR':
+                                error_mode = True
+                                i += 1
+                            elif mtype == 'ERROR_HANDLER':
+                                i += 1
+
+                    for entry in log:
+                        print(entry)
+                    print(response if response else 'NO RESPONSE')
+
+                solve()
+            test_cases:
+              - name: error-then-handler
+                stdin: "6\nNEXT logger\nNEXT auth\nERROR oops\nNEXT business-logic\nERROR_HANDLER error-handler\nRESPOND 500 internal-error\n"
+                expected_stdout: "logger\nauth\nerror-handler\nRESPONSE 500 internal-error"
+                is_hidden: false
+                weight: 1
+              - name: all-next-then-respond
+                stdin: "4\nNEXT cors\nNEXT helmet\nNEXT auth\nRESPOND 200 ok\n"
+                expected_stdout: "cors\nhelmet\nauth\nRESPONSE 200 ok"
+                is_hidden: false
+                weight: 1
+              - name: early-termination
+                stdin: "4\nNEXT logger\nRESPOND 401 unauthorized\nNEXT business-logic\nRESPOND 200 ok\n"
+                expected_stdout: "logger\nRESPONSE 401 unauthorized"
+                is_hidden: false
+                weight: 1
+              - name: no-response
+                stdin: "3\nNEXT logger\nNEXT auth\nNEXT handler\n"
+                expected_stdout: "logger\nauth\nhandler\nNO RESPONSE"
+                is_hidden: true
+                weight: 1
+              - name: error-handler-skipped-in-normal-mode
+                stdin: "5\nNEXT logger\nERROR_HANDLER unused-handler\nNEXT business\nRESPOND 200 success\nERROR_HANDLER also-unused\n"
+                expected_stdout: "logger\nbusiness\nRESPONSE 200 success"
+                is_hidden: true
+                weight: 1
+              - name: error-no-handler
+                stdin: "3\nNEXT logger\nERROR db-error\nNEXT this-is-skipped\n"
+                expected_stdout: "logger\nNO RESPONSE"
+                is_hidden: true
+                weight: 1
+
   - title: Production Concerns
     summary: Validation, auth, error handling, security, and logging.
     order_index: 3
@@ -93,6 +285,95 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/auth-and-jwt.md
+
+      - slug: nodejs-jwt-decoder-exercise
+        title: JWT Payload Decoder
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/nodejs-jwt-decoder-exercise.md
+        exercises:
+          - slug: nodejs-jwt-decoder
+            title: JWT Payload Decoder
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/nodejs-jwt-decoder.prompt.md
+            supported_languages: [python]
+            tags: [jwt, authentication, base64, security]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                import base64
+                import json
+
+                def base64url_decode(s):
+                    # TODO: restore padding and decode
+                    pass
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    jwt_token = lines[0].strip()
+                    # TODO: decode payload and extract claims
+                    pass
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import base64
+                import json
+
+                def base64url_decode(s):
+                    padding = 4 - len(s) % 4
+                    if padding != 4:
+                        s += '=' * padding
+                    s = s.replace('-', '+').replace('_', '/')
+                    return base64.b64decode(s)
+
+                def solve():
+                    lines = sys.stdin.read().splitlines()
+                    jwt_token = lines[0].strip()
+                    parts = jwt_token.split('.')
+                    payload_encoded = parts[1]
+                    payload_bytes = base64url_decode(payload_encoded)
+                    payload = json.loads(payload_bytes.decode('utf-8'))
+                    q = int(lines[1])
+                    for i in range(2, 2 + q):
+                        key = lines[i].strip()
+                        if key in payload:
+                            value = payload[key]
+                            print(f'{key}: {value}')
+                        else:
+                            print(f'{key}: MISSING')
+
+                solve()
+            test_cases:
+              - name: basic-claims
+                stdin: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDg2NDAwfQ.signature_ignored\n4\nsub\nrole\nexp\nname\n"
+                expected_stdout: "sub: user_123\nrole: admin\nexp: 1700086400\nname: MISSING"
+                is_hidden: false
+                weight: 1
+              - name: missing-claims
+                stdin: "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjQyLCJlbWFpbCI6ImFsaWNlQGV4YW1wbGUuY29tIn0.sig\n3\nuserId\nemail\nrole\n"
+                expected_stdout: "userId: 42\nemail: alice@example.com\nrole: MISSING"
+                is_hidden: false
+                weight: 1
+              - name: iat-and-exp
+                stdin: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjAwMDAwMDAwLCJleHAiOjE2MDAwMDM2MDB9.sig\n2\niat\nexp\n"
+                expected_stdout: "iat: 1600000000\nexp: 1600003600"
+                is_hidden: false
+                weight: 1
+              - name: all-missing
+                stdin: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSJ9.sig\n3\nrole\npermissions\nscope\n"
+                expected_stdout: "role: MISSING\npermissions: MISSING\nscope: MISSING"
+                is_hidden: true
+                weight: 1
+              - name: single-claim-sub
+                stdin: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzk5OSIsImlzcyI6ImF1dGgtc2VydmljZSJ9.sig\n2\nsub\niss\n"
+                expected_stdout: "sub: user_999\niss: auth-service"
+                is_hidden: true
+                weight: 1
 
       - slug: error-handling
         title: Error Handling in Express
@@ -295,6 +576,12 @@ modules:
         type: reading
         duration_minutes: 15
         content_file: lessons/testing-node.md
+
+      - slug: testing-quiz
+        title: "Quiz: Testing Node.js APIs"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/testing-quiz.md
 
   - title: Deployment and Operations
     summary: Process management, Docker, health checks, and graceful shutdown.

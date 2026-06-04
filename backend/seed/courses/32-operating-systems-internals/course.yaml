@@ -1,0 +1,2779 @@
+subject:
+  slug: systems
+  name: Systems
+  description: How computers run software, from the CPU up to the network.
+  icon: server
+  color: '#ef4444'
+  order_index: 4
+course:
+  slug: operating-systems-internals
+  title: Operating Systems Internals
+  summary: >-
+    A deep-dive into how operating systems work — processes, scheduling, memory management,
+    file systems, I/O, synchronization, and virtualization — with coding exercises on every topic.
+  description: >-
+    Master the internals of modern operating systems through rigorous theory and hands-on exercises.
+    Covers process lifecycle and the process API, all major CPU scheduling algorithms, concurrency
+    and synchronization (mutexes, semaphores, condition variables, classical problems), memory
+    management (paging, TLBs, virtual memory, page replacement), file systems and storage,
+    I/O systems and device drivers, and virtualization and security. Exercises simulate real
+    OS algorithms in Python including FIFO/LRU page replacement, Round Robin scheduling,
+    the Banker's Algorithm, SCAN disk scheduling, and more.
+  difficulty: advanced
+  estimated_hours: 60
+  order_index: 32
+  is_published: true
+modules:
+- title: Processes and the Process API
+  order_index: 1
+  lessons:
+  - slug: what-is-a-process
+    title: What Is a Process?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-a-process.md
+  - slug: process-creation-fork-and-exec
+    title: 'Process Creation: fork, exec, and wait'
+    type: reading
+    duration_minutes: 12
+    content_file: lessons/process-creation-fork-and-exec.md
+  - slug: the-process-control-block-pcb
+    title: The Process Control Block (PCB)
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/the-process-control-block-pcb.md
+  - slug: process-states-and-state-transitions
+    title: Process States and State Transitions
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/process-states-and-state-transitions.md
+  - slug: context-switch-mechanics
+    title: Context Switch Mechanics
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/context-switch-mechanics.md
+  - slug: how-a-system-call-works
+    title: How a System Call Works
+    type: reading
+    duration_minutes: 12
+    content_file: lessons/how-a-system-call-works.md
+  - slug: zombie-and-orphan-processes
+    title: Zombie and Orphan Processes
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/zombie-and-orphan-processes.md
+  - slug: why-processes-need-to-communicate
+    title: Why Processes Need to Communicate
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/why-processes-need-to-communicate.md
+  - slug: pipes-and-fifos
+    title: 'IPC: Pipes and FIFOs'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/pipes-and-fifos.md
+  - slug: signals-and-signal-handlers
+    title: Signals and Signal Handlers
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/signals-and-signal-handlers.md
+  - slug: shared-memory-ipc
+    title: 'IPC: Shared Memory'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/shared-memory-ipc.md
+  - slug: message-queues
+    title: 'IPC: Message Queues'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/message-queues.md
+  - slug: process-vs-thread
+    title: Process vs Thread
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/process-vs-thread.md
+  - slug: process-state-machine-simulation-exercise
+    title: 'Exercise: Process State Machine Simulator'
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/process-state-machine-simulation-exercise.md
+    exercises:
+      - slug: os-process-state-machine-simulation-exercise
+        title: Process State Machine Simulator
+        difficulty: easy
+        points: 15
+        prompt_file: lessons/os-process-state-machine-simulation-exercise.prompt.md
+        supported_languages: [python]
+        tags: [processes, state-machine, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split('\n')
+                # TODO: simulate process state transitions
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                lines = [l.strip() for l in sys.stdin.read().strip().split('\n') if l.strip()]
+                state = 'NEW'
+                transitions = {
+                    'NEW': {'admit': 'READY'},
+                    'READY': {'dispatch': 'RUNNING'},
+                    'RUNNING': {'interrupt': 'READY', 'io_wait': 'WAITING', 'exit': 'TERMINATED'},
+                    'WAITING': {'io_complete': 'READY'},
+                }
+                for event in lines:
+                    if state in transitions and event in transitions[state]:
+                        state = transitions[state][event]
+                    else:
+                        print(f'INVALID: {event} in {state}')
+                        return
+                print(state)
+
+            solve()
+        test_cases:
+          - name: case-new-to-ready
+            stdin: "admit\n"
+            expected_stdout: "READY"
+            is_hidden: false
+            weight: 1
+          - name: case-full-run-to-terminated
+            stdin: "admit\ndispatch\nexit\n"
+            expected_stdout: "TERMINATED"
+            is_hidden: false
+            weight: 1
+          - name: case-io-wait-and-back
+            stdin: "admit\ndispatch\nio_wait\nio_complete\ndispatch\nexit\n"
+            expected_stdout: "TERMINATED"
+            is_hidden: false
+            weight: 1
+          - name: case-interrupted-process
+            stdin: "admit\ndispatch\ninterrupt\ndispatch\nexit\n"
+            expected_stdout: "TERMINATED"
+            is_hidden: true
+            weight: 1
+          - name: case-invalid-transition
+            stdin: "admit\ndispatch\nadmit\n"
+            expected_stdout: "INVALID: admit in RUNNING"
+            is_hidden: true
+            weight: 1
+  - slug: parse-ipc-message-frames-exercise
+    title: 'Exercise: Parse IPC Message Frames'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/parse-ipc-message-frames-exercise.md
+    exercises:
+      - slug: os-parse-ipc-message-frames-exercise
+        title: Parse IPC Message Frames
+        difficulty: easy
+        points: 15
+        prompt_file: lessons/os-parse-ipc-message-frames-exercise.prompt.md
+        supported_languages: [python]
+        tags: [ipc, parsing, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read()
+                # TODO: parse IPC message frames
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                lines = sys.stdin.read().strip().split('\n')
+                for line in lines:
+                    parts = line.strip().split()
+                    if len(parts) >= 3:
+                        src, dst, *payload = parts
+                        print(f'FROM={src} TO={dst} DATA={" ".join(payload)}')
+
+            solve()
+        test_cases:
+          - name: case-single-message
+            stdin: "P1 P2 hello\n"
+            expected_stdout: "FROM=P1 TO=P2 DATA=hello"
+            is_hidden: false
+            weight: 1
+          - name: case-multi-word-payload
+            stdin: "proc1 proc2 the quick brown fox\n"
+            expected_stdout: "FROM=proc1 TO=proc2 DATA=the quick brown fox"
+            is_hidden: false
+            weight: 1
+          - name: case-multiple-messages
+            stdin: "A B ping\nB A pong\n"
+            expected_stdout: "FROM=A TO=B DATA=ping\nFROM=B TO=A DATA=pong"
+            is_hidden: true
+            weight: 1
+  - slug: quiz-processes-and-pcb
+    title: 'Quiz: Processes, PCB, and the Process API'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-processes-and-pcb.md
+  - slug: quiz-inter-process-communication
+    title: 'Quiz: Inter-Process Communication'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-inter-process-communication.md
+  - slug: interview-process-fundamentals
+    title: 'Interview Prep: Process Fundamentals'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-process-fundamentals.md
+  - slug: interview-ipc-questions
+    title: 'Interview Prep: IPC Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-ipc-questions.md
+
+- title: CPU Scheduling
+  order_index: 2
+  lessons:
+  - slug: the-role-of-the-cpu-scheduler
+    title: The Role of the CPU Scheduler
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/the-role-of-the-cpu-scheduler.md
+  - slug: scheduling-criteria-and-metrics
+    title: 'Scheduling Criteria: Throughput, Turnaround, Response Time'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/scheduling-criteria-and-metrics.md
+  - slug: preemptive-vs-non-preemptive-scheduling
+    title: Preemptive vs Non-Preemptive Scheduling
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/preemptive-vs-non-preemptive-scheduling.md
+  - slug: first-come-first-served-fcfs
+    title: First-Come, First-Served (FCFS)
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/first-come-first-served-fcfs.md
+  - slug: shortest-job-first-sjf
+    title: Shortest Job First (SJF) and SRTF
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/shortest-job-first-sjf.md
+  - slug: round-robin-and-time-quantum
+    title: Round Robin Scheduling and the Time Quantum
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/round-robin-and-time-quantum.md
+  - slug: rr-scheduling-turnaround-waiting
+    title: 'Round Robin: Computing Turnaround and Waiting Time'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/rr-scheduling-turnaround-waiting.md
+  - slug: priority-scheduling-and-starvation
+    title: Priority Scheduling and Starvation
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/priority-scheduling-and-starvation.md
+  - slug: aging-to-prevent-starvation
+    title: Aging to Prevent Starvation
+    type: reading
+    duration_minutes: 6
+    content_file: lessons/aging-to-prevent-starvation.md
+  - slug: multilevel-feedback-queue
+    title: Multi-Level Feedback Queue (MLFQ)
+    type: reading
+    duration_minutes: 12
+    content_file: lessons/multilevel-feedback-queue.md
+  - slug: multilevel-queue-scheduling
+    title: Multi-Level Queue Scheduling
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/multilevel-queue-scheduling.md
+  - slug: multiprocessor-scheduling-and-affinity
+    title: Multi-Processor Scheduling and Processor Affinity
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/multiprocessor-scheduling-and-affinity.md
+  - slug: gantt-charts-for-scheduling
+    title: Gantt Charts for Scheduling Visualization
+    type: reading
+    duration_minutes: 6
+    content_file: lessons/gantt-charts-for-scheduling.md
+  - slug: choosing-the-right-time-quantum
+    title: Choosing the Right Time Quantum
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/choosing-the-right-time-quantum.md
+  - slug: fcfs-simulation-exercise
+    title: 'Exercise: FCFS Scheduling Simulator'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/fcfs-simulation-exercise.md
+    exercises:
+      - slug: os-fcfs-simulation-exercise
+        title: FCFS Scheduling Simulator
+        difficulty: easy
+        points: 15
+        prompt_file: lessons/os-fcfs-simulation-exercise.prompt.md
+        supported_languages: [python]
+        tags: [scheduling, fcfs, simulation, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                processes = []
+                for i in range(n):
+                    arrival = int(data[idx]); idx += 1
+                    burst = int(data[idx]); idx += 1
+                    processes.append((arrival, burst, i + 1))
+                # TODO: simulate FCFS and print avg turnaround and avg waiting time
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                processes = []
+                for i in range(n):
+                    arrival = int(data[idx]); idx += 1
+                    burst = int(data[idx]); idx += 1
+                    processes.append((arrival, burst, i + 1))
+                processes.sort(key=lambda x: (x[0], x[2]))
+                time = 0
+                total_tat = 0
+                total_wt = 0
+                for arrival, burst, pid in processes:
+                    if time < arrival:
+                        time = arrival
+                    ct = time + burst
+                    tat = ct - arrival
+                    wt = tat - burst
+                    total_tat += tat
+                    total_wt += wt
+                    time = ct
+                print(f'{total_tat / n:.2f}')
+                print(f'{total_wt / n:.2f}')
+
+            solve()
+        test_cases:
+          - name: case-three-processes
+            stdin: "3\n0 6\n1 4\n5 2\n"
+            expected_stdout: "7.33\n3.33"
+            is_hidden: false
+            weight: 1
+          - name: case-single-process
+            stdin: "1\n0 10\n"
+            expected_stdout: "10.00\n0.00"
+            is_hidden: false
+            weight: 1
+          - name: case-same-arrival
+            stdin: "3\n0 3\n0 5\n0 2\n"
+            expected_stdout: "7.00\n3.67"
+            is_hidden: false
+            weight: 1
+          - name: case-idle-gap
+            stdin: "2\n0 3\n10 5\n"
+            expected_stdout: "5.00\n0.00"
+            is_hidden: true
+            weight: 1
+          - name: case-four-processes
+            stdin: "4\n0 8\n2 4\n5 2\n9 3\n"
+            expected_stdout: "8.25\n3.50"
+            is_hidden: true
+            weight: 1
+  - slug: sjf-simulation-exercise
+    title: 'Exercise: SJF Scheduler'
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/sjf-simulation-exercise.md
+    exercises:
+      - slug: os-sjf-simulation-exercise
+        title: SJF Scheduler (Non-Preemptive)
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-sjf-simulation-exercise.prompt.md
+        supported_languages: [python]
+        tags: [scheduling, sjf, simulation, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: simulate non-preemptive SJF
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+            import heapq
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                processes = []
+                for i in range(n):
+                    arrival = int(data[idx]); idx += 1
+                    burst = int(data[idx]); idx += 1
+                    processes.append([arrival, burst, i + 1])
+                processes.sort(key=lambda x: (x[0], x[2]))
+                time = 0
+                done = 0
+                total_tat = 0
+                total_wt = 0
+                heap = []
+                idx2 = 0
+                while done < n:
+                    while idx2 < n and processes[idx2][0] <= time:
+                        heapq.heappush(heap, (processes[idx2][1], processes[idx2][2], processes[idx2][0]))
+                        idx2 += 1
+                    if not heap:
+                        time = processes[idx2][0]
+                        continue
+                    burst, pid, arrival = heapq.heappop(heap)
+                    ct = time + burst
+                    tat = ct - arrival
+                    wt = tat - burst
+                    total_tat += tat
+                    total_wt += wt
+                    time = ct
+                    done += 1
+                print(f'{total_tat / n:.2f}')
+                print(f'{total_wt / n:.2f}')
+
+            solve()
+        test_cases:
+          - name: case-three-processes
+            stdin: "3\n0 6\n0 3\n0 2\n"
+            expected_stdout: "5.33\n1.33"
+            is_hidden: false
+            weight: 1
+          - name: case-single
+            stdin: "1\n0 5\n"
+            expected_stdout: "5.00\n0.00"
+            is_hidden: false
+            weight: 1
+          - name: case-staggered
+            stdin: "3\n0 8\n2 4\n5 2\n"
+            expected_stdout: "8.33\n3.67"
+            is_hidden: true
+            weight: 1
+          - name: case-tie-break-by-order
+            stdin: "2\n0 5\n0 5\n"
+            expected_stdout: "7.50\n2.50"
+            is_hidden: true
+            weight: 1
+  - slug: round-robin-simulation-exercise
+    title: 'Exercise: Round Robin Scheduler (Per-Process Output)'
+    type: exercise
+    duration_minutes: 30
+    content_file: lessons/round-robin-simulation-exercise.md
+    exercises:
+      - slug: os-round-robin-simulation-exercise
+        title: Round Robin Scheduler Simulation
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-round-robin-simulation-exercise.prompt.md
+        supported_languages: [python]
+        tags: [scheduling, round-robin, simulation, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+            from collections import deque
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                quantum = int(data[idx]); idx += 1
+                processes = []
+                for i in range(n):
+                    arrival = int(data[idx]); idx += 1
+                    burst = int(data[idx]); idx += 1
+                    processes.append([i + 1, arrival, burst, burst])
+                # TODO: simulate RR and print per-process metrics then averages
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+            from collections import deque
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                quantum = int(data[idx]); idx += 1
+                processes = []
+                for i in range(n):
+                    arrival = int(data[idx]); idx += 1
+                    burst = int(data[idx]); idx += 1
+                    processes.append([i + 1, arrival, burst, burst])
+                sorted_p = sorted(processes, key=lambda x: (x[1], x[0]))
+                time = 0
+                queue = deque()
+                added = set()
+                finish = {}
+                idx2 = 0
+                while idx2 < n and sorted_p[idx2][1] <= time:
+                    pid = sorted_p[idx2][0]
+                    queue.append(pid)
+                    added.add(pid)
+                    idx2 += 1
+                pid_to_proc = {p[0]: p for p in processes}
+                while len(finish) < n:
+                    if not queue:
+                        if idx2 < n:
+                            time = sorted_p[idx2][1]
+                            while idx2 < n and sorted_p[idx2][1] <= time:
+                                pid = sorted_p[idx2][0]
+                                if pid not in added:
+                                    queue.append(pid)
+                                    added.add(pid)
+                                idx2 += 1
+                        continue
+                    pid = queue.popleft()
+                    proc = pid_to_proc[pid]
+                    run = min(quantum, proc[3])
+                    time += run
+                    proc[3] -= run
+                    while idx2 < n and sorted_p[idx2][1] <= time:
+                        apid = sorted_p[idx2][0]
+                        if apid not in added:
+                            queue.append(apid)
+                            added.add(apid)
+                        idx2 += 1
+                    if proc[3] > 0:
+                        queue.append(pid)
+                    else:
+                        finish[pid] = time
+                total_wt = 0
+                total_tat = 0
+                for p in processes:
+                    pid, arrival, burst, _ = p
+                    ct = finish[pid]
+                    tat = ct - arrival
+                    wt = tat - burst
+                    total_tat += tat
+                    total_wt += wt
+                    print(f'P{pid} CT={ct} TAT={tat} WT={wt}')
+                print(f'Average WT={total_wt/n:.2f} Average TAT={total_tat/n:.2f}')
+
+            solve()
+        test_cases:
+          - name: case-three-same-arrival
+            stdin: "3 4\n0 10\n0 4\n0 6\n"
+            expected_stdout: "P1 CT=20 TAT=20 WT=10\nP2 CT=8 TAT=8 WT=4\nP3 CT=18 TAT=18 WT=12\nAverage WT=8.67 Average TAT=15.33"
+            is_hidden: false
+            weight: 1
+          - name: case-single-process
+            stdin: "1 5\n0 3\n"
+            expected_stdout: "P1 CT=3 TAT=3 WT=0\nAverage WT=0.00 Average TAT=3.00"
+            is_hidden: false
+            weight: 1
+          - name: case-staggered-arrivals
+            stdin: "3 2\n0 5\n2 3\n4 1\n"
+            expected_stdout: "P1 CT=9 TAT=9 WT=4\nP2 CT=8 TAT=6 WT=3\nP3 CT=7 TAT=3 WT=2\nAverage WT=3.00 Average TAT=6.00"
+            is_hidden: false
+            weight: 1
+          - name: case-four-processes
+            stdin: "4 3\n0 6\n0 4\n0 2\n0 8\n"
+            expected_stdout: "P1 CT=17 TAT=17 WT=11\nP2 CT=13 TAT=13 WT=9\nP3 CT=5 TAT=5 WT=3\nP4 CT=20 TAT=20 WT=12\nAverage WT=8.75 Average TAT=13.75"
+            is_hidden: true
+            weight: 1
+          - name: case-quantum-larger-than-burst
+            stdin: "2 10\n0 3\n0 5\n"
+            expected_stdout: "P1 CT=3 TAT=3 WT=0\nP2 CT=8 TAT=8 WT=3\nAverage WT=1.50 Average TAT=5.50"
+            is_hidden: true
+            weight: 1
+  - slug: compute-scheduling-metrics-exercise
+    title: 'Exercise: Compute Scheduling Metrics (FCFS Average)'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/compute-scheduling-metrics-exercise.md
+    exercises:
+      - slug: os-compute-scheduling-metrics-exercise
+        title: 'Compute Average Waiting and Turnaround Time (FCFS)'
+        difficulty: easy
+        points: 15
+        prompt_file: lessons/os-compute-scheduling-metrics-exercise.prompt.md
+        supported_languages: [python]
+        tags: [scheduling, fcfs, metrics, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                n = int(data[0])
+                # TODO: compute avg turnaround and avg waiting
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                processes = []
+                for i in range(n):
+                    arrival = int(data[idx]); idx += 1
+                    burst = int(data[idx]); idx += 1
+                    processes.append((arrival, burst, i))
+                processes.sort(key=lambda x: (x[0], x[2]))
+                time = 0
+                total_tat = 0
+                total_wt = 0
+                for arrival, burst, _ in processes:
+                    if time < arrival:
+                        time = arrival
+                    ct = time + burst
+                    tat = ct - arrival
+                    wt = tat - burst
+                    total_tat += tat
+                    total_wt += wt
+                    time = ct
+                print(f'{total_tat / n:.2f}')
+                print(f'{total_wt / n:.2f}')
+
+            solve()
+        test_cases:
+          - name: case-three-processes
+            stdin: "3\n0 6\n1 4\n5 2\n"
+            expected_stdout: "7.33\n3.33"
+            is_hidden: false
+            weight: 1
+          - name: case-single-process
+            stdin: "1\n0 10\n"
+            expected_stdout: "10.00\n0.00"
+            is_hidden: false
+            weight: 1
+          - name: case-all-same-arrival
+            stdin: "3\n0 3\n0 5\n0 2\n"
+            expected_stdout: "7.00\n3.67"
+            is_hidden: false
+            weight: 1
+          - name: case-gap-in-cpu
+            stdin: "2\n0 2\n10 4\n"
+            expected_stdout: "5.00\n0.00"
+            is_hidden: true
+            weight: 1
+  - slug: priority-scheduling-simulation-exercise
+    title: 'Exercise: Priority Scheduling Simulator'
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/priority-scheduling-simulation-exercise.md
+    exercises:
+      - slug: os-priority-scheduling-simulation-exercise
+        title: Priority Scheduling Simulator
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-priority-scheduling-simulation-exercise.prompt.md
+        supported_languages: [python]
+        tags: [scheduling, priority, simulation, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: simulate non-preemptive priority scheduling
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+            import heapq
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                processes = []
+                for i in range(n):
+                    arrival = int(data[idx]); idx += 1
+                    burst = int(data[idx]); idx += 1
+                    priority = int(data[idx]); idx += 1
+                    processes.append((arrival, burst, priority, i + 1))
+                sorted_p = sorted(processes, key=lambda x: (x[0], x[3]))
+                time = 0
+                done = 0
+                total_tat = 0
+                total_wt = 0
+                heap = []
+                idx2 = 0
+                while done < n:
+                    while idx2 < n and sorted_p[idx2][0] <= time:
+                        arr, bst, pri, pid = sorted_p[idx2]
+                        heapq.heappush(heap, (pri, pid, arr, bst))
+                        idx2 += 1
+                    if not heap:
+                        time = sorted_p[idx2][0]
+                        continue
+                    pri, pid, arrival, burst = heapq.heappop(heap)
+                    ct = time + burst
+                    tat = ct - arrival
+                    wt = tat - burst
+                    total_tat += tat
+                    total_wt += wt
+                    time = ct
+                    done += 1
+                print(f'{total_tat / n:.2f}')
+                print(f'{total_wt / n:.2f}')
+
+            solve()
+        test_cases:
+          - name: case-three-processes
+            stdin: "3\n0 6 3\n0 4 1\n0 2 2\n"
+            expected_stdout: "7.00\n3.00"
+            is_hidden: false
+            weight: 1
+          - name: case-single
+            stdin: "1\n0 5 1\n"
+            expected_stdout: "5.00\n0.00"
+            is_hidden: false
+            weight: 1
+          - name: case-staggered
+            stdin: "3\n0 8 2\n2 4 1\n6 2 3\n"
+            expected_stdout: "9.67\n4.33"
+            is_hidden: true
+            weight: 1
+  - slug: rr-turnaround-waiting-exercise
+    title: 'Exercise: Round Robin — Average Turnaround and Waiting Time'
+    type: exercise
+    duration_minutes: 30
+    content_file: lessons/rr-scheduling-turnaround-waiting.md
+    exercises:
+      - slug: operating-rr-turnaround-waiting
+        title: 'Round Robin Scheduling: Average Turnaround and Waiting Time'
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-rr-turnaround-waiting-exercise.prompt.md
+        supported_languages: [python]
+        tags: [scheduling, round-robin, turnaround, waiting-time, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+            from collections import deque
+
+            def solve():
+                lines = sys.stdin.read().strip().split('\n')
+                parts = lines[0].split()
+                n, quantum = int(parts[0]), int(parts[1])
+                processes = []
+                for i in range(1, n + 1):
+                    p = lines[i].split()
+                    pid, arrival, burst = p[0], int(p[1]), int(p[2])
+                    processes.append((pid, arrival, burst))
+                # TODO: simulate Round Robin and print averages
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+            from collections import deque
+
+            def solve():
+                lines = sys.stdin.read().strip().split('\n')
+                parts = lines[0].split()
+                n, quantum = int(parts[0]), int(parts[1])
+                processes = []
+                for i in range(1, n + 1):
+                    p = lines[i].split()
+                    pid, arrival, burst = p[0], int(p[1]), int(p[2])
+                    processes.append((pid, arrival, burst))
+
+                pid_list = [p[0] for p in processes]
+                arrival_map = {p[0]: p[1] for p in processes}
+                burst_map = {p[0]: p[2] for p in processes}
+                remaining = {p[0]: p[2] for p in processes}
+                sorted_procs = sorted(processes, key=lambda x: (x[1], pid_list.index(x[0])))
+
+                time = 0
+                queue = deque()
+                added = set()
+                idx = 0
+                finish = {}
+
+                while idx < n and sorted_procs[idx][1] <= time:
+                    pid = sorted_procs[idx][0]
+                    queue.append(pid)
+                    added.add(pid)
+                    idx += 1
+
+                while len(finish) < n:
+                    if not queue:
+                        if idx < n:
+                            time = sorted_procs[idx][1]
+                            while idx < n and sorted_procs[idx][1] <= time:
+                                pid = sorted_procs[idx][0]
+                                if pid not in added:
+                                    queue.append(pid)
+                                    added.add(pid)
+                                idx += 1
+                        continue
+                    pid = queue.popleft()
+                    run = min(quantum, remaining[pid])
+                    time += run
+                    remaining[pid] -= run
+                    while idx < n and sorted_procs[idx][1] <= time:
+                        apid = sorted_procs[idx][0]
+                        if apid not in added:
+                            queue.append(apid)
+                            added.add(apid)
+                        idx += 1
+                    if remaining[pid] > 0:
+                        queue.append(pid)
+                    else:
+                        finish[pid] = time
+
+                tat_list = [finish[p[0]] - arrival_map[p[0]] for p in processes]
+                wt_list = [tat_list[i] - burst_map[processes[i][0]] for i in range(n)]
+                avg_tat = sum(tat_list) / n
+                avg_wt = sum(wt_list) / n
+                print(f'Average Turnaround Time: {avg_tat:.2f}')
+                print(f'Average Waiting Time: {avg_wt:.2f}')
+
+            solve()
+        test_cases:
+          - name: case-four-processes-q2
+            stdin: "4 2\nP1 0 5\nP2 1 3\nP3 2 8\nP4 3 6\n"
+            expected_stdout: "Average Turnaround Time: 15.25\nAverage Waiting Time: 9.75"
+            is_hidden: false
+            weight: 1
+          - name: case-three-same-arrival-q4
+            stdin: "3 4\nP1 0 10\nP2 0 4\nP3 0 6\n"
+            expected_stdout: "Average Turnaround Time: 15.33\nAverage Waiting Time: 8.67"
+            is_hidden: false
+            weight: 1
+          - name: case-single-process
+            stdin: "1 5\nP1 0 3\n"
+            expected_stdout: "Average Turnaround Time: 3.00\nAverage Waiting Time: 0.00"
+            is_hidden: false
+            weight: 1
+          - name: case-three-q3
+            stdin: "3 3\nP1 0 8\nP2 0 6\nP3 0 4\n"
+            expected_stdout: "Average Turnaround Time: 16.33\nAverage Waiting Time: 10.33"
+            is_hidden: true
+            weight: 1
+          - name: case-staggered-q2
+            stdin: "3 2\nP1 0 6\nP2 3 4\nP3 7 2\n"
+            expected_stdout: "Average Turnaround Time: 6.67\nAverage Waiting Time: 2.67"
+            is_hidden: true
+            weight: 1
+  - slug: quiz-cpu-scheduling-fundamentals
+    title: 'Quiz: CPU Scheduling Fundamentals'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-cpu-scheduling-fundamentals.md
+  - slug: quiz-fcfs-sjf-round-robin
+    title: 'Quiz: FCFS, SJF, and Round Robin'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-fcfs-sjf-round-robin.md
+  - slug: quiz-priority-multilevel-realtime-scheduling
+    title: 'Quiz: Priority, MLFQ, and Real-Time Scheduling'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-priority-multilevel-realtime-scheduling.md
+  - slug: interview-scheduling-fundamentals
+    title: 'Interview Prep: Scheduling Fundamentals'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-scheduling-fundamentals.md
+  - slug: interview-scheduling-algorithm-questions
+    title: 'Interview Prep: Scheduling Algorithm Questions'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-scheduling-algorithm-questions.md
+
+- title: Concurrency, Synchronization, and Deadlock
+  order_index: 3
+  lessons:
+  - slug: process-vs-thread
+    title: Processes vs Threads
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/process-vs-thread.md
+  - slug: user-level-vs-kernel-level-threads
+    title: User-Level vs Kernel-Level Threads
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/user-level-vs-kernel-level-threads.md
+  - slug: threading-models-one-to-one-many-to-one
+    title: 'Threading Models: One-to-One, Many-to-One, Many-to-Many'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/threading-models-one-to-one-many-to-one.md
+  - slug: what-is-a-race-condition
+    title: What Is a Race Condition?
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/what-is-a-race-condition.md
+  - slug: non-atomic-increment-problem
+    title: The Non-Atomic Increment Problem
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/non-atomic-increment-problem.md
+  - slug: the-critical-section-problem
+    title: The Critical Section Problem
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/the-critical-section-problem.md
+  - slug: mutual-exclusion-requirements
+    title: Mutual Exclusion Requirements
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/mutual-exclusion-requirements.md
+  - slug: what-is-a-mutex
+    title: What Is a Mutex?
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/what-is-a-mutex.md
+  - slug: mutex-vs-semaphore
+    title: 'Mutex vs Semaphore: Ownership Semantics'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/mutex-vs-semaphore.md
+  - slug: binary-vs-counting-semaphores
+    title: Binary vs Counting Semaphores
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/binary-vs-counting-semaphores.md
+  - slug: condition-variables
+    title: Condition Variables and Monitors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/condition-variables.md
+  - slug: spinlock-vs-mutex
+    title: Spinlock vs Mutex
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/spinlock-vs-mutex.md
+  - slug: atomic-operations-and-test-and-set
+    title: Atomic Operations and Test-and-Set
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/atomic-operations-and-test-and-set.md
+  - slug: petersons-algorithm
+    title: "Peterson's Algorithm"
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/petersons-algorithm.md
+  - slug: producer-consumer-problem
+    title: The Producer-Consumer Problem
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/producer-consumer-problem.md
+  - slug: solving-producer-consumer-with-semaphores
+    title: Solving Producer-Consumer with Semaphores
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/solving-producer-consumer-with-semaphores.md
+  - slug: readers-writers-problem
+    title: The Readers-Writers Problem
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/readers-writers-problem.md
+  - slug: dining-philosophers-problem
+    title: The Dining Philosophers Problem
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/dining-philosophers-problem.md
+  - slug: the-four-conditions-for-deadlock
+    title: The Four Conditions for Deadlock (Coffman Conditions)
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/the-four-conditions-for-deadlock.md
+  - slug: resource-allocation-graphs
+    title: Resource Allocation Graphs
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/resource-allocation-graphs.md
+  - slug: deadlock-prevention
+    title: Deadlock Prevention
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/deadlock-prevention.md
+  - slug: deadlock-avoidance-bankers-algorithm
+    title: "Deadlock Avoidance: The Banker's Algorithm"
+    type: reading
+    duration_minutes: 12
+    content_file: lessons/deadlock-avoidance-bankers-algorithm.md
+  - slug: deadlock-detection-and-recovery
+    title: Deadlock Detection and Recovery
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/deadlock-detection-and-recovery.md
+  - slug: livelock-vs-deadlock
+    title: Livelock vs Deadlock vs Starvation
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/livelock-vs-deadlock.md
+  - slug: priority-inversion-and-inheritance
+    title: Priority Inversion and Priority Inheritance
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/priority-inversion-and-inheritance.md
+  - slug: detect-race-in-interleaving-exercise
+    title: 'Exercise: Detect Race Conditions in Interleavings'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/detect-race-in-interleaving-exercise.md
+    exercises:
+      - slug: os-detect-race-in-interleaving-exercise
+        title: Detect Race Conditions in Interleavings
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-detect-race-in-interleaving-exercise.prompt.md
+        supported_languages: [python]
+        tags: [concurrency, race-condition, synchronization, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read()
+                # TODO: check for race conditions in the interleaving
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                lines = [l.strip() for l in sys.stdin.read().strip().split('\n') if l.strip()]
+                shared = {}
+                last_writer = {}
+                race = False
+                for line in lines:
+                    parts = line.split()
+                    if len(parts) < 3:
+                        continue
+                    thread, op, var = parts[0], parts[1], parts[2]
+                    if op == 'W':
+                        if var in last_writer and last_writer[var] != thread:
+                            race = True
+                        last_writer[var] = thread
+                    elif op == 'R':
+                        if var in last_writer and last_writer[var] != thread:
+                            race = True
+                print('RACE' if race else 'SAFE')
+
+            solve()
+        test_cases:
+          - name: case-no-race
+            stdin: "T1 W x\nT1 R x\n"
+            expected_stdout: "SAFE"
+            is_hidden: false
+            weight: 1
+          - name: case-race-detected
+            stdin: "T1 W x\nT2 R x\n"
+            expected_stdout: "RACE"
+            is_hidden: false
+            weight: 1
+          - name: case-concurrent-writes
+            stdin: "T1 W y\nT2 W y\n"
+            expected_stdout: "RACE"
+            is_hidden: true
+            weight: 1
+  - slug: bounded-buffer-simulation-exercise
+    title: 'Exercise: Bounded Buffer with Semaphore Semantics'
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/bounded-buffer-simulation-exercise.md
+    exercises:
+      - slug: os-bounded-buffer-simulation-exercise
+        title: Bounded Buffer State Tracer
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-bounded-buffer-simulation-exercise.prompt.md
+        supported_languages: [python]
+        tags: [concurrency, semaphore, bounded-buffer, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split('\n')
+                capacity = int(data[0].strip())
+                operations = data[1].strip().split()
+                # TODO: simulate bounded buffer operations
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().strip().split('\n')
+                capacity = int(data[0].strip())
+                operations = data[1].strip().split()
+                count = 0
+                for op in operations:
+                    if op == 'P':
+                        if count < capacity:
+                            count += 1
+                            print(f'P -> buffer: {count}')
+                        else:
+                            print('P -> BLOCK (buffer full)')
+                    elif op == 'C':
+                        if count > 0:
+                            count -= 1
+                            print(f'C -> buffer: {count}')
+                        else:
+                            print('C -> BLOCK (buffer empty)')
+
+            solve()
+        test_cases:
+          - name: case-overflow-then-drain
+            stdin: "3\nP P P P C C C C\n"
+            expected_stdout: "P -> buffer: 1\nP -> buffer: 2\nP -> buffer: 3\nP -> BLOCK (buffer full)\nC -> buffer: 2\nC -> buffer: 1\nC -> buffer: 0\nC -> BLOCK (buffer empty)"
+            is_hidden: false
+            weight: 1
+          - name: case-consume-empty
+            stdin: "2\nC\n"
+            expected_stdout: "C -> BLOCK (buffer empty)"
+            is_hidden: false
+            weight: 1
+          - name: case-produce-consume-interleaved
+            stdin: "2\nP C P C P\n"
+            expected_stdout: "P -> buffer: 1\nC -> buffer: 0\nP -> buffer: 1\nC -> buffer: 0\nP -> buffer: 1"
+            is_hidden: true
+            weight: 1
+          - name: case-capacity-one
+            stdin: "1\nP P C P\n"
+            expected_stdout: "P -> buffer: 1\nP -> BLOCK (buffer full)\nC -> buffer: 0\nP -> buffer: 1"
+            is_hidden: true
+            weight: 1
+  - slug: deadlock-detection-cycle-exercise
+    title: 'Exercise: Deadlock Detection via Cycle Detection'
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/deadlock-detection-cycle-exercise.md
+    exercises:
+      - slug: os-deadlock-detection-cycle-exercise
+        title: Deadlock Detection via Cycle Detection
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-deadlock-detection-cycle-exercise.prompt.md
+        supported_languages: [python]
+        tags: [deadlock, graph, cycle, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: detect cycle in resource allocation graph
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                e = int(data[idx]); idx += 1
+                graph = {i: [] for i in range(1, n + 1)}
+                for _ in range(e):
+                    u = int(data[idx]); idx += 1
+                    v = int(data[idx]); idx += 1
+                    graph[u].append(v)
+
+                visited = set()
+                rec_stack = set()
+
+                def dfs(node):
+                    visited.add(node)
+                    rec_stack.add(node)
+                    for nb in graph[node]:
+                        if nb not in visited:
+                            if dfs(nb):
+                                return True
+                        elif nb in rec_stack:
+                            return True
+                    rec_stack.remove(node)
+                    return False
+
+                for node in range(1, n + 1):
+                    if node not in visited:
+                        if dfs(node):
+                            print('YES')
+                            return
+                print('NO')
+
+            solve()
+        test_cases:
+          - name: case-no-deadlock
+            stdin: "3 2\n1 2\n2 3\n"
+            expected_stdout: "NO"
+            is_hidden: false
+            weight: 1
+          - name: case-deadlock-cycle
+            stdin: "3 3\n1 2\n2 3\n3 1\n"
+            expected_stdout: "YES"
+            is_hidden: false
+            weight: 1
+          - name: case-two-node-cycle
+            stdin: "2 2\n1 2\n2 1\n"
+            expected_stdout: "YES"
+            is_hidden: false
+            weight: 1
+          - name: case-disconnected-no-cycle
+            stdin: "4 2\n1 2\n3 4\n"
+            expected_stdout: "NO"
+            is_hidden: true
+            weight: 1
+          - name: case-self-loop
+            stdin: "2 2\n1 2\n2 2\n"
+            expected_stdout: "YES"
+            is_hidden: true
+            weight: 1
+  - slug: bankers-algorithm-exercise
+    title: "Exercise: Banker's Algorithm Safety Check"
+    type: exercise
+    duration_minutes: 35
+    content_file: lessons/deadlock-avoidance-bankers-algorithm.md
+    exercises:
+      - slug: operating-bankers-safety-check
+        title: "Banker's Algorithm: Safety Check"
+        difficulty: hard
+        points: 30
+        prompt_file: lessons/os-bankers-safety-check-exercise.prompt.md
+        supported_languages: [python]
+        tags: [deadlock, avoidance, bankers-algorithm, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                m = int(data[idx]); idx += 1
+                available = [int(data[idx + j]) for j in range(m)]; idx += m
+                allocation = []
+                for i in range(n):
+                    row = [int(data[idx + j]) for j in range(m)]; idx += m
+                    allocation.append(row)
+                maximum = []
+                for i in range(n):
+                    row = [int(data[idx + j]) for j in range(m)]; idx += m
+                    maximum.append(row)
+                # TODO: run Banker's safety algorithm
+                print('UNSAFE')
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                m = int(data[idx]); idx += 1
+                available = [int(data[idx + j]) for j in range(m)]; idx += m
+                allocation = []
+                for i in range(n):
+                    row = [int(data[idx + j]) for j in range(m)]; idx += m
+                    allocation.append(row)
+                maximum = []
+                for i in range(n):
+                    row = [int(data[idx + j]) for j in range(m)]; idx += m
+                    maximum.append(row)
+
+                need = [[maximum[i][j] - allocation[i][j] for j in range(m)] for i in range(n)]
+                work = available[:]
+                finish = [False] * n
+                safe_seq = []
+
+                while len(safe_seq) < n:
+                    found = False
+                    for i in range(n):
+                        if not finish[i] and all(need[i][j] <= work[j] for j in range(m)):
+                            for j in range(m):
+                                work[j] += allocation[i][j]
+                            finish[i] = True
+                            safe_seq.append(i)
+                            found = True
+                            break
+                    if not found:
+                        break
+
+                if len(safe_seq) == n:
+                    print('SAFE')
+                    print('Safe sequence: ' + ' '.join(f'P{i}' for i in safe_seq))
+                else:
+                    print('UNSAFE')
+
+            solve()
+        test_cases:
+          - name: case-classic-five-processes
+            stdin: "5 3\n3 3 2\n0 1 0\n2 0 0\n3 0 2\n2 1 1\n0 0 2\n7 5 3\n3 2 2\n9 0 2\n2 2 2\n4 3 3\n"
+            expected_stdout: "SAFE\nSafe sequence: P1 P3 P0 P2 P4"
+            is_hidden: false
+            weight: 1
+          - name: case-unsafe-no-resources
+            stdin: "3 2\n0 0\n1 0\n0 1\n0 1\n2 1\n1 1\n2 0\n"
+            expected_stdout: "UNSAFE"
+            is_hidden: false
+            weight: 1
+          - name: case-two-processes-safe
+            stdin: "2 2\n2 1\n1 0\n0 1\n3 2\n1 2\n"
+            expected_stdout: "SAFE\nSafe sequence: P1 P0"
+            is_hidden: false
+            weight: 1
+          - name: case-single-process-safe
+            stdin: "1 1\n2\n1\n3\n"
+            expected_stdout: "SAFE\nSafe sequence: P0"
+            is_hidden: true
+            weight: 1
+          - name: case-all-zero-need-safe
+            stdin: "2 2\n5 5\n1 0\n0 1\n1 0\n0 1\n"
+            expected_stdout: "SAFE\nSafe sequence: P0 P1"
+            is_hidden: true
+            weight: 1
+  - slug: verify-mutual-exclusion-trace-exercise
+    title: 'Exercise: Verify Mutual Exclusion in a Trace'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/verify-mutual-exclusion-trace-exercise.md
+    exercises:
+      - slug: os-verify-mutual-exclusion-trace-exercise
+        title: Verify Mutual Exclusion in Execution Trace
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-verify-mutual-exclusion-trace-exercise.prompt.md
+        supported_languages: [python]
+        tags: [concurrency, mutex, verification, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read()
+                # TODO: check if mutual exclusion is violated
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                lines = [l.strip() for l in sys.stdin.read().strip().split('\n') if l.strip()]
+                in_cs = set()
+                for line in lines:
+                    parts = line.split()
+                    if len(parts) < 2:
+                        continue
+                    thread, event = parts[0], parts[1]
+                    if event == 'ENTER':
+                        in_cs.add(thread)
+                        if len(in_cs) > 1:
+                            print('VIOLATION')
+                            return
+                    elif event == 'EXIT':
+                        in_cs.discard(thread)
+                print('OK')
+
+            solve()
+        test_cases:
+          - name: case-correct-mutex
+            stdin: "T1 ENTER\nT1 EXIT\nT2 ENTER\nT2 EXIT\n"
+            expected_stdout: "OK"
+            is_hidden: false
+            weight: 1
+          - name: case-violation
+            stdin: "T1 ENTER\nT2 ENTER\nT1 EXIT\nT2 EXIT\n"
+            expected_stdout: "VIOLATION"
+            is_hidden: false
+            weight: 1
+          - name: case-sequential-ok
+            stdin: "T1 ENTER\nT1 EXIT\nT1 ENTER\nT1 EXIT\n"
+            expected_stdout: "OK"
+            is_hidden: true
+            weight: 1
+  - slug: quiz-race-conditions-and-critical-sections
+    title: 'Quiz: Race Conditions and Critical Sections'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-race-conditions-and-critical-sections.md
+  - slug: quiz-mutexes-semaphores-spinlocks
+    title: 'Quiz: Mutexes, Semaphores, and Spinlocks'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-mutexes-semaphores-spinlocks.md
+  - slug: quiz-classic-synchronization-problems
+    title: 'Quiz: Classic Synchronization Problems'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-classic-synchronization-problems.md
+  - slug: quiz-deadlock-livelock-priority-inversion
+    title: 'Quiz: Deadlock, Livelock, and Priority Inversion'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-deadlock-livelock-priority-inversion.md
+  - slug: interview-race-condition-questions
+    title: 'Interview Prep: Race Condition Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-race-condition-questions.md
+  - slug: interview-mutex-vs-semaphore-questions
+    title: 'Interview Prep: Mutex vs Semaphore Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-mutex-vs-semaphore-questions.md
+  - slug: interview-deadlock-questions
+    title: 'Interview Prep: Deadlock Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-deadlock-questions.md
+  - slug: interview-classic-sync-problems
+    title: 'Interview Prep: Classic Synchronization Problems'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-classic-sync-problems.md
+
+- title: Memory Management
+  order_index: 4
+  lessons:
+  - slug: logical-vs-physical-addresses
+    title: Logical vs Physical Addresses
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/logical-vs-physical-addresses.md
+  - slug: virtual-vs-physical-memory
+    title: Virtual vs Physical Memory
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/virtual-vs-physical-memory.md
+  - slug: process-address-space-layout
+    title: Process Address Space Layout
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/process-address-space-layout.md
+  - slug: internal-vs-external-fragmentation
+    title: Internal vs External Fragmentation
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/internal-vs-external-fragmentation.md
+  - slug: first-fit-best-fit-worst-fit
+    title: 'Free Space Management: First Fit, Best Fit, Worst Fit'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/first-fit-best-fit-worst-fit.md
+  - slug: compaction-and-coalescing
+    title: Compaction and Coalescing
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/compaction-and-coalescing.md
+  - slug: what-is-paging
+    title: What Is Paging?
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/what-is-paging.md
+  - slug: the-page-table
+    title: The Page Table
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/the-page-table.md
+  - slug: page-table-entry-bits
+    title: Page Table Entry Bits
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/page-table-entry-bits.md
+  - slug: multilevel-page-tables
+    title: Multi-Level Page Tables
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/multilevel-page-tables.md
+  - slug: inverted-page-tables
+    title: Inverted Page Tables
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/inverted-page-tables.md
+  - slug: what-is-the-tlb
+    title: What Is the TLB?
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/what-is-the-tlb.md
+  - slug: tlb-hit-vs-miss
+    title: TLB Hit vs Miss
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/tlb-hit-vs-miss.md
+  - slug: effective-access-time
+    title: Effective Memory Access Time
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/effective-access-time.md
+  - slug: what-is-segmentation
+    title: What Is Segmentation?
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/what-is-segmentation.md
+  - slug: segmentation-with-paging
+    title: Segmentation with Paging
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/segmentation-with-paging.md
+  - slug: why-virtual-memory-exists
+    title: Why Virtual Memory Exists
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/why-virtual-memory-exists.md
+  - slug: demand-paging-and-prefetching
+    title: Demand Paging and Prefetching
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/demand-paging-and-prefetching.md
+  - slug: what-is-a-page-fault
+    title: What Is a Page Fault?
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/what-is-a-page-fault.md
+  - slug: copy-on-write
+    title: Copy-on-Write (CoW) in fork()
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/copy-on-write.md
+  - slug: the-page-replacement-problem
+    title: The Page Replacement Problem
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/the-page-replacement-problem.md
+  - slug: optimal-page-replacement
+    title: Optimal (OPT/Belady) Page Replacement
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/optimal-page-replacement.md
+  - slug: fifo-page-replacement
+    title: FIFO Page Replacement and Belady's Anomaly
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fifo-page-replacement.md
+  - slug: lru-page-replacement
+    title: LRU Page Replacement and Approximations
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/lru-page-replacement.md
+  - slug: clock-and-second-chance
+    title: Clock and Second-Chance Page Replacement
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/clock-and-second-chance.md
+  - slug: fifo-lru-page-faults-combined
+    title: 'FIFO vs LRU: Side-by-Side Comparison'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/fifo-lru-page-faults-combined.md
+  - slug: thrashing-and-working-sets
+    title: Thrashing and the Working Set Model
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/thrashing-and-working-sets.md
+  - slug: frame-allocation-strategies
+    title: Frame Allocation Strategies
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/frame-allocation-strategies.md
+  - slug: mmap-and-file-backed-memory
+    title: mmap and File-Backed Memory
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/mmap-and-file-backed-memory.md
+  - slug: buddy-and-slab-allocators
+    title: Buddy and Slab Allocators
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/buddy-and-slab-allocators.md
+  - slug: memory-allocation-fit-exercise
+    title: 'Exercise: First Fit vs Best Fit Allocator'
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/memory-allocation-fit-exercise.md
+    exercises:
+      - slug: os-memory-allocation-fit-exercise
+        title: 'Free Space Management: First Fit vs Best Fit'
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-memory-allocation-fit-exercise.prompt.md
+        supported_languages: [python]
+        tags: [memory, allocation, first-fit, best-fit, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().strip().split('\n')
+                blocks = list(map(int, data[0].split()))
+                requests = [int(line.strip()) for line in data[1:] if line.strip()]
+                # TODO: simulate first fit and best fit allocation
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def first_fit(blocks, size):
+                for i, b in enumerate(blocks):
+                    if b >= size:
+                        return i
+                return -1
+
+            def best_fit(blocks, size):
+                best = -1
+                best_size = float('inf')
+                for i, b in enumerate(blocks):
+                    if b >= size and b < best_size:
+                        best = i
+                        best_size = b
+                return best
+
+            def solve():
+                data = sys.stdin.read().strip().split('\n')
+                block_sizes = list(map(int, data[0].split()))
+                requests = [int(line.strip()) for line in data[1:] if line.strip()]
+
+                ff_blocks = block_sizes[:]
+                bf_blocks = block_sizes[:]
+                ff_labels = list(range(1, len(block_sizes) + 1))
+                bf_labels = list(range(1, len(block_sizes) + 1))
+
+                for req in requests:
+                    fi = first_fit(ff_blocks, req)
+                    bi = best_fit(bf_blocks, req)
+                    ff_str = f'B{ff_labels[fi]}' if fi != -1 else 'FAIL'
+                    bf_str = f'B{bf_labels[bi]}' if bi != -1 else 'FAIL'
+                    print(f'Request {req}: FirstFit={ff_str} BestFit={bf_str}')
+                    if fi != -1:
+                        ff_blocks[fi] -= req
+                        if ff_blocks[fi] == 0:
+                            ff_blocks.pop(fi)
+                            ff_labels.pop(fi)
+                    if bi != -1:
+                        bf_blocks[bi] -= req
+                        if bf_blocks[bi] == 0:
+                            bf_blocks.pop(bi)
+                            bf_labels.pop(bi)
+
+            solve()
+        test_cases:
+          - name: case-four-blocks-four-requests
+            stdin: "100 500 200 300 600\n212\n417\n112\n426\n"
+            expected_stdout: "Request 212: FirstFit=B2 BestFit=B4\nRequest 417: FirstFit=B2 BestFit=B2\nRequest 112: FirstFit=B3 BestFit=B3\nRequest 426: FirstFit=B5 BestFit=B5"
+            is_hidden: false
+            weight: 1
+          - name: case-single-block-fits
+            stdin: "200\n100\n"
+            expected_stdout: "Request 100: FirstFit=B1 BestFit=B1"
+            is_hidden: false
+            weight: 1
+          - name: case-no-fit
+            stdin: "50 50\n100\n"
+            expected_stdout: "Request 100: FirstFit=FAIL BestFit=FAIL"
+            is_hidden: false
+            weight: 1
+          - name: case-exact-fit-removed
+            stdin: "100 200 300\n100\n200\n"
+            expected_stdout: "Request 100: FirstFit=B1 BestFit=B1\nRequest 200: FirstFit=B2 BestFit=B2"
+            is_hidden: true
+            weight: 1
+  - slug: fifo-lru-page-faults-exercise
+    title: 'Exercise: FIFO vs LRU Page Replacement Simulator'
+    type: exercise
+    duration_minutes: 30
+    content_file: lessons/fifo-lru-page-faults-combined.md
+    exercises:
+      - slug: operating-fifo-lru-page-faults
+        title: FIFO vs LRU Page Replacement Simulator
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-fifo-lru-page-faults-exercise.prompt.md
+        supported_languages: [python]
+        tags: [memory, page-replacement, fifo, lru, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+            from collections import OrderedDict, deque
+
+            def solve():
+                lines = sys.stdin.read().strip().split('\n')
+                frames = int(lines[0].strip())
+                pages = list(map(int, lines[1].strip().split()))
+                # TODO: simulate FIFO and LRU page replacement
+                print(f'FIFO page faults: 0')
+                print(f'LRU page faults: 0')
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+            from collections import OrderedDict
+
+            def fifo_faults(frames, pages):
+                queue = []
+                in_mem = set()
+                faults = 0
+                for page in pages:
+                    if page not in in_mem:
+                        faults += 1
+                        if len(queue) == frames:
+                            victim = queue.pop(0)
+                            in_mem.remove(victim)
+                        queue.append(page)
+                        in_mem.add(page)
+                return faults
+
+            def lru_faults(frames, pages):
+                cache = OrderedDict()
+                faults = 0
+                for page in pages:
+                    if page in cache:
+                        cache.move_to_end(page)
+                    else:
+                        faults += 1
+                        if len(cache) == frames:
+                            cache.popitem(last=False)
+                        cache[page] = True
+                return faults
+
+            def solve():
+                lines = sys.stdin.read().strip().split('\n')
+                frames = int(lines[0].strip())
+                pages = list(map(int, lines[1].strip().split()))
+                print(f'FIFO page faults: {fifo_faults(frames, pages)}')
+                print(f'LRU page faults: {lru_faults(frames, pages)}')
+
+            solve()
+        test_cases:
+          - name: case-classic-reference-string
+            stdin: "3\n7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1\n"
+            expected_stdout: "FIFO page faults: 15\nLRU page faults: 12"
+            is_hidden: false
+            weight: 1
+          - name: case-cyclic-scan-same-faults
+            stdin: "4\n1 2 3 4 5 1 2 3 4 5\n"
+            expected_stdout: "FIFO page faults: 10\nLRU page faults: 10"
+            is_hidden: false
+            weight: 1
+          - name: case-beladys-anomaly-reverse
+            stdin: "3\n1 2 3 4 1 2 5 1 2 3 4 5\n"
+            expected_stdout: "FIFO page faults: 9\nLRU page faults: 10"
+            is_hidden: false
+            weight: 1
+          - name: case-two-frames-cycle
+            stdin: "2\n1 2 3 1 2 3 1 2 3\n"
+            expected_stdout: "FIFO page faults: 9\nLRU page faults: 9"
+            is_hidden: true
+            weight: 1
+          - name: case-repeated-page
+            stdin: "2\n5 5 5 5\n"
+            expected_stdout: "FIFO page faults: 1\nLRU page faults: 1"
+            is_hidden: true
+            weight: 1
+          - name: case-full-cycle-three-frames
+            stdin: "3\n0 1 2 3 0 1 2 3\n"
+            expected_stdout: "FIFO page faults: 8\nLRU page faults: 8"
+            is_hidden: true
+            weight: 1
+  - slug: effective-access-time-exercise
+    title: 'Exercise: Effective Access Time Calculator'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/effective-access-time-exercise.md
+    exercises:
+      - slug: os-effective-access-time-exercise
+        title: Effective Memory Access Time Calculator
+        difficulty: easy
+        points: 15
+        prompt_file: lessons/os-effective-access-time-exercise.prompt.md
+        supported_languages: [python]
+        tags: [memory, tlb, effective-access-time, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: compute effective access time
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                tlb_time = int(data[0])
+                mem_time = int(data[1])
+                hit_rate = float(data[2])
+                eat = hit_rate * (tlb_time + mem_time) + (1 - hit_rate) * (tlb_time + 2 * mem_time)
+                print(f'{eat:.2f}')
+
+            solve()
+        test_cases:
+          - name: case-80-percent-hit
+            stdin: "20 200 0.80\n"
+            expected_stdout: "256.00"
+            is_hidden: false
+            weight: 1
+          - name: case-perfect-hit
+            stdin: "10 100 1.0\n"
+            expected_stdout: "110.00"
+            is_hidden: false
+            weight: 1
+          - name: case-zero-hit
+            stdin: "10 100 0.0\n"
+            expected_stdout: "210.00"
+            is_hidden: true
+            weight: 1
+  - slug: tlb-simulation-exercise
+    title: 'Exercise: TLB Simulation'
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/tlb-simulation-exercise.md
+    exercises:
+      - slug: os-tlb-simulation-exercise
+        title: TLB Simulation (Hit/Miss Counter)
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-tlb-simulation-exercise.prompt.md
+        supported_languages: [python]
+        tags: [memory, tlb, simulation, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+            from collections import OrderedDict
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: simulate TLB with LRU eviction
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+            from collections import OrderedDict
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                tlb_size = int(data[idx]); idx += 1
+                n = int(data[idx]); idx += 1
+                pages = [int(data[idx + i]) for i in range(n)]; idx += n
+                tlb = OrderedDict()
+                hits = 0
+                misses = 0
+                for page in pages:
+                    if page in tlb:
+                        tlb.move_to_end(page)
+                        hits += 1
+                    else:
+                        misses += 1
+                        if len(tlb) == tlb_size:
+                            tlb.popitem(last=False)
+                        tlb[page] = True
+                print(f'TLB hits: {hits}')
+                print(f'TLB misses: {misses}')
+
+            solve()
+        test_cases:
+          - name: case-basic-hits-misses
+            stdin: "3 6\n1 2 3 1 2 3\n"
+            expected_stdout: "TLB hits: 3\nTLB misses: 3"
+            is_hidden: false
+            weight: 1
+          - name: case-all-misses
+            stdin: "2 4\n1 2 3 4\n"
+            expected_stdout: "TLB hits: 0\nTLB misses: 4"
+            is_hidden: false
+            weight: 1
+          - name: case-all-hits-same-page
+            stdin: "2 4\n5 5 5 5\n"
+            expected_stdout: "TLB hits: 3\nTLB misses: 1"
+            is_hidden: true
+            weight: 1
+  - slug: address-translation-math-exercise
+    title: 'Exercise: Address Translation Math'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/address-translation-math-exercise.md
+    exercises:
+      - slug: os-address-translation-math-exercise
+        title: Address Translation Math
+        difficulty: easy
+        points: 15
+        prompt_file: lessons/os-address-translation-math-exercise.prompt.md
+        supported_languages: [python]
+        tags: [memory, paging, address-translation, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: compute page number and offset
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                virtual_address = int(data[idx]); idx += 1
+                page_size = int(data[idx]); idx += 1
+                page_number = virtual_address // page_size
+                offset = virtual_address % page_size
+                print(f'Page number: {page_number}')
+                print(f'Offset: {offset}')
+
+            solve()
+        test_cases:
+          - name: case-basic
+            stdin: "1234 256\n"
+            expected_stdout: "Page number: 4\nOffset: 210"
+            is_hidden: false
+            weight: 1
+          - name: case-aligned
+            stdin: "4096 4096\n"
+            expected_stdout: "Page number: 1\nOffset: 0"
+            is_hidden: false
+            weight: 1
+          - name: case-small-page
+            stdin: "100 16\n"
+            expected_stdout: "Page number: 6\nOffset: 4"
+            is_hidden: true
+            weight: 1
+  - slug: quiz-paging-and-page-tables
+    title: 'Quiz: Paging and Page Tables'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-paging-and-page-tables.md
+  - slug: quiz-tlb-and-translation-performance
+    title: 'Quiz: TLB and Translation Performance'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-tlb-and-translation-performance.md
+  - slug: quiz-page-replacement-algorithms
+    title: 'Quiz: Page Replacement Algorithms'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-page-replacement-algorithms.md
+  - slug: quiz-page-faults-and-demand-paging
+    title: 'Quiz: Page Faults and Demand Paging'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-page-faults-and-demand-paging.md
+  - slug: quiz-virtual-memory-and-address-spaces
+    title: 'Quiz: Virtual Memory and Address Spaces'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-virtual-memory-and-address-spaces.md
+  - slug: quiz-segmentation-and-fragmentation
+    title: 'Quiz: Segmentation and Fragmentation'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-segmentation-and-fragmentation.md
+  - slug: interview-virtual-memory-questions
+    title: 'Interview Prep: Virtual Memory Questions'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-virtual-memory-questions.md
+  - slug: interview-paging-questions
+    title: 'Interview Prep: Paging Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-paging-questions.md
+  - slug: interview-tlb-questions
+    title: 'Interview Prep: TLB Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-tlb-questions.md
+  - slug: interview-page-fault-questions
+    title: 'Interview Prep: Page Fault Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-page-fault-questions.md
+  - slug: interview-page-replacement-questions
+    title: 'Interview Prep: Page Replacement Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-page-replacement-questions.md
+  - slug: interview-fragmentation-questions
+    title: 'Interview Prep: Fragmentation Questions'
+    type: reading
+    duration_minutes: 6
+    content_file: lessons/interview-fragmentation-questions.md
+
+- title: File Systems and Storage
+  order_index: 5
+  lessons:
+  - slug: what-a-file-system-provides
+    title: What a File System Provides
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/what-a-file-system-provides.md
+  - slug: files-directories-and-paths
+    title: Files, Directories, and Paths
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/files-directories-and-paths.md
+  - slug: inodes-and-metadata
+    title: Inodes and File Metadata
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/inodes-and-metadata.md
+  - slug: hard-vs-soft-links
+    title: Hard Links vs Symbolic Links
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/hard-vs-soft-links.md
+  - slug: directory-structures
+    title: Directory Structures and Tree Traversal
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/directory-structures.md
+  - slug: file-descriptors-and-open-file-table
+    title: File Descriptors and the Open File Table
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/file-descriptors-and-open-file-table.md
+  - slug: block-allocation-strategies
+    title: 'Block Allocation: Contiguous, Linked, Indexed'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/block-allocation-strategies.md
+  - slug: the-virtual-file-system-layer
+    title: The Virtual File System (VFS) Layer
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/the-virtual-file-system-layer.md
+  - slug: journaling-file-systems
+    title: Journaling File Systems
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/journaling-file-systems.md
+  - slug: crash-consistency-problem
+    title: The Crash Consistency Problem
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/crash-consistency-problem.md
+  - slug: ordered-vs-data-journaling
+    title: 'Metadata vs Data Journaling: ext4 and Beyond'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/ordered-vs-data-journaling.md
+  - slug: copy-on-write-file-systems
+    title: Copy-on-Write File Systems (ZFS, Btrfs)
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/copy-on-write-file-systems.md
+  - slug: fsync-and-durability
+    title: fsync and Durability Guarantees
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/fsync-and-durability.md
+  - slug: the-page-cache-and-buffer-cache
+    title: The Page Cache and Buffer Cache
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/the-page-cache-and-buffer-cache.md
+  - slug: disk-scan-scheduling
+    title: 'Disk Scheduling: The SCAN (Elevator) Algorithm'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/disk-scan-scheduling.md
+  - slug: block-pointer-resolution-exercise
+    title: 'Exercise: Block Pointer Resolution'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/block-pointer-resolution-exercise.md
+    exercises:
+      - slug: os-block-pointer-resolution-exercise
+        title: Block Pointer Resolution (inode Indirect Blocks)
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-block-pointer-resolution-exercise.prompt.md
+        supported_languages: [python]
+        tags: [filesystem, inodes, block-pointers, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: resolve block number from inode structure
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                block_size = int(data[idx]); idx += 1
+                direct_count = int(data[idx]); idx += 1
+                block_number = int(data[idx]); idx += 1
+                ptrs_per_block = block_size // 4
+                if block_number < direct_count:
+                    print(f'direct block {block_number}')
+                else:
+                    n = block_number - direct_count
+                    if n < ptrs_per_block:
+                        print(f'single indirect, offset {n}')
+                    else:
+                        n -= ptrs_per_block
+                        if n < ptrs_per_block * ptrs_per_block:
+                            print(f'double indirect, outer {n // ptrs_per_block}, inner {n % ptrs_per_block}')
+                        else:
+                            print('triple indirect or beyond')
+
+            solve()
+        test_cases:
+          - name: case-direct-block
+            stdin: "4096 12 5\n"
+            expected_stdout: "direct block 5"
+            is_hidden: false
+            weight: 1
+          - name: case-single-indirect
+            stdin: "4096 12 13\n"
+            expected_stdout: "single indirect, offset 1"
+            is_hidden: false
+            weight: 1
+          - name: case-double-indirect
+            stdin: "4096 12 1036\n"
+            expected_stdout: "double indirect, outer 0, inner 0"
+            is_hidden: true
+            weight: 1
+  - slug: parse-mbr-partition-table-exercise
+    title: 'Exercise: Parse MBR Partition Table'
+    type: exercise
+    duration_minutes: 25
+    content_file: lessons/parse-mbr-partition-table-exercise.md
+    exercises:
+      - slug: os-parse-mbr-partition-table-exercise
+        title: Parse MBR Partition Table
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-parse-mbr-partition-table-exercise.prompt.md
+        supported_languages: [python]
+        tags: [filesystem, mbr, partition, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read()
+                # TODO: parse MBR partition entries
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                lines = [l.strip() for l in sys.stdin.read().strip().split('\n') if l.strip()]
+                for i, line in enumerate(lines):
+                    parts = line.split()
+                    if len(parts) >= 3:
+                        ptype, start, size = parts[0], int(parts[1]), int(parts[2])
+                        end = start + size - 1
+                        print(f'Partition {i+1}: type={ptype} start={start} end={end} size={size}')
+
+            solve()
+        test_cases:
+          - name: case-two-partitions
+            stdin: "0x83 2048 204800\n0x82 206848 8192\n"
+            expected_stdout: "Partition 1: type=0x83 start=2048 end=206847 size=204800\nPartition 2: type=0x82 start=206848 end=215039 size=8192"
+            is_hidden: false
+            weight: 1
+          - name: case-single-partition
+            stdin: "0x0b 63 1048576\n"
+            expected_stdout: "Partition 1: type=0x0b start=63 end=1048638 size=1048576"
+            is_hidden: true
+            weight: 1
+  - slug: disk-scan-scheduler-exercise
+    title: 'Exercise: SCAN Disk Scheduler'
+    type: exercise
+    duration_minutes: 30
+    content_file: lessons/disk-scan-scheduling.md
+    exercises:
+      - slug: operating-disk-scan-scheduler
+        title: 'Disk Scheduling: SCAN Algorithm'
+        difficulty: medium
+        points: 20
+        prompt_file: lessons/os-disk-scan-scheduler-exercise.prompt.md
+        supported_languages: [python]
+        tags: [storage, disk-scheduling, scan, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                lines = sys.stdin.read().strip().split('\n')
+                parts = lines[0].split()
+                head = int(parts[0])
+                direction = parts[1]
+                requests = list(map(int, lines[1].split()))
+                # TODO: simulate SCAN disk scheduling
+                print('Service order: ')
+                print('Total head movement: 0')
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                lines = sys.stdin.read().strip().split('\n')
+                parts = lines[0].split()
+                head = int(parts[0])
+                direction = parts[1]
+                requests = list(map(int, lines[1].split()))
+                max_track = 199
+
+                requests_sorted = sorted(requests)
+                left  = [r for r in requests_sorted if r < head]
+                right = [r for r in requests_sorted if r >= head]
+
+                service_order = []
+                movement = 0
+                current = head
+
+                if direction == 'up':
+                    for r in right:
+                        movement += r - current
+                        current = r
+                        service_order.append(r)
+                    movement += max_track - current
+                    current = max_track
+                    for r in reversed(left):
+                        movement += current - r
+                        current = r
+                        service_order.append(r)
+                else:
+                    for r in reversed(left):
+                        movement += current - r
+                        current = r
+                        service_order.append(r)
+                    movement += current - 0
+                    current = 0
+                    for r in right:
+                        movement += r - current
+                        current = r
+                        service_order.append(r)
+
+                print('Service order: ' + ' '.join(map(str, service_order)))
+                print(f'Total head movement: {movement}')
+
+            solve()
+        test_cases:
+          - name: case-head-53-up
+            stdin: "53 up\n98 183 37 122 14 124 65 67\n"
+            expected_stdout: "Service order: 65 67 98 122 124 183 37 14\nTotal head movement: 331"
+            is_hidden: false
+            weight: 1
+          - name: case-head-50-down
+            stdin: "50 down\n176 79 34 60 92 11 41 114\n"
+            expected_stdout: "Service order: 41 34 11 60 79 92 114 176\nTotal head movement: 226"
+            is_hidden: false
+            weight: 1
+          - name: case-head-100-up-two-requests
+            stdin: "100 up\n50 150\n"
+            expected_stdout: "Service order: 150 50\nTotal head movement: 248"
+            is_hidden: false
+            weight: 1
+          - name: case-head-0-up
+            stdin: "0 up\n100 50 150\n"
+            expected_stdout: "Service order: 50 100 150\nTotal head movement: 199"
+            is_hidden: true
+            weight: 1
+          - name: case-head-199-down
+            stdin: "199 down\n0 100 50\n"
+            expected_stdout: "Service order: 100 50 0\nTotal head movement: 199"
+            is_hidden: true
+            weight: 1
+          - name: case-head-75-down
+            stdin: "75 down\n25 125 10 175\n"
+            expected_stdout: "Service order: 25 10 125 175\nTotal head movement: 250"
+            is_hidden: true
+            weight: 1
+  - slug: quiz-filesystem-internals
+    title: 'Quiz: File System Internals'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-filesystem-internals.md
+  - slug: quiz-file-systems-fundamentals
+    title: 'Quiz: File System Fundamentals'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-file-systems-fundamentals.md
+  - slug: interview-filesystem-internals-questions
+    title: 'Interview Prep: File System Internals'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-filesystem-internals-questions.md
+
+- title: I/O Systems and Device Drivers
+  order_index: 6
+  lessons:
+  - slug: io-hardware-overview
+    title: I/O Hardware Overview
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/io-hardware-overview.md
+  - slug: what-is-dma
+    title: What Is DMA?
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/what-is-dma.md
+  - slug: polling-vs-interrupts
+    title: Polling vs Interrupt-Driven I/O
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/polling-vs-interrupts.md
+  - slug: interrupt-driven-io-flow
+    title: Interrupt-Driven I/O Flow
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interrupt-driven-io-flow.md
+  - slug: interrupt-handling-flow
+    title: Interrupt Handling Flow
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interrupt-handling-flow.md
+  - slug: the-interrupt-service-routine
+    title: The Interrupt Service Routine (ISR)
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/the-interrupt-service-routine.md
+  - slug: io-software-layers
+    title: I/O Software Layers
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/io-software-layers.md
+  - slug: what-is-a-device-driver
+    title: What Is a Device Driver?
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/what-is-a-device-driver.md
+  - slug: the-driver-model-and-device-files
+    title: The Driver Model and Device Files
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/the-driver-model-and-device-files.md
+  - slug: character-vs-block-devices
+    title: Character vs Block Devices
+    type: reading
+    duration_minutes: 6
+    content_file: lessons/character-vs-block-devices.md
+  - slug: dma-transfer-flow
+    title: DMA Transfer Flow
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/dma-transfer-flow.md
+  - slug: top-and-bottom-halves
+    title: Top and Bottom Halves of Interrupt Handling
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/top-and-bottom-halves.md
+  - slug: drivers-interrupts-and-dma
+    title: 'Putting It Together: Drivers, Interrupts, and DMA'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/drivers-interrupts-and-dma.md
+  - slug: mmio-register-decode-exercise
+    title: 'Exercise: MMIO Register Decode'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/mmio-register-decode-exercise.md
+    exercises:
+      - slug: os-mmio-register-decode-exercise
+        title: MMIO Register Decode
+        difficulty: easy
+        points: 15
+        prompt_file: lessons/os-mmio-register-decode-exercise.prompt.md
+        supported_languages: [python]
+        tags: [io, mmio, registers, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: decode MMIO register fields
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                value = int(data[idx], 16); idx += 1
+                n = int(data[idx]); idx += 1
+                for _ in range(n):
+                    name = data[idx]; idx += 1
+                    msb = int(data[idx]); idx += 1
+                    lsb = int(data[idx]); idx += 1
+                    mask = ((1 << (msb - lsb + 1)) - 1) << lsb
+                    field_val = (value & mask) >> lsb
+                    print(f'{name}={field_val}')
+
+            solve()
+        test_cases:
+          - name: case-two-fields
+            stdin: "0xA5 2\nSTATUS 7 4\nCONTROL 3 0\n"
+            expected_stdout: "STATUS=10\nCONTROL=5"
+            is_hidden: false
+            weight: 1
+          - name: case-single-bit
+            stdin: "0x01 1\nENABLE 0 0\n"
+            expected_stdout: "ENABLE=1"
+            is_hidden: false
+            weight: 1
+          - name: case-full-byte
+            stdin: "0xFF 1\nALL 7 0\n"
+            expected_stdout: "ALL=255"
+            is_hidden: true
+            weight: 1
+  - slug: decode-vector-table-index-exercise
+    title: 'Exercise: Decode Interrupt Vector Table Index'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/decode-vector-table-index-exercise.md
+    exercises:
+      - slug: os-decode-vector-table-index-exercise
+        title: Decode Interrupt Vector Table Index
+        difficulty: easy
+        points: 15
+        prompt_file: lessons/os-decode-vector-table-index-exercise.prompt.md
+        supported_languages: [python]
+        tags: [io, interrupts, vector-table, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: look up interrupt vector table
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                table = {}
+                for _ in range(n):
+                    vec_id = int(data[idx]); idx += 1
+                    handler = data[idx]; idx += 1
+                    table[vec_id] = handler
+                q = int(data[idx]); idx += 1
+                for _ in range(q):
+                    vec_id = int(data[idx]); idx += 1
+                    print(table.get(vec_id, 'UNDEFINED'))
+
+            solve()
+        test_cases:
+          - name: case-basic-lookup
+            stdin: "3\n0 reset_handler\n1 nmi_handler\n2 hard_fault\n2\n1\n3\n"
+            expected_stdout: "nmi_handler\nUNDEFINED"
+            is_hidden: false
+            weight: 1
+          - name: case-single-entry
+            stdin: "1\n5 timer_isr\n1\n5\n"
+            expected_stdout: "timer_isr"
+            is_hidden: true
+            weight: 1
+  - slug: quiz-device-drivers
+    title: 'Quiz: Device Drivers'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-device-drivers.md
+  - slug: quiz-io-systems-mmio-dma
+    title: 'Quiz: I/O Systems, MMIO, and DMA'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-io-systems-mmio-dma.md
+  - slug: quiz-polling-interrupt-driven-io-timer
+    title: 'Quiz: Polling, Interrupt-Driven I/O, and Timers'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-polling-interrupt-driven-io-timer.md
+  - slug: quiz-interrupts-exceptions-traps
+    title: 'Quiz: Interrupts, Exceptions, and Traps'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-interrupts-exceptions-traps.md
+  - slug: interview-device-driver-questions
+    title: 'Interview Prep: Device Driver Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-device-driver-questions.md
+  - slug: interview-mmio-dma-questions
+    title: 'Interview Prep: MMIO and DMA Questions'
+    type: reading
+    duration_minutes: 6
+    content_file: lessons/interview-mmio-dma-questions.md
+  - slug: interview-polling-vs-interrupt-questions
+    title: 'Interview Prep: Polling vs Interrupt Questions'
+    type: reading
+    duration_minutes: 6
+    content_file: lessons/interview-polling-vs-interrupt-questions.md
+
+- title: Virtualization and Security
+  order_index: 7
+  lessons:
+  - slug: what-is-virtualization
+    title: What Is Virtualization?
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/what-is-virtualization.md
+  - slug: type-1-vs-type-2-hypervisors
+    title: Type 1 vs Type 2 Hypervisors
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/type-1-vs-type-2-hypervisors.md
+  - slug: trap-and-emulate
+    title: Trap-and-Emulate Virtualization
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/trap-and-emulate.md
+  - slug: paravirtualization
+    title: Paravirtualization
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/paravirtualization.md
+  - slug: hardware-virtualization-support
+    title: 'Hardware-Assisted Virtualization: Intel VT-x and AMD-V'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/hardware-virtualization-support.md
+  - slug: nested-paging-and-iommu
+    title: Nested Paging and the IOMMU
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/nested-paging-and-iommu.md
+  - slug: containers-vs-vms
+    title: Containers vs Virtual Machines
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/containers-vs-vms.md
+  - slug: namespaces-and-cgroups
+    title: 'Linux Namespaces and cgroups: Container Isolation'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/namespaces-and-cgroups.md
+  - slug: privilege-levels-and-protection-rings
+    title: Privilege Levels and Protection Rings
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/privilege-levels-and-protection-rings.md
+  - slug: user-mode-vs-kernel-mode
+    title: User Mode vs Kernel Mode
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/user-mode-vs-kernel-mode.md
+  - slug: protected-memory-and-isolation
+    title: Protected Memory and Process Isolation
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/protected-memory-and-isolation.md
+  - slug: secure-boot-and-chain-of-trust
+    title: Secure Boot and Chain of Trust
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/secure-boot-and-chain-of-trust.md
+  - slug: decode-syscall-number-exercise
+    title: 'Exercise: Decode System Call Number'
+    type: exercise
+    duration_minutes: 20
+    content_file: lessons/decode-syscall-number-exercise.md
+    exercises:
+      - slug: os-decode-syscall-number-exercise
+        title: Decode System Call Number
+        difficulty: easy
+        points: 15
+        prompt_file: lessons/os-decode-syscall-number-exercise.prompt.md
+        supported_languages: [python]
+        tags: [syscalls, kernel, virtualization, os]
+        time_limit_ms: 3000
+        memory_limit_mb: 256
+        starter_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                # TODO: look up system call by number
+                pass
+
+            solve()
+        solution_code:
+          python: |
+            import sys
+
+            def solve():
+                data = sys.stdin.read().split()
+                idx = 0
+                n = int(data[idx]); idx += 1
+                syscall_table = {}
+                for _ in range(n):
+                    num = int(data[idx]); idx += 1
+                    name = data[idx]; idx += 1
+                    syscall_table[num] = name
+                q = int(data[idx]); idx += 1
+                for _ in range(q):
+                    num = int(data[idx]); idx += 1
+                    print(syscall_table.get(num, 'UNKNOWN'))
+
+            solve()
+        test_cases:
+          - name: case-linux-syscalls
+            stdin: "3\n1 write\n2 open\n60 exit\n2\n60\n5\n"
+            expected_stdout: "exit\nUNKNOWN"
+            is_hidden: false
+            weight: 1
+          - name: case-single-syscall
+            stdin: "1\n0 read\n1\n0\n"
+            expected_stdout: "read"
+            is_hidden: true
+            weight: 1
+  - slug: quiz-virtualization-and-containers
+    title: 'Quiz: Virtualization and Containers'
+    type: quiz
+    duration_minutes: 8
+    content_file: lessons/quiz-virtualization-and-containers.md
+  - slug: quiz-user-kernel-mode-and-privilege-levels
+    title: 'Quiz: User/Kernel Mode and Privilege Levels'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-user-kernel-mode-and-privilege-levels.md
+  - slug: quiz-system-calls-and-kernel-interface
+    title: 'Quiz: System Calls and the Kernel Interface'
+    type: quiz
+    duration_minutes: 6
+    content_file: lessons/quiz-system-calls-and-kernel-interface.md
+  - slug: interview-virtualization-questions
+    title: 'Interview Prep: Virtualization Questions'
+    type: reading
+    duration_minutes: 10
+    content_file: lessons/interview-virtualization-questions.md
+  - slug: interview-kernel-architecture-questions
+    title: 'Interview Prep: Kernel Architecture Questions'
+    type: reading
+    duration_minutes: 8
+    content_file: lessons/interview-kernel-architecture-questions.md
+  - slug: interview-user-vs-kernel-mode-questions
+    title: 'Interview Prep: User vs Kernel Mode Questions'
+    type: reading
+    duration_minutes: 6
+    content_file: lessons/interview-user-vs-kernel-mode-questions.md
+  - slug: interview-system-call-questions
+    title: 'Interview Prep: System Call Questions'
+    type: reading
+    duration_minutes: 6
+    content_file: lessons/interview-system-call-questions.md
+  - slug: full-stack-os-interview-integration
+    title: Full-Stack OS Interview Integration
+    type: reading
+    duration_minutes: 15
+    content_file: lessons/full-stack-os-interview-integration.md
+  - slug: mock-interview-walkthrough
+    title: Mock Interview Walkthrough
+    type: reading
+    duration_minutes: 15
+    content_file: lessons/mock-interview-walkthrough.md

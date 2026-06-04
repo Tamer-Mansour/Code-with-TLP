@@ -51,6 +51,73 @@ modules:
         type: quiz
         duration_minutes: 5
         content_file: lessons/go-basics-quiz.md
+      - slug: go-slice-array-exercise
+        title: Slice vs Array Semantics
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/go-slice-array-exercise.md
+        exercises:
+          - slug: go-slice-array-semantics
+            title: Slice vs Array Semantics (Append Simulation)
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/go-slice-array-semantics.prompt.md
+            supported_languages: [python]
+            tags: [slices, arrays, memory, append]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    lines = sys.stdin.read().splitlines()
+                    cap_ = int(lines[0].strip())
+                    n = int(lines[1].strip())
+                    values = list(map(int, lines[2].strip().split()))
+                    length = 0
+                    for v in values:
+                        if length < cap_:
+                            length += 1
+                            print(f"APPEND {v} cap={cap_}")
+                        else:
+                            cap_ *= 2
+                            length += 1
+                            print(f"REALLOC {v} cap={cap_}")
+
+                main()
+            test_cases:
+              - name: basic-cap4
+                stdin: "4\n8\n1 2 3 4 5 6 7 8\n"
+                expected_stdout: "APPEND 1 cap=4\nAPPEND 2 cap=4\nAPPEND 3 cap=4\nAPPEND 4 cap=4\nREALLOC 5 cap=8\nAPPEND 6 cap=8\nAPPEND 7 cap=8\nAPPEND 8 cap=8"
+                is_hidden: false
+                weight: 1
+              - name: cap1-triple-realloc
+                stdin: "1\n5\n10 20 30 40 50\n"
+                expected_stdout: "APPEND 10 cap=1\nREALLOC 20 cap=2\nREALLOC 30 cap=4\nAPPEND 40 cap=4\nREALLOC 50 cap=8"
+                is_hidden: false
+                weight: 1
+              - name: no-realloc
+                stdin: "10\n3\n5 6 7\n"
+                expected_stdout: "APPEND 5 cap=10\nAPPEND 6 cap=10\nAPPEND 7 cap=10"
+                is_hidden: false
+                weight: 1
+              - name: cap2-realloc-chain
+                stdin: "2\n6\n1 2 3 4 5 6\n"
+                expected_stdout: "APPEND 1 cap=2\nAPPEND 2 cap=2\nREALLOC 3 cap=4\nAPPEND 4 cap=4\nREALLOC 5 cap=8\nAPPEND 6 cap=8"
+                is_hidden: true
+                weight: 1
+              - name: single-element
+                stdin: "5\n1\n42\n"
+                expected_stdout: "APPEND 42 cap=5"
+                is_hidden: true
+                weight: 1
 
   - title: Functions, Structs, Interfaces
     summary: Methods, embedding, interface satisfaction.
@@ -66,6 +133,92 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/interfaces.md
+      - slug: go-interfaces-quiz
+        title: Quiz - Functions, Structs, and Interfaces
+        type: quiz
+        duration_minutes: 6
+        content_file: lessons/go-interfaces-quiz.md
+      - slug: go-interface-dispatch-exercise
+        title: Interface Dispatch Table
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/go-interface-dispatch-exercise.md
+        exercises:
+          - slug: go-interface-dispatch
+            title: Interface Dispatch Table (Shape Areas)
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/go-interface-dispatch.prompt.md
+            supported_languages: [python]
+            tags: [interfaces, polymorphism, structs, math]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                import math
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+                import math
+
+                def area(shape_type, params):
+                    if shape_type == 'CIRCLE':
+                        r = float(params[0])
+                        return math.pi * r * r
+                    elif shape_type == 'RECTANGLE':
+                        w, h = float(params[0]), float(params[1])
+                        return w * h
+                    elif shape_type == 'TRIANGLE':
+                        b, h = float(params[0]), float(params[1])
+                        return 0.5 * b * h
+                    return 0.0
+
+                def main():
+                    lines = sys.stdin.read().splitlines()
+                    n = int(lines[0].strip())
+                    for i in range(1, n + 1):
+                        parts = lines[i].strip().split()
+                        shape_type = parts[0]
+                        params = parts[1:]
+                        result = area(shape_type, params)
+                        print(f"{result:.2f}")
+
+                main()
+            test_cases:
+              - name: mixed-shapes
+                stdin: "4\nCIRCLE 7\nRECTANGLE 4 5\nTRIANGLE 6 8\nCIRCLE 3\n"
+                expected_stdout: "153.94\n20.00\n24.00\n28.27"
+                is_hidden: false
+                weight: 1
+              - name: single-circle
+                stdin: "1\nCIRCLE 1\n"
+                expected_stdout: "3.14"
+                is_hidden: false
+                weight: 1
+              - name: rectangles-only
+                stdin: "3\nRECTANGLE 10 2\nRECTANGLE 3 3\nRECTANGLE 1 100\n"
+                expected_stdout: "20.00\n9.00\n100.00"
+                is_hidden: false
+                weight: 1
+              - name: triangle-decimal
+                stdin: "2\nTRIANGLE 3 4\nTRIANGLE 5 2\n"
+                expected_stdout: "6.00\n5.00"
+                is_hidden: true
+                weight: 1
+              - name: large-circle
+                stdin: "1\nCIRCLE 100\n"
+                expected_stdout: "31415.93"
+                is_hidden: true
+                weight: 1
+              - name: all-types
+                stdin: "3\nCIRCLE 5\nRECTANGLE 6 4\nTRIANGLE 3 8\n"
+                expected_stdout: "78.54\n24.00\n12.00"
+                is_hidden: true
+                weight: 1
 
   - title: Error Handling
     summary: Errors as values; wrapping; sentinel vs custom.
@@ -76,6 +229,75 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/error-handling.md
+      - slug: go-error-handling-quiz
+        title: Quiz - Error Handling
+        type: quiz
+        duration_minutes: 5
+        content_file: lessons/go-error-handling-quiz.md
+      - slug: go-error-propagation-exercise
+        title: Error Propagation Chain
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/go-error-propagation-exercise.md
+        exercises:
+          - slug: go-error-propagation
+            title: Error Propagation Chain (errors.Is Simulation)
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/go-error-propagation.prompt.md
+            supported_languages: [python]
+            tags: [errors, wrapping, error-chain]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    lines = sys.stdin.read().splitlines()
+                    chain_str = lines[0].strip()
+                    chain = [part.strip() for part in chain_str.split('->')]
+                    q = int(lines[1].strip())
+                    for i in range(2, 2 + q):
+                        query = lines[i].strip()
+                        if query in chain:
+                            print('YES')
+                        else:
+                            print('NO')
+
+                main()
+            test_cases:
+              - name: basic-chain
+                stdin: "network error -> connection refused -> timeout\n4\ntimeout\nnetwork error\ndisk full\nconnection refused\n"
+                expected_stdout: "YES\nYES\nNO\nYES"
+                is_hidden: false
+                weight: 1
+              - name: single-error
+                stdin: "file not found\n2\nfile not found\npermission denied\n"
+                expected_stdout: "YES\nNO"
+                is_hidden: false
+                weight: 1
+              - name: deep-chain
+                stdin: "http error -> server error -> db error -> connection timeout -> dns failure\n3\ndns failure\nhttp error\nread timeout\n"
+                expected_stdout: "YES\nYES\nNO"
+                is_hidden: false
+                weight: 1
+              - name: case-sensitive
+                stdin: "Not Found -> timeout\n3\nNot Found\nnot found\ntimeout\n"
+                expected_stdout: "YES\nNO\nYES"
+                is_hidden: true
+                weight: 1
+              - name: all-missing
+                stdin: "auth error -> invalid token\n3\nexpired\nunauthorized\nforbidden\n"
+                expected_stdout: "NO\nNO\nNO"
+                is_hidden: true
+                weight: 1
 
   - title: Concurrency
     summary: Goroutines and channels.
@@ -86,6 +308,71 @@ modules:
         type: reading
         duration_minutes: 14
         content_file: lessons/goroutines-and-channels.md
+      - slug: go-goroutine-fanout-exercise
+        title: Goroutine Fan-Out Simulation
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/go-goroutine-fanout-exercise.md
+        exercises:
+          - slug: go-goroutine-fanout
+            title: Goroutine Fan-Out Simulation
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/go-goroutine-fanout.prompt.md
+            supported_languages: [python]
+            tags: [concurrency, goroutines, channels, sorting]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                def solve():
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split()
+                    idx = 0
+                    n = int(data[idx]); idx += 1
+                    tasks = []
+                    for _ in range(n):
+                        task_id = int(data[idx]); idx += 1
+                        work = int(data[idx]); idx += 1
+                        tasks.append((work, task_id))
+                    tasks.sort()
+                    for work, task_id in tasks:
+                        print(f"Task {task_id} done in {work}ms")
+
+                main()
+            test_cases:
+              - name: mixed-work
+                stdin: "5\n3 10\n1 40\n4 20\n2 10\n5 30\n"
+                expected_stdout: "Task 2 done in 10ms\nTask 3 done in 10ms\nTask 4 done in 20ms\nTask 5 done in 30ms\nTask 1 done in 40ms"
+                is_hidden: false
+                weight: 1
+              - name: already-sorted
+                stdin: "3\n1 5\n2 10\n3 20\n"
+                expected_stdout: "Task 1 done in 5ms\nTask 2 done in 10ms\nTask 3 done in 20ms"
+                is_hidden: false
+                weight: 1
+              - name: single-task
+                stdin: "1\n7 100\n"
+                expected_stdout: "Task 7 done in 100ms"
+                is_hidden: false
+                weight: 1
+              - name: all-same-work
+                stdin: "4\n4 50\n2 50\n3 50\n1 50\n"
+                expected_stdout: "Task 1 done in 50ms\nTask 2 done in 50ms\nTask 3 done in 50ms\nTask 4 done in 50ms"
+                is_hidden: true
+                weight: 1
+              - name: reverse-order
+                stdin: "4\n4 1\n3 2\n2 3\n1 4\n"
+                expected_stdout: "Task 4 done in 1ms\nTask 3 done in 2ms\nTask 2 done in 3ms\nTask 1 done in 4ms"
+                is_hidden: true
+                weight: 1
       - slug: worker-pool-exercise
         title: Worker Pool Sum
         type: exercise

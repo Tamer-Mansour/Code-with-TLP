@@ -242,6 +242,12 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: quiz-linked-lists
+        title: "Quiz: Linked Lists"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-linked-lists.md
+
   - title: Stacks & Queues
     summary: LIFO and FIFO structures, deque, circular buffer, and queue-from-two-stacks.
     order_index: 3
@@ -1129,6 +1135,130 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: min-heap-ops-exercise
+        title: "Exercise: Min-Heap Operations (Manual)"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/ds-min-heap-ops.md
+        exercises:
+          - slug: ds-min-heap-ops
+            title: "Min-Heap Operations (Manual Implementation)"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/ds-min-heap-ops.prompt.md
+            supported_languages: [python]
+            tags: [heap, priority-queue, simulation, manual-implementation]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def heap_push(heap, val):
+                    # TODO: append val and sift up
+                    pass
+
+                def heap_pop(heap):
+                    # TODO: remove root, sift down, return min
+                    pass
+
+                heap = []
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    if line.startswith('INSERT'):
+                        val = int(line.split()[1])
+                        heap_push(heap, val)
+                    elif line == 'EXTRACT_MIN':
+                        result = heap_pop(heap)
+                        print(result if result is not None else 'EMPTY')
+            solution_code:
+              python: |
+                import sys
+
+                def heap_push(heap, val):
+                    heap.append(val)
+                    i = len(heap) - 1
+                    while i > 0:
+                        parent = (i - 1) // 2
+                        if heap[parent] > heap[i]:
+                            heap[parent], heap[i] = heap[i], heap[parent]
+                            i = parent
+                        else:
+                            break
+
+                def heap_pop(heap):
+                    if not heap:
+                        return None
+                    if len(heap) == 1:
+                        return heap.pop()
+                    root = heap[0]
+                    heap[0] = heap.pop()
+                    i = 0
+                    n = len(heap)
+                    while True:
+                        left, right = 2*i+1, 2*i+2
+                        smallest = i
+                        if left < n and heap[left] < heap[smallest]:
+                            smallest = left
+                        if right < n and heap[right] < heap[smallest]:
+                            smallest = right
+                        if smallest == i:
+                            break
+                        heap[i], heap[smallest] = heap[smallest], heap[i]
+                        i = smallest
+                    return root
+
+                heap = []
+                for line in sys.stdin:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    if line.startswith('INSERT'):
+                        val = int(line.split()[1])
+                        heap_push(heap, val)
+                    elif line == 'EXTRACT_MIN':
+                        result = heap_pop(heap)
+                        print(result if result is not None else 'EMPTY')
+            test_cases:
+              - name: basic-sequence
+                stdin: "INSERT 5\nINSERT 3\nINSERT 8\nEXTRACT_MIN\nINSERT 1\nEXTRACT_MIN\nEXTRACT_MIN\n"
+                expected_stdout: "3\n1\n5"
+                is_hidden: false
+                weight: 1
+              - name: empty-extract
+                stdin: "EXTRACT_MIN\nINSERT 10\nEXTRACT_MIN\n"
+                expected_stdout: "EMPTY\n10"
+                is_hidden: false
+                weight: 1
+              - name: min-ordering
+                stdin: "INSERT 9\nINSERT 1\nINSERT 5\nEXTRACT_MIN\nEXTRACT_MIN\nEXTRACT_MIN\n"
+                expected_stdout: "1\n5\n9"
+                is_hidden: false
+                weight: 1
+              - name: negatives
+                stdin: "INSERT -2\nINSERT -5\nINSERT 0\nEXTRACT_MIN\nEXTRACT_MIN\n"
+                expected_stdout: "-5\n-2"
+                is_hidden: true
+                weight: 1
+              - name: all-extract-empty
+                stdin: "EXTRACT_MIN\nEXTRACT_MIN\nEXTRACT_MIN\n"
+                expected_stdout: "EMPTY\nEMPTY\nEMPTY"
+                is_hidden: true
+                weight: 1
+              - name: interleaved-ops
+                stdin: "INSERT 7\nINSERT 2\nEXTRACT_MIN\nINSERT 4\nINSERT 1\nEXTRACT_MIN\nEXTRACT_MIN\n"
+                expected_stdout: "2\n1\n4"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-heaps-sorting
+        title: "Quiz: Heaps, Priority Queues & Sorting"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-heaps-sorting.md
+
   - title: "Graphs — Representations & Traversals"
     summary: Adjacency list and matrix, BFS, DFS, topological sort, cycle detection.
     order_index: 7
@@ -1456,6 +1586,113 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: directed-cycle-exercise
+        title: "Exercise: Detect Cycle in Directed Graph"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ds-directed-cycle.md
+        exercises:
+          - slug: ds-directed-cycle
+            title: Detect Cycle in Directed Graph
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/ds-directed-cycle.prompt.md
+            supported_languages: [python]
+            tags: [graph, dfs, cycle-detection, directed]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+                sys.setrecursionlimit(20000)
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    V, E = int(data[0]), int(data[1])
+                    adj = [[] for _ in range(V)]
+                    idx = 2
+                    for _ in range(E):
+                        u, v = int(data[idx]), int(data[idx+1])
+                        idx += 2
+                        adj[u].append(v)
+                    # TODO: use white-gray-black DFS to detect cycle
+                    # print CYCLE or NO CYCLE
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                sys.setrecursionlimit(20000)
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    V, E = int(data[0]), int(data[1])
+                    adj = [[] for _ in range(V)]
+                    idx = 2
+                    for _ in range(E):
+                        u, v = int(data[idx]), int(data[idx+1])
+                        idx += 2
+                        adj[u].append(v)
+
+                    WHITE, GRAY, BLACK = 0, 1, 2
+                    color = [WHITE] * V
+
+                    def dfs(node):
+                        color[node] = GRAY
+                        for nb in adj[node]:
+                            if color[nb] == GRAY:
+                                return True
+                            if color[nb] == WHITE and dfs(nb):
+                                return True
+                        color[node] = BLACK
+                        return False
+
+                    for i in range(V):
+                        if color[i] == WHITE:
+                            if dfs(i):
+                                print('CYCLE')
+                                return
+                    print('NO CYCLE')
+
+                solve()
+            test_cases:
+              - name: simple-cycle
+                stdin: "4 4\n0 1\n1 2\n2 3\n3 1\n"
+                expected_stdout: "CYCLE"
+                is_hidden: false
+                weight: 1
+              - name: dag-no-cycle
+                stdin: "4 3\n0 1\n1 2\n2 3\n"
+                expected_stdout: "NO CYCLE"
+                is_hidden: false
+                weight: 1
+              - name: self-loop
+                stdin: "2 2\n0 1\n1 1\n"
+                expected_stdout: "CYCLE"
+                is_hidden: false
+                weight: 1
+              - name: two-component-one-cycle
+                stdin: "5 4\n0 1\n1 0\n2 3\n3 4\n"
+                expected_stdout: "CYCLE"
+                is_hidden: true
+                weight: 1
+              - name: linear-dag
+                stdin: "5 4\n0 1\n0 2\n1 3\n2 4\n"
+                expected_stdout: "NO CYCLE"
+                is_hidden: true
+                weight: 1
+              - name: single-vertex
+                stdin: "1 0\n"
+                expected_stdout: "NO CYCLE"
+                is_hidden: true
+                weight: 1
+
+      - slug: quiz-graphs-recursion
+        title: "Quiz: Graphs, Recursion & Divide-and-Conquer"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/quiz-graphs-recursion.md
+
   - title: Tries & Advanced Structures
     summary: Prefix trees for string search, Union-Find deep dive, and FIFO caching.
     order_index: 8
@@ -1678,3 +1915,221 @@ modules:
         type: quiz
         duration_minutes: 10
         content_file: lessons/quiz-trees-to-tries.md
+
+  - title: Sorting Algorithms
+    summary: Comparison-based and non-comparison sorts — bubble, insertion, merge, quick, heap, counting, and radix.
+    order_index: 9
+    lessons:
+      - slug: sorting-algorithms
+        title: Sorting Algorithms
+        type: reading
+        duration_minutes: 22
+        content_file: lessons/sorting-algorithms.md
+
+      - slug: merge-sort-exercise
+        title: "Exercise: Merge Sort"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/ds-merge-sort.md
+        exercises:
+          - slug: ds-merge-sort
+            title: Merge Sort
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/ds-merge-sort.prompt.md
+            supported_languages: [python]
+            tags: [sorting, merge-sort, divide-and-conquer]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def merge_sort(arr):
+                    # TODO: implement merge sort
+                    pass
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    arr = list(map(int, data[1:n+1]))
+                    result = merge_sort(arr)
+                    print(*result)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def merge_sort(arr):
+                    if len(arr) <= 1:
+                        return arr
+                    mid = len(arr) // 2
+                    left = merge_sort(arr[:mid])
+                    right = merge_sort(arr[mid:])
+                    return merge(left, right)
+
+                def merge(left, right):
+                    result = []
+                    i = j = 0
+                    while i < len(left) and j < len(right):
+                        if left[i] <= right[j]:
+                            result.append(left[i])
+                            i += 1
+                        else:
+                            result.append(right[j])
+                            j += 1
+                    result.extend(left[i:])
+                    result.extend(right[j:])
+                    return result
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    arr = list(map(int, data[1:n+1]))
+                    result = merge_sort(arr)
+                    print(*result)
+
+                solve()
+            test_cases:
+              - name: basic-sort
+                stdin: "6\n5 3 8 1 9 2\n"
+                expected_stdout: "1 2 3 5 8 9"
+                is_hidden: false
+                weight: 1
+              - name: already-sorted
+                stdin: "5\n1 2 3 4 5\n"
+                expected_stdout: "1 2 3 4 5"
+                is_hidden: false
+                weight: 1
+              - name: reverse-sorted
+                stdin: "5\n5 4 3 2 1\n"
+                expected_stdout: "1 2 3 4 5"
+                is_hidden: false
+                weight: 1
+              - name: single-element
+                stdin: "1\n42\n"
+                expected_stdout: "42"
+                is_hidden: true
+                weight: 1
+              - name: negatives-and-zero
+                stdin: "5\n-3 0 -1 2 -5\n"
+                expected_stdout: "-5 -3 -1 0 2"
+                is_hidden: true
+                weight: 1
+              - name: all-same
+                stdin: "4\n7 7 7 7\n"
+                expected_stdout: "7 7 7 7"
+                is_hidden: true
+                weight: 1
+
+  - title: Recursion & Divide-and-Conquer
+    summary: Recursive thinking, recurrences, Master Theorem, memoization, and divide-and-conquer patterns.
+    order_index: 10
+    lessons:
+      - slug: recursion-divide-conquer
+        title: Recursion and Divide-and-Conquer
+        type: reading
+        duration_minutes: 20
+        content_file: lessons/recursion-divide-conquer.md
+
+      - slug: count-inversions-exercise
+        title: "Exercise: Count Inversions"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/ds-count-inversions.md
+        exercises:
+          - slug: ds-count-inversions
+            title: Count Inversions
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/ds-count-inversions.prompt.md
+            supported_languages: [python]
+            tags: [divide-and-conquer, merge-sort, inversions]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def count_inversions(arr):
+                    # TODO: use augmented merge sort
+                    # return (sorted_arr, inversion_count)
+                    pass
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    arr = list(map(int, data[1:n+1]))
+                    _, inv = count_inversions(arr)
+                    print(inv)
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def count_inversions(arr):
+                    if len(arr) <= 1:
+                        return arr, 0
+                    mid = len(arr) // 2
+                    left, left_inv = count_inversions(arr[:mid])
+                    right, right_inv = count_inversions(arr[mid:])
+                    merged, split_inv = merge_count(left, right)
+                    return merged, left_inv + right_inv + split_inv
+
+                def merge_count(left, right):
+                    result = []
+                    inversions = 0
+                    i = j = 0
+                    while i < len(left) and j < len(right):
+                        if left[i] <= right[j]:
+                            result.append(left[i])
+                            i += 1
+                        else:
+                            result.append(right[j])
+                            j += 1
+                            inversions += len(left) - i
+                    result.extend(left[i:])
+                    result.extend(right[j:])
+                    return result, inversions
+
+                def solve():
+                    data = sys.stdin.read().split()
+                    n = int(data[0])
+                    arr = list(map(int, data[1:n+1]))
+                    _, inv = count_inversions(arr)
+                    print(inv)
+
+                solve()
+            test_cases:
+              - name: basic-inversions
+                stdin: "5\n3 1 2 5 4\n"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: no-inversions
+                stdin: "4\n1 2 3 4\n"
+                expected_stdout: "0"
+                is_hidden: false
+                weight: 1
+              - name: all-inversions
+                stdin: "4\n4 3 2 1\n"
+                expected_stdout: "6"
+                is_hidden: false
+                weight: 1
+              - name: single-element
+                stdin: "1\n5\n"
+                expected_stdout: "0"
+                is_hidden: true
+                weight: 1
+              - name: two-elements-inverted
+                stdin: "2\n5 1\n"
+                expected_stdout: "1"
+                is_hidden: true
+                weight: 1
+              - name: larger-input
+                stdin: "6\n6 5 4 3 2 1\n"
+                expected_stdout: "15"
+                is_hidden: true
+                weight: 1

@@ -57,7 +57,7 @@ modules:
         duration_minutes: 12
         content_file: lessons/lists-sets-zsets.md
       - slug: zset-exercise
-        title: Build a Leaderboard
+        title: Build a Leaderboard (ZADD/ZINCRBY/ZTOP)
         type: exercise
         duration_minutes: 25
         content_file: lessons/zset-exercise.md
@@ -121,6 +121,120 @@ modules:
                 expected_stdout: "b 2\na 1"
                 is_hidden: true
                 weight: 1
+      - slug: redis-leaderboard-exercise
+        title: "Sorted Set Leaderboard (Full Redis Commands)"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/redis-leaderboard-exercise.md
+        exercises:
+          - slug: redis-leaderboard-full
+            title: "Sorted Set Leaderboard: ZADD / ZRANK / ZREVRANK / ZRANGE / ZSCORE"
+            difficulty: easy
+            points: 20
+            prompt_file: lessons/redis-leaderboard-full.prompt.md
+            supported_languages: [python]
+            tags: [redis, sorted-set, leaderboard]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    scores = {}
+                    # TODO: implement ZADD, ZRANK, ZREVRANK, ZRANGE, ZSCORE
+                    for line in data:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        cmd = parts[0].upper()
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split('\n')
+                    scores = {}
+                    results = []
+
+                    def sorted_members():
+                        return sorted(scores.keys(), key=lambda m: (scores[m], m))
+
+                    for line in data:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        cmd = parts[0].upper()
+                        if cmd == 'ZADD':
+                            score = float(parts[1])
+                            member = parts[2]
+                            scores[member] = score
+                        elif cmd == 'ZRANK':
+                            member = parts[1]
+                            if member not in scores:
+                                results.append('-1')
+                            else:
+                                sl = sorted_members()
+                                results.append(str(sl.index(member)))
+                        elif cmd == 'ZREVRANK':
+                            member = parts[1]
+                            if member not in scores:
+                                results.append('-1')
+                            else:
+                                sl = sorted_members()
+                                results.append(str(len(sl) - 1 - sl.index(member)))
+                        elif cmd == 'ZRANGE':
+                            start, stop = int(parts[1]), int(parts[2])
+                            sl = sorted_members()
+                            n = len(sl)
+                            if start < 0:
+                                start = max(0, n + start)
+                            if stop < 0:
+                                stop = n + stop
+                            stop = min(stop, n - 1)
+                            for m in sl[start:stop+1]:
+                                results.append(m)
+                        elif cmd == 'ZSCORE':
+                            member = parts[1]
+                            if member in scores:
+                                v = scores[member]
+                                results.append(str(int(v)) if v == int(v) else str(v))
+                            else:
+                                results.append('NIL')
+                    print('\n'.join(results))
+
+                main()
+            test_cases:
+              - name: basic-rank-range-score
+                stdin: "ZADD 100 alice\nZADD 200 bob\nZADD 150 carol\nZRANK alice\nZRANK bob\nZREVRANK alice\nZRANGE 0 2\nZSCORE carol\nZSCORE eve\n"
+                expected_stdout: "0\n2\n2\nalice\ncarol\nbob\n150\nNIL"
+                is_hidden: false
+                weight: 1
+              - name: tiebreak-alphabetical
+                stdin: "ZADD 100 zara\nZADD 100 alice\nZADD 200 mike\nZRANK alice\nZRANK zara\nZRANGE 0 2\nZSCORE mike\n"
+                expected_stdout: "0\n1\nalice\nzara\nmike\n200"
+                is_hidden: false
+                weight: 1
+              - name: update-score
+                stdin: "ZADD 50 player1\nZADD 80 player2\nZADD 90 player1\nZRANK player1\nZSCORE player1\nZRANGE 0 1\n"
+                expected_stdout: "1\n90\nplayer2\nplayer1"
+                is_hidden: false
+                weight: 1
+              - name: not-found-returns-minus-one-and-nil
+                stdin: "ZADD 50 alpha\nZADD 75 beta\nZRANK gamma\nZSCORE ghost\nZREVRANK alpha\n"
+                expected_stdout: "-1\nNIL\n1"
+                is_hidden: true
+                weight: 1
+              - name: single-member
+                stdin: "ZADD 42 only\nZRANK only\nZREVRANK only\nZRANGE 0 0\nZSCORE only\n"
+                expected_stdout: "0\n0\nonly\n42"
+                is_hidden: true
+                weight: 1
 
   - title: Advanced Data Structures
     summary: "HyperLogLog, Bitmaps, and Geospatial — compact structures for analytics and location."
@@ -136,6 +250,11 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/geospatial-indexes.md
+      - slug: advanced-data-structures-quiz
+        title: "Quiz: Advanced Data Structures"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/advanced-data-structures-quiz.md
 
   - title: Caching Patterns
     summary: "Cache-aside, write-through, TTLs, and stampede protection."
@@ -151,6 +270,311 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/stampede-and-locks.md
+      - slug: redis-cache-hit-rate-exercise
+        title: "Cache Hit Rate Analyzer"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/redis-cache-hit-rate-exercise.md
+        exercises:
+          - slug: redis-cache-hit-rate
+            title: "Cache-Aside Hit Rate Analyzer"
+            difficulty: easy
+            points: 20
+            prompt_file: lessons/redis-cache-hit-rate.prompt.md
+            supported_languages: [python]
+            tags: [redis, cache-aside, hit-rate]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    capacity = int(data[idx].strip()); idx += 1
+                    ttl = int(data[idx].strip()); idx += 1
+                    # TODO: implement cache-aside simulation
+                    hits = 0
+                    misses = 0
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    capacity = int(data[idx].strip()); idx += 1
+                    ttl = int(data[idx].strip()); idx += 1
+                    cache = {}
+                    insert_order = []
+                    hits = 0
+                    misses = 0
+                    op = 0
+                    results = []
+                    while idx < len(data):
+                        line = data[idx].strip(); idx += 1
+                        if not line:
+                            continue
+                        parts = line.split()
+                        if parts[0] == 'READ':
+                            key = parts[1]
+                            op += 1
+                            if key in cache:
+                                val, insert_op = cache[key]
+                                if (op - insert_op) >= ttl:
+                                    del cache[key]
+                                    insert_order = [k for k in insert_order if k != key]
+                            if key in cache:
+                                hits += 1
+                                results.append('HIT: ' + cache[key][0])
+                            else:
+                                misses += 1
+                                value = key + '_val'
+                                while len(cache) >= capacity and insert_order:
+                                    oldest = insert_order.pop(0)
+                                    if oldest in cache:
+                                        del cache[oldest]
+                                cache[key] = (value, op)
+                                insert_order.append(key)
+                                results.append('MISS: ' + value)
+                    total = hits + misses
+                    rate = (hits / total * 100) if total > 0 else 0.0
+                    results.append('Total: {}, Hits: {}, Misses: {}, Hit Rate: {:.1f}%'.format(
+                        total, hits, misses, rate))
+                    print('\n'.join(results))
+
+                main()
+            test_cases:
+              - name: sample-eviction-and-ttl
+                stdin: "2\n3\nREAD user:1\nREAD user:2\nREAD user:1\nREAD user:3\nREAD user:1\nREAD user:2\n"
+                expected_stdout: "MISS: user:1_val\nMISS: user:2_val\nHIT: user:1_val\nMISS: user:3_val\nMISS: user:1_val\nMISS: user:2_val\nTotal: 6, Hits: 1, Misses: 5, Hit Rate: 16.7%"
+                is_hidden: false
+                weight: 1
+              - name: high-hit-rate
+                stdin: "5\n100\nREAD a\nREAD b\nREAD a\nREAD b\nREAD a\n"
+                expected_stdout: "MISS: a_val\nMISS: b_val\nHIT: a_val\nHIT: b_val\nHIT: a_val\nTotal: 5, Hits: 3, Misses: 2, Hit Rate: 60.0%"
+                is_hidden: false
+                weight: 1
+              - name: capacity-one
+                stdin: "1\n100\nREAD x\nREAD x\nREAD y\nREAD x\n"
+                expected_stdout: "MISS: x_val\nHIT: x_val\nMISS: y_val\nMISS: x_val\nTotal: 4, Hits: 1, Misses: 3, Hit Rate: 25.0%"
+                is_hidden: false
+                weight: 1
+              - name: ttl-one-always-expires
+                stdin: "3\n1\nREAD a\nREAD a\nREAD b\n"
+                expected_stdout: "MISS: a_val\nMISS: a_val\nMISS: b_val\nTotal: 3, Hits: 0, Misses: 3, Hit Rate: 0.0%"
+                is_hidden: true
+                weight: 1
+              - name: perfect-warm-cache
+                stdin: "3\n10\nREAD apple\nREAD banana\nREAD apple\nREAD banana\nREAD apple\n"
+                expected_stdout: "MISS: apple_val\nMISS: banana_val\nHIT: apple_val\nHIT: banana_val\nHIT: apple_val\nTotal: 5, Hits: 3, Misses: 2, Hit Rate: 60.0%"
+                is_hidden: true
+                weight: 1
+      - slug: redis-lru-cache-exercise
+        title: "LRU Cache Simulator"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/redis-lru-cache-exercise.md
+        exercises:
+          - slug: redis-lru-cache
+            title: "LRU Cache Simulator"
+            difficulty: medium
+            points: 30
+            prompt_file: lessons/redis-lru-cache.prompt.md
+            supported_languages: [python]
+            tags: [redis, lru, eviction]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                from collections import OrderedDict
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    capacity = int(data[idx].strip()); idx += 1
+                    cache = OrderedDict()
+                    # TODO: process SET and GET commands
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+                from collections import OrderedDict
+
+                def main():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    capacity = int(data[idx].strip())
+                    idx += 1
+                    cache = OrderedDict()
+                    results = []
+                    while idx < len(data):
+                        line = data[idx].strip()
+                        idx += 1
+                        if not line:
+                            continue
+                        parts = line.split()
+                        if parts[0] == 'GET':
+                            key = parts[1]
+                            if key in cache:
+                                cache.move_to_end(key)
+                                results.append(str(cache[key]))
+                            else:
+                                results.append('MISS')
+                        elif parts[0] == 'SET':
+                            key, value = parts[1], parts[2]
+                            if key in cache:
+                                cache.move_to_end(key)
+                            else:
+                                if len(cache) >= capacity:
+                                    cache.popitem(last=False)
+                            cache[key] = value
+                    print('\n'.join(results))
+
+                main()
+            test_cases:
+              - name: basic-eviction
+                stdin: "3\nSET a 1\nSET b 2\nSET c 3\nGET a\nSET d 4\nGET b\nGET a\nGET d\n"
+                expected_stdout: "1\nMISS\n1\n4"
+                is_hidden: false
+                weight: 1
+              - name: capacity-one
+                stdin: "1\nSET x 10\nGET x\nSET y 20\nGET x\nGET y\n"
+                expected_stdout: "10\nMISS\n20"
+                is_hidden: false
+                weight: 1
+              - name: update-refreshes-recency
+                stdin: "2\nSET a 1\nSET b 2\nSET a 99\nSET c 3\nGET b\nGET a\n"
+                expected_stdout: "MISS\n99"
+                is_hidden: false
+                weight: 1
+              - name: get-refreshes-recency
+                stdin: "2\nSET a 1\nSET b 2\nGET a\nSET c 3\nGET b\nGET a\nGET c\n"
+                expected_stdout: "1\nMISS\n1\n3"
+                is_hidden: true
+                weight: 1
+              - name: all-miss-empty-cache
+                stdin: "3\nGET x\nGET y\nGET z\n"
+                expected_stdout: "MISS\nMISS\nMISS"
+                is_hidden: true
+                weight: 1
+              - name: large-capacity
+                stdin: "4\nSET a 1\nSET b 2\nSET c 3\nSET d 4\nGET a\nSET e 5\nGET b\nGET c\nGET d\nGET e\n"
+                expected_stdout: "1\nMISS\n3\n4\n5"
+                is_hidden: true
+                weight: 1
+      - slug: redis-wt-vs-ca-exercise
+        title: "Write-Through vs Cache-Aside"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/redis-wt-vs-ca-exercise.md
+        exercises:
+          - slug: redis-wt-vs-ca
+            title: "Write-Through vs Cache-Aside Consistency"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/redis-wt-vs-ca.prompt.md
+            supported_languages: [python]
+            tags: [redis, cache-aside, write-through, caching-patterns]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    database = {}
+                    wt_cache = {}
+                    ca_cache = {}
+                    for line in data:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        cmd = parts[0].upper()
+                        # TODO: handle WRITE, READ_WT, READ_CA
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def main():
+                    data = sys.stdin.read().split('\n')
+                    database = {}
+                    wt_cache = {}
+                    ca_cache = {}
+                    results = []
+                    for line in data:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        parts = line.split()
+                        cmd = parts[0].upper()
+                        if cmd == 'WRITE':
+                            key, value = parts[1], parts[2]
+                            database[key] = value
+                            wt_cache[key] = value
+                            if key in ca_cache:
+                                del ca_cache[key]
+                        elif cmd == 'READ_WT':
+                            key = parts[1]
+                            if key in wt_cache:
+                                results.append('WT: HIT ' + str(wt_cache[key]))
+                            else:
+                                val = database.get(key, None)
+                                if val is not None:
+                                    wt_cache[key] = val
+                                results.append('WT: MISS ' + str(val))
+                        elif cmd == 'READ_CA':
+                            key = parts[1]
+                            if key in ca_cache:
+                                results.append('CA: HIT ' + str(ca_cache[key]))
+                            else:
+                                val = database.get(key, None)
+                                if val is not None:
+                                    ca_cache[key] = val
+                                results.append('CA: MISS ' + str(val))
+                    print('\n'.join(results))
+
+                main()
+            test_cases:
+              - name: basic-write-then-read-both
+                stdin: "WRITE user:1 alice\nREAD_WT user:1\nREAD_CA user:1\nWRITE user:1 bob\nREAD_WT user:1\nREAD_CA user:1\nREAD_CA user:2\nREAD_WT user:2\n"
+                expected_stdout: "WT: HIT alice\nCA: MISS alice\nWT: HIT bob\nCA: MISS bob\nCA: MISS None\nWT: MISS None"
+                is_hidden: false
+                weight: 1
+              - name: wt-always-hits-after-write
+                stdin: "WRITE product:1 laptop\nWRITE product:2 phone\nREAD_WT product:1\nREAD_WT product:2\nREAD_CA product:1\nREAD_CA product:2\n"
+                expected_stdout: "WT: HIT laptop\nWT: HIT phone\nCA: MISS laptop\nCA: MISS phone"
+                is_hidden: false
+                weight: 1
+              - name: ca-warms-then-invalidates-on-write
+                stdin: "WRITE item:1 book\nREAD_CA item:1\nREAD_CA item:1\nWRITE item:1 ebook\nREAD_CA item:1\nREAD_WT item:1\n"
+                expected_stdout: "CA: MISS book\nCA: HIT book\nCA: MISS ebook\nWT: HIT ebook"
+                is_hidden: false
+                weight: 1
+              - name: nonexistent-key-returns-none
+                stdin: "READ_WT ghost\nREAD_CA ghost\n"
+                expected_stdout: "WT: MISS None\nCA: MISS None"
+                is_hidden: true
+                weight: 1
+              - name: multiple-writes-both-caches-consistent
+                stdin: "WRITE k1 v1\nWRITE k2 v2\nWRITE k1 v3\nREAD_WT k1\nREAD_CA k1\nREAD_WT k2\nREAD_CA k2\n"
+                expected_stdout: "WT: HIT v3\nCA: MISS v3\nWT: HIT v2\nCA: MISS v2"
+                is_hidden: true
+                weight: 1
+      - slug: caching-patterns-quiz
+        title: "Quiz: Caching Patterns"
+        type: quiz
+        duration_minutes: 10
+        content_file: lessons/caching-patterns-quiz.md
 
   - title: Persistence and Replication
     summary: "RDB, AOF, replication, and Sentinel."
@@ -166,6 +590,11 @@ modules:
         type: reading
         duration_minutes: 10
         content_file: lessons/replication-and-sentinel.md
+      - slug: persistence-replication-quiz
+        title: "Quiz: Persistence and Replication"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/persistence-replication-quiz.md
 
   - title: "Pub/Sub, Streams, and Cluster"
     summary: Messaging primitives and horizontal scale.
@@ -181,6 +610,11 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/redis-cluster.md
+      - slug: pubsub-streams-cluster-quiz
+        title: "Quiz: Pub/Sub, Streams, and Cluster"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/pubsub-streams-cluster-quiz.md
 
   - title: Production Operations
     summary: "Monitoring, key design, memory optimization, and a video overview."

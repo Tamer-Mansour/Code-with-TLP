@@ -45,6 +45,84 @@ modules:
         type: reading
         duration_minutes: 12
         content_file: lessons/cpp-compilation-model.md
+      - slug: cpp-basics-type-classify
+        title: "Exercise: Uniform Initialization and Type Classification"
+        type: exercise
+        duration_minutes: 15
+        content_file: lessons/cpp-basics-exercise.md
+        exercises:
+          - slug: cpp-enum-classify
+            title: "C++ Uniform Initialization and Type Classification"
+            difficulty: easy
+            points: 10
+            prompt_file: lessons/cpp-enum-classify.prompt.md
+            supported_languages: [python]
+            tags: [types, initialization, auto]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    for _ in range(n):
+                        line = input()
+                        # parse and classify
+                        pass
+                solve()
+            solution_code:
+              python: |
+                def classify_type(t):
+                    if t == 'int':
+                        return 'integral'
+                    elif t in ('double', 'float'):
+                        return 'floating'
+                    elif t == 'bool':
+                        return 'bool'
+                    elif t == 'string':
+                        return 'string'
+                    else:
+                        return 'auto'
+
+                def solve():
+                    n = int(input())
+                    for _ in range(n):
+                        line = input().strip()
+                        # format: TYPE NAME = VALUE  or  TYPE NAME{VALUE}
+                        if '{' in line:
+                            init_style = 'uniform'
+                            parts = line.split()
+                            type_str = parts[0]
+                            name = parts[1].split('{')[0]
+                        else:
+                            init_style = 'classic'
+                            parts = line.split()
+                            type_str = parts[0]
+                            name = parts[1]
+                        type_class = classify_type(type_str)
+                        print(f'{name}: {type_class} {init_style}')
+
+                solve()
+            test_cases:
+              - name: basic-mixed
+                stdin: "5\nint x = 42\ndouble pi{3.14}\nbool flag = true\nstring name{hello}\nauto count = 10\n"
+                expected_stdout: "x: integral classic\npi: floating uniform\nflag: bool classic\nname: string uniform\ncount: auto classic"
+                is_hidden: false
+                weight: 1
+              - name: all-uniform
+                stdin: "3\nint a{1}\nfloat b{2.5}\nstring s{world}\n"
+                expected_stdout: "a: integral uniform\nb: floating uniform\ns: string uniform"
+                is_hidden: false
+                weight: 1
+              - name: all-classic
+                stdin: "3\nint x = 0\ndouble y = 1.5\nbool z = false\n"
+                expected_stdout: "x: integral classic\ny: floating classic\nz: bool classic"
+                is_hidden: true
+                weight: 1
+              - name: auto-types
+                stdin: "2\nauto n = 5\nauto pi{3.14}\n"
+                expected_stdout: "n: auto classic\npi: auto uniform"
+                is_hidden: true
+                weight: 1
       - slug: cpp-quiz
         title: "Quiz: C++ Basics"
         type: quiz
@@ -65,6 +143,275 @@ modules:
         type: reading
         duration_minutes: 15
         content_file: lessons/move-semantics.md
+      - slug: cpp-value-categories
+        title: "Value Categories: lvalue, rvalue, xvalue"
+        type: reading
+        duration_minutes: 12
+        content_file: lessons/cpp-value-categories.md
+      - slug: cpp-move-classify-lesson
+        title: "Exercise: Move Semantics Value Category Classifier"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/cpp-move-classify-exercise.md
+        exercises:
+          - slug: cpp-move-classify
+            title: Move Semantics Value Category Classifier
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/cpp-move-classify.prompt.md
+            supported_languages: [python]
+            tags: [move-semantics, value-categories, lvalue, rvalue]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    for _ in range(n):
+                        line = input()
+                        expr, hint = line.split('|')
+                        # classify and print
+                        pass
+                solve()
+            solution_code:
+              python: |
+                def classify(hint):
+                    mapping = {
+                        'VAR': 'LVALUE',
+                        'LIT': 'RVALUE',
+                        'CALL_VAL': 'RVALUE',
+                        'CALL_REF': 'LVALUE',
+                        'MOVE': 'XVALUE',
+                        'NAMED_RREF': 'LVALUE',
+                        'TEMP': 'RVALUE'
+                    }
+                    return mapping.get(hint, 'UNKNOWN')
+
+                def solve():
+                    n = int(input())
+                    for _ in range(n):
+                        line = input().strip()
+                        parts = line.split('|')
+                        expr = parts[0]
+                        hint = parts[1]
+                        print(f'{expr}: {classify(hint)}')
+
+                solve()
+            test_cases:
+              - name: all-categories
+                stdin: "7\nx|VAR\n42|LIT\ngetValue()|CALL_VAL\ngetRef()|CALL_REF\nstd::move(x)|MOVE\nrref_var|NAMED_RREF\nMyClass()|TEMP\n"
+                expected_stdout: "x: LVALUE\n42: RVALUE\ngetValue(): RVALUE\ngetRef(): LVALUE\nstd::move(x): XVALUE\nrref_var: LVALUE\nMyClass(): RVALUE"
+                is_hidden: false
+                weight: 1
+              - name: named-rref-is-lvalue
+                stdin: "3\nT_ref|NAMED_RREF\nstd::move(obj)|MOVE\nobj|VAR\n"
+                expected_stdout: "T_ref: LVALUE\nstd::move(obj): XVALUE\nobj: LVALUE"
+                is_hidden: false
+                weight: 1
+              - name: only-rvalues
+                stdin: "4\n100|LIT\n3.14f|LIT\nfactory()|CALL_VAL\nWidget()|TEMP\n"
+                expected_stdout: "100: RVALUE\n3.14f: RVALUE\nfactory(): RVALUE\nWidget(): RVALUE"
+                is_hidden: true
+                weight: 1
+              - name: mixed-calls
+                stdin: "4\ngetName()|CALL_REF\nmakeObj()|CALL_VAL\nstd::move(tmp)|MOVE\nptr|VAR\n"
+                expected_stdout: "getName(): LVALUE\nmakeObj(): RVALUE\nstd::move(tmp): XVALUE\nptr: LVALUE"
+                is_hidden: true
+                weight: 1
+      - slug: cpp-raii-tracker-lesson
+        title: "Exercise: RAII Resource Tracker Simulation"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/cpp-raii-tracker-exercise.md
+        exercises:
+          - slug: cpp-raii-tracker
+            title: RAII Resource Tracker Simulation
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/cpp-raii-tracker.prompt.md
+            supported_languages: [python]
+            tags: [raii, smart-pointers, resource-management]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    current_scope = []
+                    released = set()
+                    for _ in range(n):
+                        line = input().split()
+                        op = line[0]
+                        # implement RAII behavior
+                        pass
+                solve()
+            solution_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    scope_stack = [[]]
+                    released = set()
+
+                    for _ in range(n):
+                        line = input().split()
+                        op = line[0]
+                        if op == 'ACQUIRE':
+                            name = line[1]
+                            scope_stack[-1].append(name)
+                            if name in released:
+                                released.discard(name)
+                        elif op == 'RELEASE':
+                            name = line[1]
+                            if name in released:
+                                print(f'ERROR: {name} already released')
+                            else:
+                                for scope in scope_stack:
+                                    if name in scope:
+                                        scope.remove(name)
+                                        break
+                                released.add(name)
+                                print(f'MANUAL-RELEASE: {name}')
+                        elif op == 'SCOPE_END':
+                            if scope_stack:
+                                current_scope = scope_stack[-1]
+                                for name in reversed(current_scope):
+                                    if name not in released:
+                                        released.add(name)
+                                        print(f'AUTO-RELEASE: {name}')
+                                scope_stack[-1] = []
+                                if len(scope_stack) > 1:
+                                    scope_stack.pop()
+
+                solve()
+            test_cases:
+              - name: basic-scope-end
+                stdin: "8\nACQUIRE fileA\nACQUIRE dbConn\nACQUIRE mutex\nSCOPE_END\nACQUIRE socket\nRELEASE socket\nRELEASE socket\nSCOPE_END\n"
+                expected_stdout: "AUTO-RELEASE: mutex\nAUTO-RELEASE: dbConn\nAUTO-RELEASE: fileA\nMANUAL-RELEASE: socket\nERROR: socket already released"
+                is_hidden: false
+                weight: 1
+              - name: all-manual-release
+                stdin: "5\nACQUIRE lock\nACQUIRE conn\nRELEASE conn\nRELEASE lock\nSCOPE_END\n"
+                expected_stdout: "MANUAL-RELEASE: conn\nMANUAL-RELEASE: lock"
+                is_hidden: false
+                weight: 1
+              - name: reverse-order
+                stdin: "4\nACQUIRE a\nACQUIRE b\nACQUIRE c\nSCOPE_END\n"
+                expected_stdout: "AUTO-RELEASE: c\nAUTO-RELEASE: b\nAUTO-RELEASE: a"
+                is_hidden: true
+                weight: 1
+              - name: double-release-error
+                stdin: "4\nACQUIRE res1\nRELEASE res1\nRELEASE res1\nSCOPE_END\n"
+                expected_stdout: "MANUAL-RELEASE: res1\nERROR: res1 already released"
+                is_hidden: true
+                weight: 1
+              - name: mixed-manual-and-auto
+                stdin: "6\nACQUIRE x\nACQUIRE y\nACQUIRE z\nRELEASE y\nSCOPE_END\nSCOPE_END\n"
+                expected_stdout: "MANUAL-RELEASE: y\nAUTO-RELEASE: z\nAUTO-RELEASE: x"
+                is_hidden: true
+                weight: 1
+      - slug: cpp-shared-ptr-sim-lesson
+        title: "Exercise: Smart Pointer Reference Count Simulator"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/cpp-shared-ptr-sim-exercise.md
+        exercises:
+          - slug: cpp-shared-ptr-sim
+            title: Smart Pointer Reference Count Simulator
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/cpp-shared-ptr-sim.prompt.md
+            supported_languages: [python]
+            tags: [smart-pointers, shared-ptr, reference-counting]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    ptr_to_obj = {}
+                    ref_counts = {}
+                    obj_counter = 0
+                    for _ in range(n):
+                        parts = input().split()
+                        op = parts[0]
+                        # implement shared_ptr semantics
+                        pass
+                solve()
+            solution_code:
+              python: |
+                def solve():
+                    n = int(input())
+                    ptr_to_obj = {}
+                    ref_counts = {}
+                    obj_counter = 0
+
+                    def decrement(obj_id):
+                        if obj_id is None:
+                            return
+                        ref_counts[obj_id] -= 1
+                        if ref_counts[obj_id] == 0:
+                            print(f'Object-{obj_id} destroyed')
+                        else:
+                            print(f'rc[Object-{obj_id}]={ref_counts[obj_id]}')
+
+                    for _ in range(n):
+                        parts = input().split()
+                        op = parts[0]
+                        if op == 'MAKE':
+                            name = parts[1]
+                            obj_counter += 1
+                            oid = obj_counter
+                            ref_counts[oid] = 1
+                            ptr_to_obj[name] = oid
+                            print(f'Object-{oid} created [rc=1]')
+                        elif op == 'COPY':
+                            dst, src = parts[1], parts[2]
+                            src_obj = ptr_to_obj.get(src)
+                            old_obj = ptr_to_obj.get(dst)
+                            if old_obj is not None:
+                                decrement(old_obj)
+                            ptr_to_obj[dst] = src_obj
+                            if src_obj is not None:
+                                ref_counts[src_obj] += 1
+                                print(f'rc[Object-{src_obj}]={ref_counts[src_obj]}')
+                        elif op == 'RESET':
+                            name = parts[1]
+                            obj_id = ptr_to_obj.get(name)
+                            ptr_to_obj[name] = None
+                            decrement(obj_id)
+                        elif op == 'MOVE':
+                            dst, src = parts[1], parts[2]
+                            old_obj = ptr_to_obj.get(dst)
+                            if old_obj is not None:
+                                decrement(old_obj)
+                            src_obj = ptr_to_obj.get(src)
+                            ptr_to_obj[dst] = src_obj
+                            ptr_to_obj[src] = None
+                            if src_obj is not None:
+                                print(f'rc[Object-{src_obj}]={ref_counts[src_obj]}')
+
+                solve()
+            test_cases:
+              - name: basic-lifecycle
+                stdin: "7\nMAKE p1\nMAKE p2\nCOPY p3 p1\nRESET p1\nCOPY p4 p3\nRESET p3\nRESET p4\n"
+                expected_stdout: "Object-1 created [rc=1]\nObject-2 created [rc=1]\nrc[Object-1]=2\nrc[Object-1]=1\nrc[Object-1]=2\nrc[Object-1]=1\nObject-1 destroyed"
+                is_hidden: false
+                weight: 1
+              - name: move-semantics
+                stdin: "4\nMAKE a\nCOPY b a\nMOVE c a\nRESET b\n"
+                expected_stdout: "Object-1 created [rc=1]\nrc[Object-1]=2\nrc[Object-1]=2\nrc[Object-1]=1"
+                is_hidden: false
+                weight: 1
+              - name: single-owner-destroy
+                stdin: "2\nMAKE x\nRESET x\n"
+                expected_stdout: "Object-1 created [rc=1]\nObject-1 destroyed"
+                is_hidden: true
+                weight: 1
+              - name: multiple-objects
+                stdin: "6\nMAKE p1\nMAKE p2\nCOPY p3 p2\nRESET p2\nRESET p1\nRESET p3\n"
+                expected_stdout: "Object-1 created [rc=1]\nObject-2 created [rc=1]\nrc[Object-2]=2\nrc[Object-2]=1\nObject-1 destroyed\nObject-2 destroyed"
+                is_hidden: true
+                weight: 1
       - slug: cpp-move-exercise
         title: "Exercise: String Pool Move/Copy Simulator"
         type: exercise
@@ -238,10 +585,296 @@ modules:
         duration_minutes: 40
         video_url: "https://www.youtube.com/results?search_query=C%2B%2B+templates+generic+programming+tutorial"
         content_file: lessons/cpp-templates-video.md
+      - slug: cpp-variadic-fold-lesson
+        title: "Exercise: Variadic Template Argument Pack Expander"
+        type: exercise
+        duration_minutes: 25
+        content_file: lessons/cpp-variadic-fold-exercise.md
+        exercises:
+          - slug: cpp-variadic-fold
+            title: Variadic Template Argument Pack Expander
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/cpp-variadic-fold.prompt.md
+            supported_languages: [python]
+            tags: [templates, variadic, fold-expressions, metaprogramming]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                from functools import reduce
+
+                def solve():
+                    n = int(input())
+                    for _ in range(n):
+                        parts = input().split()
+                        cmd = parts[0]
+                        # implement fold operations
+                        pass
+                solve()
+            solution_code:
+              python: |
+                from functools import reduce
+
+                def do_op(a, b, op):
+                    if op == '+':
+                        return a + b
+                    elif op == '-':
+                        return a - b
+                    elif op == '*':
+                        return a * b
+                    elif op == 'MAX':
+                        return max(a, b)
+
+                def foldr(f, lst):
+                    if len(lst) == 1:
+                        return lst[0]
+                    return f(lst[0], foldr(f, lst[1:]))
+
+                def solve():
+                    n = int(input())
+                    for _ in range(n):
+                        parts = input().split()
+                        cmd = parts[0]
+                        if cmd == 'SIZEOF_PACK':
+                            values = parts[1:]
+                            print(len(values))
+                        elif cmd in ('LEFT_FOLD', 'UNARY_FOLD'):
+                            op = parts[1]
+                            values = list(map(int, parts[2:]))
+                            result = reduce(lambda a, b: do_op(a, b, op), values)
+                            print(result)
+                        elif cmd == 'RIGHT_FOLD':
+                            op = parts[1]
+                            values = list(map(int, parts[2:]))
+                            result = foldr(lambda a, b: do_op(a, b, op), values)
+                            print(result)
+
+                solve()
+            test_cases:
+              - name: all-operations
+                stdin: "6\nLEFT_FOLD + 1 2 3 4\nRIGHT_FOLD - 10 3 2 1\nLEFT_FOLD * 2 3 4\nLEFT_FOLD MAX 5 2 9 1 7\nSIZEOF_PACK 10 20 30 40 50\nRIGHT_FOLD + 1 2 3 4 5\n"
+                expected_stdout: "10\n8\n24\n9\n5\n15"
+                is_hidden: false
+                weight: 1
+              - name: right-fold-subtraction
+                stdin: "3\nRIGHT_FOLD - 1 2 3\nLEFT_FOLD - 1 2 3\nRIGHT_FOLD - 5 4 3 2\n"
+                expected_stdout: "2\n-4\n2"
+                is_hidden: false
+                weight: 1
+              - name: sizeof-pack
+                stdin: "3\nSIZEOF_PACK 1\nSIZEOF_PACK 1 2 3 4 5 6 7\nSIZEOF_PACK 10 20\n"
+                expected_stdout: "1\n7\n2"
+                is_hidden: true
+                weight: 1
+              - name: max-fold
+                stdin: "2\nLEFT_FOLD MAX 3 1 4 1 5 9 2 6\nRIGHT_FOLD MAX 3 1 4 1 5 9 2 6\n"
+                expected_stdout: "9\n9"
+                is_hidden: true
+                weight: 1
+      - slug: cpp-template-depth-lesson
+        title: "Exercise: Template Instantiation Depth Checker"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/cpp-template-depth-exercise.md
+        exercises:
+          - slug: cpp-template-depth
+            title: Template Instantiation Depth Checker
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/cpp-template-depth.prompt.md
+            supported_languages: [python]
+            tags: [templates, metaprogramming, recursion, compile-time]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                import sys
+                sys.setrecursionlimit(10000)
+
+                def solve():
+                    first_line = input().split()
+                    M, LIMIT = int(first_line[0]), int(first_line[1])
+                    templates = {}
+                    for _ in range(M):
+                        parts = input().split()
+                        name = parts[0]
+                        n_sub = int(parts[1])
+                        subs = parts[2:2+n_sub] if n_sub > 0 else []
+                        templates[name] = [s for s in subs if s != 'BASE']
+                    start = input().strip()
+                    # perform DFS and track depth
+                    pass
+                solve()
+            solution_code:
+              python: |
+                import sys
+                sys.setrecursionlimit(100000)
+
+                def solve():
+                    first_line = input().split()
+                    M, LIMIT = int(first_line[0]), int(first_line[1])
+
+                    templates = {}
+                    for _ in range(M):
+                        parts = input().split()
+                        name = parts[0]
+                        n_sub = int(parts[1])
+                        subs = parts[2:2+n_sub] if n_sub > 0 else []
+                        templates[name] = [s for s in subs if s != 'BASE']
+
+                    start = input().strip()
+                    visited = set()
+                    depth_exceeded = False
+                    exceeded_path = 'N/A'
+
+                    def dfs(node, depth, path):
+                        nonlocal depth_exceeded, exceeded_path
+                        if depth > LIMIT:
+                            if not depth_exceeded:
+                                depth_exceeded = True
+                                exceeded_path = ' -> '.join(path)
+                            return
+                        if node in visited:
+                            return
+                        visited.add(node)
+                        for child in templates.get(node, []):
+                            dfs(child, depth + 1, path + [child])
+
+                    dfs(start, 1, [start])
+                    print(f'Unique instantiations: {len(visited)}')
+                    if depth_exceeded:
+                        print('DEPTH_EXCEEDED')
+                        print(exceeded_path)
+                    else:
+                        print('DEPTH_OK')
+                        print('N/A')
+
+                solve()
+            test_cases:
+              - name: basic-no-overflow
+                stdin: "4 3\nFactorial 1 Factorial\nMyPair 2 Vector Map\nVector 1 BASE\nMap 1 BASE\nMyPair\n"
+                expected_stdout: "Unique instantiations: 3\nDEPTH_OK\nN/A"
+                is_hidden: false
+                weight: 1
+              - name: depth-exceeded
+                stdin: "3 2\nA 1 B\nB 1 C\nC 1 BASE\nA\n"
+                expected_stdout: "Unique instantiations: 2\nDEPTH_EXCEEDED\nA -> B -> C"
+                is_hidden: false
+                weight: 1
+              - name: leaf-only
+                stdin: "1 5\nLeaf 0\nLeaf\n"
+                expected_stdout: "Unique instantiations: 1\nDEPTH_OK\nN/A"
+                is_hidden: true
+                weight: 1
+              - name: shared-dependencies
+                stdin: "4 5\nRoot 2 Left Right\nLeft 1 Shared\nRight 1 Shared\nShared 1 BASE\nRoot\n"
+                expected_stdout: "Unique instantiations: 4\nDEPTH_OK\nN/A"
+                is_hidden: true
+                weight: 1
+      - slug: cpp-templates-quiz
+        title: "Quiz: Templates and Generic Programming"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/cpp-templates-quiz.md
+
+  - title: Compile-Time Programming
+    summary: "constexpr, consteval, static_assert, and compile-time evaluation."
+    order_index: 5
+    lessons:
+      - slug: cpp-constexpr-lesson
+        title: "Compile-Time Programming: constexpr, consteval, and constinit"
+        type: reading
+        duration_minutes: 14
+        content_file: lessons/cpp-constexpr-lesson.md
+      - slug: cpp-constexpr-exercise-lesson
+        title: "Exercise: constexpr Fibonacci Evaluator"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/cpp-constexpr-exercise.md
+        exercises:
+          - slug: cpp-constexpr-fib
+            title: constexpr Fibonacci Evaluator
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/cpp-constexpr-fib.prompt.md
+            supported_languages: [python]
+            tags: [constexpr, compile-time, fibonacci]
+            time_limit_ms: 2000
+            memory_limit_mb: 128
+            starter_code:
+              python: |
+                from functools import lru_cache
+
+                @lru_cache(maxsize=None)
+                def fib(n):
+                    if n == 0:
+                        return 0
+                    if n == 1:
+                        return 1
+                    return fib(n-1) + fib(n-2)
+
+                def solve():
+                    m = int(input())
+                    for _ in range(m):
+                        parts = input().split()
+                        op = parts[0]
+                        n = int(parts[1])
+                        # print result based on context
+                        pass
+                solve()
+            solution_code:
+              python: |
+                from functools import lru_cache
+
+                @lru_cache(maxsize=None)
+                def fib(n):
+                    if n == 0:
+                        return 0
+                    if n == 1:
+                        return 1
+                    return fib(n-1) + fib(n-2)
+
+                def solve():
+                    m = int(input())
+                    for _ in range(m):
+                        parts = input().split()
+                        op = parts[0]
+                        n = int(parts[1])
+                        result = fib(n)
+                        if op == 'CONSTEXPR_CONTEXT':
+                            print(f'COMPILE-TIME: fib({n})={result}')
+                        elif op == 'RUNTIME_CONTEXT':
+                            print(f'RUNTIME: fib({n})={result}')
+                        elif op == 'IS_CONSTEXPR':
+                            print('YES' if n >= 0 else 'NO')
+
+                solve()
+            test_cases:
+              - name: basic-contexts
+                stdin: "5\nCONSTEXPR_CONTEXT 10\nRUNTIME_CONTEXT 10\nIS_CONSTEXPR 15\nCONSTEXPR_CONTEXT 0\nRUNTIME_CONTEXT 7\n"
+                expected_stdout: "COMPILE-TIME: fib(10)=55\nRUNTIME: fib(10)=55\nYES\nCOMPILE-TIME: fib(0)=0\nRUNTIME: fib(7)=13"
+                is_hidden: false
+                weight: 1
+              - name: is-constexpr-checks
+                stdin: "3\nIS_CONSTEXPR 0\nIS_CONSTEXPR 35\nIS_CONSTEXPR -1\n"
+                expected_stdout: "YES\nYES\nNO"
+                is_hidden: false
+                weight: 1
+              - name: large-values
+                stdin: "3\nCONSTEXPR_CONTEXT 20\nRUNTIME_CONTEXT 15\nCONSTEXPR_CONTEXT 1\n"
+                expected_stdout: "COMPILE-TIME: fib(20)=6765\nRUNTIME: fib(15)=610\nCOMPILE-TIME: fib(1)=1"
+                is_hidden: true
+                weight: 1
+              - name: edge-cases
+                stdin: "4\nCONSTEXPR_CONTEXT 35\nRUNTIME_CONTEXT 0\nRUNTIME_CONTEXT 1\nIS_CONSTEXPR 10\n"
+                expected_stdout: "COMPILE-TIME: fib(35)=9227465\nRUNTIME: fib(0)=0\nRUNTIME: fib(1)=1\nYES"
+                is_hidden: true
+                weight: 1
 
   - title: Error Handling
     summary: Exceptions, error codes, optional, and variant.
-    order_index: 5
+    order_index: 6
     lessons:
       - slug: cpp-exceptions
         title: "Error Handling: Exceptions and Error Codes"
@@ -253,10 +886,15 @@ modules:
         type: reading
         duration_minutes: 13
         content_file: lessons/cpp-optional-variant.md
+      - slug: cpp-error-handling-quiz
+        title: "Quiz: Error Handling and Exception Safety"
+        type: quiz
+        duration_minutes: 8
+        content_file: lessons/cpp-error-handling-quiz.md
 
   - title: Concurrency
     summary: Threads, mutexes, futures, and atomics.
-    order_index: 6
+    order_index: 7
     lessons:
       - slug: cpp-threads
         title: "Concurrency: Threads, Mutexes, and Futures"
@@ -277,7 +915,7 @@ modules:
 
   - title: "C++20 Modern Features"
     summary: "Ranges, coroutines, modules, and the spaceship operator."
-    order_index: 7
+    order_index: 8
     lessons:
       - slug: cpp20-ranges
         title: "C++20 Ranges and Views"

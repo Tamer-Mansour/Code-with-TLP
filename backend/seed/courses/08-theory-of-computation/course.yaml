@@ -290,6 +290,117 @@ modules:
                 is_hidden: true
                 weight: 1
 
+      - slug: nfa-subset-construction-exercise
+        title: "NFA Subset Construction: Count DFA States"
+        type: exercise
+        duration_minutes: 35
+        content_file: lessons/nfa-subset-construction-exercise.md
+        exercises:
+          - slug: theory-nfa-subset
+            title: "NFA Subset Construction"
+            difficulty: hard
+            points: 30
+            prompt_file: lessons/theory-nfa-subset.prompt.md
+            supported_languages: [python]
+            tags: [automata, nfa, dfa, subset-construction, powerset]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                from collections import deque
+
+                def solve():
+                    import sys
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n, a = map(int, data[idx].split()); idx += 1
+                    start = int(data[idx].strip()); idx += 1
+                    accepts = set(map(int, data[idx].split())); idx += 1
+                    alphabet = [chr(ord('a') + i) for i in range(a)]
+                    # trans[state][sym_index] = frozenset of successors
+                    trans = [[frozenset() for _ in range(a)] for _ in range(n)]
+                    for i in range(n):
+                        for j in range(a):
+                            parts = data[idx].split(); idx += 1
+                            # format: 'a: s1 s2 ...' or 'a: empty'
+                            successors = parts[1:]
+                            if successors == ['empty']:
+                                trans[i][j] = frozenset()
+                            else:
+                                trans[i][j] = frozenset(map(int, successors))
+                    # TODO: implement subset construction and count reachable DFA states
+                    print(0)
+
+                solve()
+            solution_code:
+              python: |
+                from collections import deque
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    n, a = map(int, data[idx].split()); idx += 1
+                    start = int(data[idx].strip()); idx += 1
+                    accepts = set(map(int, data[idx].split())); idx += 1
+                    alphabet = [chr(ord('a') + i) for i in range(a)]
+                    trans = [[frozenset() for _ in range(a)] for _ in range(n)]
+                    for i in range(n):
+                        for j in range(a):
+                            parts = data[idx].split(); idx += 1
+                            successors = parts[1:]
+                            if successors == ['empty']:
+                                trans[i][j] = frozenset()
+                            else:
+                                trans[i][j] = frozenset(map(int, successors))
+                    start_subset = frozenset([start])
+                    visited = set()
+                    queue = deque([start_subset])
+                    visited.add(start_subset)
+                    while queue:
+                        subset = queue.popleft()
+                        for j in range(a):
+                            next_subset = frozenset(
+                                s2 for s in subset for s2 in trans[s][j]
+                            )
+                            if next_subset not in visited:
+                                visited.add(next_subset)
+                                queue.append(next_subset)
+                    print(len(visited))
+
+                solve()
+            test_cases:
+              - name: sample-3state-2alpha
+                stdin: "3 2\n0\n2\na: 0 1\nb: 0\na: 2\nb: empty\na: empty\nb: empty"
+                expected_stdout: "3"
+                is_hidden: false
+                weight: 1
+              - name: single-state-trivial
+                stdin: "1 1\n0\n0\na: 0"
+                expected_stdout: "1"
+                is_hidden: false
+                weight: 1
+              - name: two-states-no-dead
+                stdin: "2 1\n0\n1\na: 0 1\na: 1"
+                expected_stdout: "2"
+                is_hidden: false
+                weight: 1
+              - name: dead-state-reachable
+                stdin: "2 1\n0\n1\na: 1\na: empty"
+                expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+              - name: four-subsets-reachable
+                stdin: "2 2\n0\n1\na: 1\nb: 0\na: 0 1\nb: empty"
+                expected_stdout: "4"
+                is_hidden: true
+                weight: 1
+              - name: four-state-nfa
+                stdin: "4 2\n0\n3\na: 0 1\nb: 0\na: 2\nb: empty\na: 3\nb: empty\na: empty\nb: 3"
+                expected_stdout: "5"
+                is_hidden: true
+                weight: 1
+
       - slug: quiz-finite-automata
         title: "Quiz: Finite Automata"
         type: quiz
@@ -324,6 +435,181 @@ modules:
         type: reading
         duration_minutes: 22
         content_file: lessons/pumping-lemma-regular.md
+
+      - slug: dfa-even-ones-exercise
+        title: "DFA Simulator: Even Number of 1s"
+        type: exercise
+        duration_minutes: 20
+        content_file: lessons/dfa-even-ones-exercise.md
+        exercises:
+          - slug: theory-dfa-even-ones
+            title: "DFA Simulator: Even Number of 1s"
+            difficulty: medium
+            points: 20
+            prompt_file: lessons/theory-dfa-even-ones.prompt.md
+            supported_languages: [python]
+            tags: [automata, dfa, simulation, regular-languages]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                T = int(input())
+                for _ in range(T):
+                    s = input().strip()
+                    if s == 'epsilon':
+                        s = ''
+                    # TODO: simulate the DFA and print ACCEPT or REJECT
+                    print('ACCEPT')
+            solution_code:
+              python: |
+                T = int(input())
+                for _ in range(T):
+                    s = input().strip()
+                    if s == 'epsilon':
+                        s = ''
+                    state = 0
+                    for ch in s:
+                        if ch == '1':
+                            state = 1 - state
+                    print('ACCEPT' if state == 0 else 'REJECT')
+            test_cases:
+              - name: single-1-reject
+                stdin: "1\n1"
+                expected_stdout: "REJECT"
+                is_hidden: false
+                weight: 1
+              - name: two-ones-accept
+                stdin: "1\n1010"
+                expected_stdout: "ACCEPT"
+                is_hidden: false
+                weight: 1
+              - name: epsilon-accept
+                stdin: "1\nepsilon"
+                expected_stdout: "ACCEPT"
+                is_hidden: false
+                weight: 1
+              - name: three-ones-reject
+                stdin: "1\n111"
+                expected_stdout: "REJECT"
+                is_hidden: false
+                weight: 1
+              - name: multi-strings
+                stdin: "4\n0100\n111\n1010\nepsilon"
+                expected_stdout: "REJECT\nREJECT\nACCEPT\nACCEPT"
+                is_hidden: false
+                weight: 2
+              - name: all-zeros-accept
+                stdin: "1\n0000"
+                expected_stdout: "ACCEPT"
+                is_hidden: true
+                weight: 1
+              - name: four-ones-accept
+                stdin: "1\n1111"
+                expected_stdout: "ACCEPT"
+                is_hidden: true
+                weight: 1
+              - name: mixed-long
+                stdin: "2\n10110101\n101"
+                expected_stdout: "REJECT\nACCEPT"
+                is_hidden: true
+                weight: 1
+
+      - slug: pumping-lemma-exercise
+        title: "Pumping Lemma Witness for a^n b^n"
+        type: exercise
+        duration_minutes: 30
+        content_file: lessons/pumping-lemma-exercise.md
+        exercises:
+          - slug: theory-pumping-witness
+            title: "Pumping Lemma Witness"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/theory-pumping-witness.prompt.md
+            supported_languages: [python]
+            tags: [pumping-lemma, regular-languages, non-regularity, proof]
+            time_limit_ms: 3000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                p = int(input())
+                s = input().strip()
+
+                def is_anbn(t):
+                    if not t:
+                        return True
+                    i = 0
+                    while i < len(t) and t[i] == 'a':
+                        i += 1
+                    j = i
+                    while j < len(t) and t[j] == 'b':
+                        j += 1
+                    return j == len(t) and i == len(t) - i
+
+                # TODO: check all valid splits and determine STAYS_REGULAR or PUMPS_OUT
+                print('PUMPS_OUT')
+            solution_code:
+              python: |
+                p = int(input())
+                s = input().strip()
+
+                def is_anbn(t):
+                    if not t:
+                        return True
+                    i = 0
+                    while i < len(t) and t[i] == 'a':
+                        i += 1
+                    j = i
+                    while j < len(t) and t[j] == 'b':
+                        j += 1
+                    return j == len(t) and t[:i].count('a') == t[i:].count('b')
+
+                stays = False
+                for xy_len in range(1, min(p, len(s)) + 1):
+                    for y_start in range(0, xy_len):
+                        for y_end in range(y_start + 1, xy_len + 1):
+                            x = s[:y_start]
+                            z = s[y_end:]
+                            pumped = x + z
+                            if is_anbn(pumped):
+                                stays = True
+                                break
+                        if stays:
+                            break
+                    if stays:
+                        break
+
+                print('STAYS_REGULAR' if stays else 'PUMPS_OUT')
+            test_cases:
+              - name: aabbaabb-p3-pumps-out
+                stdin: "3\naabbaabb"
+                expected_stdout: "PUMPS_OUT"
+                is_hidden: false
+                weight: 1
+              - name: aabb-p3-stays
+                stdin: "3\naabb"
+                expected_stdout: "STAYS_REGULAR"
+                is_hidden: false
+                weight: 1
+              - name: ab-p1-pumps-out
+                stdin: "1\nab"
+                expected_stdout: "PUMPS_OUT"
+                is_hidden: false
+                weight: 1
+              - name: aaabbb-p3-pumps-out
+                stdin: "3\naaabbb"
+                expected_stdout: "PUMPS_OUT"
+                is_hidden: true
+                weight: 1
+              - name: aaabbb-p4-stays
+                stdin: "4\naaabbb"
+                expected_stdout: "STAYS_REGULAR"
+                is_hidden: true
+                weight: 1
+              - name: aaaaabbbbb-p5-pumps-out
+                stdin: "5\naaaaabbbbb"
+                expected_stdout: "PUMPS_OUT"
+                is_hidden: true
+                weight: 2
 
       - slug: quiz-regular-languages
         title: "Quiz: Regular Expressions & Regular Languages"
@@ -809,6 +1095,111 @@ modules:
               - name: div3-len3
                 stdin: "3 2\n0 1\n0 1\n2 0\n1 2\n0\n0\n3"
                 expected_stdout: "3"
+                is_hidden: true
+                weight: 1
+
+      - slug: tm-halting-exercise
+        title: "Bounded TM Simulation and the Halting Problem"
+        type: exercise
+        duration_minutes: 35
+        content_file: lessons/tm-halting-exercise.md
+        exercises:
+          - slug: theory-tm-halting
+            title: "Bounded Turing Machine Simulator"
+            difficulty: medium
+            points: 25
+            prompt_file: lessons/theory-tm-halting.prompt.md
+            supported_languages: [python]
+            tags: [turing-machine, halting-problem, decidability, simulation]
+            time_limit_ms: 5000
+            memory_limit_mb: 256
+            starter_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    r, k = map(int, data[idx].split()); idx += 1
+                    transitions = {}
+                    for _ in range(r):
+                        parts = data[idx].split(); idx += 1
+                        state, sym, next_state, write_sym, direction = parts
+                        transitions[(state, sym)] = (next_state, write_sym, direction)
+                    # TODO: simulate TM on empty tape for at most k steps
+                    # Print HALT_ACCEPT, HALT_REJECT, or DID_NOT_HALT
+                    print('DID_NOT_HALT')
+
+                solve()
+            solution_code:
+              python: |
+                import sys
+
+                def solve():
+                    data = sys.stdin.read().split('\n')
+                    idx = 0
+                    r, k = map(int, data[idx].split()); idx += 1
+                    transitions = {}
+                    for _ in range(r):
+                        parts = data[idx].split(); idx += 1
+                        state, sym, next_state, write_sym, direction = parts
+                        transitions[(state, sym)] = (next_state, write_sym, direction)
+                    tape = {}
+                    head = 0
+                    current_state = 'q0'
+                    for step in range(k):
+                        if current_state == 'qaccept':
+                            print('HALT_ACCEPT')
+                            return
+                        if current_state == 'qreject':
+                            print('HALT_REJECT')
+                            return
+                        sym = tape.get(head, 'B')
+                        key = (current_state, sym)
+                        if key not in transitions:
+                            print('HALT_REJECT')
+                            return
+                        next_state, write_sym, direction = transitions[key]
+                        tape[head] = write_sym
+                        current_state = next_state
+                        head += 1 if direction == 'R' else -1
+                    if current_state == 'qaccept':
+                        print('HALT_ACCEPT')
+                    elif current_state == 'qreject':
+                        print('HALT_REJECT')
+                    else:
+                        print('DID_NOT_HALT')
+
+                solve()
+            test_cases:
+              - name: immediate-accept
+                stdin: "2 100\nq0 B qaccept B R\nq0 0 qreject 0 R"
+                expected_stdout: "HALT_ACCEPT"
+                is_hidden: false
+                weight: 1
+              - name: loops-forever
+                stdin: "1 10\nq0 B q0 B R"
+                expected_stdout: "DID_NOT_HALT"
+                is_hidden: false
+                weight: 1
+              - name: two-steps-reject
+                stdin: "2 50\nq0 B q1 1 R\nq1 B qreject B L"
+                expected_stdout: "HALT_REJECT"
+                is_hidden: false
+                weight: 1
+              - name: no-transition-reject
+                stdin: "1 100\nq0 1 qaccept 1 R"
+                expected_stdout: "HALT_REJECT"
+                is_hidden: true
+                weight: 1
+              - name: write-then-accept
+                stdin: "3 100\nq0 B q1 0 R\nq1 B q2 1 R\nq2 B qaccept B L"
+                expected_stdout: "HALT_ACCEPT"
+                is_hidden: true
+                weight: 1
+              - name: boundary-k-steps
+                stdin: "2 2\nq0 B q1 B R\nq1 B qaccept B R"
+                expected_stdout: "HALT_ACCEPT"
                 is_hidden: true
                 weight: 1
 
